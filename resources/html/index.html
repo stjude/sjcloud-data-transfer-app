@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8">
+		<title>St. Jude Cloud Upload</title>
+		<script src="../../bower_components/jquery/dist/jquery.min.js"></script>
+		<script src="../js/main.js"></script>
+		<style>
+		#drag-file {
+			background-color: blue;
+			color:white;
+			text-align: center;
+			width:300px;
+			height:300px;
+		}
+		</style>
+	</head>
+
+	<body>
+		<h1>File Upload Demo</h1>
+		<div id="upload-form" class="hide-on-upload">
+			<h2>Select files to upload.</h2>
+			<div>
+				<ul id="files-list"></ul>
+				<button id="select-files-btn">Select files</button>
+			</div>
+			<div id="drag-file">
+				<p>Drag your files here</p>
+			</div>
+			<div>
+				<h2>Which project to upload to?</h2>
+				<select id="project-list"></select>
+
+				<h2>Upload</h2>
+				<button id="upload-btn">Upload</button>
+			</div>
+		</div>
+		<div class="show-on-upload" style="display:none">
+			<h2>Uploading files...</h2>
+		</div>
+	</body>
+	<script>
+	var auth_api = "https://auth.dnanexus.com";
+	var auth_route = "/oauth2/authorize";
+	var client_id = "sjcloudplatform";
+	var redirect_uri = "https://platform.stjude.cloud:443/return_from_login";
+	document.write("<a href='" + auth_api + auth_route + "?client_id=" + client_id +
+				 "&redirect_uri=" + encodeURIComponent(redirect_uri) +
+				 "&response_type=code'>Log in to DNAnexus</a>");
+	</script>
+</html>

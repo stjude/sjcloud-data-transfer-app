@@ -1,0 +1,20 @@
+{
+  "name": "sjcloud_desktop_app",
+  "description": "The St. Jude Cloud desktop app, designed for getting data in the St. Jude Cloud easily and reliably.",
+  "main": "src/main.js",
+  "authors": [
+    "Clay McLeod"
+  ],
+  "license": "MIT",
+  "homepage": "",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^3.2.1"
+  }
+}
