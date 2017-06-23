@@ -1,26 +1,53 @@
-const electron = require('electron')
-const app = electron.app
+const electron = require("electron");
+const app = electron.app;
 
-const sjui = require('./ui');
-const sjutils = require('./utils');
-const dx = require('./dx-toolkit');
+const url = require("url");
+const ui = require("./ui");
+const path = require("path");
+const state = require("./state");
 
-let mainWindow
+let mainWindow;
 
+app.on("ready", function() {
+  ui.createWindow(function(mw) {
+    mainWindow = mw;
+    state.getState(function(state) {
+      mainWindow.loadURL(
+        url.format({
+          pathname: path.join(
+            __dirname,
+            "../assets/sjcloud/html/" + state.htmlfile
+          ),
+          protocol: "file:",
+          slashes: true
+        })
+      );
+    });
+  });
+});
 
-app.on('ready', function() {
-	sjui.createWindow()
-})
-
-app.on('window-all-closed', function () {
-  if (process.platform !== 'darwin') {
-    app.quit()
+app.on("window-all-closed", function() {
+  if (process.platform !== "darwin") {
+    app.quit();
   }
-})
+});
 
-app.on('activate', function () {
+app.on("activate", function() {
   if (mainWindow === null) {
-    sjui.createWindow()
+    ui.createWindow(function(mw) {
+      mainWindow = mw;
+      state.getState(function(state) {
+        mainWindow.loadURL(
+          url.format({
+            pathname: path.join(
+              __dirname,
+              "../assets/sjcloud/html/" + state.htmlfile
+            ),
+            protocol: "file:",
+            slashes: true
+          })
+        );
+      });
+    });
   }
-})
-
+});

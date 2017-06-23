@@ -1,20 +1,19 @@
-const $ = require("jquery");
-const url = require('url')
-const path = require('path')
-const electron = require('electron')
-const BrowserWindow = electron.BrowserWindow
+const url = require("url");
+const path = require("path");
+const jquery = require("jquery");
+const electron = require("electron");
+const BrowserWindow = electron.BrowserWindow;
 
-module.exports.createWindow = function () {
-  mainWindow = new BrowserWindow({width: 800, height: 600})
-  mainWindow.$ = $;
+module.exports.createWindow = function(callback) {
+  mainWindow = new BrowserWindow({
+    width: 800,
+    height: 600
+  });
+  mainWindow.$ = jquery;
 
-  mainWindow.loadURL(url.format({
-    pathname: path.join(__dirname, '../resources/html/index.html'),
-    protocol: 'file:',
-    slashes: true
-  }))
+  mainWindow.on("closed", function() {
+    mainWindow = null;
+  });
 
-  mainWindow.on('closed', function () {
-    mainWindow = null
-  })
-}
+  return callback(mainWindow);
+};

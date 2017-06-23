@@ -1,42 +1,55 @@
-const os = require('os')
-const fs = require('fs')
-const path = require('path')
-const { exec, execSync } = require('child_process')
+const os = require("os");
+const fs = require("fs");
+const path = require("path");
+const { exec, execSync } = require("child_process");
 
-module.exports.tokenLocation = path.join(os.homedir(), '.sjcloud', 'auth', 'token')
+module.exports.tokenLocation = path.join(
+  os.homedir(),
+  ".sjcloud",
+  "auth",
+  "token"
+);
 
-module.exports.runCommand = function (cmd, callback) {
-	exec(cmd, { shell: '/bin/bash' },
-		function (err, stdout, stderr) {
-			if (err) {
-				return callback(err, false, null);
-			}
+module.exports.readToken = function(callback) {
+  /* Check if the file exists */
+  fs.stat(module.exports.tokenLocation, function(err, stats) {
+    if (err) return callback(err, false);
 
-			if (stderr.length > 0) {
-				return callback(stderr, false, null);
-			}
+    fs.readFile(module.exports.tokenLocation, function(err, contents) {
+      if (err) return callback(err, false);
 
-			return callback(null, true, stdout);
-	})
-}
+      const firstLine = contents.toString().split(os.EOL)[0];
+      return callback(null, firstLine);
+    });
+  });
+};
 
-module.exports.runCommandSync = function (cmd) {
-	return execSync(cmd, { shell: '/bin/bash' })
-}
+module.exports.runCommand = function(cmd, callback) {
+  exec(cmd, { shell: "/bin/bash" }, function(err, stdout, stderr) {
+    if (err) {
+      return callback(err, null);
+    }
 
-module.exports.readToken = function (callback) {
+    if (stderr.length > 0) {
+      return callback(stderr, null);
+    }
 
-	/* Check if the file exists */
-	fs.stat(module.exports.tokenLocation, function (err, stats) {
+    return callback(null, stdout);
+  });
+};
 
-		if (err) return callback(err, false)
+module.exports.runCommandSync = function(cmd) {
+  return execSync(cmd, { shell: "/bin/bash" });
+};
 
-		fs.readFile(module.exports.tokenLocation, function (err, contents) {
+module.exports.dxToolkitOnPath = function(callback) {
+  exec("which dx", callback);
+};
 
-			if (err) return callback(err, false)
+module.exports.dxLoggedIn = function(callback) {
+  exec("dx whoami", callback);
+};
 
-			const firstLine = contents.toString().split(os.EOL)[0]
-			return callback(null, firstLine);
-		})
-	});
-}
+module.exports.dxCheckProjectAccess = function(callback) {
+  exec("dx ls", callback);
+};
