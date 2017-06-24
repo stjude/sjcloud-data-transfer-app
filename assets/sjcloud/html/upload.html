@@ -42,11 +42,18 @@
 		<div class="col-md-4 col-md-offset-3">
 			<ul id="files-list"></ul>
 			<select id="project-list" class="form-control" style="margin-top:10px;"></select>
-			<a id="upload-btn" class="btn btn-primary btn-large" style="margin-top:10px;">Upload</a>
+			<button id="upload-btn" class="btn btn-primary btn-large" style="margin-top:10px;" disabled>Upload</button>
 		</div>
 	</div>
-	<div id="dynamic-message" class="container" style="display: none;">
-		Uploading!
+	<div id="dynamic-message" style="display: none;">
+		<div id="upload-message"></div>
+		<div class="progress">
+            <div id="progress-bar" class="progress-bar active"></div>
+        </div>
+		<div>
+			<button id="project-btn" class="btn btn-primary btn-lrg">Go to Project</button>
+			<button id="reset-btn" class="btn btn-danger btn-lrg">Reset</button>
+		</div>
 	</div>
 </body>
 <script>
@@ -58,12 +65,14 @@
 	$(function () {
 		const dx = require("../../../src/dx");
 		const sjutils = require("../../../src/utils");
+		const { shell, remote } = require('electron');
 		const { dialog } = require("electron").remote;
 		const async = require("async");
 
 		/**
 		 * Grab projects first.
 		 **/
+
 		dx.listProjects(function (err, results) {
 			if (err) {
 				console.error(err);
@@ -74,6 +83,7 @@
 			results.forEach(function (elem) {
 				var option = document.createElement("option");
 				option.text = elem["project_name"];
+				option.value = elem["dx_location"];
 				project_select.add(option);
 			});
 		});
@@ -81,22 +91,28 @@
 		/**
 		 * Next, setup handlers.
 		 **/
+
+		function updateFilesList(files) {
+
+			$("#files-list").empty();
+
+			if (!files || files.length <= 0) {
+				$('#upload-btn').prop('disabled', true);
+				return;
+			} else {
+				$('#upload-btn').prop('disabled', false);
+			}
+
+			files.forEach(function (elem) {
+				$("#files-list").append("<li>" + elem + "</li>");
+			});
+		}
+
 		$("#file-upload-form").click(function () {
 			dialog.showOpenDialog(
 				{ properties: ["openFile", "multiSelections"] },
-				function (files) {
-					$("#files-list").empty();
-					files.forEach(function (elem) {
-						$("#files-list").append("<li>" + elem + "</li>");
-					});
-				}
+				function (files) { return updateFilesList(files); }
 			);
-		});
-
-		$("#upload-btn").click(function () {
-			$("#static-message").hide();
-			$("#dynamic-message").show();
-			performUpload();
 		});
 
 		var holder = document.getElementById('file-upload-form');
@@ -111,21 +127,23 @@
 		};
 		holder.ondrop = (e) => {
 			e.preventDefault();
-			$('#files-list').empty()
+			var files = [];
 			for (let f of e.dataTransfer.files) {
-				$('#files-list').append("<li>" + f.path + "</li>")
+				files.append(f);
 			}
-
+			updateFilesList(files);
 			return false;
 		};
 
 		function performUpload() {
 			let projectName = $("#project-list").find(":selected").text();
 			var tasks = [];
-			$("#files-list").children().each(function () {
+			const children = $("#files-list").children()
+			console.error("Children: "+children.length.toString())
+			children.each(function (index, element) {
 				let fileName = $(this).text();
 				tasks.push(function (next) {
-					$("body").append("Uploading ", fileName, " to ", projectName, ".<br>");
+					updateProgress(Math.round(100.0 * index / children.length).toString() + "%", "Uploading " + fileName + " to " + projectName + "...")
 					dx.uploadFile(fileName, projectName, function (err, result) {
 						next(err, result);
 					});
@@ -138,9 +156,42 @@
 					return;
 				}
 
-				console.log("Successful!");
+				updateProgress("100%", "Successfully uploaded all files!");
 			});
 		}
+
+		$("#upload-btn").click(function (event) {
+			event.preventDefault();
+			$("#static-message").hide();
+			$("#dynamic-message").show();
+			$('#project-btn').on('click', function () {
+				let dxLocation = $("#project-list").find(":selected").val().replace("project-", "");
+				console.log(dxLocation);
+				shell.openExternal("https://platform.dnanexus.com/projects/"+dxLocation+"/data/")
+			});
+			performUpload();
+		});
+
+		$('#reset-btn').click(function(event) {
+			event.preventDefault();
+			$("#static-message").show();
+			$("#dynamic-message").hide();
+			updateProgress("0%", "");
+			updateFilesList(undefined);
+		});
+
+		function updateProgress(val, message) {
+			console.log(val, message);
+			$('#upload-message').text(message);
+            $('#progress-bar').width(val);
+            if (val == '100%')
+                $('#progress-bar').addClass("progress-bar-success");
+        }
+
+        function failProgress(failmessage) {
+			$('#upload-message').text(failmessage);
+            $('#progress-bar').addClass("progress-bar-danger").width("100%");
+        }
 
 	});
 

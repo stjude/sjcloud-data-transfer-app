@@ -27,7 +27,6 @@ module.exports.install = function(updateProgress, failProgress, callback) {
     const dxFolderPath = utils.getDXToolkitDir();
     updateProgress("30%", "Downloading dx-toolkit...");
     utils.downloadFile(DOWNLOAD_INFO.MAC.URL, dxTarPath, function() {
-
       updateProgress("60%", "Verifying dx-toolkit...");
       // NOTE: I unzip to the parent directory because
       // the unzip creates a structure like dx-toolkit/dx-toolkit/...
@@ -51,8 +50,8 @@ module.exports.install = function(updateProgress, failProgress, callback) {
           }
 
           updateProgress("100%", "Success!");
-          setTimeout(function () {
-            return callback(null, true)
+          setTimeout(function() {
+            return callback(null, true);
           }, 1000);
         });
       });
@@ -85,6 +84,8 @@ module.exports.listProjects = function(callback) {
 
     var results = [];
     stdout.split("\n").forEach(function(el) {
+      if (el.trim().length <= 0) return;
+
       [dx_location, name, access_level, _] = el.split("\t");
       results.push({
         project_name: name,
@@ -98,14 +99,26 @@ module.exports.listProjects = function(callback) {
 };
 
 module.exports.uploadFile = function(file, project, callback) {
-  let dx_path = project + ":/" + path.basename(file.trim());
-  let command = "dx upload --path '" + dx_path + "' '" + file + "'";
-  console.log(command);
-  utils.runCommand(command, function(err, stdout) {
-    if (err) {
-      return callback(err, null);
-    }
+  let dx_path = project + ":/inputs/" + path.basename(file.trim());
+  let rmCommand = "dx rm -a '" + dx_path + "'";
+  console.log(rmCommand)
+  utils.runCommand(rmCommand, function() {
+    let command = "dx upload -p --path '" + dx_path + "' '" + file + "'";
+    console.log(command);
+    utils.runCommand(command, function(err, stdout) {
+      if (err) {
+        return callback(err, null);
+      }
 
-    return callback(null, stdout);
+      let tagCommand = "dx tag '" + dx_path + "' sj-needs-analysis";
+      console.log(tagCommand);
+      utils.runCommand(tagCommand, function(err, stdout) {
+        if (err) {
+          return callback(err, null);
+        }
+
+        return callback(null, stdout);
+      });
+    });
   });
 };

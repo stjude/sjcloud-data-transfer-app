@@ -10,8 +10,8 @@ module.exports.state = {
   NEED_LOGIN: {
     htmlfile: "login.html"
   },
-  NORMAL: {
-    htmlfile: "index.html"
+  UPLOAD: {
+    htmlfile: "upload.html"
   },
   UNKNOWN: {
     htmlfile: "unknown.html"
@@ -36,7 +36,7 @@ module.exports.getState = function(callback) {
                 return callback(self.state.UNKNOWN);
             }
 
-            return callback(self.state.NORMAL);
+            return callback(self.state.UPLOAD);
         })
     });
   });

@@ -13,6 +13,10 @@
             transform: translate(-50%, -50%)
         }
 
+        #instructions {
+            text-align: left;
+        }
+
         #download-btn-div {
             margin-top: 5%;
         }
@@ -29,9 +33,16 @@
     <div class="container">
         <div id="static-message">
             <p>
-                You do not appear to be logged in! You will need to grab a DNAnexus token and paste it in the box below.
+                You do not appear to be logged in! Please follow the steps below.
             </p>
-
+            <hr><br>
+            <p id="instructions">
+                <b>Step 1. </b> Click on the button below to go to the DNAnexus token generation page. <br>
+                <a id="generate-token-btn" class="btn btn-primary btn-lrg" href="https://platform.dnanexus.com/profile/">Go to DNAnexus</a>                <br>
+                <b>Step 2. </b> Click "API Tokens". <br>
+                <b>Step 3. </b> Click "New Token". Generate a new token. <br>
+                <b>Step 4. </b> Paste the generated token in the box below. <br>
+            </p>
             <form class="form-horizontal">
                 <div class="form-group">
                     <div class="col-xs-6 col-xs-offset-3">
@@ -45,24 +56,32 @@
                 </div>
             </form>
         </div>
-        <div id="dynamic-message" style="display: none;">
-            <div class="progress">
-                <div id="progress-bar" class="progress-bar active"></div>
-            </div>
+    </div>
+
+    <div id="dynamic-message" style="display: none;">
+        <div class="progress">
+            <div id="progress-bar" class="progress-bar active"></div>
         </div>
     </div>
 </body>
 
 <script>
     window.jQuery = window.$ = require('jquery');
+
 </script>
 <script src="../../bootstrap/dist/js/bootstrap.min.js"></script>
 <script>
     const dx = require('../../../src/dx');
     const utils = require('../../../src/utils');
-    const { remote } = require("electron");
+    const { shell, remote } = require('electron');
 
     $(function () {
+
+        $('#generate-token-btn').on('click', function (event) {
+            event.preventDefault();
+            shell.openExternal(this.href);
+        });
+
         function updateProgress(val, message) {
             $('#progress-bar').width(val).text(message);
             if (val == '100%')
