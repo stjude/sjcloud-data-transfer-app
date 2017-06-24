@@ -14,6 +14,8 @@
     "tests"
   ],
   "dependencies": {
-    "jquery": "^3.2.1"
+    "jquery": "^3.2.1",
+    "bootstrap": "^3.3.7",
+    "todc-bootstrap": "^3.0.2"
   }
 }

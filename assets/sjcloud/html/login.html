@@ -1,5 +1,114 @@
 <html>
-    <body>
-        Need to log in!
-    </body>
+
+<head>
+    <link rel="stylesheet" href="../../bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../todc-bootstrap/dist/css/todc-bootstrap.min.css">
+    <style>
+        .container {
+            text-align: center;
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            margin-right: -50%;
+            transform: translate(-50%, -50%)
+        }
+
+        #download-btn-div {
+            margin-top: 5%;
+        }
+
+        p {
+            font-size: 14pt;
+            margin-left: 15%;
+            margin-right: 15%;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div id="static-message">
+            <p>
+                You do not appear to be logged in! You will need to grab a DNAnexus token and paste it in the box below.
+            </p>
+
+            <form class="form-horizontal">
+                <div class="form-group">
+                    <div class="col-xs-6 col-xs-offset-3">
+                        <input id="token-input" class="form-control input-lg" type="text">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <div class="col-xs-6 col-xs-offset-3">
+                        <button id="login-btn" type="button" class="btn btn-primary btn-lg disabled">Login</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        <div id="dynamic-message" style="display: none;">
+            <div class="progress">
+                <div id="progress-bar" class="progress-bar active"></div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script>
+    window.jQuery = window.$ = require('jquery');
+</script>
+<script src="../../bootstrap/dist/js/bootstrap.min.js"></script>
+<script>
+    const dx = require('../../../src/dx');
+    const utils = require('../../../src/utils');
+    const { remote } = require("electron");
+
+    $(function () {
+        function updateProgress(val, message) {
+            $('#progress-bar').width(val).text(message);
+            if (val == '100%')
+                $('#progress-bar').addClass("progress-bar-success");
+        }
+
+        function failProgress(failmessage) {
+            $('#progress-bar').addClass("progress-bar-danger").width("100%")
+                .text(failmessage);
+        }
+
+        $('#login-btn').on('click', function (event) {
+            event.preventDefault();
+            $('#static-message').hide();
+            $('#dynamic-message').show();
+            updateProgress("30%", "Validating token...");
+            const token = $('#token-input').val();
+            dx.login(token, function (err, res) {
+
+                if (err) {
+                    failProgress("Could not login with token!");
+                    return;
+                } else {
+                    updateProgress("100%", "Success!");
+                    setTimeout(remote.getCurrentWindow().refreshState(), 1500);
+                    return;
+                }
+            });
+        });
+
+        $('#token-input').keypress(function (event) {
+            if (event.keyCode == 13) {
+                event.preventDefault();
+            }
+        });
+
+        $("#token-input").on('input', function () {
+            const val = $('#token-input').val();
+            if (val.length < 10) {
+                $('#login-btn').addClass("disabled");
+            } else {
+                $('#login-btn').removeClass("disabled");
+            }
+        });
+    });
+
+</script>
+
 </html>

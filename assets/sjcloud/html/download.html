@@ -1,5 +1,77 @@
 <html>
-    <body>
-        Need to download!
-    </body>
+
+<head>
+    <link rel="stylesheet" href="../../bootstrap/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="../../todc-bootstrap/dist/css/todc-bootstrap.min.css">
+    <style>
+        .container {
+            text-align: center;
+            position: absolute;
+            top: 40%;
+            left: 50%;
+            margin-right: -50%;
+            transform: translate(-50%, -50%)
+        }
+
+        #download-btn-div {
+            margin-top: 5%;
+        }
+
+        p {
+            font-size: 14pt;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="static-message" class="container">
+        <p>
+            We cannot find the dx-toolkit on your system! If you have already downloaded the toolkit, please ensure it is reachable on
+            your PATH!
+        </p>
+
+        <div id="download-btn-div">
+            <a id="install" class="btn btn-success btn-large">Install Automatically</a>
+            <a id="download" class="btn btn-primary btn-large" href="https://wiki.dnanexus.com/Downloads#DNAnexus-Platform-SDK">Download</a>
+        </div>
+        </center>
+    </div>
+    <div id="downloading" class="container">
+        
+    </div>
+</body>
+<script>
+    window.jQuery = window.$ = require('jquery');
+</script>
+<script src="../../bootstrap/dist/js/bootstrap.min.js"></script>
+<script>
+    const dx = require('../../../src/dx');
+    const utils = require('../../../src/utils');
+    const {shell, remote} = require('electron');
+
+    function disableButtons() {
+        $('.btn').addClass("disabled");
+    }
+
+    function enableButtons() {
+        $('.btn').removeClass("disabled");
+    }
+
+    $('#download').on('click', function (event) {
+        event.preventDefault();
+        shell.openExternal(this.href);
+    });
+
+    $('#install').on('click', function(event) {
+        event.preventDefault();
+        disableButtons();
+        dx.install(function cb(err, status) {
+            utils.runCommand("which dx", function (err, stdout) {
+                remote.getCurrentWindow().refreshState();
+            })
+        });
+    })
+
+</script>
+
 </html>

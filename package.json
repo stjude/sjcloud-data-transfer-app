@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "async": "^2.4.1",
-    "jquery": "^3.2.1"
+    "jquery": "^3.2.1",
+    "mkdirp": "^0.5.1"
   }
 }

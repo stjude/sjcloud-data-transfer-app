@@ -1,51 +1,57 @@
 <!DOCTYPE html>
 <html>
-	<head>
-		<meta charset="UTF-8">
-		<title>St. Jude Cloud Upload</title>
-		<script src="../../jquery/dist/jquery.min.js"></script>
-		<script src="../js/index.js"></script>
-		<style>
-		#drag-file {
-			background-color: blue;
-			color:white;
-			text-align: center;
-			width:300px;
-			height:300px;
-		}
-		</style>
-	</head>
 
-	<body>
-		<h1>File Upload Demo</h1>
-		<div id="upload-form" class="hide-on-upload">
-			<h2>Select files to upload.</h2>
-			<div>
+<head>
+	<meta charset="UTF-8">
+	<title>St. Jude Cloud Upload</title>
+	<link rel="stylesheet" href="../../bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" href="../../todc-bootstrap/dist/css/todc-bootstrap.min.css">
+	<style>
+		.container {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			margin-right: -50%;
+			transform: translate(-50%, -50%)
+		}
+
+		form {
+			color: white;
+			border: 4pt dashed #000;
+			width: 300px;
+			height: 300px;
+		}
+
+		form p {
+			width: 100%;
+			height: 100%;
+			text-align: center;
+			line-height: 170px;
+			color: #000;
+		}
+	</style>
+</head>
+
+<body>
+	<div id="static-message" class="container">
+		<form class="form-horizontal">
+			<div id="form-group">
 				<ul id="files-list"></ul>
-				<button id="select-files-btn">Select files</button>
-			</div>
-			<div id="drag-file">
 				<p>Drag your files here</p>
 			</div>
-			<div>
-				<h2>Which project to upload to?</h2>
-				<select id="project-list"></select>
+		</form>
+		<div class="col-md-4 col-md-offset-3" >
+			<select id="project-list" class="form-control" style="margin-top:10px;"></select>
+			<a id="upload" class="btn btn-primary btn-large" style="margin-top:10px;">Upload</a>
+		</div>
+	</div>
 
-				<h2>Upload</h2>
-				<button id="upload-btn">Upload</button>
-			</div>
-		</div>
-		<div class="show-on-upload" style="display:none">
-			<h2>Uploading files...</h2>
-		</div>
-	</body>
-	<script>
-	var auth_api = "https://auth.dnanexus.com";
-	var auth_route = "/oauth2/authorize";
-	var client_id = "sjcloudplatform";
-	var redirect_uri = "https://platform.stjude.cloud:443/return_from_login";
-	document.write("<a href='" + auth_api + auth_route + "?client_id=" + client_id +
-				 "&redirect_uri=" + encodeURIComponent(redirect_uri) +
-				 "&response_type=code'>Log in to DNAnexus</a>");
-	</script>
+</body>
+<script>
+	window.jQuery = window.$ = require('jquery');
+
+</script>
+<script src="../../bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="../js/index.js"></script>
+
 </html>

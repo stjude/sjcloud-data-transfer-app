@@ -4,6 +4,9 @@ module.exports.state = {
   NEED_DOWNLOAD: {
     htmlfile: "download.html"
   },
+  CONNECTION_ERROR: {
+    htmlfile: "connection.html"
+  },
   NEED_LOGIN: {
     htmlfile: "login.html"
   },
@@ -18,6 +21,7 @@ module.exports.state = {
 module.exports.getState = function(callback) {
   self = this;
   utils.dxToolkitOnPath(function(err, res) {
+
     if (err) {
       return callback(self.state.NEED_DOWNLOAD);
     }
