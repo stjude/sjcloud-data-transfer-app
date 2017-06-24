@@ -3,6 +3,7 @@ const fs = require("fs");
 const path = require("path");
 const https = require('https');
 const mkdirp = require("mkdirp");
+const crypto = require('crypto');
 const { exec, execSync } = require("child_process");
 
 module.exports._sjcloud_homedir = path.join( os.homedir(), ".sjcloud" )
@@ -91,5 +92,19 @@ module.exports.downloadFile = function(url, dest, cb) {
     file.on('finish', function() {
       file.close(cb);
     });
+  });
+}
+
+module.exports.untarTo = function (file, parentDir, callback) {
+  module.exports.runCommand("tar -C " + parentDir + " -zxf " + file, callback);
+}
+
+module.exports.computeSHA256 = function (filepath, callback) {
+  var shasum = crypto.createHash('SHA256');
+  var s = fs.ReadStream(filepath);
+  s.on('data', function(d) { shasum.update(d); });
+  s.on('end', function() {
+      const result = shasum.digest('hex');
+      return callback(null, result);
   });
 }

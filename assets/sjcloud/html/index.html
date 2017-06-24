@@ -34,24 +34,116 @@
 
 <body>
 	<div id="static-message" class="container">
-		<form class="form-horizontal">
-			<div id="form-group">
-				<ul id="files-list"></ul>
-				<p>Drag your files here</p>
+		<form id="file-upload-form" class="form-horizontal">
+			<div class="form-group">
+				<p>Drag your files in the box or click here!</p>
 			</div>
 		</form>
-		<div class="col-md-4 col-md-offset-3" >
+		<div class="col-md-4 col-md-offset-3">
+			<ul id="files-list"></ul>
 			<select id="project-list" class="form-control" style="margin-top:10px;"></select>
-			<a id="upload" class="btn btn-primary btn-large" style="margin-top:10px;">Upload</a>
+			<a id="upload-btn" class="btn btn-primary btn-large" style="margin-top:10px;">Upload</a>
 		</div>
 	</div>
-
+	<div id="dynamic-message" class="container" style="display: none;">
+		Uploading!
+	</div>
 </body>
 <script>
 	window.jQuery = window.$ = require('jquery');
 
 </script>
 <script src="../../bootstrap/dist/js/bootstrap.min.js"></script>
-<script src="../js/index.js"></script>
+<script>
+	$(function () {
+		const dx = require("../../../src/dx");
+		const sjutils = require("../../../src/utils");
+		const { dialog } = require("electron").remote;
+		const async = require("async");
+
+		/**
+		 * Grab projects first.
+		 **/
+		dx.listProjects(function (err, results) {
+			if (err) {
+				console.error(err);
+				document.write("Could not get projects.");
+				return;
+			}
+			let project_select = document.getElementById("project-list");
+			results.forEach(function (elem) {
+				var option = document.createElement("option");
+				option.text = elem["project_name"];
+				project_select.add(option);
+			});
+		});
+
+		/**
+		 * Next, setup handlers.
+		 **/
+		$("#file-upload-form").click(function () {
+			dialog.showOpenDialog(
+				{ properties: ["openFile", "multiSelections"] },
+				function (files) {
+					$("#files-list").empty();
+					files.forEach(function (elem) {
+						$("#files-list").append("<li>" + elem + "</li>");
+					});
+				}
+			);
+		});
+
+		$("#upload-btn").click(function () {
+			$("#static-message").hide();
+			$("#dynamic-message").show();
+			performUpload();
+		});
+
+		var holder = document.getElementById('file-upload-form');
+		holder.ondragover = () => {
+			return false;
+		};
+		holder.ondragleave = () => {
+			return false;
+		};
+		holder.ondragend = () => {
+			return false;
+		};
+		holder.ondrop = (e) => {
+			e.preventDefault();
+			$('#files-list').empty()
+			for (let f of e.dataTransfer.files) {
+				$('#files-list').append("<li>" + f.path + "</li>")
+			}
+
+			return false;
+		};
+
+		function performUpload() {
+			let projectName = $("#project-list").find(":selected").text();
+			var tasks = [];
+			$("#files-list").children().each(function () {
+				let fileName = $(this).text();
+				tasks.push(function (next) {
+					$("body").append("Uploading ", fileName, " to ", projectName, ".<br>");
+					dx.uploadFile(fileName, projectName, function (err, result) {
+						next(err, result);
+					});
+				});
+			});
+
+			async.series(tasks, function (err, result) {
+				if (err) {
+					console.error("An error occurred!");
+					return;
+				}
+
+				console.log("Successful!");
+			});
+		}
+
+	});
+
+</script>
 
 </html>
