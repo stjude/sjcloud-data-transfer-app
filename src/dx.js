@@ -99,7 +99,7 @@ module.exports.listProjects = function(callback) {
 };
 
 module.exports.uploadFile = function(file, project, callback) {
-  let dx_path = project + ":/inputs/" + path.basename(file.trim());
+  let dx_path = project + ":/uploads/" + path.basename(file.trim());
   let rmCommand = "dx rm -a '" + dx_path + "'";
   console.log(rmCommand)
   utils.runCommand(rmCommand, function() {
