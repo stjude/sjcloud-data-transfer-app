@@ -26,6 +26,10 @@
             margin-left: 15%;
             margin-right: 15%;
         }
+
+        p#instructions {
+            font-size: 11pt;
+        }
     </style>
 </head>
 
@@ -37,8 +41,10 @@
             </p>
             <hr><br>
             <p id="instructions">
-                <b>Step 1. </b> Click on the button below to go to the DNAnexus token generation page. <br>
-                <a id="generate-token-btn" class="btn btn-primary btn-lrg" href="https://platform.dnanexus.com/profile/">Go to DNAnexus</a>                <br>
+                <b>Step 1. </b> Click on the button below to go to your DNAnexus profile. <br>
+                <br>
+                <a id="generate-token-btn" class="btn btn-primary btn-lrg" href="https://platform.dnanexus.com/profile/">Go to DNAnexus</a><br>
+                <br>
                 <b>Step 2. </b> Click "API Tokens". <br>
                 <b>Step 3. </b> Click "New Token". Generate a new token. <br>
                 <b>Step 4. </b> Paste the generated token in the box below. <br>
@@ -75,9 +81,9 @@
     const utils = require('../../../src/utils');
     const { shell, remote } = require('electron');
 
-    $(function () {
+    $( () => {
 
-        $('#generate-token-btn').on('click', function (event) {
+        $('#generate-token-btn').on('click', (event) => {
             event.preventDefault();
             shell.openExternal(this.href);
         });
@@ -93,13 +99,17 @@
                 .text(failmessage);
         }
 
-        $('#login-btn').on('click', function (event) {
+        /**
+         * Handlers
+         **/
+
+        $('#login-btn').on('click', (event) => {
             event.preventDefault();
             $('#static-message').hide();
             $('#dynamic-message').show();
             updateProgress("30%", "Validating token...");
             const token = $('#token-input').val();
-            dx.login(token, function (err, res) {
+            dx.login(token, (err, res) => {
 
                 if (err) {
                     failProgress("Could not login with token!");
@@ -112,13 +122,16 @@
             });
         });
 
-        $('#token-input').keypress(function (event) {
+        // Don't submit on pressing enter in the text box.
+        $('#token-input').keypress( (event) => {
             if (event.keyCode == 13) {
                 event.preventDefault();
             }
         });
 
-        $("#token-input").on('input', function () {
+        // Token's will at least be 10 characters, this needs
+        // to be hardened.
+        $("#token-input").on('input', () => {
             const val = $('#token-input').val();
             if (val.length < 10) {
                 $('#login-btn').addClass("disabled");

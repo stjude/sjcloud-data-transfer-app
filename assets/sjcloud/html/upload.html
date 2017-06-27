@@ -36,7 +36,7 @@
 	<div id="static-message" class="container">
 		<form id="file-upload-form" class="form-horizontal">
 			<div id="drag-n-drop" class="form-group">
-				<p>Drag your files in the box or click here!</p>
+				<p>Drag your files in the box or click here.</p>
 			</div>
 
 			<div class="col-md-6 col-md-offset-3">
@@ -50,12 +50,13 @@
 				<div id="form-group">
 					<label for="upload-type">Upload Type</label>
 					<select class="form-control" id="upload-type">
-						<option value="Series">Series</option>
-						<option value="Parallel">Parallel</option>
+						<option value="series">Upload files sequentially</option>
+						<option value="parallel">Upload files in parallel</option>
 					</select>
 				</div>
 				<div id="form-group">
 					<button id="upload-btn" class="btn btn-primary btn-large" style="margin-top:10px;" disabled>Upload</button>
+					<button id="reset-btn-one" class="btn btn-danger btn-large" style="margin-top:10px;" disabled>Reset</button>
 				</div>
 			</div>
 		</form>
@@ -79,17 +80,16 @@
 		</div>
 		<div>
 			<button id="project-btn" class="btn btn-primary btn-lrg">Go to Project</button>
-			<button id="reset-btn" class="btn btn-danger btn-lrg">Reset</button>
+			<button id="reset-btn-two" class="btn btn-danger btn-lrg">Reset</button>
 		</div>
 	</div>
 </body>
 <script>
 	window.jQuery = window.$ = require('jquery');
-
 </script>
 <script src="../../bootstrap/dist/js/bootstrap.min.js"></script>
 <script>
-	$(function () {
+	$( () => {
 		const os = require("os");
 		const path = require("path");
 		const async = require("async");
@@ -100,17 +100,18 @@
 		const sjutils = require("../../../src/utils");
 
 		/**
-		 * Grab projects first.
+		 * First, grab projects from remote URL.
 		 **/
 
-		dx.listProjects(function (err, results) {
+		dx.listProjects( (err, results) => {
 			if (err) {
 				console.error(err);
 				document.write("Could not get projects.");
 				return;
 			}
+
 			let project_select = document.getElementById("project-list");
-			results.forEach(function (elem) {
+			results.forEach( (elem) => {
 				var option = document.createElement("option");
 				option.text = elem["project_name"];
 				option.value = elem["dx_location"];
@@ -123,40 +124,52 @@
 		 **/
 
 		function updateFilesList(files) {
-
 			$("#files-list").empty();
 
 			if (!files || files.length <= 0) {
 				$('#upload-btn').prop('disabled', true);
+				$('#reset-btn-one').prop("disabled", true);
+				$('#drag-n-drop').show();
 				return;
-			} else {
-				$('#upload-btn').prop('disabled', false);
-			}
+			} 
 
-			files.forEach(function (elem) {
+			$('#upload-btn').prop('disabled', false);
+			$('#reset-btn-one').prop("disabled", false);
+			$('#drag-n-drop').hide();
+
+			files.forEach( (elem) => {
 				$("#files-list").append("<li>" + elem + "</li>");
 			});
 		}
 
-		$("#drag-n-drop").click(function () {
+		$("#drag-n-drop").click( () => {
 			dialog.showOpenDialog(
 				{ properties: ["openFile", "multiSelections"] },
-				function (files) { return updateFilesList(files); }
+				 (files) => { return updateFilesList(files); }
 			);
 		});
 
+		/**
+		 * Drag-n-drop
+		 **/
+
 		var holder = document.getElementById('file-upload-form');
+
 		holder.ondragover = () => {
 			return false;
 		};
+
 		holder.ondragleave = () => {
 			return false;
 		};
+
 		holder.ondragend = () => {
 			return false;
 		};
+
 		holder.ondrop = (e) => {
 			e.preventDefault();
+
 			var files = [];
 			for (let f of e.dataTransfer.files) {
 				files.append(f);
@@ -175,25 +188,26 @@
 			</tr>
 			`;
 			$('#progress-table > tbody:last-child').append(entry);
+			// return the previously added tr.
 			return $('#progress-table tbody tr:last-child')
 		}
 
 		function performUpload() {
-			let projectName = $("#project-list").find(":selected").text();
-			let uploadType = $("#upload-type").find(":selected").text();
+			let projectName = $("#project-list").find(":selected").val();
+			let uploadType = $("#upload-type").find(":selected").val();
 
 			var tasks = [];
 			const children = $("#files-list").children()
-			children.each(function (index, element) {
+			children.each( (index, element) => {
 				let fileName = $(this).text();
 				let fileBaseName = path.basename(fileName);
 				addProgressTableElement(fileBaseName, projectName, "Waiting...", "0%");
-				tasks.push(function (next) {
+				tasks.push( (next) => {
 					updateProgress(Math.round(100.0 * index / children.length).toString() + "%", "Uploading " + fileName + " to " + projectName + "...")
 					let nth = index + 1
 					let tableElemTr = $('#progress-table tbody tr:nth-child(' + nth.toString() + ")");
 					tableElemTr.children('td:nth-child(3)').text("Uploading...")
-					dx.uploadFile(fileName, projectName, function (err, result) {
+					dx.uploadFile(fileName, projectName, (err, result) => {
 						tableElemTr.children('td:nth-child(3)').text("Finished.")
 						tableElemTr.children('td:nth-child(4)').text("100%")
 						next(err, result);
@@ -201,20 +215,22 @@
 				});
 			});
 
-			if(uploadType == "Parallel") {
-				var queue = async.queue(function (task, cb) {
+			if(uploadType == "parallel") {
+				// Upload in parallel across CPUs.
+				var queue = async.queue( (task, cb) => {
 					task(cb)
 				}, os.cpus().length);
 
-				queue.drain = function () {
+				queue.drain = () => {
 					updateProgress("100%", "Successfully uploaded all files!");
 				};
 
 				queue.push(tasks);
 			} else {
-				async.series(tasks, function (err, result) {
+				async.series(tasks, (err, result) => {
 					if (err) {
 						console.error("An error occurred!");
+						failProgress("An error occurred when uploading files!");
 						return;
 					}
 
@@ -223,19 +239,25 @@
 			}
 		}
 
-		$("#upload-btn").click(function (event) {
+		$("#upload-btn").click( (event) => {
 			event.preventDefault();
 			$("#static-message").hide();
 			$("#dynamic-message").show();
-			$('#project-btn').on('click', function () {
+			$('#project-btn').on('click', () => {
 				let dxLocation = $("#project-list").find(":selected").val().replace("project-", "");
-				console.log(dxLocation);
 				shell.openExternal("https://platform.dnanexus.com/projects/" + dxLocation + "/data/uploads")
 			});
+
 			performUpload();
 		});
 
-		$('#reset-btn').click(function (event) {
+
+		$('#reset-btn-one').click( (event) => {
+			event.preventDefault();
+			updateFilesList(undefined);
+		});
+
+		$('#reset-btn-two').click( (event) => {
 			event.preventDefault();
 			$("#static-message").show();
 			$("#dynamic-message").hide();
@@ -248,8 +270,11 @@
 			console.log(val, message);
 			$('#upload-message').text(message);
 			$('#progress-bar').width(val);
-			if (val == '100%')
-				$('#progress-bar').addClass("progress-bar-success");
+			if (val == '100%') {
+				$('#progress-bar').addClass("progress-bar-success")
+			} else {
+				$('#progress-bar').removeClass("progress-bar-success")
+			}
 		}
 
 		function failProgress(failmessage) {

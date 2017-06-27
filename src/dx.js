@@ -18,7 +18,7 @@ DOWNLOAD_INFO = {
   }
 };
 
-module.exports.install = function(updateProgress, failProgress, callback) {
+module.exports.install = (updateProgress, failProgress, callback) => {
   const platform = os.platform();
   const tmpdir = os.tmpdir();
 
@@ -26,11 +26,11 @@ module.exports.install = function(updateProgress, failProgress, callback) {
     const dxTarPath = path.join(tmpdir, "dx-toolkit.tar.gz");
     const dxFolderPath = utils.getDXToolkitDir();
     updateProgress("30%", "Downloading dx-toolkit...");
-    utils.downloadFile(DOWNLOAD_INFO.MAC.URL, dxTarPath, function() {
+    utils.downloadFile(DOWNLOAD_INFO.MAC.URL, dxTarPath, () => {
       updateProgress("60%", "Verifying dx-toolkit...");
       // NOTE: I unzip to the parent directory because
       // the unzip creates a structure like dx-toolkit/dx-toolkit/...
-      utils.computeSHA256(dxTarPath, function(err, shasum) {
+      utils.computeSHA256(dxTarPath, (err, shasum) => {
         if (err) {
           failProgress("Could not verify download!");
           return callback(err, null);
@@ -43,14 +43,14 @@ module.exports.install = function(updateProgress, failProgress, callback) {
 
         updateProgress("90%", "Extracting dx-toolkit...");
         const parentDir = path.dirname(dxFolderPath);
-        utils.untarTo(dxTarPath, parentDir, function(err, res) {
+        utils.untarTo(dxTarPath, parentDir, (err, res) => {
           if (err) {
             failProgress("Could not extract dx-toolkit!");
             return callback(err, false);
           }
 
           updateProgress("100%", "Success!");
-          setTimeout(function() {
+          setTimeout( () => {
             return callback(null, true);
           }, 1000);
         });
@@ -59,10 +59,10 @@ module.exports.install = function(updateProgress, failProgress, callback) {
   }
 };
 
-module.exports.login = function(token, callback) {
+module.exports.login = (token, callback) => {
   utils.runCommand(
     "dx login --token " + token.toString() + " --noprojects",
-    function(err, stdout) {
+    (err, stdout) => {
       if (err) {
         console.error("Could not login: " + err);
         return callback(err, null);
@@ -73,17 +73,14 @@ module.exports.login = function(token, callback) {
   );
 };
 
-module.exports.listProjects = function(callback) {
-  utils.runCommand("dx find projects --tag sjcloud --delim $'\t'", function(
-    err,
-    stdout
-  ) {
+module.exports.listProjects = (callback) => {
+  utils.runCommand("dx find projects --tag sjcloud --delim $'\t'", (err, stdout) => {
     if (err) {
       return callback(err, []);
     }
 
     var results = [];
-    stdout.split("\n").forEach(function(el) {
+    stdout.split("\n").forEach( (el) => {
       if (el.trim().length <= 0) return;
 
       [dx_location, name, access_level, _] = el.split("\t");
@@ -98,21 +95,21 @@ module.exports.listProjects = function(callback) {
   });
 };
 
-module.exports.uploadFile = function(file, project, callback) {
+module.exports.uploadFile = (file, project, callback) => {
   let dx_path = project + ":/uploads/" + path.basename(file.trim());
   let rmCommand = "dx rm -a '" + dx_path + "'";
   console.log(rmCommand)
-  utils.runCommand(rmCommand, function() {
+  utils.runCommand(rmCommand, () => {
     let command = "dx upload -p --path '" + dx_path + "' '" + file + "'";
     console.log(command);
-    utils.runCommand(command, function(err, stdout) {
+    utils.runCommand(command, (err, stdout) => {
       if (err) {
         return callback(err, null);
       }
 
       let tagCommand = "dx tag '" + dx_path + "' sj-needs-analysis";
       console.log(tagCommand);
-      utils.runCommand(tagCommand, function(err, stdout) {
+      utils.runCommand(tagCommand, (err, stdout) => {
         if (err) {
           return callback(err, null);
         }

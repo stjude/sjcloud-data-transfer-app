@@ -2,7 +2,7 @@ const utils = require("./utils");
 
 module.exports.state = {
   NEED_DOWNLOAD: {
-    htmlfile: "download.html"
+    htmlfile: "dx-toolkit.html"
   },
   CONNECTION_ERROR: {
     htmlfile: "connection.html"
@@ -18,20 +18,20 @@ module.exports.state = {
   }
 };
 
-module.exports.getState = function(callback) {
+module.exports.getState = (callback) => {
   self = this;
-  utils.dxToolkitOnPath(function(err, res) {
+  utils.dxToolkitOnPath( (err, res) => {
 
     if (err) {
       return callback(self.state.NEED_DOWNLOAD);
     }
 
-    utils.dxLoggedIn(function(err, res) {
+    utils.dxLoggedIn( (err, res) => {
         if (err) {
             return callback(self.state.NEED_LOGIN);
         }
 
-        utils.dxCheckProjectAccess(function(err, res) {
+        utils.dxCheckProjectAccess( (err, res) => {
             if (err) {
                 return callback(self.state.UNKNOWN);
             }

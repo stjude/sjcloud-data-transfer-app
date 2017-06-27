@@ -5,19 +5,19 @@ const state = require("./state");
 const electron = require("electron");
 const BrowserWindow = electron.BrowserWindow;
 
-module.exports.createWindow = function(callback) {
+module.exports.createWindow = (callback) => {
   mainWindow = new BrowserWindow({
     width: 600,
     height: 600
   });
   mainWindow.$ = jquery;
 
-  mainWindow.on("closed", function() {
+  mainWindow.on("closed", () => {
     mainWindow = null;
   });
 
-  mainWindow.refreshState = function () {
-    state.getState(function(state) {
+  mainWindow.refreshState = () => {
+    state.getState( (state) => {
       mainWindow.loadURL(
         url.format({
           pathname: path.join(

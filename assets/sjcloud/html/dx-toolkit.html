@@ -26,15 +26,25 @@
         p {
             font-size: 14pt;
         }
+
+        ul {
+            font-size: 12pt;
+            text-align: left;
+        }
     </style>
 </head>
 
 <body>
     <div id="static-message" class="container">
         <p>
-            We cannot find the dx-toolkit on your system! If you have already downloaded the toolkit, please ensure it is reachable on
-            your PATH! If you believe it should already be installed, you should click "Download Yourself" and follow the
-            instructions.
+            We cannot find the dx-toolkit on your system!
+        </p>
+        <hr><br>
+        <p>
+            <ul>
+                <li>If you have already downloaded the toolkit, please ensure it is reachable on your PATH!</li>
+                <li>If you believe it should already be installed, you should click "Download Yourself" and follow the instructions.</li>
+            </ul>
         </p>
 
         <div id="download-btn-div">
@@ -61,8 +71,11 @@
 
     function updateProgress(val, message) {
         $('#progress-bar').width(val).text(message);
-        if (val == '100%')
+        if (val == '100%') {
             $('#progress-bar').addClass("progress-bar-success");
+        } else {
+            $('#progress-bar').removeClass("progress-bar-success");
+        }
     }
 
     function failProgress(failmessage) {
@@ -78,18 +91,18 @@
         $('.btn').removeClass("disabled");
     }
 
-    $('#download').on('click', function (event) {
+    $('#download').on('click', (event) => {
         event.preventDefault();
         shell.openExternal(this.href);
     });
 
-    $('#install').on('click', function (event) {
+    $('#install').on('click', (event) => {
         event.preventDefault();
         disableButtons();
         $('#static-message').hide();
         $('#dynamic-message').show();
-        dx.install(updateProgress, failProgress, function cb(err, status) {
-            utils.runCommand("which dx", function (err, stdout) {
+        dx.install(updateProgress, failProgress, (err, status) => {
+            utils.runCommand("which dx", (err, stdout) => {
                 remote.getCurrentWindow().refreshState();
             })
         });
