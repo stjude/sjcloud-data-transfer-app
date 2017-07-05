@@ -83,7 +83,7 @@
 
     $( () => {
 
-        $('#generate-token-btn').on('click', (event) => {
+        $('#generate-token-btn').click( function (event) {
             event.preventDefault();
             shell.openExternal(this.href);
         });
@@ -103,7 +103,7 @@
          * Handlers
          **/
 
-        $('#login-btn').on('click', (event) => {
+        $('#login-btn').on('click', function (event) {
             event.preventDefault();
             $('#static-message').hide();
             $('#dynamic-message').show();
@@ -123,7 +123,7 @@
         });
 
         // Don't submit on pressing enter in the text box.
-        $('#token-input').keypress( (event) => {
+        $('#token-input').keypress( function (event) {
             if (event.keyCode == 13) {
                 event.preventDefault();
             }

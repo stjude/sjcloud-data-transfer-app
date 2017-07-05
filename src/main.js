@@ -40,7 +40,7 @@ app.on("ready", () => {
 		]}
 	];
 
-	menu.setApplicationMenu(menu.buildFromTemplate(template));
+	//menu.setApplicationMenu(menu.buildFromTemplate(template));
   });
 });
 

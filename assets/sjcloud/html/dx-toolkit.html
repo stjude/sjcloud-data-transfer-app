@@ -91,12 +91,12 @@
         $('.btn').removeClass("disabled");
     }
 
-    $('#download').on('click', (event) => {
+    $('#download').on('click', function (event) {
         event.preventDefault();
         shell.openExternal(this.href);
     });
 
-    $('#install').on('click', (event) => {
+    $('#install').on('click', function (event) {
         event.preventDefault();
         disableButtons();
         $('#static-message').hide();
