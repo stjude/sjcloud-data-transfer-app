@@ -198,7 +198,7 @@
 
 			var tasks = [];
 			const children = $("#files-list").children()
-			children.each( (index, element) => {
+			children.each( function (index, element) {
 				let fileName = $(this).text();
 				let fileBaseName = path.basename(fileName);
 				addProgressTableElement(fileBaseName, projectName, "Waiting...", "0%");
