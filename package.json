@@ -8,9 +8,10 @@
     "postinstall": "install-app-deps",
     "pack": "build --dir",
     "dist": "build -m -w -l",
-    "dist-local": "build"
+    "dist-local": "build",
+	"postdist-local": "change_manifest.bat"
   },
-  "author": "Clay McLeod",
+  "author": "Clay McLeod and Andrew Frantz",
   "dependencies": {
     "async": "^2.4.1",
     "jquery": "^3.2.1",

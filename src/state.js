@@ -18,10 +18,9 @@ module.exports.state = {
   }
 };
 
-module.exports.getState = (callback) => {
+module.exports.getState = function(callback) {
   self = this;
-  utils.dxToolkitOnPath( (err, res) => {
-
+  utils.dxToolkitOnPath( function(err, res) {
     if (err) {
       return callback(self.state.NEED_DOWNLOAD);
     }

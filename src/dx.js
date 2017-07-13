@@ -4,7 +4,10 @@ const utils = require("./utils");
 
 DOWNLOAD_INFO = {
   WINDOWS: {
-    URL: "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0.exe"
+    URL:
+      "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0.exe",
+    SHA256SUM:
+      "e1c2f9b92bb1c88351ef0e755df41e2522283ffa0d27ce10aeeffd66a8a6b1e2"
   },
   MAC: {
     URL:
@@ -14,19 +17,44 @@ DOWNLOAD_INFO = {
   },
   LINUX: {
     URL:
-      "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0-ubuntu-14.04-amd64.tar.gz"
+      "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0-ubuntu-14.04-amd64.tar.gz",
+    SHA256SUM:
+      "fc5b478708ed36927ce476eb64f5498db70b4cf5e7638867fae09c654a290dcc"
   }
 };
+
+function getDxDownloadUrlFromPlatform(platform) {
+  if (platform == "darwin") {
+    return DOWNLOAD_INFO.MAC.URL;
+  }
+  else if (platform == "linux") {
+    return DOWNLOAD_INFO.LINUX.URL;
+  }
+  else if (platform == "win32") {
+    return DOWNLOAD_INFO.WINDOWS.URL;
+  }
+}
+
+function getSha256sumFromPlatform(platform) {
+  if (platform == "darwin") {
+    return DOWNLOAD_INFO.MAC.SHA256SUM;
+  }
+  else if (platform == "linux") {
+    return DOWNLOAD_INFO.LINUX.SHA256SUM;
+  }
+  else if (platform == "win32") {
+    return DOWNLOAD_INFO.WINDOWS.SHA256SUM;
+  }
+}
 
 module.exports.install = (updateProgress, failProgress, callback) => {
   const platform = os.platform();
   const tmpdir = os.tmpdir();
-
-  if (platform == "darwin") {
+  if (platform == "darwin" || platform == "linux") {
     const dxTarPath = path.join(tmpdir, "dx-toolkit.tar.gz");
     const dxFolderPath = utils.getDXToolkitDir();
     updateProgress("30%", "Downloading dx-toolkit...");
-    utils.downloadFile(DOWNLOAD_INFO.MAC.URL, dxTarPath, () => {
+    utils.downloadFile(getDxDownloadUrlFromPlatform(platform), dxTarPath, () => {
       updateProgress("60%", "Verifying dx-toolkit...");
       // NOTE: I unzip to the parent directory because
       // the unzip creates a structure like dx-toolkit/dx-toolkit/...
@@ -36,24 +64,54 @@ module.exports.install = (updateProgress, failProgress, callback) => {
           return callback(err, null);
         }
 
-        if (DOWNLOAD_INFO.MAC.SHA256SUM != shasum) {
+        if (getSha256sumFromPlatform(platform) != shasum) {
           failProgress("Could not verify download!");
           return callback("SHA sum doesn't match!", null);
         }
-
+        
         updateProgress("90%", "Extracting dx-toolkit...");
         const parentDir = path.dirname(dxFolderPath);
-        utils.untarTo(dxTarPath, parentDir, (err, res) => {
+        utils.untarTo(dxTarPath, parentDir, function(err, res) {
           if (err) {
             failProgress("Could not extract dx-toolkit!");
             return callback(err, false);
           }
+        })
 
-          updateProgress("100%", "Success!");
+        updateProgress("100%", "Success!");
+        setTimeout( () => {
+          return callback(null, true);
+        }, 1000);
+      });
+    });
+  }
+  
+  else if (platform == "win32") {
+    const dxExePath = path.join(utils.getDXToolkitDir(), "dx-toolkit.exe");
+    updateProgress("30%", "Downloading dx-toolkit...");
+    utils.downloadFile(getDxDownloadUrlFromPlatform(platform), dxExePath, () => {
+      updateProgress("60%", "Verifying dx-toolkit...");
+      utils.computeSHA256(dxExePath, (err, shasum) => {
+        if (err) {
+          failProgress("Could not verify download!");
+          return callback(err, null);
+        }
+
+        if (getSha256sumFromPlatform(platform) != shasum) {
+          failProgress("Could not verify download!");
+          return callback("SHA sum doesn't match!", null);
+        }
+		
+		updateProgress("90%", "Installing dx-toolkit...");
+
+        const cp = require('child_process');
+		setTimeout( () => {
+		  cp.execSync(dxExePath);
+		  updateProgress("100%", "Success!");
           setTimeout( () => {
             return callback(null, true);
-          }, 1000);
-        });
+          }, 1);
+		}, 1000);
       });
     });
   }
@@ -74,23 +132,29 @@ module.exports.login = (token, callback) => {
 };
 
 module.exports.listProjects = (callback) => {
-  utils.runCommand("dx find projects --tag sjcloud --delim $'\t'", (err, stdout) => {
+  if (os.platform() == "darwin" || os.platform() == "linux") {
+	var tabliteral = "$'\t'";
+  }
+  else if (os.platform() == "win32") {
+	var tabliteral = "`t";
+  }
+  //utils.runCommand("dx find projects --tag sjcloud --delim $'\t'", (err, stdout) => {
+  utils.runCommand("dx find projects --tag sjcloud --delim " + tabliteral, (err, stdout) => {
     if (err) {
       return callback(err, []);
     }
-
     var results = [];
     stdout.split("\n").forEach( (el) => {
       if (el.trim().length <= 0) return;
-
-      [dx_location, name, access_level, _] = el.split("\t");
-      results.push({
-        project_name: name,
-        dx_location: dx_location,
-        access_level: access_level
-      });
+      [dx_location, name, access_level, _] = el.split("\t"); 
+	  if (access_level) {
+        results.push({
+          project_name: name,
+          dx_location: dx_location,
+          access_level: access_level
+        });
+	  }
     });
-
     return callback(null, results);
   });
 };

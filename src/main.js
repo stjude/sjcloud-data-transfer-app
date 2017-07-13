@@ -5,12 +5,18 @@ const menu = electron.Menu;
 
 const url = require("url");
 const path = require("path");
+const os = require("os");
 const winston = require("winston");
 
 const ui = require("./ui");
 const state = require("./state");
 
-winston.add(winston.transports.File, { filename: path.join(process.env.HOME, '.sjcloud/log.txt') });
+if (os.platform() == "darwin" || os.platform == "linux") {
+  winston.add(winston.transports.File, { filename: path.join(process.env.HOME, '.sjcloud/log.txt') });
+}
+if (os.platform() == "win32") {
+  winston.add(winston.transports.File, { filename: path.join(process.env.HOMEPATH, '.sjcloud/log.txt') });
+}
 
 let mainWindow;
 
