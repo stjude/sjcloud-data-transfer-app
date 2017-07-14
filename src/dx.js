@@ -50,6 +50,7 @@ function getSha256sumFromPlatform(platform) {
 module.exports.install = (updateProgress, failProgress, callback) => {
   const platform = os.platform();
   const tmpdir = os.tmpdir();
+
   if (platform == "darwin" || platform == "linux") {
     const dxTarPath = path.join(tmpdir, "dx-toolkit.tar.gz");
     const dxFolderPath = utils.getDXToolkitDir();
