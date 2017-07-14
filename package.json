@@ -8,8 +8,7 @@
     "postinstall": "install-app-deps",
     "pack": "build --dir",
     "dist": "build -m -w -l",
-    "dist-local": "build",
-	"postdist-local": "change_manifest.bat"
+    "dist-local": "build"
   },
   "author": "Clay McLeod and Andrew Frantz",
   "dependencies": {

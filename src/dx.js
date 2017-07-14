@@ -88,9 +88,9 @@ module.exports.install = (updateProgress, failProgress, callback) => {
   
   else if (platform == "win32") {
     const dxExePath = path.join(utils.getDXToolkitDir(), "dx-toolkit.exe");
-    updateProgress("30%", "Downloading dx-toolkit...");
+    updateProgress("40%", "Downloading dx-toolkit...");
     utils.downloadFile(getDxDownloadUrlFromPlatform(platform), dxExePath, () => {
-      updateProgress("60%", "Verifying dx-toolkit...");
+      updateProgress("50%", "Verifying dx-toolkit...");
       utils.computeSHA256(dxExePath, (err, shasum) => {
         if (err) {
           failProgress("Could not verify download!");
@@ -102,7 +102,7 @@ module.exports.install = (updateProgress, failProgress, callback) => {
           return callback("SHA sum doesn't match!", null);
         }
 		
-		updateProgress("90%", "Installing dx-toolkit...");
+		updateProgress("70%", "Installing dx-toolkit...");
 
         const cp = require('child_process');
 		setTimeout( () => {
@@ -138,7 +138,6 @@ module.exports.listProjects = (callback) => {
   else if (os.platform() == "win32") {
 	var tabliteral = "`t";
   }
-  //utils.runCommand("dx find projects --tag sjcloud --delim $'\t'", (err, stdout) => {
   utils.runCommand("dx find projects --tag sjcloud --delim " + tabliteral, (err, stdout) => {
     if (err) {
       return callback(err, []);

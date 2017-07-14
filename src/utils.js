@@ -54,7 +54,7 @@ module.exports.runCommand = function(cmd, callback) {
       if (!err) {  // fs.stat() is only to check if "dx" commands can be sourced. If it fails other commands can still be run.
         cmd = "source " + dxToolkitEnvFile + "; " + cmd;
       }
-	  return exec(cmd, inner_callback);
+	  return exec(cmd, { shell: "/bin/bash" }, inner_callback);
     });
   }
   
