@@ -26,17 +26,17 @@ module.exports.getState = function(callback) {
     }
 
     utils.dxLoggedIn( (err, res) => {
+      if (err) {
+        return callback(self.state.NEED_LOGIN);
+      }
+
+      utils.dxCheckProjectAccess( (err, res) => {
         if (err) {
-            return callback(self.state.NEED_LOGIN);
+          return callback(self.state.UNKNOWN);
         }
 
-        utils.dxCheckProjectAccess( (err, res) => {
-            if (err) {
-                return callback(self.state.UNKNOWN);
-            }
-
-            return callback(self.state.UPLOAD);
-        })
+        return callback(self.state.UPLOAD);
+      });
     });
   });
 };
