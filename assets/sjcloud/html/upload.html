@@ -93,7 +93,7 @@
 		const os = require("os");
 		const path = require("path");
 		const async = require("async");
-		const { shell, remote } = require('electron');
+    const { shell, remote } = require('electron');
 		const { dialog } = require("electron").remote;
 
 		const dx = require("../../../src/dx");
@@ -109,43 +109,84 @@
 				document.write("Could not get projects.");
 				return;
 			}
-
 			let project_select = document.getElementById("project-list");
-			results.forEach( (elem) => {
-				var option = document.createElement("option");
-				option.text = elem["project_name"];
-				option.value = elem["dx_location"];
-				project_select.add(option);
-			});
+      if (remote.getGlobal("sjcloudURI")[0] && remote.getGlobal("sjcloudURI")[0].search("sjcloud://") != -1) { // app called by sjcloud:// URI
+        var input_project = document.createElement("option");
+        input_project.text = remote.getGlobal("sjcloudURI")[0].replace("sjcloud://", "");
+        for (i = 1; i < remote.getGlobal("sjcloudURI").length; i++) {
+          input_project.text = input_project.text + " " + remote.getGlobal("sjcloudURI")[i];
+        }
+        input_project.text = input_project.text.substring(0, input_project.text.length - 1); // remove trailing '/'
+        var found_project = false;
+        results.some( function(elem) {
+          if (elem["project_name"] == input_project.text) {
+            input_project.value = elem["dx_location"];
+            project_select.add(input_project);
+            found_project = true;
+            results.splice(results.indexOf(elem), 1);
+            return true;
+          }
+        });
+        
+      }
+      if (found_project !== true) {  // app not called by sjcloud:// protocol or linked project was not found
+        var default_option = document.createElement("option");
+        default_option.text = "Select a project from this drop-down menu.";
+        default_option.value = "invalid";
+        project_select.add(default_option);
+      };
+      results.forEach( (elem) => {
+        var option = document.createElement("option");
+        option.text = elem["project_name"];
+        option.value = elem["dx_location"];
+        project_select.add(option);
+      });
 		});
 
 		/**
 		 * Next, setup handlers.
 		 **/
-
+    function checkInput(files) {  // function called when user changes project selection or adds files
+      // disable upload button if default menu option is selected
+      if ( $("#project-list").find(":selected").val() == "invalid" ) {
+        $("#upload-btn").prop("disabled", true);
+      }
+      // enable upload button if valid project is chosen and files have been selected
+      else if (files != null || $("#files-list").children().length != 0 ) {
+        $('#upload-btn').prop('disabled', false);
+      }
+      // update list if new files are being selected
+      if (files != null) {
+        updateFilesList(files);
+      }
+      return;
+    }
+    
 		function updateFilesList(files) {
 			$("#files-list").empty();
 
 			if (!files || files.length <= 0) {
 				$('#upload-btn').prop('disabled', true);
 				$('#reset-btn-one').prop("disabled", true);
+        
 				$('#drag-n-drop').show();
 				return;
 			} 
-
-			$('#upload-btn').prop('disabled', false);
-			$('#reset-btn-one').prop("disabled", false);
-			$('#drag-n-drop').hide();
-
+      
+      $('#reset-btn-one').prop("disabled", false);
+      $('#drag-n-drop').hide();
+      
 			files.forEach( (elem) => {
 				$("#files-list").append("<li>" + elem + "</li>");
 			});
 		}
-
+    $("#project-list").change( () => {
+      checkInput(null)
+    });
 		$("#drag-n-drop").click( () => {
 			dialog.showOpenDialog(
 				{ properties: ["openFile", "multiSelections"] },
-				 (files) => { return updateFilesList(files); }
+				 (files) => { return checkInput(files); }
 			);
 		});
 
@@ -174,7 +215,7 @@
 			for (let f of e.dataTransfer.files) {
 				files.append(f);
 			}
-			updateFilesList(files);
+			checkInput(files);
 			return false;
 		};
 

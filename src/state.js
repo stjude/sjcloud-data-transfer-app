@@ -18,26 +18,25 @@ module.exports.state = {
   }
 };
 
-module.exports.getState = (callback) => {
+module.exports.getState = function(callback) {
   self = this;
-  utils.dxToolkitOnPath( (err, res) => {
-
+  utils.dxToolkitOnPath( function(err, res) {
     if (err) {
       return callback(self.state.NEED_DOWNLOAD);
     }
 
     utils.dxLoggedIn( (err, res) => {
+      if (err) {
+        return callback(self.state.NEED_LOGIN);
+      }
+
+      utils.dxCheckProjectAccess( (err, res) => {
         if (err) {
-            return callback(self.state.NEED_LOGIN);
+          return callback(self.state.UNKNOWN);
         }
 
-        utils.dxCheckProjectAccess( (err, res) => {
-            if (err) {
-                return callback(self.state.UNKNOWN);
-            }
-
-            return callback(self.state.UPLOAD);
-        })
+        return callback(self.state.UPLOAD);
+      });
     });
   });
 };
