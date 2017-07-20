@@ -1,4 +1,5 @@
 const utils = require("./utils");
+const os = require("os");
 
 module.exports.state = {
   NEED_DOWNLOAD: {
@@ -20,6 +21,11 @@ module.exports.state = {
 
 module.exports.getState = function(callback) {
   self = this;
+
+  if (os.platform() != "darwin" && os.platform() != "linux" && os.platform() != "win32") {
+    return callback(self.state.UNKNOWN);
+  }
+
   utils.dxToolkitOnPath( function(err, res) {
     if (err) {
       return callback(self.state.NEED_DOWNLOAD);
