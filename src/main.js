@@ -10,6 +10,7 @@ const winston = require("winston");
 
 const ui = require("./ui");
 const state = require("./state");
+const protocolhandler = require("./protocol-handler");
 
 if (os.platform() == "darwin" || os.platform == "linux") {
   winston.add(winston.transports.File, { filename: path.join(process.env.HOME, ".sjcloud/log.txt") });
@@ -19,8 +20,6 @@ if (os.platform() == "win32") {
 }
 
 let mainWindow;
-
-app.setAsDefaultProtocolClient("sjcloud");
 winston.info(process.argv);
 
 app.on("ready", () => {
@@ -45,7 +44,6 @@ app.on("ready", () => {
         { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
       ]}
     ];
-
     //menu.setApplicationMenu(menu.buildFromTemplate(template));
   });
 });
