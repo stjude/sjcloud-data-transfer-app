@@ -36,7 +36,7 @@ module.exports.getDXToolkitDir = function() {
 
 module.exports._dx_toolkit_env_file = path.join( module.exports._dx_toolkit_dir, "environment" );
 //module.exports._dnanexus_CLI_dir = path.join( module.exports._dx_toolkit_dir, "DNAnexus CLI" );
-module.exports._dnanexus_CLI_dir = "C:\\Program Files (x86)\\DNAnexus CLI";
+module.exports._dnanexus_CLI_dir = "C:\\Program Files (x86)\\DNAnexus CLI"; // default install location of dx toolkit install wizard (windows)
 module.exports.runCommand = function(cmd, callback) {
   var inner_callback = function (err, stdout, stderr) {
     if (err) {
@@ -62,7 +62,7 @@ module.exports.runCommand = function(cmd, callback) {
     const dnanexusPSscript = path.join( module.exports._dnanexus_CLI_dir, "dnanexus-shell.ps1" );
     fs.stat(dnanexusPSscript, function(err, stats) {
       if (!err) {  // fs.stat() is only to check if "dx" commands can be sourced. If it fails other commands can still be run.
-        cmd = "cd '" + module.exports._dnanexus_CLI_dir + "'; \$(.\\dnanexus-shell.ps1); " + cmd;
+        cmd = "cd '" + module.exports._dnanexus_CLI_dir + "'; .\\dnanexus-shell.ps1; " + cmd;
       }
       cmd = "powershell.exe " + cmd;
       return exec(cmd, inner_callback);  // Warning: the dnanexus-shell.ps1 script used to source environment variables on Windows sends a DNAnexus banner to STDOUT. Banner will be first 2 lines of STDOUT
@@ -70,7 +70,7 @@ module.exports.runCommand = function(cmd, callback) {
   }
 };
 
-module.exports.runCommandSync = (cmd) => {  // Won't work on Windows
+module.exports.runCommandSync = (cmd) => {  // Won't work on Windows, but function not currently used anywhere on any platform
   const dxToolkitEnvFile = module.exports._dx_toolkit_env_file;
   fs.stat(module.exports._dx_toolkit_env_file, (err, stats) => {
 
@@ -97,7 +97,12 @@ module.exports.dxLoggedIn = (callback) => {
 };
 
 module.exports.dxCheckProjectAccess = (callback) => {
-  this.runCommand("dx ls", callback);
+  if (os.platform() == "linux" || os.platform() == "darwin") {
+    this.runCommand("echo '0' | dx select --level UPLOAD; dx ls", callback); // dx ls may not be necessary. Haven't tested
+  }
+  else if (os.platform() == "win32") {
+    this.runCommand("\"echo 0 | dx select --level UPLOAD\"; dx ls", callback); // dx ls may not be necessary. Haven't tested
+  }
 };
 
 module.exports.downloadFile = (url, dest, cb) => {

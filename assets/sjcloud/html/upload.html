@@ -50,8 +50,8 @@
         <div id="form-group">
           <label for="upload-type">Upload Type</label>
           <select class="form-control" id="upload-type">
-            <option value="series">Upload files sequentially</option>
             <option value="parallel">Upload files in parallel</option>
+            <option value="series">Upload files sequentially</option>
           </select>
         </div>
         <div id="form-group">
@@ -113,7 +113,7 @@
       if (remote.getGlobal("sjcloudURI") && remote.getGlobal("sjcloudURI")[0] && remote.getGlobal("sjcloudURI")[0].search("sjcloud://") != -1) { // app called by sjcloud:// URI
         var input_project = document.createElement("option");
         input_project.text = remote.getGlobal("sjcloudURI")[0].replace("sjcloud://", "");
-        for (i = 1; i < remote.getGlobal("sjcloudURI").length; i++) {
+        for (i = 1; i < remote.getGlobal("sjcloudURI").length; i++) { // Concatenate project names with spaces
           input_project.text = input_project.text + " " + remote.getGlobal("sjcloudURI")[i];
         }
         input_project.text = input_project.text.substring(0, input_project.text.length - 1); // remove trailing '/'
@@ -131,7 +131,7 @@
       }
       if (found_project !== true) {  // app not called by sjcloud:// protocol or linked project was not found
         var default_option = document.createElement("option");
-        default_option.text = "Select a project from this drop-down menu.";
+        default_option.text = "Select a project here";
         default_option.value = "invalid";
         project_select.add(default_option);
       };
