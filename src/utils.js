@@ -98,10 +98,11 @@ module.exports.dxLoggedIn = (callback) => {
 
 module.exports.dxCheckProjectAccess = (callback) => {
   if (os.platform() == "linux" || os.platform() == "darwin") {
-    this.runCommand("echo '0' | dx select --level UPLOAD; dx ls", callback); // dx ls may not be necessary. Haven't tested
+//    this.runCommand("echo '0' | dx select --level UPLOAD", callback);
+    this.runCommand("dx ls", callback);
   }
   else if (os.platform() == "win32") {
-    this.runCommand("\"echo 0 | dx select --level UPLOAD\"; dx ls", callback); // dx ls may not be necessary. Haven't tested
+    this.runCommand("\"echo 0 | dx select --level UPLOAD\"", callback);
   }
 };
 

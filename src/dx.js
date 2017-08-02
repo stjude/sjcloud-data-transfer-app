@@ -120,7 +120,9 @@ module.exports.install = (updateProgress, failProgress, callback) => {
 
 module.exports.login = (token, callback) => {
   utils.runCommand(
-    "dx login --token " + token.toString() + " --noprojects",
+//    "dx login --token " + token.toString() + " --noprojects",
+    "echo '0' | dx login --token " + token.toString(),
+
     (err, stdout) => {
       if (err) {
         console.error("Could not login: " + err);
