@@ -69,19 +69,6 @@ module.exports.runCommand = function(cmd, callback) {
   }
 };
 
-module.exports.runCommandSync = (cmd) => {  // Won't work on Windows, but function not currently used anywhere on any platform
-  const dxToolkitEnvFile = module.exports._dx_toolkit_env_file;
-  fs.stat(module.exports._dx_toolkit_env_file, (err, stats) => {
-
-    if (!err) {
-      cmd = "source " + dxToolkitEnvFile + "; " + cmd;
-    }
-
-    return execSync(cmd, { shell: "/bin/bash" });
-
-  });
-};
-
 module.exports.dxToolkitOnPath = function(callback) {
   if (os.platform() == "linux" || os.platform() == "darwin") {
     this.runCommand("which dx", callback);

@@ -1,25 +1,25 @@
+// TODO: add documentationin the style of http://usejsdoc.org/
+
 const os = require("os");
 const path = require("path");
 const utils = require("./utils");
+const child_process = require("child_process");
 
+// TODO: move these variables to a JSON config file in the root directory
+// of the project.
+const PROJECT_TAG = 'SJCP';
 DOWNLOAD_INFO = {
   WINDOWS: {
-    URL:
-   "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0.exe",
-    SHA256SUM:
-   "e1c2f9b92bb1c88351ef0e755df41e2522283ffa0d27ce10aeeffd66a8a6b1e2"
+    URL: "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0.exe",
+    SHA256SUM: "e1c2f9b92bb1c88351ef0e755df41e2522283ffa0d27ce10aeeffd66a8a6b1e2"
   },
   MAC: {
-    URL:
-   "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0-osx.tar.gz",
-    SHA256SUM:
-   "49b5bbfe62fe2b6fe3e1fdcd19308e60c931a1f9acbb21b9adde422f7bc4eaf2"
+    URL: "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0-osx.tar.gz",
+    SHA256SUM: "49b5bbfe62fe2b6fe3e1fdcd19308e60c931a1f9acbb21b9adde422f7bc4eaf2"
   },
   LINUX: {
-    URL:
-   "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0-ubuntu-14.04-amd64.tar.gz",
-    SHA256SUM:
-   "fc5b478708ed36927ce476eb64f5498db70b4cf5e7638867fae09c654a290dcc"
+    URL: "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0-ubuntu-14.04-amd64.tar.gz",
+    SHA256SUM: "fc5b478708ed36927ce476eb64f5498db70b4cf5e7638867fae09c654a290dcc"
   }
 };
 
@@ -33,6 +33,7 @@ function getDxDownloadUrlFromPlatform(platform) {
   else if (platform == "win32") {
     return DOWNLOAD_INFO.WINDOWS.URL;
   }
+  // TODO: handle unrecognized platform.
 }
 
 function getSha256sumFromPlatform(platform) {
@@ -45,6 +46,7 @@ function getSha256sumFromPlatform(platform) {
   else if (platform == "win32") {
     return DOWNLOAD_INFO.WINDOWS.SHA256SUM;
   }
+  // TODO: handle unrecognized platform.
 }
 
 module.exports.install = (updateProgress, failProgress, callback) => {
@@ -86,7 +88,6 @@ module.exports.install = (updateProgress, failProgress, callback) => {
       });
     });
   }
- 
   else if (platform == "win32") {
     const dxExePath = path.join(utils.getDXToolkitDir(), "dx-toolkit.exe");
     updateProgress("40%", "Downloading dx-toolkit...");
@@ -105,10 +106,11 @@ module.exports.install = (updateProgress, failProgress, callback) => {
         
         updateProgress("70%", "Installing dx-toolkit...");
 
-        const cp = require("child_process");
         setTimeout( () => {
-          cp.execSync(dxExePath);
+          child_process.execSync(dxExePath);
           updateProgress("100%", "Success!");
+		  // TODO: is there a reason this is a timeout?
+		  // if not, just call the statement directly.
           setTimeout( () => {
             return callback(null, true);
           }, 1);
@@ -135,14 +137,15 @@ module.exports.login = (token, callback) => {
 module.exports.listProjects = (callback) => {
   if (os.platform() == "darwin" || os.platform() == "linux") {
     var tabliteral = "$'\t'";
-  }
-  else if (os.platform() == "win32") {
+  } else if (os.platform() == "win32") {
     var tabliteral = "`t";
-  }
-  utils.runCommand("dx find projects --level UPLOAD --tag sjcloud --delim " + tabliteral, (err, stdout) => {
+  } // TODO: handle non-detected platform case.
+
+  utils.runCommand("dx find projects --level UPLOAD --tag " + PROJECT_TAG + " --delim " + tabliteral, (err, stdout) => {
     if (err) {
       return callback(err, []);
     }
+
     var results = [];
     stdout.split("\n").forEach( (el) => {
       if (el.trim().length <= 0) return;
