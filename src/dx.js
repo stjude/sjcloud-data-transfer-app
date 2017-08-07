@@ -1,13 +1,15 @@
-// TODO: add documentationin the style of http://usejsdoc.org/
+// TODO: add documentation the style of http://usejsdoc.org/
 
 const os = require("os");
 const path = require("path");
 const utils = require("./utils");
 const child_process = require("child_process");
+const config = require("../config.json");
 
+/*
 // TODO: move these variables to a JSON config file in the root directory
 // of the project.
-const PROJECT_TAG = 'SJCP';
+const PROJECT_TAG = "SJCP";
 DOWNLOAD_INFO = {
   WINDOWS: {
     URL: "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0.exe",
@@ -22,31 +24,30 @@ DOWNLOAD_INFO = {
     SHA256SUM: "fc5b478708ed36927ce476eb64f5498db70b4cf5e7638867fae09c654a290dcc"
   }
 };
+*/
 
 function getDxDownloadUrlFromPlatform(platform) {
   if (platform == "darwin") {
-    return DOWNLOAD_INFO.MAC.URL;
+    return config.DOWNLOAD_INFO.MAC.URL;
   }
   else if (platform == "linux") {
-    return DOWNLOAD_INFO.LINUX.URL;
+    return config.DOWNLOAD_INFO.LINUX.URL;
   }
   else if (platform == "win32") {
-    return DOWNLOAD_INFO.WINDOWS.URL;
-  }
-  // TODO: handle unrecognized platform.
+    return config.DOWNLOAD_INFO.WINDOWS.URL;
+  }  // unknown platforms handled in ./state.js
 }
 
 function getSha256sumFromPlatform(platform) {
   if (platform == "darwin") {
-    return DOWNLOAD_INFO.MAC.SHA256SUM;
+    return config.DOWNLOAD_INFO.MAC.SHA256SUM;
   }
   else if (platform == "linux") {
-    return DOWNLOAD_INFO.LINUX.SHA256SUM;
+    return config.DOWNLOAD_INFO.LINUX.SHA256SUM;
   }
   else if (platform == "win32") {
-    return DOWNLOAD_INFO.WINDOWS.SHA256SUM;
-  }
-  // TODO: handle unrecognized platform.
+    return config.DOWNLOAD_INFO.WINDOWS.SHA256SUM;
+  }  // unknown platforms handled in ./state.js
 }
 
 module.exports.install = (updateProgress, failProgress, callback) => {
@@ -109,9 +110,9 @@ module.exports.install = (updateProgress, failProgress, callback) => {
         setTimeout( () => {
           child_process.execSync(dxExePath);
           updateProgress("100%", "Success!");
-		  // TODO: is there a reason this is a timeout?
-		  // if not, just call the statement directly.
-          setTimeout( () => {
+            // TODO: is there a reason this is a timeout?
+            // if not, just call the statement directly.
+          setTimeout( () => {  // allows progress bar to display correctly
             return callback(null, true);
           }, 1);
         }, 1000);
@@ -139,9 +140,9 @@ module.exports.listProjects = (callback) => {
     var tabliteral = "$'\t'";
   } else if (os.platform() == "win32") {
     var tabliteral = "`t";
-  } // TODO: handle non-detected platform case.
+  }  // unknown platforms handled in ./state.js
 
-  utils.runCommand("dx find projects --level UPLOAD --tag " + PROJECT_TAG + " --delim " + tabliteral, (err, stdout) => {
+  utils.runCommand("dx find projects --level UPLOAD --tag " + config.PROJECT_TAG + " --delim " + tabliteral, (err, stdout) => {
     if (err) {
       return callback(err, []);
     }
