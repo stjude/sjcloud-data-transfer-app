@@ -10,17 +10,18 @@
     "dist:mac": "build -m",
     "dist:linux": "build -l",
     "dist:win": "build -w",
-    "postdist:win": "src\\change_manifest.bat"
+    "postdist:win": "etc\\change_manifest.bat"
   },
-  "author": "Clay McLeod and Andrew Frantz",
+  "author": "Clay McLeod, Andrew Frantz",
   "dependencies": {
     "async": "^2.4.1",
+    "bootstrap": "^3.3.7",
+    "electron": "~1.6.2",
     "jquery": "^3.2.1",
     "mkdirp": "^0.5.1",
     "winston": "^2.3.1"
   },
   "devDependencies": {
-    "electron": "~1.6.2",
     "electron-builder": "^19.8.0",
     "electron-packager": "latest",
     "eslint": "^4.0.0",
