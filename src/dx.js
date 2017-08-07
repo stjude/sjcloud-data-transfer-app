@@ -139,7 +139,7 @@ module.exports.listProjects = (callback) => {
   else if (os.platform() == "win32") {
     var tabliteral = "`t";
   }
-  utils.runCommand("dx find projects --tag sjcloud --delim " + tabliteral, (err, stdout) => {
+  utils.runCommand("dx find projects --level UPLOAD --tag sjcloud --delim " + tabliteral, (err, stdout) => {
     if (err) {
       return callback(err, []);
     }
