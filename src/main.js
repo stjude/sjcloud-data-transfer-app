@@ -45,7 +45,7 @@ app.on("ready", () => {
       ]}
     ];
     //menu.setApplicationMenu(menu.buildFromTemplate(template));
-  });
+  });   //TODO either use or delete these menu settings
 });
 
 app.on("window-all-closed", () => {

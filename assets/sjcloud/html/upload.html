@@ -110,13 +110,18 @@
         return;
       }
       let project_select = document.getElementById("project-list");
-      if (remote.getGlobal("sjcloudURI") && remote.getGlobal("sjcloudURI")[0] && remote.getGlobal("sjcloudURI")[0].search("sjcloud://") != -1) { // app called by sjcloud:// URI
+/*      if (remote.getGlobal("sjcloudURI") && remote.getGlobal("sjcloudURI")[0] && remote.getGlobal("sjcloudURI")[0].search("sjcloud://") != -1) { // app called by sjcloud:// URI
         var input_project = document.createElement("option");
         input_project.text = remote.getGlobal("sjcloudURI")[0].replace("sjcloud://", "");
         for (i = 1; i < remote.getGlobal("sjcloudURI").length; i++) { // Concatenate project names with spaces
           input_project.text = input_project.text + " " + remote.getGlobal("sjcloudURI")[i];
         }
         input_project.text = input_project.text.substring(0, input_project.text.length - 1); // remove trailing '/'
+*/
+      if (remote.getGlobal("sjcloudURI")) {
+        var input_project = document.createElement("option");
+        input_project.text = remote.getGlobal("sjcloudURI");
+      
         var found_project = false;
         results.some( function(elem) {
           if (elem["project_name"] == input_project.text) {
@@ -127,7 +132,6 @@
             return true;
           }
         });
-        
       }
       if (found_project !== true) {  // app not called by sjcloud:// protocol or linked project was not found
         var default_option = document.createElement("option");
