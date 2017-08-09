@@ -1,4 +1,6 @@
-// TODO: add documentation the style of http://usejsdoc.org/
+/**
+ * @fileOverview Various methods for installing dx-toolkit and interacting with DNAnexus
+*/
 
 const os = require("os");
 const path = require("path");
@@ -6,26 +8,13 @@ const utils = require("./utils");
 const child_process = require("child_process");
 const config = require("../config.json");
 
-/*
-// TODO: move these variables to a JSON config file in the root directory
-// of the project.
-const PROJECT_TAG = "SJCP";
-DOWNLOAD_INFO = {
-  WINDOWS: {
-    URL: "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0.exe",
-    SHA256SUM: "e1c2f9b92bb1c88351ef0e755df41e2522283ffa0d27ce10aeeffd66a8a6b1e2"
-  },
-  MAC: {
-    URL: "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0-osx.tar.gz",
-    SHA256SUM: "49b5bbfe62fe2b6fe3e1fdcd19308e60c931a1f9acbb21b9adde422f7bc4eaf2"
-  },
-  LINUX: {
-    URL: "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0-ubuntu-14.04-amd64.tar.gz",
-    SHA256SUM: "fc5b478708ed36927ce476eb64f5498db70b4cf5e7638867fae09c654a290dcc"
-  }
-};
+/**
+ * Getter function for returning the URL of the dx-toolkit download for the platform the app is running on.
+ * The only platforms supported are Mac, Windows, and Linux. Unknown platform case handled in state.js.
+ * @see state.js
+ * @param {string} platform The platform the app is running on.
+ * @returns {string} URL of download
 */
-
 function getDxDownloadUrlFromPlatform(platform) {
   if (platform == "darwin") {
     return config.DOWNLOAD_INFO.MAC.URL;
@@ -35,9 +24,16 @@ function getDxDownloadUrlFromPlatform(platform) {
   }
   else if (platform == "win32") {
     return config.DOWNLOAD_INFO.WINDOWS.URL;
-  }  // unknown platforms handled in ./state.js
+  }
 }
 
+/**
+ * Getter function for returning the SHA256 sum of the dx-toolkit download for the platform the app is running on.
+ * The only platforms supported are Mac, Windows, and Linux. Unknown platform case handled in state.js.
+ * @see state.js
+ * @param {string} platform The platform the app is running on.
+ * @returns {string} SHA256 sum of download
+*/
 function getSha256sumFromPlatform(platform) {
   if (platform == "darwin") {
     return config.DOWNLOAD_INFO.MAC.SHA256SUM;
@@ -47,9 +43,15 @@ function getSha256sumFromPlatform(platform) {
   }
   else if (platform == "win32") {
     return config.DOWNLOAD_INFO.WINDOWS.SHA256SUM;
-  }  // unknown platforms handled in ./state.js
+  }
 }
 
+/**
+ * Installs dx-toolkit.
+ * @param {function} updateProgress Function that updates on-screen progress bar.
+ * @param {function} failProgress Function that displays failure message on progress bar.
+ * @param {function} callback Callback function.
+*/
 module.exports.install = (updateProgress, failProgress, callback) => {
   const platform = os.platform();
   const tmpdir = os.tmpdir();

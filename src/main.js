@@ -1,3 +1,7 @@
+/**
+ * @fileOverview Script that launches app.
+*/
+
 const electron = require("electron");
 const app = electron.app;
 const protocol = electron.protocol;

@@ -1,8 +1,11 @@
+/**
+ * @fileOverview Handles the custom sjcloud:// URI protocol. Windows and Mac are the only systems custom protocol handling is supported.
+*/
+
 const electron = require("electron");
 const app = electron.app;
 const os = require("os");
 
-/** Windows and Mac are the only systems custom protocol handling is supported on */
 
 app.setAsDefaultProtocolClient("sjcloud");
 

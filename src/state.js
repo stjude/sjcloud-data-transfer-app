@@ -1,3 +1,6 @@
+/**
+ * @fileOverview Determines what html page to display based on what requirements for uploading files are met.
+*/
 const utils = require("./utils");
 const os = require("os");
 
