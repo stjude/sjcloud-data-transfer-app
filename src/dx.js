@@ -165,15 +165,17 @@ module.exports.listProjects = (callback) => {
     stdout.split("\n").forEach( (el) => {
       if (el.trim().length <= 0) return;
       [dx_location, name, access_level, _] = el.split("\t"); 
-      /**
-       * @typedef {Object} dx_project
-       * @property {string} project_name Name of the project
-       * @property {string} dx_location Unique DNAnexus identifier of project
-      */
-      results.push({
-        project_name: name,
-        dx_location: dx_location,
-      });
+      if (access_level) {
+        /**
+        * @typedef {Object} dx_project
+        * @property {string} project_name Name of the project
+        * @property {string} dx_location Unique DNAnexus identifier of project
+        */
+        results.push({
+          project_name: name,
+          dx_location: dx_location,
+        });
+      }
     });
     return callback(null, results);
   });
