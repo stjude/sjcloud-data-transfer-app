@@ -23,6 +23,11 @@ module.exports.state = {
   }
 };
 
+/**
+ * Determines what state the system is in.
+ * @param {Function} callback cb function
+ * @returns html file to be loaded
+ */
 module.exports.getState = function(callback) {
   self = this;
 
