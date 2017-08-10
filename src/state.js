@@ -1,6 +1,7 @@
 /**
  * @fileOverview Determines what html page to display based on what requirements for uploading files are met.
 */
+
 const utils = require("./utils");
 const os = require("os");
 
@@ -26,7 +27,8 @@ module.exports.state = {
 /**
  * Determines what state the system is in.
  * @param {Function} callback cb function
- * @returns html file to be loaded
+ * @param {Function} callback Callback function
+ * @returns {string} html file to be loaded
  */
 module.exports.getState = function(callback) {
   self = this;
@@ -40,12 +42,12 @@ module.exports.getState = function(callback) {
       return callback(self.state.NEED_DOWNLOAD);
     }
 
-    utils.dxLoggedIn( (err, res) => {
+    utils.dxLoggedIn( function(err, res) {
       if (err) {
         return callback(self.state.NEED_LOGIN);
       }
 
-      utils.dxCheckProjectAccess( (err, res) => {
+      utils.dxCheckProjectAccess( function(err, res) {
         if (err) {
           return callback(self.state.UNKNOWN);
         }

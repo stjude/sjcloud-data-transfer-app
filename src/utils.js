@@ -10,6 +10,17 @@ const mkdirp = require("mkdirp");
 const crypto = require("crypto");
 const { exec, execSync } = require("child_process");
 
+/**
+ * @callback runCommandCB
+ * @returns {CB_return}
+*/
+
+/**
+ * @typedef CB_return
+ * @property {(string|null)} err Error message or null if none
+ * @property {(string|null)} res Result of function or null if an error occurs 
+*/
+
 module.exports._sjcloud_homedir = path.join( os.homedir(), ".sjcloud" );
 /**
  * Find or create the ".sjcloud" directory in the users home directory and return its path.
@@ -49,16 +60,11 @@ module.exports._dnanexus_PS_script = "C:\\Program Files (x86)\\DNAnexus CLI\\dna
 /**
  * Runs commands on the system command line
  * @param {string} cmd Text to be entered at the command line
- * @param {function} callback cb function
- * @returns {runCommandReturn}
+ * @param {runCommandCB} callback
+ * @returns {CB_return}
 */
 module.exports.runCommand = function(cmd, callback) {
   var inner_callback = function (err, stdout, stderr) {
-    /**
-     * @typedef {Tuple} runCommandReturn
-     * @property {(string|null)} error
-     * @property {(string|null)} stdout
-    */
     if (err) {
       return callback(err, null);
     }
@@ -90,11 +96,9 @@ module.exports.runCommand = function(cmd, callback) {
   }
 };
 
-//TODO unify function syntax below
-
 /**
  * Determines if dx-toolkit is correctly installed on the system.
- * @param {function} callback cb function
+ * @param {runCommandCB} callback
 */
 module.exports.dxToolkitOnPath = function(callback) {
   if (os.platform() == "linux" || os.platform() == "darwin") {
@@ -107,17 +111,17 @@ module.exports.dxToolkitOnPath = function(callback) {
 
 /**
  * Determines if the user is logged into DNAnexus
- * @param {function} callback cb function
+ * @param {runCommandCB} callback
 */
-module.exports.dxLoggedIn = (callback) => {
+module.exports.dxLoggedIn = function(callback) {
   this.runCommand("dx whoami", callback);
 };
 
 /**
  * Checks if there's atleast one project the user can upload data to
- * @param {function} callback cb function
+ * @param {runCommandCB} callback
 */
-module.exports.dxCheckProjectAccess = (callback) => {
+module.exports.dxCheckProjectAccess = function(callback) {
   if (os.platform() == "linux" || os.platform() == "darwin") {
     this.runCommand("echo '0' | dx select --level UPLOAD", callback);
   }
@@ -130,14 +134,14 @@ module.exports.dxCheckProjectAccess = (callback) => {
  * Downloads a file
  * @param {string} url URL of download
  * @param {string} dest Path for newly downloaded file
- * @param {Function} cb cb function
+ * @param {Function} callback Callback function
 */
-module.exports.downloadFile = (url, dest, cb) => { //TODO change cb
+module.exports.downloadFile = (url, dest, callback) => {
   var file = fs.createWriteStream(dest);
   var request = https.get(url, (response) => {
     response.pipe(file);
     file.on("finish", () => {
-      file.close(cb);
+      file.close(callback);
     });
   });
 };
@@ -146,7 +150,7 @@ module.exports.downloadFile = (url, dest, cb) => { //TODO change cb
  * Untars a file to a new location
  * @param {string} file Path to tarballed file
  * @param {string} parentDir Path to the directory the tarballs contents should be dumped in
- * @param {Function} callback cb function
+ * @param {runCommandCB} callback
 */
 module.exports.untarTo = (file, parentDir, callback) => {
   module.exports.runCommand("tar -C " + parentDir + " -zxf " + file, callback);
@@ -155,8 +159,8 @@ module.exports.untarTo = (file, parentDir, callback) => {
 /**
  * Computes the SHA256 sum of a given file
  * @param {string} filepath Path to file being checksummed
- * @param {Function} callback cb function
- * @returns {runCommandReturn}
+ * @param {Function} callback Callback function
+ * @returns {CB_return}
 */
 module.exports.computeSHA256 = (filepath, callback) => {
   var shasum = crypto.createHash("SHA256");

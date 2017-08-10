@@ -1,3 +1,7 @@
+/**
+ * @fileOverview Authorizes the user with DNAnexus using OAuth 
+*/
+
 var https   = require('https'),
     pem     = require('pem'),
     express = require('express'),

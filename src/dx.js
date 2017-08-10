@@ -51,7 +51,7 @@ function getSha256sumFromPlatform(platform) {
  * @param {function} updateProgress Function that updates on-screen progress bar.
  * @param {function} failProgress Function that displays failure message on progress bar.
  * @param {function} callback Callback function.
- * @returns {runCommandReturn}
+ * @returns {CB_return}
 */
 module.exports.install = (updateProgress, failProgress, callback) => {
   const platform = os.platform();
@@ -127,9 +127,8 @@ module.exports.install = (updateProgress, failProgress, callback) => {
 /**
  * Login to DNAnexus using an authentication token.
  * @param {string} token Authentication token
- * @param {function} callback Callback function
- * @returns {string} Error message or null if no error
- * @returns {string} Status message or null if error
+ * @param {runCommandCB} callback 
+ * @returns {CB_return}
 */
 module.exports.login = (token, callback) => {
   utils.runCommand(
@@ -146,10 +145,9 @@ module.exports.login = (token, callback) => {
 };
 
 /**
- * List projects the user can upload data to.
- * @param {function} callback Callback function
- * @returns {string} Error message or null if no error
- * @returns {Array} Array of {@link dx_project} objects
+ * Find and return projects the user can upload data to.
+ * @param {runCommandCB} callback 
+ * @returns {CB_return}
 */
 module.exports.listProjects = (callback) => {
   if (os.platform() == "darwin" || os.platform() == "linux") {
@@ -167,19 +165,15 @@ module.exports.listProjects = (callback) => {
     stdout.split("\n").forEach( (el) => {
       if (el.trim().length <= 0) return;
       [dx_location, name, access_level, _] = el.split("\t"); 
-      if (access_level) {
-        /**
-         * @typedef {Object} dx_project
-         * @property {string} project_name Name of the project
-         * @property {string} dx_location Unique DNAnexus identifier of project
-         * @property {string} access_level Level of access the user has to the project
-        */
-        results.push({
-          project_name: name,
-          dx_location: dx_location,
-          access_level: access_level //TODO rm access_level. Unused.
-        });
-      }
+      /**
+       * @typedef {Object} dx_project
+       * @property {string} project_name Name of the project
+       * @property {string} dx_location Unique DNAnexus identifier of project
+      */
+      results.push({
+        project_name: name,
+        dx_location: dx_location,
+      });
     });
     return callback(null, results);
   });
@@ -187,10 +181,9 @@ module.exports.listProjects = (callback) => {
 
 /**
  * Uploads a file to the /uploads/ directory of a project
- * @param file
- * @param project
- * @param callback
- * @return {runCommandReturn}
+ * @param {string} file Name of file being uploaded
+ * @param {string} project DNAnexus ID of project being uploaded to
+ * @param {runCommandCB} callback 
 */
 module.exports.uploadFile = (file, project, callback) => {
   let dx_path = project + ":/uploads/" + path.basename(file.trim());
