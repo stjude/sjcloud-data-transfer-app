@@ -124,6 +124,13 @@ module.exports.install = (updateProgress, failProgress, callback) => {
   }
 };
 
+/**
+ * Login to DNAnexus using an authentication token.
+ * @param {string} token Authentication token
+ * @param {function} callback Callback function
+ * @returns {string} Error message or null if no error
+ * @returns {string} Status message or null if error
+*/
 module.exports.login = (token, callback) => {
   utils.runCommand(
     "dx login --token " + token.toString() + " --noprojects",
@@ -138,6 +145,12 @@ module.exports.login = (token, callback) => {
   );
 };
 
+/**
+ * List projects the user can upload data to.
+ * @param {function} callback Callback function
+ * @returns {string} Error message or null if no error
+ * @returns {Array} Array of {@link dx_project} objects
+*/
 module.exports.listProjects = (callback) => {
   if (os.platform() == "darwin" || os.platform() == "linux") {
     var tabliteral = "$'\t'";
@@ -155,10 +168,16 @@ module.exports.listProjects = (callback) => {
       if (el.trim().length <= 0) return;
       [dx_location, name, access_level, _] = el.split("\t"); 
       if (access_level) {
+        /**
+         * @typedef {Object} dx_project
+         * @property {string} project_name Name of the project
+         * @property {string} dx_location Unique DNAnexus identifier of project
+         * @property {string} access_level Level of access the user has to the project
+        */
         results.push({
           project_name: name,
           dx_location: dx_location,
-          access_level: access_level
+          access_level: access_level //TODO rm access_level. Unused.
         });
       }
     });
@@ -166,6 +185,13 @@ module.exports.listProjects = (callback) => {
   });
 };
 
+/**
+ * Uploads a file to the /uploads/ directory of a project
+ * @param file
+ * @param project
+ * @param callback
+ * @return {runCommandReturn}
+*/
 module.exports.uploadFile = (file, project, callback) => {
   let dx_path = project + ":/uploads/" + path.basename(file.trim());
   let rmCommand = "dx rm -a '" + dx_path + "'";

@@ -54,6 +54,11 @@ module.exports._dnanexus_PS_script = "C:\\Program Files (x86)\\DNAnexus CLI\\dna
 */
 module.exports.runCommand = function(cmd, callback) {
   var inner_callback = function (err, stdout, stderr) {
+    /**
+     * @typedef {Tuple} runCommandReturn
+     * @property {(string|null)} error
+     * @property {(string|null)} stdout
+    */
     if (err) {
       return callback(err, null);
     }

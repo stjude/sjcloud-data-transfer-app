@@ -1,5 +1,5 @@
 /**
- * @fileOverview Script that launches app.
+ * @fileOverview App entry point
 */
 
 const electron = require("electron");
