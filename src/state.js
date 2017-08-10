@@ -13,8 +13,7 @@ module.exports.state = {
     htmlfile: "connection.html"
   },
   NEED_LOGIN: {
-    //htmlfile: "login.html"
-    htmlfile: "oauth.html"
+    htmlfile: "login.html"
   },
   UPLOAD: {
     htmlfile: "upload.html"
