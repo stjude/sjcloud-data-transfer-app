@@ -9,7 +9,7 @@ const child_process = require("child_process");
 const config = require("../config.json");
 
 /**
- * Getter function for returning the URL of the dx-toolkit download for the platform the app is running on.
+ * Returns the URL of the dx-toolkit download for the platform the app is running on.
  * The only platforms supported are Mac, Windows, and Linux. Unknown platform case handled in state.js.
  * @see state.js
  * @param {string} platform The platform the app is running on.
@@ -28,7 +28,7 @@ function getDxDownloadUrlFromPlatform(platform) {
 }
 
 /**
- * Getter function for returning the SHA256 sum of the dx-toolkit download for the platform the app is running on.
+ * Returns the SHA256 sum of the dx-toolkit download for the platform the app is running on.
  * The only platforms supported are Mac, Windows, and Linux. Unknown platform case handled in state.js.
  * @see state.js
  * @param {string} platform The platform the app is running on.
@@ -51,6 +51,7 @@ function getSha256sumFromPlatform(platform) {
  * @param {function} updateProgress Function that updates on-screen progress bar.
  * @param {function} failProgress Function that displays failure message on progress bar.
  * @param {function} callback Callback function.
+ * @returns {runCommandReturn}
 */
 module.exports.install = (updateProgress, failProgress, callback) => {
   const platform = os.platform();
