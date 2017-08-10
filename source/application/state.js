@@ -1,48 +1,45 @@
-const utils = require("./utils");
 const os = require("os");
+const fs = require("fs");
+const utils = require("./utils");
 
 module.exports.state = {
-  NEED_DOWNLOAD: {
-    htmlfile: "dx-toolkit.html"
-  },
-  CONNECTION_ERROR: {
-    htmlfile: "connection.html"
-  },
-  NEED_LOGIN: {
-    htmlfile: "login.html"
-  },
-  UPLOAD: {
-    htmlfile: "upload.html"
-  },
-  UNKNOWN: {
-    htmlfile: "unknown.html"
-  }
+	WELCOME: { htmlfile: "welcome.html" },
+	NEED_DOWNLOAD: { htmlfile: "install.html" },
+	CONNECTION_ERROR: { htmlfile: "connection.html" },
+	NEED_LOGIN: { htmlfile: "login.html" },
+	UPLOAD: { htmlfile: "upload.html" },
+	UNKNOWN: { htmlfile: "unknown.html" }
 };
 
 module.exports.getState = function(callback) {
-  self = this;
+	self = this;
 
-  if (os.platform() != "darwin" && os.platform() != "linux" && os.platform() != "win32") {
-    return callback(self.state.UNKNOWN);
-  }
+	if (os.platform() != "darwin" && os.platform() != "linux" && os.platform() != "win32") {
+		return callback(self.state.UNKNOWN);
+	}
 
-  utils.dxToolkitOnPath( function(err, res) {
-    if (err) {
-      return callback(self.state.NEED_DOWNLOAD);
-    }
+	utils.initSJCloudHome( function (err, res) {
+		if (err) { return callback(self.state.UNKNOWN); }
+		if (res) { return callback(self.state.WELCOME); }
 
-    utils.dxLoggedIn( (err, res) => {
-      if (err) {
-        return callback(self.state.NEED_LOGIN);
-      }
+		utils.dxToolkitOnPath( function(err, res) {
+			if (err) {
+				return callback(self.state.NEED_DOWNLOAD);
+			}
 
-      utils.dxCheckProjectAccess( (err, res) => {
-        if (err) {
-          return callback(self.state.UNKNOWN);
-        }
+			utils.dxLoggedIn( (err, res) => {
+				if (err) {
+					return callback(self.state.NEED_LOGIN);
+				}
 
-        return callback(self.state.UPLOAD);
-      });
-    });
-  });
+				utils.dxCheckProjectAccess( (err, res) => {
+					if (err) {
+						return callback(self.state.UNKNOWN);
+					}
+
+					return callback(self.state.UPLOAD);
+				});
+			});
+		});
+	});
 };

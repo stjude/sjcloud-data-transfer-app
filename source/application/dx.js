@@ -82,9 +82,7 @@ module.exports.install = (updateProgress, failProgress, callback) => {
         });
 
         updateProgress("100%", "Success!");
-        setTimeout( () => {
-          return callback(null, true);
-        }, 1000);
+        return callback(null, true);
       });
     });
   }
