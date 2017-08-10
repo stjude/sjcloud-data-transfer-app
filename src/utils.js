@@ -38,6 +38,11 @@ module.exports._dx_toolkit_env_file = path.join( module.exports._dx_toolkit_dir,
 module.exports._dnanexus_CLI_dir = "C:\\Program Files (x86)\\DNAnexus CLI"; // default install location of dx toolkit install wizard (windows)
 module.exports.runCommand = function(cmd, callback) {
   var inner_callback = function (err, stdout, stderr) {
+    /**
+     * @typedef {Tuple} runCommandReturn
+     * @property {(string|null)} error
+     * @property {(string|null)} stdout
+    */
     if (err) {
       return callback(err, null);
     }
