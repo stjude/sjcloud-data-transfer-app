@@ -3,24 +3,46 @@
 @import url('https://fonts.googleapis.com/css?family=Open+Sans');
 @import url('https://fonts.googleapis.com/css?family=Roboto');
 
+
+.theater {
+	@rowspacing: 30px;
+
+	h1 {
+		text-align: center;
+		margin-top: @rowspacing;
+		font: normal 36px/normal "Open Sans", "Roboto", Times, serif;
+	}
+
+	img {
+		display: block;
+		margin: 0 auto;
+		margin-top: @rowspacing / 2;
+	}
+
+	.btn-stjude {
+		margin: 0 auto;
+		margin-top: @rowspacing;
+	}
+}
+
 .btn-stjude {
-  display: inline-block;
-  .box-sizing(content-box);
-  cursor: pointer;
-  padding: 10px 20px;
-  border: 1px solid #018dc4;
-  border-bottom: 3px solid #0f6282;
-  -webkit-border-radius: 3px;
-  border-radius: 3px;
-  font: normal 16px/normal "Open Sans", "Roboto", Times, serif;
-  color: rgba(255,255,255,0.9);
-  &:hover { color: rgba(255,255,255,1.0) }
-  &:active {
-	  background-color: #0076AD;
-      transform: translateY(1px);
-  }
-  -o-text-overflow: clip;
-  text-overflow: clip;
-  background: #158cba;
-  .transition(all 100ms cubic-bezier(0.42, 0, 0.58, 1));
+	display: inline-block;
+	.box-sizing(content-box);
+	cursor: pointer;
+	padding: 10px 20px;
+	border: 1px solid #018dc4;
+	border-bottom: 3px solid #0f6282;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	font: normal 16px/normal "Open Sans", "Roboto", Times, serif;
+	color: rgba(255,255,255,0.9);
+	&:hover { color: rgba(255,255,255,1.0) }
+	&:active {
+		background-color: #0076AD;
+		transform: translateY(1px);
+	}
+	-o-text-overflow: clip;
+	text-overflow: clip;
+	background: #158cba;
+	.transition(all 100ms cubic-bezier(0.42, 0, 0.58, 1));
 }
