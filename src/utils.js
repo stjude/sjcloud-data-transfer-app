@@ -1,3 +1,7 @@
+/**
+ * @fileOverview Utility functions.
+*/
+
 const os = require("os");
 const fs = require("fs");
 const path = require("path");
@@ -6,14 +10,28 @@ const mkdirp = require("mkdirp");
 const crypto = require("crypto");
 const { exec, execSync } = require("child_process");
 
+/**
+ * @callback runCommandCB
+ * @returns {CB_return}
+*/
+
+/**
+ * @typedef CB_return
+ * @property {(string|null)} err Error message or null if none
+ * @property {(string|null)} res Result of function or null if an error occurs 
+*/
+
 module.exports._sjcloud_homedir = path.join( os.homedir(), ".sjcloud" );
+/**
+ * Find or create the ".sjcloud" directory in the users home directory and return its path.
+ * @returns {string} Path of ".sjcloud" directory
+*/
 module.exports.getSJCloudHomeDir = function() {
   if (!fs.existsSync(module.exports._sjcloud_homedir)) {
     mkdirp(module.exports._sjcloud_homedir, function(err) {
       if (err) {
         return null;
       }
-
       return module.exports._sjcloud_homedir;
     });
   }
@@ -21,13 +39,16 @@ module.exports.getSJCloudHomeDir = function() {
 };
 
 module.exports._dx_toolkit_dir = path.join( module.exports._sjcloud_homedir, "dx-toolkit" );
+/**
+ * Find or create the "dx-toolkit" directory in the ".sjcloud" directory and return its path.
+ * @returns {string} Path of "dx-toolkit" directory
+*/
 module.exports.getDXToolkitDir = function() {
   if (!fs.existsSync(module.exports._dx_toolkit_dir)) {
     mkdirp(module.exports._dx_toolkit_dir, function(err) {
       if (err) {
         return null;
       }
-
       return module.exports._dx_toolkit_dir;
     });
   }
@@ -35,7 +56,13 @@ module.exports.getDXToolkitDir = function() {
 };
 
 module.exports._dx_toolkit_env_file = path.join( module.exports._dx_toolkit_dir, "environment" ); // file only on Linux and Mac installations
-module.exports._dnanexus_CLI_dir = "C:\\Program Files (x86)\\DNAnexus CLI"; // default install location of dx toolkit install wizard (windows)
+module.exports._dnanexus_PS_script = "C:\\Program Files (x86)\\DNAnexus CLI\\dnanexus-shell.ps1"; // default install location of dx-toolkit on Windows
+/**
+ * Runs commands on the system command line
+ * @param {string} cmd Text to be entered at the command line
+ * @param {runCommandCB} callback
+ * @returns {CB_return}
+*/
 module.exports.runCommand = function(cmd, callback) {
   var inner_callback = function (err, stdout, stderr) {
     if (err) {
@@ -58,7 +85,7 @@ module.exports.runCommand = function(cmd, callback) {
   }
  
   else if (os.platform() == "win32") {
-    const dnanexusPSscript = path.join( module.exports._dnanexus_CLI_dir, "dnanexus-shell.ps1" );
+    const dnanexusPSscript = module.exports._dnanexus_PS_script;
     fs.stat(dnanexusPSscript, function(err, stats) {
       if (!err) {  // fs.stat() is only to check if "dx" commands can be sourced. If it fails other commands can still be run.
         cmd = ".'" + dnanexusPSscript + "'; " + cmd;
@@ -69,6 +96,10 @@ module.exports.runCommand = function(cmd, callback) {
   }
 };
 
+/**
+ * Determines if dx-toolkit is correctly installed on the system.
+ * @param {runCommandCB} callback
+*/
 module.exports.dxToolkitOnPath = function(callback) {
   if (os.platform() == "linux" || os.platform() == "darwin") {
     this.runCommand("which dx", callback);
@@ -78,11 +109,19 @@ module.exports.dxToolkitOnPath = function(callback) {
   }
 };
 
-module.exports.dxLoggedIn = (callback) => {
+/**
+ * Determines if the user is logged into DNAnexus
+ * @param {runCommandCB} callback
+*/
+module.exports.dxLoggedIn = function(callback) {
   this.runCommand("dx whoami", callback);
 };
 
-module.exports.dxCheckProjectAccess = (callback) => {
+/**
+ * Checks if there's atleast one project the user can upload data to
+ * @param {runCommandCB} callback
+*/
+module.exports.dxCheckProjectAccess = function(callback) {
   if (os.platform() == "linux" || os.platform() == "darwin") {
     this.runCommand("echo '0' | dx select --level UPLOAD", callback);
   }
@@ -91,20 +130,38 @@ module.exports.dxCheckProjectAccess = (callback) => {
   }
 };
 
-module.exports.downloadFile = (url, dest, cb) => {
+/**
+ * Downloads a file
+ * @param {string} url URL of download
+ * @param {string} dest Path for newly downloaded file
+ * @param {Function} callback Callback function
+*/
+module.exports.downloadFile = (url, dest, callback) => {
   var file = fs.createWriteStream(dest);
   var request = https.get(url, (response) => {
     response.pipe(file);
     file.on("finish", () => {
-      file.close(cb);
+      file.close(callback);
     });
   });
 };
 
+/**
+ * Untars a file to a new location
+ * @param {string} file Path to tarballed file
+ * @param {string} parentDir Path to the directory the tarballs contents should be dumped in
+ * @param {runCommandCB} callback
+*/
 module.exports.untarTo = (file, parentDir, callback) => {
   module.exports.runCommand("tar -C " + parentDir + " -zxf " + file, callback);
 };
 
+/**
+ * Computes the SHA256 sum of a given file
+ * @param {string} filepath Path to file being checksummed
+ * @param {Function} callback Callback function
+ * @returns {CB_return}
+*/
 module.exports.computeSHA256 = (filepath, callback) => {
   var shasum = crypto.createHash("SHA256");
   var s = fs.ReadStream(filepath);

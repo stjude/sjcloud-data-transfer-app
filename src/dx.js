@@ -1,54 +1,58 @@
-// TODO: add documentationin the style of http://usejsdoc.org/
+/**
+ * @fileOverview Various methods for installing dx-toolkit and interacting with DNAnexus
+*/
 
 const os = require("os");
 const path = require("path");
 const utils = require("./utils");
 const child_process = require("child_process");
+const config = require("../config.json");
 
-// TODO: move these variables to a JSON config file in the root directory
-// of the project.
-const PROJECT_TAG = 'SJCP';
-DOWNLOAD_INFO = {
-  WINDOWS: {
-    URL: "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0.exe",
-    SHA256SUM: "e1c2f9b92bb1c88351ef0e755df41e2522283ffa0d27ce10aeeffd66a8a6b1e2"
-  },
-  MAC: {
-    URL: "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0-osx.tar.gz",
-    SHA256SUM: "49b5bbfe62fe2b6fe3e1fdcd19308e60c931a1f9acbb21b9adde422f7bc4eaf2"
-  },
-  LINUX: {
-    URL: "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0-ubuntu-14.04-amd64.tar.gz",
-    SHA256SUM: "fc5b478708ed36927ce476eb64f5498db70b4cf5e7638867fae09c654a290dcc"
-  }
-};
-
+/**
+ * Returns the URL of the dx-toolkit download for the platform the app is running on.
+ * The only platforms supported are Mac, Windows, and Linux. Unknown platform case handled in state.js.
+ * @see state.js
+ * @param {string} platform The platform the app is running on.
+ * @returns {string} URL of download
+*/
 function getDxDownloadUrlFromPlatform(platform) {
   if (platform == "darwin") {
-    return DOWNLOAD_INFO.MAC.URL;
+    return config.DOWNLOAD_INFO.MAC.URL;
   }
   else if (platform == "linux") {
-    return DOWNLOAD_INFO.LINUX.URL;
+    return config.DOWNLOAD_INFO.LINUX.URL;
   }
   else if (platform == "win32") {
-    return DOWNLOAD_INFO.WINDOWS.URL;
+    return config.DOWNLOAD_INFO.WINDOWS.URL;
   }
-  // TODO: handle unrecognized platform.
 }
 
+/**
+ * Returns the SHA256 sum of the dx-toolkit download for the platform the app is running on.
+ * The only platforms supported are Mac, Windows, and Linux. Unknown platform case handled in state.js.
+ * @see state.js
+ * @param {string} platform The platform the app is running on.
+ * @returns {string} SHA256 sum of download
+*/
 function getSha256sumFromPlatform(platform) {
   if (platform == "darwin") {
-    return DOWNLOAD_INFO.MAC.SHA256SUM;
+    return config.DOWNLOAD_INFO.MAC.SHA256SUM;
   }
   else if (platform == "linux") {
-    return DOWNLOAD_INFO.LINUX.SHA256SUM;
+    return config.DOWNLOAD_INFO.LINUX.SHA256SUM;
   }
   else if (platform == "win32") {
-    return DOWNLOAD_INFO.WINDOWS.SHA256SUM;
+    return config.DOWNLOAD_INFO.WINDOWS.SHA256SUM;
   }
-  // TODO: handle unrecognized platform.
 }
 
+/**
+ * Installs dx-toolkit.
+ * @param {function} updateProgress Function that updates on-screen progress bar.
+ * @param {function} failProgress Function that displays failure message on progress bar.
+ * @param {function} callback Callback function.
+ * @returns {CB_return}
+*/
 module.exports.install = (updateProgress, failProgress, callback) => {
   const platform = os.platform();
   const tmpdir = os.tmpdir();
@@ -109,9 +113,9 @@ module.exports.install = (updateProgress, failProgress, callback) => {
         setTimeout( () => {
           child_process.execSync(dxExePath);
           updateProgress("100%", "Success!");
-		  // TODO: is there a reason this is a timeout?
-		  // if not, just call the statement directly.
-          setTimeout( () => {
+            // TODO: is there a reason this is a timeout?
+            // if not, just call the statement directly.
+          setTimeout( () => {  // allows progress bar to display correctly
             return callback(null, true);
           }, 1);
         }, 1000);
@@ -120,6 +124,12 @@ module.exports.install = (updateProgress, failProgress, callback) => {
   }
 };
 
+/**
+ * Login to DNAnexus using an authentication token.
+ * @param {string} token Authentication token
+ * @param {runCommandCB} callback 
+ * @returns {CB_return}
+*/
 module.exports.login = (token, callback) => {
   utils.runCommand(
     "dx login --token " + token.toString() + " --noprojects",
@@ -134,14 +144,19 @@ module.exports.login = (token, callback) => {
   );
 };
 
+/**
+ * Find and return projects the user can upload data to.
+ * @param {runCommandCB} callback 
+ * @returns {CB_return}
+*/
 module.exports.listProjects = (callback) => {
   if (os.platform() == "darwin" || os.platform() == "linux") {
     var tabliteral = "$'\t'";
   } else if (os.platform() == "win32") {
     var tabliteral = "`t";
-  } // TODO: handle non-detected platform case.
+  }  // unknown platforms handled in ./state.js
 
-  utils.runCommand("dx find projects --level UPLOAD --tag " + PROJECT_TAG + " --delim " + tabliteral, (err, stdout) => {
+  utils.runCommand("dx find projects --level UPLOAD --tag " + config.PROJECT_TAG + " --delim " + tabliteral, (err, stdout) => {
     if (err) {
       return callback(err, []);
     }
@@ -151,10 +166,14 @@ module.exports.listProjects = (callback) => {
       if (el.trim().length <= 0) return;
       [dx_location, name, access_level, _] = el.split("\t"); 
       if (access_level) {
+        /**
+        * @typedef {Object} dx_project
+        * @property {string} project_name Name of the project
+        * @property {string} dx_location Unique DNAnexus identifier of project
+        */
         results.push({
           project_name: name,
           dx_location: dx_location,
-          access_level: access_level
         });
       }
     });
@@ -162,6 +181,12 @@ module.exports.listProjects = (callback) => {
   });
 };
 
+/**
+ * Uploads a file to the /uploads/ directory of a project
+ * @param {string} file Name of file being uploaded
+ * @param {string} project DNAnexus ID of project being uploaded to
+ * @param {runCommandCB} callback 
+*/
 module.exports.uploadFile = (file, project, callback) => {
   let dx_path = project + ":/uploads/" + path.basename(file.trim());
   let rmCommand = "dx rm -a '" + dx_path + "'";
