@@ -8,7 +8,8 @@ const BrowserWindow = electron.BrowserWindow;
 module.exports.createWindow = (callback) => {
   mainWindow = new BrowserWindow({
     width: 850,
-    height: 600
+    height: 600,
+    frame: false
   });
   mainWindow.$ = jquery;
 
