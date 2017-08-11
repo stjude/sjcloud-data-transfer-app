@@ -4,8 +4,8 @@
 <head>
   <meta charset="UTF-8">
   <title>St. Jude Cloud Upload</title>
-  <link rel="stylesheet" href="../../../node_modules/bootstrap/dist/css/bootstrap.min.css">
-  <link rel="stylesheet" href="../../../node_modules/todc-bootstrap/dist/css/todc-bootstrap.min.css">
+  <link rel="stylesheet" href="../../../../node_modules/bootstrap/dist/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../../../../node_modules/todc-bootstrap/dist/css/todc-bootstrap.min.css">
   <style>
     .container {
       position: absolute;
@@ -87,7 +87,7 @@
 <script>
   window.jQuery = window.$ = require('jquery');
 </script>
-<script src="../../bootstrap/dist/js/bootstrap.min.js"></script>
+<script src="../../../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 <script>
   $( () => {
     const os = require("os");
@@ -96,8 +96,8 @@
     const { shell, remote } = require('electron');
     const { dialog } = require("electron").remote;
 
-    const dx = require("../../../src/dx");
-    const sjutils = require("../../../src/utils");
+    const dx = require("../../../../source/application/dx");
+    const sjutils = require("../../../../source/application/utils");
 
     /**
      * First, grab projects from remote URL.
