@@ -1,5 +1,5 @@
 const {BrowserWindow} = require('electron').remote;
-const dx = require('../../../application/dx');
+const dx = require('../../app/dx');
 
 $('#action-btn').on('click', function (e) {
 	e.preventDefault();
