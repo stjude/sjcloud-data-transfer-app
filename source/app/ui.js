@@ -23,7 +23,7 @@ module.exports.createWindow = (callback) => {
         url.format({
           pathname: path.join(
             __dirname,
-            "../assets/sjcloud/html/" + state.htmlfile
+            "../client/html/" + state.htmlfile
           ),
           protocol: "file:",
           slashes: true

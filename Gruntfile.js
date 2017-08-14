@@ -15,8 +15,8 @@ module.exports = function(grunt) {
         src: [ 'build' ]
       },
       post: {
-        src: [ 'build/assets/sjcloud/css/**.less',
-               'build/assets/sjcloud/css/bootstrap/' ]
+        src: [ 'build/client/css/**.less',
+               'build/client/css/bootstrap/' ]
       },
     },
     less: {
@@ -27,7 +27,7 @@ module.exports = function(grunt) {
           optimization: 2
         },
         files: {
-          "build/assets/sjcloud/css/main.css": "build/assets/sjcloud/css/main.less"
+          "build/client/css/main.css": "build/client/css/main.less"
         }
       }
     },
