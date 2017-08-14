@@ -4,13 +4,9 @@
   "description": "The St. Jude Cloud desktop app, designed for getting data in the St. Jude Cloud easily and reliably.",
   "main": "build/app/main.js",
   "scripts": {
-<<<<<<< HEAD
-    "start": "electron build/application/main.js",
+    "start": "electron build/app/main.js",
     "vuewp": "electron app/electron.js",
     "www": "webpack --config=webpack.config.js --watch --progress --colors",
-=======
-    "start": "electron build/app/main.js",
->>>>>>> df80d46aaac7be072d8b437075145e966d2b9dfe
     "postinstall": "install-app-deps",
     "pack": "build --dir",
     "dist:mac": "build -m",
