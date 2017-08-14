@@ -4,13 +4,15 @@
 const url = require("url");
 const path = require("path");
 const jquery = require("jquery");
-const state = require("./state");
 const electron = require("electron");
+
+const state = require("./state");
+
 const BrowserWindow = electron.BrowserWindow;
 
 module.exports.createWindow = (callback) => {
   mainWindow = new BrowserWindow({
-    width: 600,
+    width: 900,
     height: 600
   });
   mainWindow.$ = jquery;
@@ -25,7 +27,7 @@ module.exports.createWindow = (callback) => {
         url.format({
           pathname: path.join(
             __dirname,
-            "../assets/sjcloud/html/" + state.htmlfile
+            "../client/html/" + state.htmlfile
           ),
           protocol: "file:",
           slashes: true

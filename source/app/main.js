@@ -2,34 +2,38 @@
  * @fileOverview App entry point
 */
 
-const electron = require("electron");
-const app = electron.app;
-const protocol = electron.protocol;
-const menu = electron.Menu; 
-
+const os = require("os");
 const url = require("url");
 const path = require("path");
-const os = require("os");
 const winston = require("winston");
+const electron = require("electron");
 
 const ui = require("./ui");
 const state = require("./state");
-const protocolhandler = require("./protocol-handler");
+const protocolhandler = require("./protocol");
 
-if (os.platform() == "darwin" || os.platform == "linux") {
+const app = electron.app;
+const menu = electron.Menu;
+const protocol = electron.protocol;
+
+/**
+ * Set up logging
+ **/
+
+ const platform = os.platform();
+
+if (platform === "darwin" || platform === "linux") {
   winston.add(winston.transports.File, { filename: path.join(process.env.HOME, ".sjcloud/log.txt") });
-}
-if (os.platform() == "win32") {
+} else if (platform === "win32") {
   winston.add(winston.transports.File, { filename: path.join(process.env.HOMEPATH, ".sjcloud/log.txt") });
 }
 
 let mainWindow;
-winston.info(process.argv);
 
 app.on("ready", () => {
   ui.createWindow( (mw) => {
     mainWindow = mw;
-    mainWindow.refreshState(); 
+    mainWindow.refreshState();
     var template = [{
       label: "SJCPUploader",
       submenu: [
@@ -48,8 +52,11 @@ app.on("ready", () => {
         { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
       ]}
     ];
-    //menu.setApplicationMenu(menu.buildFromTemplate(template));
-  });   //TODO either use or delete these menu settings
+
+	if (process.env.NODE_ENVIRONMENT !== "dev") {
+		menu.setApplicationMenu(menu.buildFromTemplate(template));
+	}
+  });
 });
 
 app.on("window-all-closed", () => {
@@ -62,7 +69,7 @@ app.on("activate", () => {
   if (mainWindow === null) {
     ui.createWindow( (mw) => {
       mainWindow = mw;
-      mainWindow.refreshState(); 
+      mainWindow.refreshState();
     });
   }
 });

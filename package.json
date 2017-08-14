@@ -1,10 +1,11 @@
 {
   "name": "SJCPUploader",
-  "version": "1.0.0a",
+  "version": "1.0.0",
   "description": "The St. Jude Cloud desktop app, designed for getting data in the St. Jude Cloud easily and reliably.",
-  "main": "src/main.js",
+  "main": "source/app/main.js",
   "scripts": {
-    "start": "electron src/main.js",
+    "start": "electron source/app/main.js",
+    "start-dev": "NODE_ENVIRONMENT=dev electron source/app/main.js",
     "postinstall": "install-app-deps",
     "pack": "build --dir",
     "dist:mac": "build -m",
@@ -12,12 +13,13 @@
     "dist:win": "build -w",
     "postdist:win": "etc\\change_manifest.bat"
   },
-  "author": "Clay McLeod, Andrew Frantz",
+  "author": "Clay McLeod, Andrew Frantz, Edgar Sioson",
   "dependencies": {
     "async": "^2.4.1",
     "bootstrap": "^3.3.7",
     "jquery": "^3.2.1",
     "mkdirp": "^0.5.1",
+    "todc-bootstrap": "^3.3.7-3.3.13",
     "winston": "^2.3.1"
   },
   "devDependencies": {
@@ -25,6 +27,7 @@
     "electron-builder": "^19.19.1",
     "electron-packager": "latest",
     "eslint": "^4.0.0",
-    "eslint-config-google": "^0.8.0"
+    "eslint-config-google": "^0.8.0",
+    "jsdoc": "^3.5.4"
   }
 }

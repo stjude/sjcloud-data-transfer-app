@@ -11,14 +11,14 @@ const crypto = require("crypto");
 const { exec, execSync } = require("child_process");
 
 /**
- * @callback runCommandCB
- * @returns {CB_return}
+ * @callback Standard callback
+ * @returns {callback}
 */
 
 /**
- * @typedef CB_return
+ * @typedef callback
  * @property {(string|null)} err Error message or null if none
- * @property {(string|null)} res Result of function or null if an error occurs 
+ * @property {(string|null)} res Result of function or null if an error occurs
 */
 
 module.exports._sjcloud_homedir = path.join( os.homedir(), ".sjcloud" );
@@ -39,6 +39,7 @@ module.exports.getSJCloudHomeDir = function() {
 };
 
 module.exports._dx_toolkit_dir = path.join( module.exports._sjcloud_homedir, "dx-toolkit" );
+
 /**
  * Find or create the "dx-toolkit" directory in the ".sjcloud" directory and return its path.
  * @returns {string} Path of "dx-toolkit" directory
@@ -46,9 +47,7 @@ module.exports._dx_toolkit_dir = path.join( module.exports._sjcloud_homedir, "dx
 module.exports.getDXToolkitDir = function() {
   if (!fs.existsSync(module.exports._dx_toolkit_dir)) {
     mkdirp(module.exports._dx_toolkit_dir, function(err) {
-      if (err) {
-        return null;
-      }
+      if (err) { return null; }
       return module.exports._dx_toolkit_dir;
     });
   }
@@ -60,8 +59,8 @@ module.exports._dnanexus_PS_script = "C:\\Program Files (x86)\\DNAnexus CLI\\dna
 /**
  * Runs commands on the system command line
  * @param {string} cmd Text to be entered at the command line
- * @param {runCommandCB} callback
- * @returns {CB_return}
+ * @param {callback} callback
+ * @returns {callback}
 */
 module.exports.runCommand = function(cmd, callback) {
   var inner_callback = function (err, stdout, stderr) {
@@ -83,7 +82,7 @@ module.exports.runCommand = function(cmd, callback) {
       return exec(cmd, { shell: "/bin/bash" }, inner_callback);
     });
   }
- 
+
   else if (os.platform() == "win32") {
     const dnanexusPSscript = module.exports._dnanexus_PS_script;
     fs.stat(dnanexusPSscript, function(err, stats) {
@@ -98,20 +97,20 @@ module.exports.runCommand = function(cmd, callback) {
 
 /**
  * Determines if dx-toolkit is correctly installed on the system.
- * @param {runCommandCB} callback
+ * @param {callback} callback
 */
 module.exports.dxToolkitOnPath = function(callback) {
-  if (os.platform() == "linux" || os.platform() == "darwin") {
+  const platform = os.platform();
+  if (platform == "linux" || platform === "darwin") {
     this.runCommand("which dx", callback);
-  }
-  else if (os.platform() == "win32") {
+  } else if (platform === "win32") {
     this.runCommand("get-command dx", callback);
   }
 };
 
 /**
  * Determines if the user is logged into DNAnexus
- * @param {runCommandCB} callback
+ * @param {callback} callback
 */
 module.exports.dxLoggedIn = function(callback) {
   this.runCommand("dx whoami", callback);
@@ -119,7 +118,7 @@ module.exports.dxLoggedIn = function(callback) {
 
 /**
  * Checks if there's atleast one project the user can upload data to
- * @param {runCommandCB} callback
+ * @param {callback} callback
 */
 module.exports.dxCheckProjectAccess = function(callback) {
   if (os.platform() == "linux" || os.platform() == "darwin") {
@@ -150,7 +149,7 @@ module.exports.downloadFile = (url, dest, callback) => {
  * Untars a file to a new location
  * @param {string} file Path to tarballed file
  * @param {string} parentDir Path to the directory the tarballs contents should be dumped in
- * @param {runCommandCB} callback
+ * @param {callback} callback
 */
 module.exports.untarTo = (file, parentDir, callback) => {
   module.exports.runCommand("tar -C " + parentDir + " -zxf " + file, callback);
@@ -160,7 +159,7 @@ module.exports.untarTo = (file, parentDir, callback) => {
  * Computes the SHA256 sum of a given file
  * @param {string} filepath Path to file being checksummed
  * @param {Function} callback Callback function
- * @returns {CB_return}
+ * @returns {callback}
 */
 module.exports.computeSHA256 = (filepath, callback) => {
   var shasum = crypto.createHash("SHA256");
