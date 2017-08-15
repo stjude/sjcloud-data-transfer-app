@@ -1,0 +1,40 @@
+<template>
+	<div style='display:inline-block; padding-top: 0.5rem; vertical-align:top; font-size: 1.2rem;'>
+		<router-link to='/upload'>
+			<div class='nav-span' v-bind:style='uploadLinkStyle'>Upload</div>
+		</router-link>
+		<router-link to='/download'>
+			<div class='nav-span' v-bind:style='downloadLinkStyle'>Download</div>
+		</router-link>
+	</div>
+</template>
+
+<script>
+
+
+const active={color:'#000', 'border-bottom':'2px solid #1381B3' }
+const inactive={color:'#aaa','border-bottom': 'none'}
+
+export default {
+	data() {
+		return {}
+	},
+	computed: {
+		uploadLinkStyle() {
+			return this.$route.path=='/upload' ? active : inactive   
+		},
+		downloadLinkStyle() {
+			return this.$route.path!='/upload' ? active : inactive
+		}
+	}
+}
+</script>
+
+<style>
+.nav-span {
+	display: inline-block;
+	padding: 5px;
+	font-size: 16px;
+	color:#000;
+}
+</style>

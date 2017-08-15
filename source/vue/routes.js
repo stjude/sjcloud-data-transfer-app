@@ -1,19 +1,22 @@
-import Welcome from './page/Welcome.vue'
+import Home from './page/Home.vue'
 import NotFound from './page/NotFound.vue'
 import Upload from './page/Upload.vue'
 
 export default function () {
 	return [{
 		path: '/home',
-		component: Welcome
+		component: Home
 	},{
 		path: '/upload',
 		component: Upload
 	},{
-		path: '/',
-		component: Welcome
+		path: '/download',
+		component: Upload
 	},{
-		path: '/*',
+		path: '/',
+		component: Home
+	},{
+		path: '*',
 		component: NotFound
 	}]
 }
