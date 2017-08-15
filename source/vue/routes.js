@@ -1,6 +1,6 @@
-import Home from './page/Home.vue'
-import NotFound from './page/NotFound.vue'
-import Upload from './page/Upload.vue'
+import Home from './components/Home.vue'
+import NotFound from './components/NotFound.vue'
+import Upload from './components/Upload.vue'
 
 export default function () {
 	return [{

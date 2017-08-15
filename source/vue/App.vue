@@ -7,7 +7,7 @@
 </template>
 
 <script>
-import TopBar from './page/TopBar.vue';
+import TopBar from './components/TopBar.vue';
 import jquery from 'jquery';
 
 export default {
