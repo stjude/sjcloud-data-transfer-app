@@ -3,7 +3,7 @@
   "version": "1.0.0a",
   "description": "The St. Jude Cloud desktop app, designed for getting data in the St. Jude Cloud easily and reliably.",
   "scripts": {
-    "start": "electron app/electron.js",
+    "vuewp": "electron app/electron.js",
     "www": "webpack --config=webpack.config.js --watch --progress --colors",
     "postinstall": "install-app-deps",
     "pack": "build --dir",
