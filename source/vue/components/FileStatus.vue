@@ -4,7 +4,7 @@
 			<thead>
 				<tr style='color:#000; background-color:#ececec'>
 					<th style='width:10%'>
-						<input type='checkbox' name='sjcda-file-all' value='all' v-on:click.stop='toggleCheckBoxes($event)'/>
+						<input type='checkbox' name='sjcda-file-all' id='sjcda-file-checkbox-all' value='all' v-on:click.stop='toggleCheckBoxes($event)'/>
 					</th>
 					<th style='text-align:center;width:50%'>Filename</th>
 					<th style='text-align:center;width:25%'>Size</th>
@@ -29,6 +29,8 @@
 import store from '../store.js'
 
 let i="0"
+let prevTool='Rapid RNASeq'
+let prevPath='/upload'
 
 export default {
 	data() {
@@ -50,6 +52,12 @@ export default {
 	],
 	mounted() {
 		
+	},
+	updated() {
+		if (this.currTool==prevTool && this.$route.path==prevPath) return
+		prevTool=this.currTool
+		prevPath=this.$route.path
+		document.querySelector('#sjcda-file-checkbox-all').checked=false
 	},
 	methods: {
 		toggleFileChecked(file,event) {

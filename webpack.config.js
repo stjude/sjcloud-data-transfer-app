@@ -17,6 +17,13 @@ module.exports=function (env={}) {
 			publicPath:'bin/',
 			jsonpFunction: 'sjcdappJsonp' // for dynamic import
 		},
+		resolve: {
+	      modules: ['node_modules', 'resources/vue', 'vue/', 'vue/vp', 'tests/'],
+	      extensions: ['.js', '.vue', '.json'],
+	      alias: {
+		    vue: 'vue/dist/vue.js'
+		  }
+	    },
 		module:{
 			rules:[{
 				test: /\.vue$/, 
@@ -32,7 +39,12 @@ module.exports=function (env={}) {
 				test: /\.js$/,
 				use: [{
 					loader: 'babel-loader',
-					options: { presets: [['es2015', {modules: false}]], plugins: ['syntax-dynamic-import'] }
+					options: { 
+						presets: [
+							['es2015', {modules: false}]
+						], 
+						plugins: ['syntax-dynamic-import'] 
+					}
 				}]
 			},{ 
 	          test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,

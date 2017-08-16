@@ -10,13 +10,7 @@ const data={
 			{name:'file_u6',size:5,status:0,checked:false},
 			{name:'file_u7',size:11,status:0,checked:false}
 		],
-		download: [
-			{name:'file_d1',size:12,status:0,checked:false},
-			{name:'file_d2',size:10,status:0,checked:false},
-			{name:'file_d3',size:8,status:0,checked:false},
-			{name:'file_d4',size:16,status:0,checked:false},
-			{name:'file_d5',size:20,status:0,checked:false}
-		]
+		download: []
 	},{
 		name: 'WARDEN',
 		upload: [
