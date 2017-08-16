@@ -1,13 +1,12 @@
 <template>
-	<div id='sjcda-top-bar' style='font-family:"Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;  color:#fff;'>
+	<div class='sjcda-top-bar'>
 		<div style='display:inline-block;margin-left:5px'>
 			<a href='#/home'>
-			<img id='sj-portal-topbar-logo' align="left" src="img/stjude-logo-small-white.svg" class="logo" style='width:10rem;max-height:40px;margin-top:5px;' vspace="">
+				<img class="sjcda-top-bar__logo" src="img/stjude-logo-child-white.png">
 			</a>
 		</div>
-		<div style='display:inline-block; padding-top: 0.3rem; vertical-align:top; margin-left:20px; font-size:24px; cursor:pointer' v-on:click='goHome'>
-			St. Jude Cloud Platform
-		</div>
+		<span v-on:click='goHome'>ST. JUDE CLOUD</span>
+		<span style="font-weight: lighter;" v-on:click='goHome'>PLATFORM</span>
 	</div>
 </template>
 <script>
@@ -20,9 +19,24 @@ export default {
 }
 </script>
 <style>
-#sjcda-top-bar {
-	background-color: #1381B3;
-	width:100%;
-	height:40px;
+.sjcda-top-bar {
+	background-color: #2A8BB6;
+	border-width: 3px;
+	border-style: solid;
+	border-color: #1381B3;
+	color: #FFFFFF;
+	cursor: pointer;
+	display:inline-block; 
+	font-family: "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 24px; 
+	height: 60px;
+	padding-top: 0.3rem; 
+	vertical-align: top; 
+	width: 100%;
+	vertical-align: middle;
+}
+
+.sjcda-top-bar__logo {
+	height: 50px;
 }
 </style>
