@@ -1,5 +1,5 @@
 <template>
-	<div id='sjcda-top-bar' style='font-family:"Open Sans", Gotham, "Helvetica Neue", Helvetica, Arial, sans-serif;  color:#fff;'>
+	<div id='sjcda-top-bar' style='font-family:"Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;  color:#fff;'>
 		<div style='display:inline-block;margin-left:5px'>
 			<a href='#/home'>
 			<img id='sj-portal-topbar-logo' align="left" src="img/stjude-logo-small-white.svg" class="logo" style='width:10rem;max-height:40px;margin-top:5px;' vspace="">
