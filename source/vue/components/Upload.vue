@@ -1,6 +1,8 @@
 <template>
 	<div class='row'>
-		<left-panel></left-panel>
+		<div class='col-xs-4'>
+			<left-panel></left-panel>
+		</div>
 		
 		<div class='col-xs-8 rightPanel' style='height:100%;'>
 			<nav-bar style="margin-top:18px;"></nav-bar>
@@ -14,7 +16,7 @@
 			</upload-target>
 
 			<div style='position:absolute; bottom:10px; right: 10px; text-align:right'>
-				<button class='btn btn-primary'>Start</button>
+				<!--<button class='btn btn-primary' v-on:click=''>Upload</button>-->
 				<button class='btn btn-danger' v-on:click='deleteFiles'>Delete</button>
 			</div>
 		</div>
@@ -46,11 +48,16 @@ export default {
 		//console.log('Upload component mounted')
 	},
 	updated() {
-		//console.log('Upload component updated')
+		console.log('Upload component updated')
 	},
 	methods: {
 		deleteFiles() {
 
+		}
+	},
+	route: {
+		activate() { console.log('activate')
+			this.$forceUpdate()
 		}
 	}
 }

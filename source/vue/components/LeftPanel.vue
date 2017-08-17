@@ -1,5 +1,5 @@
 <template>
-	<div class='col-xs-4 leftPanel' style='height:550px; border:3px solid #ececec; padding-left: 0px; padding-right: 0px;'>
+	<div class='leftPanel' style='height:550px; border:3px solid #ececec; padding-left: 0px; padding-right: 0px;'>
 		<table style='width:100%; margin-top: 20px'>
 			<thead>
 				<tr style='color:#a3a3a3;'>

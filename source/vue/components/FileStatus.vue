@@ -1,6 +1,6 @@
 <template>
-	<div>
-		<table style='width:100%; margin-top: 15px'>
+	<div style='height:400px; overflow:scroll; margin-top:15px; border-bottom:1px solid #ececec'>
+		<table style='width:100%;'>
 			<thead>
 				<tr style='color:#000; background-color:#ececec'>
 					<th style='width:10%'>
@@ -18,7 +18,12 @@
 					</td>
 					<td>{{ file.name }}</td>
 					<td style='text-align:center'>{{ file.size }} GB</td>
-					<td style='text-align:center'>{{ file.status }}</td>
+					<td style='text-align:center'>
+						<div 
+							style='height:20px; width:100%; background-color:#fff; border: 1px solid #ececec'>
+							<div class='bg-success' v-bind:style="{height:'20px',width:file.status+'%'}"></div>
+						</div>
+					</td>
 				</tr>
 			</tbody>
 		</table>
@@ -56,6 +61,9 @@ export default {
 			const checked=event.target.checked; 
 			this.files.forEach(f=>f.checked=checked);
 			this.$forceUpdate()
+		},
+		progressStyle(file) {
+			return {height:'20px',width:file.status/100+'%'}
 		}
 	}
 }

@@ -1,6 +1,8 @@
 <template>
 	<div class='row'>
-		<left-panel></left-panel>
+		<div class='col-xs-4'>
+			<left-panel></left-panel>
+		</div>
 		
 		<div class='col-xs-8 rightPanel' style='height:100%;'>
 			<nav-bar style="margin-top:18px;"></nav-bar>
@@ -11,7 +13,11 @@
 			</file-status>
 			
 			<div style='position:absolute; bottom:10px; right: 10px; text-align:right'>
-				<button class='btn btn-primary'>Start</button>
+				<button class='btn btn-primary' 
+					v-bind:disabled='!checkedFiles.length'
+					v-on:click='downloadFiles'>
+					Download
+				</button>
 				<button class='btn btn-danger' v-on:click='deleteFiles'>Delete</button>
 			</div>
 		</div>
@@ -37,6 +43,9 @@ export default {
 	computed: {
 		hasFiles() {
 			return this.$store.getters.currFiles.length
+		},
+		checkedFiles() {
+			return this.$store.getters.checkedFiles
 		}
 	},
 	mounted() {
@@ -46,8 +55,11 @@ export default {
 		//console.log('Upload component updated')
 	},
 	methods: {
+		downloadFiles() {
+			this.$store.commit('downloadFiles')
+		},
 		deleteFiles() {
-			
+
 		}
 	}
 }

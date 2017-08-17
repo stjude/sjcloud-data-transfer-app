@@ -1,5 +1,6 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import fakeProgress from '../../tests/fakeProgress'
 
 Vue.use(Vuex);
 
@@ -84,6 +85,10 @@ export default new Vuex.Store({
 			const tool=getters.currTool;
 			return !tool ? [] : tool[state.currPath]
 		},
+		checkedFiles(state,getters) {
+			const tool=getters.currTool;
+			return !tool ? [] : tool[state.currPath].filter(f=>f.checked)
+		}
 	},
 	mutations: {
 		setCurrToolName(state,toolName) {
@@ -92,7 +97,7 @@ export default new Vuex.Store({
 		setCurrPath(state,path) {
 			state.currPath=path
 		},
-		addFiles(state,d) { //toolName,path,files) {
+		addFiles(state,d) {
 			const tool= state.tools.filter(t=>t.name==state.currToolName)[0];
 			if (!tool || !tool[state.currPath]) {
 				console.log("Invalid tool name='"+stat.currToolName+"' and/or path='"+state.currPath+"'.")
@@ -107,6 +112,18 @@ export default new Vuex.Store({
 					checked:false
 				})
 			})
+			fakeProgress(state)
+		},
+		downloadFiles(state) { console.log('store downloadFiles',state.tools)
+			fakeProgress(state)
+		},
+		trackProgress(state) { console.log('trackProgress')
+			fakeProgress(state)
 		}
+	},
+	actions: {
+		/*downloadFiles(state) { console.log('store downloadFiles',state)
+			fakeProgress(state)
+		}*/
 	}
 });
