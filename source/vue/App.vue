@@ -23,7 +23,7 @@ export default {
 		console.log('App mounted')
 	},
 	updated() {
-		console.log('App updated')
+		//console.log('App updated')
 		this.$store.commit('setCurrPath',this.$route.path.slice(1))
 	}
 }

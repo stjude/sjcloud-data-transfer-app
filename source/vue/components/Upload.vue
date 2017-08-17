@@ -84,7 +84,7 @@ export default {
 		console.log('Upload component mounted')
 	},
 	updated() {
-		console.log('Upload component updated')
+		//console.log('Upload component updated')
 	},
 	methods: {
 		setCurrTool(toolName) {
