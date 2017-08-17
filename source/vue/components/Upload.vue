@@ -1,15 +1,15 @@
 <template>
 	<div class='row'>
-		<div class='col-xs-4 leftPanel' style='height:550px; border:1px solid #ececec;'>
-			<table style='width:100%'>
+		<div class='col-xs-4 leftPanel' style='height:550px; border:3px solid #ececec; padding-left: 0px; padding-right: 0px;'>
+			<table style='width:100%; margin-top: 20px'>
 				<thead>
-					<tr style='color:#aaa'>
-						<th style='width:70%'>TOOL</th>
-						<th style='text-align:center;width:30%'>SIZE</th>
+					<tr style='color:#a3a3a3;'>
+						<th style='width:70%;font-size:10pt;'>TOOL</th>
+						<th style='text-align:center;width:30%;font-size:10pt;'>SIZE</th>
 					</tr>
 				</thead>
-				<tbody>
-					<tr v-for='tool in tools' 
+				<tbody style="font-size: 15pt">
+					<tr v-for='tool in tools'
 						v-bind:style='tool.name==currTool.name ? styles.activeTr : styles.inactiveTr' 
 						v-on:click='setCurrTool(tool.name)'>
 						<td v-bind:style=''>{{ tool.name }}</td>
@@ -19,7 +19,7 @@
 			</table>
 		</div>
 		<div class='col-xs-8 rightPanel' style='height:100%;'>
-			<nav-bar></nav-bar>
+			<nav-bar style="margin-top:18px;"></nav-bar>
 			
 			<upload-target 
 				v-show='!hasFiles' 
@@ -43,8 +43,16 @@ import NavBar from './NavBar.vue';
 import FileStatus from './FileStatus.vue';
 import UploadTarget from './UploadTarget.vue';
 
-const activeTool={color:'#000', 'background-color':'rgba(19,129,179,0.3)'}
-const inactiveTool={color:'#aaa', 'background-color':'transparent'}
+const activeTool = {
+	'color' :'#010304',
+	'font-size': '16pt',
+	'background-color':'rgba(19,129,179,0.3)',
+}
+const inactiveTool = {
+	color:'#a3a3a3',
+	'font-size': '16pt',
+	'background-color':'transparent'
+}
 
 export default {
 	components: {
@@ -55,10 +63,22 @@ export default {
 	data() {
 		return {
 			styles: {
-				activeTr: {color:'#000', 'background-color':'rgba(19,129,179,0.3)'},
-				inactiveTr: {color:'#aaa', 'background-color':'transparent'},
-				activeTd: {'text-align':'center', 'border-right':'2px solid #1381B3'},
-				inactiveTd: {'text-align':'center', 'border-right':''}
+				activeTr: {
+					'color':'#010304',
+					'background-color':'rgba(19,129,179,0.3)'
+				},
+				inactiveTr: {
+					'color':'#a3a3a3',
+					'background-color':'transparent'
+				},
+				activeTd: {
+					'text-align':'center',
+					'border-right':'4px solid #1381B3'
+				},
+				inactiveTd: {
+					'text-align':'center',
+					'border-right':''
+				}
 			}
 		}
 	},

@@ -1,5 +1,5 @@
 <template>
-	<div style='display:inline-block; padding-top: 0.5rem; vertical-align:top; font-size: 1.2rem;'>
+	<div style='display:inline-block; padding-top: 0.5rem; vertical-align:top; font-size: 18pt;'>
 		<router-link to='/upload'>
 			<div class='nav-span' v-bind:style='uploadLinkStyle'>Upload</div>
 		</router-link>
@@ -34,7 +34,7 @@ export default {
 .nav-span {
 	display: inline-block;
 	padding: 5px;
-	font-size: 16px;
+	font-size: 18px;
 	color:#000;
 }
 </style>
