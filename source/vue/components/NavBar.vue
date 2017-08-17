@@ -12,20 +12,31 @@
 <script>
 
 
-const active={color:'#000', 'border-bottom':'2px solid #1381B3' }
-const inactive={color:'#aaa','border-bottom': 'none'}
+const active={
+	color:'#000', 
+	'border-bottom':'2px solid #1381B3'
+}
+const inactive={
+	color:'#aaa',
+	'border-bottom': 'none'
+}
 
 export default {
 	data() {
 		return {}
 	},
+	created() { 
+		//console.log('NavBar created')
+	},
 	computed: {
 		uploadLinkStyle() {
-			return this.$route.path=='/upload' ? active : inactive   
+			return this.$store.getters.currPath=='upload' ? active : inactive   
 		},
 		downloadLinkStyle() {
-			return this.$route.path!='/upload' ? active : inactive
+			return this.$store.getters.currPath=='download' ? active : inactive
 		}
+	},
+	methods: {
 	}
 }
 </script>
