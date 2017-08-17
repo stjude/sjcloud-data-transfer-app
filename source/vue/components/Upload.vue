@@ -21,19 +21,22 @@
 		<div class='col-xs-8 rightPanel' style='height:100%;'>
 			<nav-bar style="margin-top:18px;"></nav-bar>
 			
-			<upload-target 
-				v-show='!hasFiles' 
-				style='margin-top:50px'>
-			</upload-target>
-
 			<file-status
+				style='max-height:500px; overflow:scroll;'
 				v-show='hasFiles'>
 			</file-status>
 			
+			<upload-target style='margin-top:50px' v-show='!hasFiles'>
+			</upload-target>
+
 			<div style='position:absolute; bottom:10px; right: 10px; text-align:right'>
 				<button class='btn btn-primary'>{{ submitBtnLabel }}</button>
 				<button class='btn btn-danger' v-on:click='deleteFiles'>Delete</button>
 			</div>
+		</div>
+
+		<div >
+			
 		</div>
 	</div>
 </template>
@@ -85,7 +88,7 @@ export default {
 	computed: {
 		submitBtnLabel() {
 			const path=this.$store.getters.currPath
-			return path[0].toUpperCase() + path.slice(2)
+			return path[0].toUpperCase() + path.slice(1)
 		},
 		currTool() {
 			return this.$store.getters.currTool
