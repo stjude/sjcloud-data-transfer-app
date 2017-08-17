@@ -1,9 +1,7 @@
 <template>
 	<div id='sjcda-container' style='background-color: #fff'>
 		<top-bar></top-bar>
-		
-			<router-view keep-alive class='app-route-placement' style='height:560px;width:840px;'>
-			</router-view>
+		<router-view keep-alive class='app-route-placement' style='height:560px;width:840px;'></router-view>
 	</div>
 </template>
 
