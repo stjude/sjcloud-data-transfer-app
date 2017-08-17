@@ -5,7 +5,7 @@
 		<p>or</p>
 		<p><button class='btn btn-xs'>Select files ...</button></p>
 	</div>-->
-	<dropzone id="myVueDropzone" url="https://httpbin.org/post" v-on:vdropzone-success="showSuccess">
+	<dropzone ref="dz" id='sjcda-dz' url="https://httpbin.org/post" v-on:vdropzone-success="showSuccess">
         <!-- Optional parameters if any! -->
         <input type="hidden" name="token" value="xxx">
     </dropzone>
@@ -18,9 +18,12 @@ export default {
 	components:{
 		Dropzone
 	},
+	props: [
+		'currTool'
+	],
 	methods: {
 		showSuccess() {
-			console.log('yes!!')
+			const files=this.$refs.dz.getAcceptedFiles(); console.log(files)
 		}
 	}
 }

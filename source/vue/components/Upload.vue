@@ -10,10 +10,10 @@
 				</thead>
 				<tbody>
 					<tr v-for='tool in tools' 
-						v-bind:style='tool.name==currTool ? styles.activeTr : styles.inactiveTr' 
+						v-bind:style='tool.name==currTool.name ? styles.activeTr : styles.inactiveTr' 
 						v-on:click='setCurrTool(tool.name)'>
 						<td v-bind:style=''>{{ tool.name }}</td>
-						<td v-bind:style='tool.name==currTool ? styles.activeTd : styles.inactiveTd'>{{ tool.size }} GB</td>
+						<td v-bind:style='tool.name==currTool.name ? styles.activeTd : styles.inactiveTd'>{{ tool.size }} GB</td>
 					</tr>
 				</tbody>
 			</table>
@@ -21,11 +21,12 @@
 		<div class='col-xs-8 rightPanel' style='height:100%;'>
 			<nav-bar></nav-bar>
 			
-			<upload-target v-show='!hasFiles' style='margin-top:50px'></upload-target>
+			<upload-target 
+				v-show='!hasFiles' 
+				style='margin-top:50px'>
+			</upload-target>
 
-			<file-status 
-				v-bind:currTool='currTool' 
-				v-bind:dataKey='dataKey'
+			<file-status
 				v-show='hasFiles'>
 			</file-status>
 			
@@ -41,7 +42,6 @@
 import NavBar from './NavBar.vue';
 import FileStatus from './FileStatus.vue';
 import UploadTarget from './UploadTarget.vue';
-import store from '../store.js'
 
 const activeTool={color:'#000', 'background-color':'rgba(19,129,179,0.3)'}
 const inactiveTool={color:'#aaa', 'background-color':'transparent'}
@@ -54,8 +54,6 @@ export default {
 	},
 	data() {
 		return {
-			currTool: 'Rapid RNASeq',
-			toolsByName: {},
 			styles: {
 				activeTr: {color:'#000', 'background-color':'rgba(19,129,179,0.3)'},
 				inactiveTr: {color:'#aaa', 'background-color':'transparent'},
@@ -65,46 +63,32 @@ export default {
 		}
 	},
 	computed: {
-		dataKey() {
-			return this.$route.path.slice(1)
-		},
 		submitBtnLabel() {
-			return this.$route.path.substr(1,1).toUpperCase() + this.$route.path.slice(2)
+			const path=this.$store.getters.currPath
+			return path[0].toUpperCase() + path.slice(2)
+		},
+		currTool() {
+			return this.$store.getters.currTool
 		},
 		tools() {
-			const lst=[]
-			store.data.tools.forEach((t,i)=>{
-				lst.push({
-					name: t.name,
-					size: t[this.$route.path.slice(1)].reduce((a,b)=>{
-						return {
-							size: a.size+b.size
-						}
-					},{size:0}).size
-				})
-				this.toolsByName[t.name]=t
-			})
-			return lst
+			return this.$store.getters.tools
 		},
 		hasFiles() {
-			const tools=this.tools;
-			const tool=this.toolsByName[this.currTool]
-			const path=this.$route.path.slice(1)
-			return !tool ? false
-				: !tool[path] ? false
-				: !Array.isArray(tool[path]) ? false
-				: tool[path].length
+			return this.$store.getters.currFiles.length
 		}
 	},
 	created() {
 		window.addEventListener('keydown', this.toggleToolRow)
 	},
 	mounted() {
-		console.log('Upload Mounted')
+		console.log('Upload component mounted')
+	},
+	updated() {
+		console.log('Upload component updated')
 	},
 	methods: {
-		setCurrTool(name) {
-			this.currTool=name
+		setCurrTool(toolName) {
+			this.$store.commit('setCurrToolName',toolName)
 		},
 		toggleToolRow(event) {
 			if (event.keyCode==38 || event.keyCode==40) {
@@ -113,11 +97,11 @@ export default {
 				let i=-1
 				this.tools.forEach((t,j)=>{
 					names.push(t.name)
-					if (t.name==this.currTool) i=j;
+					if (t.name==this.currTool.name) i=j;
 				});
 				
-				this.currTool = i<0 || i+incr<0 || i+incr>=names.length ? names[0] 
-					: this.currTool=names[i+incr]
+				const toolName=i<0 || i+incr<0 || i+incr>=names.length ? names[0] : names[i+incr]
+				this.$store.commit('setCurrToolName',toolName)
 			}
 			else if (event.keyCode==37) {
 				this.$router.push('/upload')
@@ -128,11 +112,6 @@ export default {
 		},
 		deleteFiles() {
 
-		}
-	},
-	events:{
-		rerender() {
-			this.$forceUpdate()
 		}
 	}
 }

@@ -2,14 +2,15 @@
 	<div id='sjcda-container' style='background-color: #fff'>
 		<top-bar></top-bar>
 		
-			<router-view keep-alive class='app-route-placement' style='height:560px;width:840px;'>
+			<router-view keep-alive 
+				class='app-route-placement' 
+				style='height:560px;width:840px;'>
 			</router-view>
 	</div>
 </template>
 
 <script>
 import TopBar from './components/TopBar.vue';
-import jquery from 'jquery';
 
 export default {
 	data() {
@@ -20,6 +21,10 @@ export default {
 	},
 	mounted() {
 		console.log('App mounted')
+	},
+	updated() {
+		console.log('App updated')
+		this.$store.commit('setCurrPath',this.$route.path.slice(1))
 	}
 }
 </script>

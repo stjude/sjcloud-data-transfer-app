@@ -26,37 +26,26 @@
 </template>
 
 <script>
-import store from '../store.js'
-
 let i="0"
-let prevTool='Rapid RNASeq'
-let prevPath='/upload'
+let prevTool={}
+let prevPath='upload'
 
 export default {
 	data() {
 		return {}
 	},
 	computed: {
-		tools() {
-			const map={}
-			store.data.tools.forEach(t=>map[t.name]=t)
-			return map
-		},
 		files() {
-			return this.tools[this.currTool][this.dataKey]
+			return this.$store.getters.currFiles
 		}
 	},
-	props: [
-		'currTool',
-		'dataKey'
-	],
 	mounted() {
 		
 	},
 	updated() {
-		if (this.currTool==prevTool && this.$route.path==prevPath) return
-		prevTool=this.currTool
-		prevPath=this.$route.path
+		if (this.$store.currTool==prevTool && this.$store.currPath==prevPath) return
+		prevTool=this.$store.currTool
+		prevPath=this.$store.currPath
 		document.querySelector('#sjcda-file-checkbox-all').checked=false
 	},
 	methods: {
