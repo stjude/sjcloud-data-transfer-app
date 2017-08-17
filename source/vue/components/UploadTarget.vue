@@ -24,6 +24,7 @@ export default {
 	methods: {
 		showSuccess() {
 			const files=this.$refs.dz.getAcceptedFiles(); console.log(files)
+			this.$store.commit('addFiles',{files})
 		}
 	}
 }
@@ -34,5 +35,8 @@ p {
 	width:100%;
 	text-align: center;
 }
-	
+.dropzone {
+	min-height: 0;
+	padding:0;
+}
 </style>

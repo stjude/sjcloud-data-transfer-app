@@ -1,6 +1,7 @@
 import Home from './components/Home.vue'
 import NotFound from './components/NotFound.vue'
 import Upload from './components/Upload.vue'
+import Download from './components/Download.vue'
 
 export default function () {
 	return [{
@@ -11,7 +12,7 @@ export default function () {
 		component: Upload
 	},{
 		path: '/download',
-		component: Upload
+		component: Download
 	},{
 		path: '/',
 		component: Home

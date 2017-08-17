@@ -9,6 +9,7 @@ export default new Vuex.Store({
 		currPath: 'upload',
 		tools: [{
 			name: 'Rapid RNASeq',
+			size: 168,
 			upload: [
 				{name:'file_u1',size:12,status:0,checked:false},
 				{name:'file_u2',size:10,status:0,checked:false},
@@ -18,13 +19,15 @@ export default new Vuex.Store({
 				{name:'file_u6',size:5,status:0,checked:false},
 				{name:'file_u7',size:11,status:0,checked:false}
 			],
-			download: []
+			download: [
+				{name:'file_d1',size:12,status:0,checked:false},
+				{name:'file_d2',size:10,status:0,checked:false},
+				{name:'file_d3',size:8,status:0,checked:false}
+			]
 		},{
 			name: 'WARDEN',
-			upload: [
-				{name:'file_w1',size:9,status:0,checked:false},
-				{name:'file_w2',size:101,status:0,checked:false}
-			],
+			size: 501,
+			upload: [],
 			download: [
 				{name:'file_dw1',size:12,status:0,checked:false},
 				{name:'file_dw2',size:10,status:0,checked:false},
@@ -32,15 +35,28 @@ export default new Vuex.Store({
 			]
 		},{
 			name: 'ChiP-Seq',
+			size: 192,
 			upload: [
+				{name:'file_uc1',size:9,status:0,checked:false},
+				{name:'file_uc2',size:101,status:0,checked:false}
+			],
+			download: [
+				{name:'file_c0',size:12,status:0,checked:false},
+				{name:'file_c1',size:12,status:0,checked:false},
+				{name:'file_c2',size:10,status:0,checked:false},
+				{name:'file_c3',size:8,status:0,checked:false},
+				{name:'file_c4',size:16,status:0,checked:false},
+				{name:'file_c5',size:20,status:0,checked:false},
+				{name:'file_s1',size:12,status:0,checked:false},
+				{name:'file_s2',size:10,status:0,checked:false},
+				{name:'file_s3',size:8,status:0,checked:false},
+				{name:'file_s4',size:16,status:0,checked:false},
+				{name:'file_s5',size:20,status:0,checked:false},
 				{name:'file_s1',size:12,status:0,checked:false},
 				{name:'file_s2',size:10,status:0,checked:false},
 				{name:'file_s3',size:8,status:0,checked:false},
 				{name:'file_s4',size:16,status:0,checked:false},
 				{name:'file_s5',size:20,status:0,checked:false}
-			],
-			download: [
-				{name:'file_sd1',size:12,status:0,checked:false}
 			]
 		}]
 	},
@@ -59,11 +75,7 @@ export default new Vuex.Store({
 			state.tools.forEach((t,i)=>{
 				lst.push({
 					name: t.name,
-					size: t[state.currPath].reduce((a,b)=>{
-						return {
-							size: a.size+b.size
-						}
-					},{size:0}).size
+					size: t.size
 				})
 			})
 			return lst
@@ -81,16 +93,16 @@ export default new Vuex.Store({
 			state.currPath=path
 		},
 		addFiles(state,d) { //toolName,path,files) {
-			const tool= state.tools.filter(t=>t.name==d.toolName)[0];
-			if (!tool || !tool[d.path]) {
-				console.log("Invalid tool name='"+d.toolName+"' and/or path='"+d.path+"'.")
+			const tool= state.tools.filter(t=>t.name==state.currToolName)[0];
+			if (!tool || !tool[state.currPath]) {
+				console.log("Invalid tool name='"+stat.currToolName+"' and/or path='"+state.currPath+"'.")
 				return;
 			}
-			const currFiles=tool[path];
-			files.forEach(f=>{
+			const currFiles=tool[state.currPath];
+			d.files.forEach(f=>{
 				currFiles.push({
 					name:f.name,
-					size:f.size,
+					size:f.size*0.000000001,
 					status:0,
 					checked:false
 				})

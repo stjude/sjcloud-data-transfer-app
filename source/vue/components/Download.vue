@@ -10,9 +10,6 @@
 				v-show='hasFiles'>
 			</file-status>
 			
-			<upload-target style='margin-top:50px' v-show='!hasFiles'>
-			</upload-target>
-
 			<div style='position:absolute; bottom:10px; right: 10px; text-align:right'>
 				<button class='btn btn-primary'>Start</button>
 				<button class='btn btn-danger' v-on:click='deleteFiles'>Delete</button>
@@ -43,14 +40,14 @@ export default {
 		}
 	},
 	mounted() {
-		//console.log('Upload component mounted')
+		//console.log('Download component mounted')
 	},
 	updated() {
 		//console.log('Upload component updated')
 	},
 	methods: {
 		deleteFiles() {
-
+			
 		}
 	}
 }
