@@ -3,9 +3,10 @@
 		<div class='col-xs-12' style='text-align:center;padding-top:20%;'>
 			<h1>Homepage under contruction ...</h1>
 			<div style='font-size:20px'>
-				<router-link to='/upload'>Upload</router-link>
-				<span>&nbsp;&nbsp;&nbsp;</span>
-				<router-link to='/download'>Download</router-link>
+				<div><router-link to='/install'>Install</router-link></div>
+				<div><router-link to='/login'>Log In</router-link></div>
+				<div><router-link to='/upload'>Upload</router-link></div>
+				<div><router-link to='/download'>Download</router-link></div>
 			</div>
 		</div>
 	</div>

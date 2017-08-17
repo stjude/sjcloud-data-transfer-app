@@ -3,7 +3,7 @@
 		<top-bar></top-bar>
 			<router-view keep-alive 
 				class='app-route-placement' 
-				style='height:560px;width:840px;'>
+				style='height:560px;width:900px;'>
 			</router-view>
 	</div>
 </template>
@@ -63,7 +63,7 @@ export default {
 
 <style>
 body {
-	width:850px;
+	width:900px;
 	height:600px;
 	margin:auto;
 	font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
