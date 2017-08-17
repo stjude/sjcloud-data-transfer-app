@@ -21,8 +21,8 @@ winston.info(process.argv);
 
 app.on("ready", () => {
   const mainWindow = new BrowserWindow({
-    width: 850,
-    height: 600,
+    width: 900,
+    height: 642, // 600px + top bar
     frame: true //false
   });
 
