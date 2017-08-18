@@ -53,8 +53,8 @@
 </template>
 
 <script>
-
-var dx = require('../../app/dx');
+// for now, switched this to use global dx as set by source/app/sys.js
+// var dx = require('../../app/dx');
 
 export default {
 	computed: {

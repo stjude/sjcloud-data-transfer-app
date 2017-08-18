@@ -4,14 +4,13 @@ const WebpackNotifierPlugin = require('webpack-notifier')
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
 const ExtractTextPlugin = require("extract-text-webpack-plugin")
 
-module.exports=function (env={}) {
+module.exports=function wpbase(env={}) {
 	return {
 		entry: {
 			app: ['./source/vue/main.js'], 
 			vendor: ['vue','vue-router','jquery'],
 			//less: ['./source/client/css/app.less']
 	    },
-		//target: 'node',
 		output:{
 			path: __dirname+'/app/bin',
 			filename:'[name].bundle.js',
@@ -19,19 +18,13 @@ module.exports=function (env={}) {
 			jsonpFunction: 'sjcdappJsonp' // for dynamic import
 		},
 		resolve: {
-	      modules: ['node_modules', 'resources/vue', 'vue/', 'vue/vp', 'tests/'],
+	      modules: ['node_modules'],
 	      extensions: ['.js', '.vue', '.json'],
 	      alias: {
 		    vue: 'vue/dist/vue.js'
 		  }
 	    },
-	    /*externals: [
-	    	'child_process',
-	    	'fs',
-	    	'os'
-	    ],*/
 		module:{
-			noParse: [/\.\.\/\.\.\/app\//],
 			rules:[{
 				test: /\.vue$/, 
 	        	loader: 'vue-loader' 
@@ -73,7 +66,6 @@ module.exports=function (env={}) {
 
 			
 		plugins:[
-			//new webpack.IgnorePlugin(/jquery/),
 			new webpack.optimize.ModuleConcatenationPlugin(),
 			new webpack.optimize.CommonsChunkPlugin({name:"vendor", filename:"vendor.bundle.js"}),
 	     	new ExtractTextPlugin({filename:"app.bundle.css"}),

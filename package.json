@@ -3,8 +3,9 @@
   "version": "1.0.0a",
   "description": "The St. Jude Cloud desktop app, designed for getting data in the St. Jude Cloud easily and reliably.",
   "scripts": {
-    "vuewp": "electron app/electron.js",
+    "start": "electron app/electron.js",
     "www": "webpack --config=webpack.config.js --watch --progress --colors",
+    "sys": "webpack --config=webpack.config.sys.js --watch --progress --colors",
     "postinstall": "install-app-deps",
     "pack": "build --dir",
     "dist:mac": "build -m",
@@ -42,6 +43,7 @@
     "file-loader": "^0.11.2",
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
+    "null-loader": "^0.1.1",
     "style-loader": "^0.18.2",
     "url-loader": "^0.5.9",
     "vue": "^2.4.2",
