@@ -9,8 +9,9 @@ module.exports=function (env={}) {
 		entry: {
 			app: ['./source/vue/main.js'], 
 			vendor: ['vue','vue-router','jquery'],
-			less: ['./source/client/css/app.less']
+			//less: ['./source/client/css/app.less']
 	    },
+		target: 'node',
 		output:{
 			path: __dirname+'/app/bin',
 			filename:'[name].bundle.js',
