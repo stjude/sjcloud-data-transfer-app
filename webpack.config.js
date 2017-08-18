@@ -11,7 +11,7 @@ module.exports=function (env={}) {
 			vendor: ['vue','vue-router','jquery'],
 			//less: ['./source/client/css/app.less']
 	    },
-		target: 'node',
+		//target: 'node',
 		output:{
 			path: __dirname+'/app/bin',
 			filename:'[name].bundle.js',
@@ -25,7 +25,13 @@ module.exports=function (env={}) {
 		    vue: 'vue/dist/vue.js'
 		  }
 	    },
+	    /*externals: [
+	    	'child_process',
+	    	'fs',
+	    	'os'
+	    ],*/
 		module:{
+			noParse: [/\.\.\/\.\.\/app\//],
 			rules:[{
 				test: /\.vue$/, 
 	        	loader: 'vue-loader' 
