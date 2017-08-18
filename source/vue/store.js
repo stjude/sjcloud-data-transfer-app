@@ -96,11 +96,13 @@ export default new Vuex.Store({
 		},
 		currFiles(state,getters) {
 			const tool=getters.currTool;
-			return !tool ? [] : tool[state.currPath]
+			return !tool || !Array.isArray(tool[state.currPath]) ? [] 
+				: tool[state.currPath] 
 		},
 		checkedFiles(state,getters) {
 			const tool=getters.currTool;
-			return !tool ? [] : tool[state.currPath].filter(f=>f.checked)
+			return !tool || !Array.isArray(tool[state.currPath]) ? [] 
+				: tool[state.currPath].filter(f=>f.checked)
 		}
 	},
 	mutations: {
