@@ -6,6 +6,11 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
 	state: {
+		/** Install **/
+		installingDxToolkit: false,
+		downloadStatus: "Downloading...",
+
+		/** Upload/Download **/
 		currToolName: 'Rapid RNASeq',
 		currPath: 'upload',
 		tools: [{
@@ -62,6 +67,14 @@ export default new Vuex.Store({
 		}]
 	},
 	getters: {
+		/** Install **/
+		installingDxToolkit(state, getters) {
+			return state.installingDxToolkit;
+		}, 
+		downloadStatus(state, getters) {
+			return state.downloadStatus;
+		},
+		/** Upload/Download **/
 		currTool(state) {
 			return state.tools.filter(t=>t.name==state.currToolName)[0]
 		},	
@@ -91,6 +104,15 @@ export default new Vuex.Store({
 		}
 	},
 	mutations: {
+		/** Install **/
+		setInstallingDxToolkit(state, installing) {
+			state.installingDxToolkit = installing;	
+		},
+		setDownloadStatus(state, status) {
+			state.downloadStatus = status;
+		},
+
+		/** Upload/Download **/
 		setCurrToolName(state,toolName) {
 			state.currToolName=toolName
 		},
