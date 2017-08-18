@@ -6,8 +6,10 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
 	state: {
+		environment: 'dev',
+
 		/** Install **/
-		installingDxToolkit: false,
+		installingDxToolkit: "waiting",
 		downloadStatus: "Downloading...",
 
 		/** Upload/Download **/
@@ -67,6 +69,11 @@ export default new Vuex.Store({
 		}]
 	},
 	getters: {
+		/** Global **/
+		environment(state, getters) {
+			return state.environment;
+		},
+		
 		/** Install **/
 		installingDxToolkit(state, getters) {
 			return state.installingDxToolkit;
@@ -74,6 +81,7 @@ export default new Vuex.Store({
 		downloadStatus(state, getters) {
 			return state.downloadStatus;
 		},
+
 		/** Upload/Download **/
 		currTool(state) {
 			return state.tools.filter(t=>t.name==state.currToolName)[0]

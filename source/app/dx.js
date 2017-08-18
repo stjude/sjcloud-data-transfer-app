@@ -56,9 +56,9 @@ module.exports.install = (updateProgress, failProgress, callback) => {
   if (platform == "darwin" || platform == "linux") {
     const dxTarPath = path.join(tmpdir, "dx-toolkit.tar.gz");
     const dxFolderPath = utils.getDXToolkitDir();
-    updateProgress("30%", "Downloading dx-toolkit...");
+    updateProgress("30%", "Downloading...");
     utils.downloadFile(getDxDownloadUrlFromPlatform(platform), dxTarPath, () => {
-      updateProgress("60%", "Verifying dx-toolkit...");
+      updateProgress("60%", "Verifying...");
       // NOTE: I unzip to the parent directory because
       // the unzip creates a structure like dx-toolkit/dx-toolkit/...
       utils.computeSHA256(dxTarPath, (err, shasum) => {
@@ -72,7 +72,7 @@ module.exports.install = (updateProgress, failProgress, callback) => {
           return callback("SHA sum doesn't match!", null);
         }
     
-        updateProgress("90%", "Extracting dx-toolkit...");
+        updateProgress("90%", "Extracting...");
         const parentDir = path.dirname(dxFolderPath);
         utils.untarTo(dxTarPath, parentDir, function(err, res) {
           if (err) {

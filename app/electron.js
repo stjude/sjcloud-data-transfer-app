@@ -22,16 +22,18 @@ winston.info(process.argv);
 app.on("ready", () => {
   const mainWindow = new BrowserWindow({
     width: 900,
-    height: 642, // 600px + top bar
-    frame: true //false
+    height: 642,
+    frame: true
   });
 
+  mainWindow.setResizable(false);
+  
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
 
   mainWindow.loadURL(`file://${__dirname}/index.html`);
-})
+});
 
 app.on("window-all-closed", () => {
   if (process.platform !== "darwin") {

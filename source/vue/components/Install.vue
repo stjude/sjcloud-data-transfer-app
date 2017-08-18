@@ -1,11 +1,19 @@
 <template>
 	<div class="row">
+		<div class="dev-box" v-show="environment == 'dev'">
+			<select @change="setInstallingDxToolkit($event.target.value)">
+				<option>waiting</option>
+				<option>installing</option>
+				<option>completed</option>
+				<option>failed</option>
+			</select>
+		</div>
 		<div class='col-xs-12 main'>
 			<div class="theater-heading">
-				<h1>Install</h1>
+				<h1>Install</h1> 
 				<hr>
 			</div>
-			<div v-show="!installingDxToolkit" class='theater-body'>
+			<div v-show="installingDxToolkit == 'waiting' " class='theater-body'>
 				<div class="col-xs-6">
 					<img src="http://via.placeholder.com/350x300">
 				</div>
@@ -16,7 +24,7 @@
 					<div @click="downloadDxToolkit()" class="btn btn-large btn-stjude">Install</div>
 				</div>
 			</div>
-			<div v-show="installingDxToolkit" class='theater-body'>
+			<div v-show="installingDxToolkit == 'installing'" class='theater-body'>
 				<div class="col-xs-12">
 					<div id="status-text">{{downloadStatus}}</div>
 					<div class="sk-circle">
@@ -33,6 +41,22 @@
 						<div class="sk-circle11 sk-child"></div>
 						<div class="sk-circle12 sk-child"></div>
 					</div>	
+				</div>
+			</div>
+			<div v-show="installingDxToolkit == 'completed'" class='theater-body'>
+				<div class="col-xs-12">
+					<div id="status-text">Success!</div>
+					<div style="margin-top: 20px">
+						<img src="http://via.placeholder.com/225x225">
+					</div>
+				</div>
+			</div>
+			<div v-show="installingDxToolkit == 'failed'" class='theater-body'>
+				<div class="col-xs-12">
+					<div id="status-text">Failure!</div>
+					<div style="margin-top: 20px">
+						<img src="http://via.placeholder.com/225x225">
+					</div>
 				</div>
 			</div>
 		</div>
@@ -54,12 +78,15 @@
 
 <script>
 // for now, switched this to use global dx as set by source/app/sys.js
-// var dx = require('../../app/dx');
+
 
 export default {
 	computed: {
 		installingDxToolkit() {
 			return this.$store.getters.installingDxToolkit;
+		},
+		environment() {
+			return this.$store.getters.environment;
 		},
 		downloadStatus() {
 			return this.$store.getters.downloadStatus;
@@ -73,8 +100,29 @@ export default {
 			this.$store.commit('setDownloadStatus', status);
 		},
 		downloadDxToolkit() {
-			this.$store.commit('setInstallingDxToolkit', true);
-			console.log(dx);
+			this.$store.commit('setInstallingDxToolkit', "installing");
+			var that = this;
+
+			window.dx.install(function (percent, text) {
+				that.setDownloadStatus(text);
+			}, 
+			function (text) {
+				that.setDownloadStatus(text);
+			},
+			function (err, result) {
+				if (err) {
+					that.$store.commit('setInstallingDxToolkit', "failed");
+				} else {
+					that.$store.commit('setInstallingDxToolkit', "completed");
+					console.log("Sending to /")
+					setTimeout(function (){
+						console.log("Logging in")
+						that.$router.push('login');
+					}, 4000);
+				}
+
+				return result;
+			});
 		}
 	}
 }
@@ -83,6 +131,13 @@ export default {
 <style scoped>
 	.row {
 		margin: 0px;
+	}
+
+	.dev-box {
+		position: absolute;
+		left: 750px;
+		top: 20px;
+		z-index: 1;
 	}
 
 	.main {
