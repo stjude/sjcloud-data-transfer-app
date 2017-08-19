@@ -4,6 +4,7 @@ const path = require("path");
 const https = require("https");
 const mkdirp = require("mkdirp");
 const crypto = require("crypto");
+const shell = require('electron').shell;
 const { exec, execSync } = require("child_process");
 
 _sjcloud_homedir     = path.join( os.homedir(), ".sjcloud" );
@@ -118,6 +119,10 @@ module.exports.computeSHA256 = (filepath, callback) => {
 		return callback(null, result);
 	});
 };
+
+module.exports.openExternal = function(url) {
+	shell.openExternal(url);
+}
 
 
 module.exports._sjcloud_homedir = _sjcloud_homedir

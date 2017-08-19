@@ -12,6 +12,9 @@ export default new Vuex.Store({
 		installingDxToolkit: "waiting",
 		downloadStatus: "Downloading...",
 
+		/** Login **/
+		loginState: "waiting",
+
 		/** Upload/Download **/
 		currToolName: 'Rapid RNASeq',
 		currPath: 'upload',
@@ -73,7 +76,7 @@ export default new Vuex.Store({
 		environment(state, getters) {
 			return state.environment;
 		},
-		
+
 		/** Install **/
 		installingDxToolkit(state, getters) {
 			return state.installingDxToolkit;
@@ -81,6 +84,11 @@ export default new Vuex.Store({
 		downloadStatus(state, getters) {
 			return state.downloadStatus;
 		},
+
+		/** Login **/
+		loginState(state, getters) {
+			return state.loginState;
+		}, 
 
 		/** Upload/Download **/
 		currTool(state) {

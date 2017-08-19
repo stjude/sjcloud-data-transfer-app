@@ -11,10 +11,9 @@
 
 // supress warning in dev environment
 if (window.location.host=='localhost:3057') {
-	window.dx={}
+	window.dx = {}
+	//window.utils = {}
+} else {
+	window.dx = require('./dx');
+	//window.utils = require("./utils");
 }
-else {
-	window.dx=require('./dx');
-	console.log(window.dx)
-}
-

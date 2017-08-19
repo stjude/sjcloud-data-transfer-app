@@ -27,7 +27,7 @@ app.on("ready", () => {
   });
 
   mainWindow.setResizable(false);
-  
+
   mainWindow.on("closed", () => {
     mainWindow = null;
   });
