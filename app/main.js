@@ -8,9 +8,9 @@ const path = require("path");
 const os = require("os");
 const winston = require("winston");
 
-const ui = require("./ui");
-const state = require("./state");
-const protocolhandler = require("./protocol-handler");
+const ui = require("./bin/backend/ui");
+const state = require("./bin/backend/state");
+const protocolhandler = require("./bin/backend/protocol");
 
 if (os.platform() == "darwin" || os.platform == "linux") {
   winston.add(winston.transports.File, { filename: path.join(process.env.HOME, ".sjcloud/log.txt") });
@@ -25,7 +25,8 @@ winston.info(process.argv);
 app.on("ready", () => {
   ui.createWindow( (mw) => {
     mainWindow = mw;
-    mainWindow.refreshState(); 
+    mainWindow.loadURL(`file://${__dirname}/index.html`);
+
     var template = [{
       label: "SJCPUploader",
       submenu: [
@@ -58,7 +59,6 @@ app.on("activate", () => {
   if (mainWindow === null) {
     ui.createWindow( (mw) => {
       mainWindow = mw;
-      mainWindow.refreshState(); 
     });
   }
 });

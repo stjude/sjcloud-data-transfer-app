@@ -3,7 +3,7 @@
   "version": "1.0.0a",
   "description": "The St. Jude Cloud desktop app, designed for getting data in the St. Jude Cloud easily and reliably.",
   "scripts": {
-    "start": "electron app/electron.js",
+    "start": "electron app/main.js",
     "www": "webpack --config=webpack.config.js --watch --progress --colors",
     "sys": "webpack --config=webpack.config.sys.js --watch --progress --colors",
     "postinstall": "install-app-deps",
@@ -11,7 +11,7 @@
     "dist:mac": "build -m",
     "dist:linux": "build -l",
     "dist:win": "build -w",
-    "postdist:win": "source\\etc\\change_manifest.bat"
+    "postdist:win": "scripts\\change_manifest.bat"
   },
   "author": "Clay McLeod, Andrew Frantz, Edgar Sioson",
   "dependencies": {

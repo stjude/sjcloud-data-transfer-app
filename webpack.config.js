@@ -1,80 +1,104 @@
-const webpack=require('webpack')
-const path = require('path')
-const WebpackNotifierPlugin = require('webpack-notifier')
-const BrowserSyncPlugin = require('browser-sync-webpack-plugin')
-const ExtractTextPlugin = require("extract-text-webpack-plugin")
+const path = require('path');
+const webpack=require('webpack');
+const WebpackNotifierPlugin = require('webpack-notifier');
+const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
+const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
-module.exports=function wpbase(env={}) {
-	return {
-		entry: {
-			app: ['./source/vue/main.js'], 
-			vendor: ['vue','vue-router','jquery'],
-			//less: ['./source/client/css/app.less']
-	    },
-		output:{
-			path: __dirname+'/app/bin',
-			filename:'[name].bundle.js',
-			publicPath:'bin/',
-			jsonpFunction: 'sjcdappJsonp' // for dynamic import
-		},
-		resolve: {
-	      modules: ['node_modules'],
-	      extensions: ['.js', '.vue', '.json'],
-	      alias: {
-		    vue: 'vue/dist/vue.js'
-		  }
-	    },
-		module:{
-			rules:[{
+const common = {
+	module: {
+		rules:[
+			{
 				test: /\.vue$/, 
-	        	loader: 'vue-loader' 
-	        },{
+        		loader: 'vue-loader' 
+        	}, {
 				test:/\.css$/,
-				use: [{
-					loader: "style-loader"
-				},{
-					loader: "css-loader"
-				}]
-			},{
+				use: [
+					{ loader: "style-loader" }, 
+					{ loader: "css-loader" }
+				]
+			}, {
 				test: /\.js$/,
-				use: [{
-					loader: 'babel-loader',
-					options: { 
-						presets: [
-							['es2015', {modules: false}]
-						], 
-						plugins: ['syntax-dynamic-import'] 
-					}
-				}]
-			},{ 
-	          test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-	          loader: "url-loader?limit=10000&mimetype=application/font-woff"
-	        },{ 
-	          test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
-	          loader: "file-loader"
-	        },{
-	          test: /\.less$/,
-	          use: ExtractTextPlugin.extract({
-	            fallback: "style-loader",
-	            use: env.NODE_ENV === 'production' ?
-	                  "css-loader?minimize!less-loader" :
-	                  "css-loader!less-loader"
-	          })
-	      }]
-		},
-		devtool:'source-map',
-
-			
-		plugins:[
-			new webpack.optimize.ModuleConcatenationPlugin(),
-			new webpack.optimize.CommonsChunkPlugin({name:"vendor", filename:"vendor.bundle.js"}),
-	     	new ExtractTextPlugin({filename:"app.bundle.css"}),
-			new BrowserSyncPlugin({
-		    	host: 'localhost', // replace this with your hostname
-		        port: 3057,
-		        server: { baseDir: ['app'] }
-		    }),
-			new WebpackNotifierPlugin()
+				use: [
+						{
+							loader: 'babel-loader',
+							options: { 
+								presets: [ ['es2015', { modules: false } ] ],
+								plugins: ['syntax-dynamic-import'] 
+							}
+						}
+					]
+			}, {
+				test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+				loader: "url-loader?limit=10000&mimetype=application/font-woff"
+			}, {
+				test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
+				loader: "file-loader"
+			}, {
+				test: /\.less$/,
+				use: ExtractTextPlugin.extract({
+					fallback: "style-loader",
+					// use: env.NODE_ENV === 'production' ? "css-loader?minimize!less-loader" : "css-loader!less-loader"
+					use: "css-loader?minimize!less-loader"
+				})
+			}
 		]
+	},
+	resolve: {
+		modules: ['node_modules'],
+		extensions: ['.js', '.vue', '.json'],
+		alias: {
+			vue: 'vue/dist/vue.js'
+		}
 	}
 }
+
+const frontend = {
+	entry: {
+		app: ['./src/vue/main.js'], 
+		vendor: ['vue','vue-router','jquery'],
+		less: ['./src/client/css/app.less']
+	},
+	output:{
+		path: __dirname + '/app/bin/frontend',
+		filename:'[name].bundle.js',
+		publicPath:'bin/frontend/',
+		jsonpFunction: 'sjcdappJsonp'
+	},
+	devtool: 'source-map',
+	plugins: [
+		new webpack.optimize.ModuleConcatenationPlugin(),
+		new webpack.optimize.CommonsChunkPlugin({
+			name: "vendor",
+			filename: "vendor.bundle.js"
+		}),
+     	new ExtractTextPlugin({
+     		filename: "app.bundle.css"
+     	}),
+		new BrowserSyncPlugin({
+	    	host: 'localhost',
+	        port: 3057,
+	        server: { baseDir: ['app'] }
+	    }),
+		new WebpackNotifierPlugin()
+	]
+}
+
+//const backend = {
+//	target: 'node',
+//	entry: './source/app/sys.js',
+//	output: {
+//		path: __dirname + '/app/bin/',
+//		filename: 'backend.bundle.js',
+//		publicPath: 'bin/',
+//		jsonpFunction: 'sjcdsysJsonp'
+//	},
+//	devtool: 'source-map',
+//	plugins: [
+//		new webpack.optimize.ModuleConcatenationPlugin()
+//	]
+//}
+
+module.exports = [
+    Object.assign({} , common, frontend)
+    //Object.assign({} , common, backend)
+]
