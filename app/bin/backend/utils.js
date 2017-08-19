@@ -4,8 +4,9 @@ const path = require("path");
 const https = require("https");
 const mkdirp = require("mkdirp");
 const crypto = require("crypto");
-const shell = require('electron').shell;
 const { exec, execSync } = require("child_process");
+const shell = require("electron").shell;
+
 
 _sjcloud_homedir     = path.join( os.homedir(), ".sjcloud" );
 _dx_toolkit_dir      = path.join( _sjcloud_homedir, "dx-toolkit" );
@@ -120,10 +121,9 @@ module.exports.computeSHA256 = (filepath, callback) => {
 	});
 };
 
-module.exports.openExternal = function(url) {
+module.exports.openExternal = function (url) {
 	shell.openExternal(url);
 }
-
 
 module.exports._sjcloud_homedir = _sjcloud_homedir
 module.exports._dx_toolkit_dir = _dx_toolkit_dir
