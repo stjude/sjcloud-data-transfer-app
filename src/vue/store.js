@@ -130,6 +130,11 @@ export default new Vuex.Store({
 			state.downloadStatus = status;
 		},
 
+		/** Login **/
+		setLoginState(state, status) {
+			state.loginState = status;
+		},
+
 		/** Upload/Download **/
 		setCurrToolName(state,toolName) {
 			state.currToolName=toolName

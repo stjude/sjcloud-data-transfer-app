@@ -26,3 +26,20 @@ module.exports.createWindow = (callback) => {
 
   return callback(mainWindow);
 };
+
+
+module.exports.createOauthWindow = (callback) => {
+	RemoteBrowserWindow = require('electron').remote.BrowserWindow;
+	loginWindow = new RemoteBrowserWindow({
+		width: 1080,
+		height: 960,
+		frame: true,
+		webPreferences: {
+			nodeIntegration: false
+	    }
+	});
+
+	loginWindow.loadURL("https://platform.dnanexus.com/login?scope=%7B%22full%22%3A+true%7D&redirect_uri=https%3A%2F%2Flocalhost%3A4433%2Fauthcb&client_id=sjcloud-desktop-dev");
+	loginWindow.show();
+	return callback(loginWindow);
+}

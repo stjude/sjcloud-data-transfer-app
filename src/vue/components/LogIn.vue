@@ -3,6 +3,9 @@
 		<div class="dev-box" v-show="environment == 'dev'">
 			<b>State:</b> {{loginState}}
 			<select @change="setLoginState($event.target.value)">
+				<option>waiting</option>
+				<option>completed</option>
+				<option>failed</option>
 			</select>
 		</div>
 		<div class='col-xs-12 main'>
@@ -70,7 +73,9 @@ export default {
 			this.$store.commit('setLoginState', state);
 		},
 		login() {
-			window.location.href = "https://platform.dnanexus.com/login?scope=%7B%22full%22%3A+true%7D&redirect_uri=https%3A%2F%2Flocalhost%3A4433%2Fauthcb&client_id=sjcloud-desktop-dev"
+			window.oauth.waitForCode(function(err, code) {
+				console.log("Code inside: " + code);
+			});
 		}
 	}
 }

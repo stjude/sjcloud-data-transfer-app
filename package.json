@@ -18,8 +18,10 @@
     "async": "^2.4.1",
     "bootstrap": "^3.3.7",
     "electron": "~1.6.2",
+    "express": "^4.15.4",
     "jquery": "^3.2.1",
     "mkdirp": "^0.5.1",
+    "pem": "^1.9.7",
     "spinkit": "^1.2.5",
     "todc-bootstrap": "^3.3.7-3.3.13",
     "winston": "^2.3.1"
