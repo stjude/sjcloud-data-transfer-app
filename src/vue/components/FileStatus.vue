@@ -1,5 +1,5 @@
 <template>
-	<div style='height:400px; overflow:scroll; margin-top:15px; border-bottom:1px solid #ececec'>
+	<div class="rightPanel" style=''>
 		<table style='width:100%;'>
 			<thead>
 				<tr style='color:#000; background-color:#ececec'>
@@ -70,6 +70,14 @@ export default {
 </script>
 
 <style>
+.rightPanel {
+	height: 400px;
+	overflow: scroll;
+	margin-top: 15px;
+	//border-bottom: 1px solid #ececec;
+	max-height: 500px;
+}
+
 .rightPanel th {
 	padding:10px;
 	border: 2px solid #ececec;

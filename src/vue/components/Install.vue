@@ -163,7 +163,7 @@ export default {
 	}
 
 	.theater-body {
-		margin: 35px 45px 0px 45px;
+		margin: 35px 40px 0px 45px;
 		text-align: center;
 		font-style: 'Open Sans', 'Helvetica Neue';
 		font-size: 24px;

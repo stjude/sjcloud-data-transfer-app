@@ -1,24 +1,25 @@
 <template>
-	<div class='leftPanel' style='height:550px; border:3px solid #ececec; padding-left: 0px; padding-right: 0px;'>
-		<table style='width:100%; margin-top: 20px'>
+	<div class='leftPanel'>
+		<table> 
 			<thead>
-				<tr style='color:#a3a3a3;'>
-					<th style='width:70%;font-size:10pt;'>TOOL</th>
-					<th style='text-align:center;width:30%;font-size:10pt;'>SIZE</th>
+				<tr>
+					<th style='width:70%'>TOOL</th>
+					<th style='width:30%; text-align: right;'>SIZE</th>
 				</tr>
 			</thead>
-			<tbody style="font-size: 15pt">
+			<tbody>
 				<tr v-for='tool in tools'
 					v-bind:style='tool.name==currTool.name ? styles.activeTr : styles.inactiveTr' 
 					v-on:click='setCurrTool(tool.name)'>
 					<td v-bind:style=''>{{ tool.name }}</td>
-					<td v-bind:style='tool.name==currTool.name ? styles.activeTd : styles.inactiveTd'>{{ tool.size }} GB</td>
+					<td v-bind:style='tool.name==currTool.name ? styles.activeTd : styles.inactiveTd' style="text-align: right">{{ tool.size }} GB</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
 </template>
 <script>
+
 const activeTool = {
 	'color' :'#010304',
 	'font-size': '16pt',
@@ -36,7 +37,7 @@ export default {
 			styles: {
 				activeTr: {
 					'color':'#010304',
-					'background-color':'rgba(19,129,179,0.3)'
+					'background-color':'rgba(145,202,251,0.3)'
 				},
 				inactiveTr: {
 					'color':'#a3a3a3',
@@ -70,13 +71,37 @@ export default {
 		}
 	}
 }
-
 </script>
 
 <style scoped>
+.leftPanel {
+	height: 560px;
+	border:3px solid #ececec;
+	padding: 0px;
+}
+
+.leftPanel table {
+	width:100%;
+	margin-top: 20px;
+}
+
+.leftPanel table thead {
+	font-size: 10pt;
+	color:#a3a3a3;
+}
+
+.leftPanel table tbody {
+	font-size: 14pt;
+}
+
+.leftPanel table tbody tr {
+	height: 70px;
+}
+
 th {
 	padding: 10px;
 }
+
 td {
 	padding: 10px;
 	cursor: pointer;

@@ -1,24 +1,19 @@
 <template>
 	<div class='row'>
-		<div class='col-xs-4'>
+		<div class='col-xs-4 left-panel-container'>
 			<left-panel></left-panel>
 		</div>
 		
-		<div class='col-xs-8 rightPanel' style='height:100%;'>
-			<nav-bar style="margin-top:18px;"></nav-bar>
-			
-			<file-status
-				style='max-height:500px; overflow:scroll;'
-				v-show='hasFiles'>
-			</file-status>
-			
-			<div style='position:absolute; bottom:10px; right: 10px; text-align:right'>
-				<button class='btn btn-primary' 
+		<div class='col-xs-8 right-panel-container'>
+			<nav-bar></nav-bar>
+			<file-status v-show='hasFiles'></file-status>
+			<div class="button-bar">
+				<button class='btn btn-primary btn-stjude' 
 					v-bind:disabled='!checkedFiles.length'
 					v-on:click='downloadFiles'>
 					Download
 				</button>
-				<button class='btn btn-danger' v-on:click='deleteFiles'>Delete</button>
+				<button class='btn btn-danger btn-stjude-warning' v-on:click='deleteFiles'>Delete</button>
 			</div>
 		</div>
 	</div>
@@ -69,5 +64,20 @@ export default {
 .row {
 	margin-left:0;
 	margin-right:0;
+}
+
+.left-panel-container {
+	padding: 0px;
+}
+
+.right-panel-container {
+	height: 100%;
+}
+
+.button-bar {
+	position: absolute;
+	bottom: 10px;
+	right: 10px;
+	text-align: right;
 }
 </style>

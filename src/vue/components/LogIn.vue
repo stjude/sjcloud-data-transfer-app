@@ -89,10 +89,13 @@
 					<div style="margin-top: 20px">
 						<img src="http://via.placeholder.com/225x225">
 					</div>
+					<div style="margin-top: 20px">
+						<div @click="external(false)" class="btn btn-large btn-stjude-warning" style="margin-top:20px">Retry</div>
+					</div>
 				</div>
 			</div>
 		</div>
-		<div class='col-xs-12 footer'>
+		<div v-show="loginState != 'failed'" class='col-xs-12 footer'>
 			<div class='progress'>
 				<div class='progress-bar' style='width: 100%'></div>
 				<div class='progress-node progress-node-active'>1</div>
@@ -139,9 +142,11 @@ export default {
 				console.log("Code inside: " + code);
 			});
 		},
-		external() {
+		external(openURL=true) {
 			this.$store.commit('setLoginState', 'token');
-			window.utils.openExternal("https://platform.dnanexus.com/profile/");
+			if (openURL) {
+				window.utils.openExternal("https://platform.dnanexus.com/profile/");
+			}
 		},
 		validate() {
 			this.$store.commit('setLoginState', 'validating');

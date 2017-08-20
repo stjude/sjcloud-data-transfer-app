@@ -1,5 +1,5 @@
 <template>
-	<div style='display:inline-block; padding-top: 0.5rem; vertical-align:top; font-size: 18pt;'>
+	<div class="nav-bar">
 		<router-link to='/upload'>
 			<div class='nav-span' v-bind:style='uploadLinkStyle'>Upload</div>
 		</router-link>
@@ -11,11 +11,11 @@
 
 <script>
 
-
 const active={
 	color:'#000', 
-	'border-bottom':'2px solid #1381B3'
+	'border-bottom':'2px solid #1381b3'
 }
+
 const inactive={
 	color:'#aaa',
 	'border-bottom': 'none'
@@ -42,9 +42,18 @@ export default {
 </script>
 
 <style>
+.nav-bar {
+	display: inline-block;
+	margin-top: 16px;
+	padding-top: 0.5rem;
+	vertical-align: top;
+	font-size: 18pt;
+} 
+
 .nav-span {
 	display: inline-block;
 	padding: 5px;
+	height: 33px;
 	font-size: 18px;
 	color:#000;
 }
