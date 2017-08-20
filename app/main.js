@@ -62,3 +62,12 @@ app.on("activate", () => {
     });
   }
 });
+
+app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+  if (url.startsWith("https://localhost:4433/authcb?code=")) {
+    event.preventDefault();
+    callback(true);
+  } else {
+    callback(false);
+  }
+});

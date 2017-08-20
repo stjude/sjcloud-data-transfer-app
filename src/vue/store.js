@@ -13,7 +13,8 @@ export default new Vuex.Store({
 		downloadStatus: "Downloading...",
 
 		/** Login **/
-		loginState: "waiting",
+		loginState: "waiting-2",
+		token: "",
 
 		/** Upload/Download **/
 		currToolName: 'Rapid RNASeq',
@@ -89,6 +90,9 @@ export default new Vuex.Store({
 		loginState(state, getters) {
 			return state.loginState;
 		}, 
+		token(state, getters) {
+			return state.token;
+		}, 
 
 		/** Upload/Download **/
 		currTool(state) {
@@ -133,6 +137,9 @@ export default new Vuex.Store({
 		/** Login **/
 		setLoginState(state, status) {
 			state.loginState = status;
+		},
+		setToken(state, token) {
+			state.token = token;
 		},
 
 		/** Upload/Download **/
