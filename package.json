@@ -17,17 +17,30 @@
   "author": "Clay McLeod, Andrew Frantz, Edgar Sioson",
   "build": {
   	"appId": "org.stjude.cloud",
-  	"linux": {
-  	  "target": [
-  		"AppImage",
-  		"deb"
-  	  ]
-  	},
-  	"win": {
-  	  "target": "NSIS",
-  	  "icon": "build/icon.ico"
-  	}
+    "dmg": {
+      "contents": [
+        {
+          "x": 110,
+          "y": 150
+        },
+        {
+          "x": 240,
+          "y": 150,
+          "type": "link"
+        }
+      ]
     },
+    "linux": {
+      "target": [
+        "AppImage",
+        "deb"
+      ]
+    },
+    "win": {
+      "target": "NSIS",
+      "icon": "build/icon.ico"
+    }
+  },
   "dependencies": {
     "async": "^2.4.1",
     "bootstrap": "^3.3.7",
