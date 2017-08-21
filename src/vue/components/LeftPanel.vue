@@ -63,6 +63,9 @@ export default {
 		},
 		tools() {
 			return this.$store.getters.tools
+		},
+		environment() {
+			return this.$store.getters.environment
 		}
 	},
 	methods: {
@@ -71,6 +74,8 @@ export default {
 		}
 	}
 }
+
+
 </script>
 
 <style scoped>

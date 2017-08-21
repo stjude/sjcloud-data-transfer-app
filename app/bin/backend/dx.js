@@ -184,3 +184,23 @@ module.exports.uploadFile = (file, project, callback) => {
     });
   });
 };
+
+module.exports.getToolsInformation = function (callback) {
+	module.exports.listProjects(function (err, results) {
+		console.log(results);
+		
+		var results = [];
+		results.forEach(function (elem) {
+			var item = {
+				name: elem.project_name,
+				size: 0,
+				uploads: [],
+				downloads: []
+			}
+
+			results.append(item);
+		});
+
+		return callback(results);
+	});
+};

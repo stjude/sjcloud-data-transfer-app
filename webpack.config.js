@@ -38,7 +38,8 @@ const common = {
 				use: ExtractTextPlugin.extract({
 					fallback: "style-loader",
 					// use: env.NODE_ENV === 'production' ? "css-loader?minimize!less-loader" : "css-loader!less-loader"
-					use: "css-loader?minimize!less-loader"
+					// use: "css-loader?minimize!less-loader"
+					use: "css-loader!less-loader"
 				})
 			}
 		]
@@ -56,7 +57,7 @@ const frontend = {
 	entry: {
 		app: ['./src/vue/main.js'], 
 		vendor: ['vue','vue-router','jquery'],
-		less: ['./src/client/css/app.less']
+		less: ['./src/css/app.less']
 	},
 	output:{
 		path: __dirname + '/app/bin/frontend',

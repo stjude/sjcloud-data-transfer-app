@@ -1,41 +1,6 @@
-@import "bootstrap/bootstrap.less";
+@import "~bootstrap/less/bootstrap.less";
+@import "fonts.less";
 
-@import url('https://fonts.googleapis.com/css?family=Open+Sans');
-@import url('https://fonts.googleapis.com/css?family=Roboto');
-
-
-.theater {
-  position: absolute;
-	@rowspacing: 30px;
-
-	h1 {
-		text-align: center;
-		margin-top: @rowspacing;
-		font: normal 36px/normal "Open Sans", "Roboto", Times, serif;
-	}
-
-	img {
-		display: block;
-		margin: 0 auto;
-		margin-top: @rowspacing / 2;
-	}
-
-	.btn-stjude {
-		margin: 0 auto;
-		margin-top: @rowspacing;
-	}
-
-  .btn-stjude-warning {
-    margin: 0 auto;
-    margin-top: @rowspacing;
-  }
-
-	#status-text {
-		margin: 0 auto;
-		margin-top: @rowspacing * 2;
-    font: normal 20px/normal "Open Sans", "Roboto", Times, serif;
-	}
-}
 
 .btn-stjude {
 	display: inline-block;
@@ -80,7 +45,6 @@
 	background: #921638;
 	.transition(all 100ms cubic-bezier(0.42, 0, 0.58, 1));
 }
-
 .nav-side-menu {
   overflow: auto;
   font-size: 12px;
@@ -93,14 +57,12 @@
   box-shadow: 6px 0px 5px -5px #999, -6px 0px 5px -5px #999;
   color: #e1ffff;
 }
-
 /**
  * Graciously taken from SpinKit and adapted for our needs
  *
  * http://tobiasahlin.com/spinkit/
  *
  **/
-
 .sk-circle {
   margin: 0px auto;
   margin-top: 50px;
@@ -204,7 +166,6 @@
 .sk-circle .sk-circle12:before {
   -webkit-animation-delay: -0.1s;
           animation-delay: -0.1s; }
-
 @-webkit-keyframes sk-circleBounceDelay {
   0%, 80%, 100% {
     -webkit-transform: scale(0);
@@ -214,7 +175,6 @@
             transform: scale(1);
   }
 }
-
 @keyframes sk-circleBounceDelay {
   0%, 80%, 100% {
     -webkit-transform: scale(0);
