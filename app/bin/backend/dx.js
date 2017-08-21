@@ -7,7 +7,7 @@ const child_process = require("child_process");
 
 // TODO: move these variables to a JSON config file in the root directory
 // of the project.
-const PROJECT_TAG = "SJCP";
+const PROJECT_TAG = "sjcp-project";
 DOWNLOAD_INFO = {
   WINDOWS: {
     URL: "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0.exe",
