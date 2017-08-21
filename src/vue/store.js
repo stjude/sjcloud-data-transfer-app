@@ -150,7 +150,7 @@ export default new Vuex.Store({
 
     /** Upload/Download **/
     setTools(state, tools) {
-      state.tools = tools;
+      state.tools.splice(0, state.tools.length, ...tools);
     },
     setCurrToolName(state, toolName) {
       state.currToolName = toolName;

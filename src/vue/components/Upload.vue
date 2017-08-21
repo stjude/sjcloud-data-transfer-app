@@ -15,7 +15,12 @@
 			</upload-target>
 
 			<div style='position:absolute; bottom:10px; right: 10px; text-align:right'>
-				<button class='btn btn-primary' v-on:click='uploadFiles'>Upload</button>
+				<button class='btn btn-primary' 
+					v-bind:disabled='!hasFiles'
+					v-on:click='uploadFiles'
+					>
+					Upload
+				</button>
 				<button class='btn btn-danger' v-on:click='deleteFiles'>Delete</button>
 			</div>
 		</div>
