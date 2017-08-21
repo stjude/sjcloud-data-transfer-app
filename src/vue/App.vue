@@ -28,8 +28,7 @@ export default {
 		this.$store.commit('setCurrPath',this.$route.path.slice(1))
 	},
 	mounted() {
-		//console.log('App mounted')
-		this.$store.commit('trackProgress')
+		console.log('App mounted')
 	},
 	updated() {
 		//console.log('App updated')

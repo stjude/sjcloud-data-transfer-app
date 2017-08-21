@@ -27,7 +27,8 @@ export default {
 		'currTool'
 	],
 	methods: {
-		showSuccess() {
+		showSuccess($event) { console.log($event)
+			//$event.stopPropagation()
 			const files=this.$refs.dz.getAcceptedFiles(); console.log(files)
 			this.$store.commit('addFiles',{files})
 		}

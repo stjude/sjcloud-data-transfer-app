@@ -4,6 +4,7 @@
 			<left-panel></left-panel>
 		</div>
 		
+<<<<<<< Updated upstream:src/vue/components/Upload.vue
 		<div class='col-xs-8 right-panel-container'>
 			<nav-bar></nav-bar>
 			<file-status v-show='hasFiles'></file-status>
@@ -11,6 +12,22 @@
 			<div class="button-bar">
 				<!--<button class='btn btn-large btn-stjude' v-on:click=''>Upload</button>-->
 				<button class='btn btn-large btn-stjude-warning' v-on:click='deleteFiles'>Delete</button>
+=======
+		<div class='col-xs-8 rightPanel' style='height:100%;'>
+			<nav-bar style="margin-top:18px;"></nav-bar>
+			
+			<file-status
+				style='max-height:500px; overflow:scroll;'
+				v-show='hasFiles'>
+			</file-status>
+			
+			<upload-target style='margin-top:50px' v-show='!hasFiles'>
+			</upload-target>
+
+			<div style='position:absolute; bottom:10px; right: 10px; text-align:right'>
+				<button class='btn btn-primary' v-on:click='uploadFiles'>Upload</button>
+				<button class='btn btn-danger' v-on:click='deleteFiles'>Delete</button>
+>>>>>>> Stashed changes:source/vue/components/Upload.vue
 			</div>
 		</div>
 	</div>
@@ -44,13 +61,11 @@ export default {
 		console.log('Upload component updated')
 	},
 	methods: {
+		uploadFiles() {
+			this.$store.commit('trackProgress')
+		},
 		deleteFiles() {
 
-		}
-	},
-	route: {
-		activate() { console.log('activate')
-			this.$forceUpdate()
 		}
 	}
 }
