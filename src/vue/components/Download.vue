@@ -10,12 +10,15 @@
 			<div class="bottom-bar">
 
 				<div class="bottom-bar-left">
-					<input type="text" style="height: 45px; width: 350px;">
+					<input id="downloadTextInput" type="text"
+						   v-model="downloadLocation"
+						   v-on:click.prevent="selectDownloadLocation"
+						   readonly>
 				</div>
 				<div class="bottom-bar-right">
 					<button class='btn btn-primary btn-stjude download-btn' 
-						v-bind:disabled='!checkedFiles.length'
-						v-on:click='downloadFiles'>
+						    v-bind:disabled='!checkedFiles.length'
+						    v-on:click='downloadFiles'>
 						Download
 					</button>
 					<button class='btn btn-danger btn-stjude-warning cancel-btn' v-on:click='deleteFiles'>Cancel</button>
@@ -47,6 +50,9 @@ export default {
 		},
 		checkedFiles() {
 			return this.$store.getters.checkedFiles
+		},
+		downloadLocation() {
+			return this.$store.getters.downloadLocation
 		}
 	},
 	mounted() {
@@ -56,11 +62,22 @@ export default {
 		//console.log('Upload component updated')
 	},
 	methods: {
+		selectDownloadLocation() {
+			console.log("Selecting download location...");
+			const defaultLocation = this.$store.getters.downloadLocation
+			window.utils.openFileDialog(
+				(files) => {
+					if (files.length > 0) {
+						this.$store.commit('setDownloadLocation', files[0]);
+					}
+				}, 
+				defaultLocation
+			);
+		},
 		downloadFiles() {
 			this.$store.commit('downloadFiles')
 		},
 		deleteFiles() {
-
 		}
 	}
 }
@@ -96,5 +113,12 @@ export default {
 .bottom-bar-right {
 	text-align: right;
 	float: right;
+}
+
+#downloadTextInput {
+	height: 45px;
+	width: 350px;
+	padding-left: 10px;
+	font-size: 12pt;
 }
 </style>

@@ -81,6 +81,7 @@ export default new Vuex.Store({
 
     /** Upload/Download **/
     currPath: "upload",
+    downloadLocation: "~/Downloads/",
   },
   getters: {
     /** Global **/
@@ -110,6 +111,9 @@ export default new Vuex.Store({
     },
     currPath(state) {
       return state.currPath;
+    },
+    downloadLocation(state) {
+      return state.downloadLocation;
     },
     tool(state) {
       return (name)=>state.tools.filter((t)=>t.name==name)[0];
@@ -153,6 +157,9 @@ export default new Vuex.Store({
     },
     setCurrPath(state, path) {
       state.currPath=path;
+    },
+    setDownloadLocation(state, location) {
+      state.downloadLocation = location;
     },
     addFiles(state, d) {
       const tool= state.tools.filter((t)=>t.name==state.currToolName)[0];
