@@ -4,7 +4,7 @@ import fakeProgress from "../../tests/fakeProgress";
 
 Vue.use(Vuex);
 
-const environment = "dev";
+const environment = "prod";
 
 let tools = environment == "dev" ? [{
   name: "Rapid RNA-Seq",
@@ -58,15 +58,6 @@ let tools = environment == "dev" ? [{
     {name: "file_s5", size: 20, status: 0, checked: false},
   ],
 }] : [];
-
-
-if (environment !== "dev") {
-  console.log(this);
-  window.dx.getToolsInformation(function(err, results) {
-    console.log(that);
-    that.setTools(results);
-  });
-}
 
 let currToolName = "";
 
