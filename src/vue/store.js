@@ -115,19 +115,10 @@ export default new Vuex.Store({
       return (name)=>state.tools.filter((t)=>t.name==name)[0];
     },
     tools(state) {
-      const lst=[];
-      state.tools.forEach((t, i)=>{
-        lst.push({
-          name: t.name,
-          size: t.size,
-        });
-      });
-      return lst;
+      return state.tools;
     },
     currFiles(state, getters) {
-	  const tool=getters.currTool;
-	  console.log("Tool ", tool);
-	  console.log("State ", state);
+	    const tool=getters.currTool;
       return !tool || !Array.isArray(tool[state.currPath]) ? [] : tool[state.currPath];
     },
     checkedFiles(state, getters) {
@@ -156,7 +147,6 @@ export default new Vuex.Store({
     /** Upload/Download **/
     setTools(state, tools) {
       state.tools = tools;
-      // state.tools.splice(0, 0, ...tools);
     },
     setCurrToolName(state, toolName) {
       state.currToolName = toolName;
@@ -182,17 +172,12 @@ export default new Vuex.Store({
       fakeProgress(state);
     },
     downloadFiles(state) {
- console.log("store downloadFiles", state.tools);
       fakeProgress(state);
     },
     trackProgress(state) {
- console.log("trackProgress");
       fakeProgress(state);
     },
   },
   actions: {
-    /* downloadFiles(state) { console.log('store downloadFiles',state)
-			fakeProgress(state)
-		}*/
   },
 });

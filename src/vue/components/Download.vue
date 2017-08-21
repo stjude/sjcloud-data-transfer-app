@@ -6,14 +6,20 @@
 		
 		<div class='col-xs-8 right-panel-container'>
 			<nav-bar></nav-bar>
-			<file-status v-show='1'></file-status>
-			<div class="button-bar">
-				<button class='btn btn-primary btn-stjude' 
-					v-bind:disabled='!checkedFiles.length'
-					v-on:click='downloadFiles'>
-					Download
-				</button>
-				<button class='btn btn-danger btn-stjude-warning' v-on:click='deleteFiles'>Delete</button>
+			<file-status v-show="hasFiles"></file-status>
+			<div class="bottom-bar">
+
+				<div class="bottom-bar-left">
+					<input type="text" style="height: 45px; width: 350px;">
+				</div>
+				<div class="bottom-bar-right">
+					<button class='btn btn-primary btn-stjude download-btn' 
+						v-bind:disabled='!checkedFiles.length'
+						v-on:click='downloadFiles'>
+						Download
+					</button>
+					<button class='btn btn-danger btn-stjude-warning cancel-btn' v-on:click='deleteFiles'>Cancel</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -74,10 +80,21 @@ export default {
 	height: 100%;
 }
 
-.button-bar {
+.bottom-bar {
 	position: absolute;
-	bottom: 10px;
-	right: 10px;
+	bottom: 20px;
+	left: 10px;
+	width: 570px;
+	margin-left: 10px;
+}
+
+.bottom-bar-left {
+	text-align: left;
+	float: left;
+}
+
+.bottom-bar-right {
 	text-align: right;
+	float: right;
 }
 </style>

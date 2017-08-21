@@ -199,8 +199,8 @@ module.exports.getToolsInformation = function(callback) {
       let item = {
         name: elem.project_name,
         size: 0,
-        uploads: [],
-        downloads: [],
+        upload: [],
+        download: [],
       };
 
       module.exports.describeProject(elem.dx_location, (err, describe) => {
@@ -222,7 +222,7 @@ module.exports.getToolsInformation = function(callback) {
             downloadableFiles.push(dl_file);
           });
 
-          item.downloads = downloadableFiles;
+          item.download = downloadableFiles;
           return cb(null, item);
         });
       });
