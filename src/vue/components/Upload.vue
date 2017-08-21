@@ -7,7 +7,7 @@
 		<div class='col-xs-8 right-panel-container'>
 			<nav-bar></nav-bar>
 			<file-status v-show='hasFiles'></file-status>
-			<upload-target style='margin-top:50px' v-show='!hasFiles'></upload-target>
+			<upload-target v-show='!hasFiles'></upload-target>
 			<div class="button-bar">
 				<!--<button class='btn btn-large btn-stjude' v-on:click=''>Upload</button>-->
 				<button class='btn btn-large btn-stjude-warning' v-on:click='deleteFiles'>Delete</button>

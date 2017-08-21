@@ -176,7 +176,7 @@ export default {
 
 	.dev-box {
 		position: absolute;
-		left: 750px;
+		left: 675px;
 		top: 20px;
 		z-index: 1;
 	}

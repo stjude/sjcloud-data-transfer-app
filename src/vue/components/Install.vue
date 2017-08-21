@@ -77,9 +77,6 @@
 </template>
 
 <script>
-// for now, switched this to use global dx as set by source/app/sys.js
-
-
 export default {
 	computed: {
 		installingDxToolkit() {

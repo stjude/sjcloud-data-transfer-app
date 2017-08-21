@@ -76,18 +76,18 @@ export default {
 <style scoped>
 .leftPanel {
 	height: 560px;
-	border:3px solid #ececec;
+	border: 3px solid #ececec;
 	padding: 0px;
 }
 
 .leftPanel table {
-	width:100%;
+	width: 100%;
 	margin-top: 20px;
 }
 
 .leftPanel table thead {
 	font-size: 10pt;
-	color:#a3a3a3;
+	color: #a3a3a3;
 }
 
 .leftPanel table tbody {

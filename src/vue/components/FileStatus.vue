@@ -1,6 +1,6 @@
 <template>
-	<div class="rightPanel" style=''>
-		<table style='width:100%;'>
+	<div class='rightPanel'>
+		<table>
 			<thead>
 				<tr style='color:#000; background-color:#ececec'>
 					<th style='width:10%'>
@@ -74,12 +74,15 @@ export default {
 	height: 400px;
 	overflow: scroll;
 	margin-top: 15px;
-	//border-bottom: 1px solid #ececec;
 	max-height: 500px;
 }
 
+.rightPanel table {
+	width: 100%;
+}
+
 .rightPanel th {
-	padding:10px;
+	padding: 10px;
 	border: 2px solid #ececec;
 }
 .rightPanel td {

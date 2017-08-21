@@ -1,10 +1,7 @@
 <template>
-	<div id='sjcda-container' style='background-color: #fff'>
+	<div class='sjcda-container'>
 		<top-bar></top-bar>
-		<router-view keep-alive 
-			class='app-route-placement' 
-			style='height:560px;width:900px;'>
-		</router-view>
+		<router-view keep-alive class='app-route-placement'></router-view>
 	</div>
 </template>
 
@@ -65,10 +62,19 @@ export default {
 
 <style>
 body {
-	width:900px;
-	height:600px;
-	margin:auto;
+	width: 900px;
+	height: 600px;
+	margin: 0px auto;
 	font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+}
+
+.app-route-placement {
+	height: 560px;
+	width: 900px;
+}
+
+.sjcda-container {
+	background-color: #FFFFFF;
 }
 
 .btn-stjude {
@@ -129,4 +135,5 @@ body {
   background-color: #7c132f;
   transform: translateY(1px);
 }
+
 </style>

@@ -1,14 +1,19 @@
 <template>
-	<!--<div class=''
+	<!--
+	<div class=''
 		style='height:400px; width:90%; margin:20px; border:1px dashed #aaa'>
 		<p style="margin-top:100px">DRAG FILES HERE</p>
 		<p>or</p>
 		<p><button class='btn btn-xs'>Select files ...</button></p>
-	</div>-->
-	<dropzone ref="dz" id='sjcda-dz' url="https://httpbin.org/post" v-on:vdropzone-success="showSuccess">
-        <!-- Optional parameters if any! -->
-        <input type="hidden" name="token" value="xxx">
-    </dropzone>
+	</div>
+	-->
+
+	<div class='dropzone-container'>
+		<dropzone ref="dz" id='sjcda-dz' url="https://httpbin.org/post" v-on:vdropzone-success="showSuccess">
+			<!-- Optional parameters if any! -->
+			<input type="hidden" name="token" value="xxx">
+		</dropzone>
+	</div>
 </template>
 
 <script>
@@ -32,11 +37,16 @@ export default {
 
 <style scoped>
 p {
-	width:100%;
+	width: 100%;
 	text-align: center;
 }
+
 .dropzone {
-	min-height: 0;
-	padding:0;
+	min-height: 0px;
+	padding: 0px;
+}
+
+.dropzone-container {
+	margin-top: 50px;
 }
 </style>

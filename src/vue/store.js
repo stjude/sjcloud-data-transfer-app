@@ -6,7 +6,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
 	state: {
-		environment: 'dev',
+		environment: 'prod',
 
 		/** Install **/
 		installingDxToolkit: "waiting",

@@ -1,6 +1,6 @@
 <template>
 	<div class='row'>
-		<div class='col-xs-12' style='text-align:center;padding-top:20%;'>
+		<div class='col-xs-12 home-container' >
 			<h1>Homepage under contruction ...</h1>
 			<div style='font-size:20px'>
 				<div><router-link to='/install'>Install</router-link></div>
@@ -24,4 +24,8 @@ export default {
 </script>
 
 <style>
+.home-container {
+	text-align: center;
+	padding-top: 20%;
+}
 </style>
