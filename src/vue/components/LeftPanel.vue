@@ -11,7 +11,7 @@
 				<tr v-for='tool in tools'
 					v-bind:style='tool.name==currTool.name ? styles.activeTr : styles.inactiveTr' 
 					v-on:click='setCurrTool(tool.name)'>
-					<td v-bind:style=''>{{ tool.name }}</td>
+					<td>{{ tool.name }}</td>
 					<td v-bind:style='tool.name==currTool.name ? styles.activeTd : styles.inactiveTd' style="text-align: right">{{ tool.size }} GB</td>
 				</tr>
 			</tbody>

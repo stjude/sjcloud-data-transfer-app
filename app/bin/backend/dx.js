@@ -2,12 +2,15 @@
 
 const os = require("os");
 const path = require("path");
+const async = require("async");
 const utils = require("./utils");
 const child_process = require("child_process");
 
 // TODO: move these variables to a JSON config file in the root directory
 // of the project.
 const PROJECT_TAG = "sjcp-project";
+const DOWNLOADABLE_TAG = "sjcp-result-file";
+
 DOWNLOAD_INFO = {
   WINDOWS: {
     URL: "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0.exe",
@@ -132,7 +135,7 @@ module.exports.listProjects = (callback) => {
     var tabliteral = "$'\t'";
   } else if (os.platform() == "win32") {
     var tabliteral = "`t";
-  } // TODO: handle non-detected platform case.
+  } 
 
   utils.runCommand("dx find projects --level UPLOAD --tag " + PROJECT_TAG + " --delim " + tabliteral, (err, stdout) => {
     if (err) {
@@ -152,6 +155,19 @@ module.exports.listProjects = (callback) => {
       }
     });
     return callback(null, results);
+  });
+};
+
+module.exports.describeProject = function(projectId, cb) {
+  utils.runCommand("dx describe " + projectId + " --json", (err, stdout) => {
+    return cb(err, JSON.parse(stdout));
+  });
+};
+
+module.exports.listDownloadableFiles = function(projectId, cb) {
+  let cmd = "dx find data --path " + projectId + ":/ --tag " + DOWNLOADABLE_TAG + " --json";
+  utils.runCommand(cmd, (err, stdout) => {
+    return cb(err, JSON.parse(stdout));
   });
 };
 
@@ -179,9 +195,7 @@ module.exports.uploadFile = (file, project, callback) => {
 
 module.exports.getToolsInformation = function(callback) {
   module.exports.listProjects(function(err, results) {
-    let tools = [];
-
-    results.forEach(function(elem) {
+    async.map(results, function(elem, cb) {
       let item = {
         name: elem.project_name,
         size: 0,
@@ -189,9 +203,31 @@ module.exports.getToolsInformation = function(callback) {
         downloads: [],
       };
 
-      tools.push(item);
-    });
+      module.exports.describeProject(elem.dx_location, (err, describe) => {
+        item.size = Math.round(describe.dataUsage);
 
-    return callback(tools);
+        module.exports.listDownloadableFiles(elem.dx_location, (err, files) => {
+
+          let downloadableFiles = [];
+
+          files.forEach((elem) => {
+            let dl_file = {
+              name: elem.describe.name,
+              status: 0,
+              checked: false,
+              size: 1, //Math.round(elem.describe.size / 1e9, 2),
+              dx_location: elem.project + ":" + elem.id,
+            };
+
+            downloadableFiles.push(dl_file);
+          });
+
+          item.downloads = downloadableFiles;
+          return cb(null, item);
+        });
+      });
+    }, function(err, allTools) {
+      return callback(allTools);
+    });
   });
 };

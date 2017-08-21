@@ -6,7 +6,7 @@
 		
 		<div class='col-xs-8 right-panel-container'>
 			<nav-bar></nav-bar>
-			<file-status v-show='hasFiles'></file-status>
+			<file-status v-show='1'></file-status>
 			<div class="button-bar">
 				<button class='btn btn-primary btn-stjude' 
 					v-bind:disabled='!checkedFiles.length'

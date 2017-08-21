@@ -4,8 +4,8 @@ const BrowserSyncPlugin = require("browser-sync-webpack-plugin");
 const ExtractTextPlugin = require("extract-text-webpack-plugin");
 
 
-module.exports = function (env={}) {
-	const common = {
+module.exports = function(env={}) {
+  const common = {
 	  module: {
 	    rules: [
 	      {
@@ -50,9 +50,9 @@ module.exports = function (env={}) {
 	      vue: "vue/dist/vue.js",
 	    },
 	  },
-	};
+  };
 
-	const frontend = {
+  const frontend = {
 	  entry: {
 	    app: ["./src/vue/main.js"],
 	    vendor: ["vue", "vue-router", "jquery"],
@@ -81,25 +81,25 @@ module.exports = function (env={}) {
 	    }),
 	    new WebpackNotifierPlugin(),
 	  ],
-	};
+  };
 
-	// const backend = {
-	//	target: 'node',
-	//	entry: './source/app/sys.js',
-	//	output: {
-	//		path: __dirname + '/app/bin/',
-	//		filename: 'backend.bundle.js',
-	//		publicPath: 'bin/',
-	//		jsonpFunction: 'sjcdsysJsonp'
-	//	},
-	//	devtool: 'source-map',
-	//	plugins: [
-	//		new webpack.optimize.ModuleConcatenationPlugin()
-	//	]
-	// }
+  // const backend = {
+  //	target: 'node',
+  //	entry: './source/app/sys.js',
+  //	output: {
+  //		path: __dirname + '/app/bin/',
+  //		filename: 'backend.bundle.js',
+  //		publicPath: 'bin/',
+  //		jsonpFunction: 'sjcdsysJsonp'
+  //	},
+  //	devtool: 'source-map',
+  //	plugins: [
+  //		new webpack.optimize.ModuleConcatenationPlugin()
+  //	]
+  // }
 
-	return Object.assign({}, common, frontend)
+  return Object.assign({}, common, frontend);
 	  // Object.assign({} , common, backend)
-	//];
-}
+  // ];
+};
 
