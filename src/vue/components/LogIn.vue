@@ -171,7 +171,7 @@ export default {
 	}
 
 	.stjude-link {
-		color: #7c132f;
+		color: #931638;
 		font-weight: bold;
 		font-size: 14px;
 		/* text-decoration: underline; */
