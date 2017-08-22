@@ -6,13 +6,13 @@
 		
 		<div class='col-xs-8 right-panel-container'>
 			<nav-bar></nav-bar>
-			<file-status v-show="hasFiles"></file-status>
-			<div class="no-files-container" v-show="!hasFiles">
+			<file-status v-show="hasTools && hasFiles"></file-status>
+			<div class="no-files-container" v-show="hasTools && !hasFiles">
 				<img src="http://via.placeholder.com/175x175">
-				<h1>No files to download!</h1>
+				<h3>No files to download!</h3>
 			</div>
-			<div class="bottom-bar">
 
+			<div class="bottom-bar">
 				<div class="bottom-bar-left">
 					<input id="downloadTextInput" type="text"
 						   v-model="downloadLocation"
@@ -53,6 +53,9 @@ export default {
 	computed: {
 		hasFiles() {
 			return this.$store.getters.currFiles.length
+		},
+		hasTools() {
+			return this.$store.getters.tools.length
 		},
 		checkedFiles() {
 			return this.$store.getters.checkedFiles

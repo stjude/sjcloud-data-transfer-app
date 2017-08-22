@@ -23,9 +23,9 @@
 					<div style="margin-top: 40px;">
 						Next, you'll need to log in to DNAnexus so that we can access your input and output files.
 					</div>
-					<div @click="external()" class="btn btn-large btn-stjude" style="margin-bottom: 0px">Log In</div>
+					<div @click="external()" class="btn btn-large btn-stjude" style="margin-bottom: 10px">Log In</div>
 					<div>
-						<a class="stjude-link" @click="internal()">St. Jude users click here</a>
+						<a class="stjude-link" @click="internal()">I'm a St. Jude employee</a>
 					</div>
 				</div>
 			</div>
@@ -172,7 +172,7 @@ export default {
 
 	.stjude-link {
 		color: #7c132f;
-		font-style: bold;
+		font-weight: bold;
 		font-size: 14px;
 		/* text-decoration: underline; */
 	}
