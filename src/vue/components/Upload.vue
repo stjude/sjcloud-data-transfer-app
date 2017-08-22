@@ -6,10 +6,11 @@
 		<div class='col-xs-8 rightPanel'>
 			<nav-bar></nav-bar>
 			
-			<file-status class="middle" v-show='hasFiles'></file-status>
-			<upload-target class="middle" v-show='!hasFiles'></upload-target>
+			<file-status class="middle" v-show='hasTools && hasFiles'></file-status>
+			<!-- <upload-target class="middle" v-show='hasTools && !hasFiles'></upload-target> -->
+			<dropzone class="middle" v-show='hasTools && !hasFiles'></dropzone>
 
-			<div class="bottom-bar">
+			<div class="bottom-bar" v-show="hasTools && hasFiles">
 				<div class="bottom-bar-left"></div>
 				<div class="bottom-bar-right">
 					<button class='btn btn-primary btn-stjude download-btn'
@@ -33,13 +34,15 @@ import LeftPanel from './LeftPanel.vue'
 import NavBar from './NavBar.vue';
 import FileStatus from './FileStatus.vue';
 import UploadTarget from './UploadTarget.vue';
+import Dropzone from './Dropzone.vue';
 
 export default {
 	components: {
 		LeftPanel,
 		NavBar,
 		FileStatus,
-		UploadTarget
+		UploadTarget,
+		Dropzone
 	},
 	data() {
 		return {}
@@ -47,6 +50,9 @@ export default {
 	computed: {
 		hasFiles() {
 			return this.$store.getters.currFiles.length
+		},
+		hasTools() {
+			return this.$store.getters.tools.length
 		},
 		checkedFiles() {
 			return this.$store.getters.checkedFiles
