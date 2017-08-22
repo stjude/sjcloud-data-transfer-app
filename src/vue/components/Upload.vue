@@ -3,25 +3,26 @@
 		<div class='col-xs-4 left-panel-container'>
 			<left-panel></left-panel>
 		</div>
-		<div class='col-xs-8 rightPanel' style='height:100%;'>
-			<nav-bar style="margin-top:18px;"></nav-bar>
+		<div class='col-xs-8 rightPanel'>
+			<nav-bar></nav-bar>
 			
-			<file-status
-				style='max-height:500px; overflow:scroll;'
-				v-show='hasFiles'>
-			</file-status>
-			
-			<upload-target style='margin-top:50px' v-show='!hasFiles'>
-			</upload-target>
+			<file-status class="middle" v-show='hasFiles'></file-status>
+			<upload-target class="middle" v-show='!hasFiles'></upload-target>
 
-			<div style='position:absolute; bottom:10px; right: 10px; text-align:right'>
-				<button class='btn btn-primary' 
-					v-bind:disabled='!hasFiles'
-					v-on:click='uploadFiles'
-					>
-					Upload
-				</button>
-				<button class='btn btn-danger' v-on:click='deleteFiles'>Delete</button>
+			<div class="bottom-bar">
+				<div class="bottom-bar-left"></div>
+				<div class="bottom-bar-right">
+					<button class='btn btn-primary btn-stjude download-btn'
+						    v-bind:disabled='!checkedFiles.length'>
+						    <!-- v-on:click='downloadFiles'> -->
+						Upload
+					</button>
+					<button class='btn btn-danger btn-stjude-warning cancel-btn'
+						    v-bind:disabled='!checkedFiles.length'>
+						    <!-- v-on:click='cancelFiles'> -->
+							Cancel
+					</button>
+				</div>
 			</div>
 		</div>
 	</div>
@@ -46,7 +47,10 @@ export default {
 	computed: {
 		hasFiles() {
 			return this.$store.getters.currFiles.length
-		}
+		},
+		checkedFiles() {
+			return this.$store.getters.checkedFiles
+		},
 	},
 	mounted() {
 		//console.log('Upload component mounted')
@@ -79,10 +83,22 @@ export default {
 	height: 100%;
 }
 
-.button-bar {
+.bottom-bar {
 	position: absolute;
-	bottom: 10px;
-	right: 10px;
-	text-align: right;
+	bottom: 20px;
+	left: 10px;
+	width: 570px;
+	margin-left: 10px;
 }
+
+.bottom-bar-left {
+	text-align: left;
+	float: left;
+}
+
+.bottom-bar-right {
+	text-align: right;
+	float: right;
+}
+
 </style>

@@ -7,16 +7,16 @@ module.exports.createWindow = (callback) => {
   mainWindow = new BrowserWindow({
     width: 900,
     height: 642,
-    frame: true
+    frame: true,
   });
 
   /** Attach key libraries to window **/
-  mainWindow.$ = require('jquery');
-  mainWindow.dx = require('./dx');
+  mainWindow.$ = require("jquery");
+  mainWindow.dx = require("./dx");
   mainWindow.electron = electron;
-  mainWindow.protocol = require('./protocol');
-  mainWindow.state = require('./state');
-  mainWindow.utils = require('./utils');
+  mainWindow.protocol = require("./protocol");
+  mainWindow.state = require("./state");
+  mainWindow.utils = require("./utils");
 
   mainWindow.on("closed", () => {
     mainWindow = null;
@@ -27,19 +27,41 @@ module.exports.createWindow = (callback) => {
   return callback(mainWindow);
 };
 
+const internal_url = "https://cloud.stjude.org";
+const oauth_url = "https://platform.dnanexus.com/login?scope=%7B%22full%22%3A+true%7D&redirect_uri=https%3A%2F%2Flocalhost%3A4433%2Fauthcb&client_id=sjcloud-desktop-dev";
 
-module.exports.createOauthWindow = (callback) => {
-	RemoteBrowserWindow = require('electron').remote.BrowserWindow;
-	loginWindow = new RemoteBrowserWindow({
-		width: 1080,
-		height: 960,
-		frame: true,
-		webPreferences: {
-			nodeIntegration: false
-	    }
-	});
 
-	loginWindow.loadURL("https://platform.dnanexus.com/login?scope=%7B%22full%22%3A+true%7D&redirect_uri=https%3A%2F%2Flocalhost%3A4433%2Fauthcb&client_id=sjcloud-desktop-dev");
-	loginWindow.show();
-	return callback(loginWindow);
-}
+module.exports.createOauthWindow = (internal, callback) => {
+  RemoteBrowserWindow = require("electron").remote.BrowserWindow;
+  loginWindow = new RemoteBrowserWindow({
+    width: 1080,
+    height: 960,
+    frame: true,
+    webPreferences: {
+      nodeIntegration: false,
+	  },
+  });
+
+  loginWindow.webContents.on("did-get-redirect-request", function(event, oldUrl, newUrl) {
+    // Redirect the browser to the oauth login
+    // If the browser isn't trying to go to cloud.stjude.org
+    // OR if it's actually going to the Oauth page.
+    //
+    // Really, this just accomplishes a redirect straight to the 
+    // oauth page rather than landing on platform.dnanexus.com after
+    // login.
+
+    const match = /https:\/\/platform.dnanexus.com\/login\/scope/g.exec(newUrl) ||
+                  /.*stjude.org/g.exec(newUrl) || null;
+
+    if (match === null) {
+      event.preventDefault();
+      loginWindow.loadURL(oauth_url);
+    }
+  });
+
+  const url = internal ? internal_url : oauth_url;
+  loginWindow.loadURL(url);
+  loginWindow.show();
+  return callback(loginWindow);
+};

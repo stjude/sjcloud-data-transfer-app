@@ -135,7 +135,7 @@ module.exports.listProjects = (callback) => {
     var tabliteral = "$'\t'";
   } else if (os.platform() == "win32") {
     var tabliteral = "`t";
-  } 
+  }
 
   utils.runCommand("dx find projects --level UPLOAD --tag " + PROJECT_TAG + " --delim " + tabliteral, (err, stdout) => {
     if (err) {
@@ -193,6 +193,21 @@ module.exports.uploadFile = (file, project, callback) => {
   });
 };
 
+module.exports.downloadFile = function(downloadLocation, fileId, updateCb, finishedCb) {
+  let cmd = "cd " + downloadLocation + "; dx download -f " + fileId;
+
+  utils.runCommandSpawn(cmd,
+    function(data) {
+      console.log("STDIN:", data);
+    }, function(data) {
+      console.log("STDERR:", data);
+    }, function(code) {
+      console.log("Exitting:", code)
+    });
+  updateCb(100);
+  return finishedCb(null, true);
+};
+
 module.exports.getToolsInformation = function(callback) {
   module.exports.listProjects(function(err, results) {
     async.map(results, function(elem, cb) {
@@ -204,10 +219,9 @@ module.exports.getToolsInformation = function(callback) {
       };
 
       module.exports.describeProject(elem.dx_location, (err, describe) => {
-        item.size = Math.round(describe.dataUsage);
+        item.size = utils.readableFileSize(describe.dataUsage * 1e9);
 
         module.exports.listDownloadableFiles(elem.dx_location, (err, files) => {
-
           let downloadableFiles = [];
 
           files.forEach((elem) => {
@@ -215,7 +229,7 @@ module.exports.getToolsInformation = function(callback) {
               name: elem.describe.name,
               status: 0,
               checked: false,
-              size: 1, //Math.round(elem.describe.size / 1e9, 2),
+              size: utils.readableFileSize(elem.describe.size),
               dx_location: elem.project + ":" + elem.id,
             };
 

@@ -4,7 +4,7 @@ const path = require("path");
 const https = require("https");
 const mkdirp = require("mkdirp");
 const crypto = require("crypto");
-const {exec, execSync} = require("child_process");
+const {exec, execSync, spawn} = require("child_process");
 const {remote, shell} = require("electron");
 
 
@@ -62,7 +62,8 @@ module.exports.runCommand = function(cmd, callback) {
     fs.stat(module.exports._dx_toolkit_env_file, function(err, stats) {
       if (!err) { // fs.stat() is only to check if "dx" commands can be sourced. If it fails other commands can still be run.
         cmd = "source " + dxToolkitEnvFile + "; " + cmd;
-      }
+	  }
+
       return exec(cmd, {shell: "/bin/bash"}, inner_callback);
     });
   } else if (os.platform() == "win32") {
@@ -73,6 +74,49 @@ module.exports.runCommand = function(cmd, callback) {
       }
       cmd = "powershell.exe " + cmd;
       return exec(cmd, inner_callback); // Warning: the dnanexus-shell.ps1 script used to source environment variables on Windows sends a DNAnexus banner to STDOUT. Banner will be first 3 lines of STDOUT
+    });
+  }
+};
+
+module.exports.runCommandSpawn = function(cmd, stdin, stderr, close) {
+  if (os.platform() == "darwin" || os.platform() == "linux") {
+    const dxToolkitEnvFile = module.exports._dx_toolkit_env_file;
+    fs.stat(module.exports._dx_toolkit_env_file, function(err, stats) {
+	  // fs.stat() is only to check if "dx" commands can be sourced. If it fails other commands can still be run.
+      if (!err) { cmd = "source " + dxToolkitEnvFile + "; " + cmd; }
+
+	  let process = spawn(cmd,
+        {
+          shell: "/bin/bash",
+          stdio: "pipe",
+        }
+	  );
+
+	  process.stdout.on("data", (data) => {
+        console.log(`child stdout:\n${data}`);
+	  });
+
+	  process.stderr.on("data", (data) => {
+        console.error(`child stderr:\n${data}`);
+	  });
+
+	  process.on("close", close);
+    });
+  } else if (os.platform() == "win32") {
+    const dnanexusPSscript = path.join( module.exports._dnanexus_CLI_dir, "dnanexus-shell.ps1" );
+    fs.stat(dnanexusPSscript, function(err, stats) {
+      if (!err) { // fs.stat() is only to check if "dx" commands can be sourced. If it fails other commands can still be run.
+        cmd = ".'" + dnanexusPSscript + "'; " + cmd;
+      }
+      cmd = "powershell.exe " + cmd;
+	  let process = spawn(cmd, 
+						  {
+							stdio: 'pipe',
+						  }
+						);
+	  process.stdout.on("data", stdin);
+	  process.stderr.on("data", stderr);
+	  process.on("close", close);
     });
   }
 };
@@ -130,10 +174,33 @@ module.exports.openExternal = function(url) {
 module.exports.openFileDialog = function(callback, defaultPath) {
   console.log(defaultPath);
   return callback(remote.dialog.showOpenDialog({
-	buttonLabel: "Select",
-	defaultPath,
-    properties: ["openDirectory"],
+    buttonLabel: "Select",
+    defaultPath,
+    properties: ["openDirectory", "createDirectory"],
   }));
+};
+
+// Base function derived from stack overflow.
+// Credit: https://stackoverflow.com/a/14919494
+
+module.exports.readableFileSize = function(bytes) {
+  if (bytes === 0) {
+    return "0 GB";
+  }
+
+  let thresh = 1000;
+  if (Math.abs(bytes) < thresh) {
+    return bytes + " B";
+  }
+
+  let units = ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+  let u = -1;
+
+  do {
+    bytes /= thresh;
+    ++u;
+  } while (Math.abs(bytes) >= thresh && u < units.length - 1);
+  return bytes.toFixed(1)+" "+units[u];
 };
 
 module.exports._sjcloud_homedir = _sjcloud_homedir;

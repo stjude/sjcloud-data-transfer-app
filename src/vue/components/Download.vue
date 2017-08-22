@@ -7,6 +7,10 @@
 		<div class='col-xs-8 right-panel-container'>
 			<nav-bar></nav-bar>
 			<file-status v-show="hasFiles"></file-status>
+			<div class="no-files-container" v-show="!hasFiles">
+				<img src="http://via.placeholder.com/175x175">
+				<h1>No files to download!</h1>
+			</div>
 			<div class="bottom-bar">
 
 				<div class="bottom-bar-left">
@@ -21,7 +25,9 @@
 						    v-on:click='downloadFiles'>
 						Download
 					</button>
-					<button class='btn btn-danger btn-stjude-warning cancel-btn' v-on:click='deleteFiles'>Cancel</button>
+					<button class='btn btn-danger btn-stjude-warning cancel-btn'
+						    v-bind:disabled='!checkedFiles.length'
+						    v-on:click='cancelFiles'>Cancel</button>
 				</div>
 			</div>
 		</div>
@@ -75,10 +81,22 @@ export default {
 			);
 		},
 		downloadFiles() {
-			this.$store.commit('downloadFiles')
+			this.$store.getters.currTool.download.forEach((elem) => {
+				if (elem.checked) {
+					window.dx.downloadFile(this.$store.getters.downloadLocation,
+										   elem.dx_location,
+										   function(progress) {
+											   elem.status = progress;
+										   },
+										   function(err, result) {
+
+										   });
+					console.log("Downloading:", elem.name)
+				}
+			});
+			//this.$store.commit('downloadFiles')
 		},
-		deleteFiles() {
-		}
+		cancelFiles() {}
 	}
 }
 </script>
@@ -120,5 +138,10 @@ export default {
 	width: 350px;
 	padding-left: 10px;
 	font-size: 12pt;
+}
+
+.no-files-container {
+	margin-top: 90px;
+	text-align: center;
 }
 </style>

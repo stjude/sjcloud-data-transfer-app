@@ -20,40 +20,13 @@
 					<img src="http://via.placeholder.com/350x300">
 				</div>
 				<div class="col-xs-6">
-					<div>
+					<div style="margin-top: 40px;">
 						Next, you'll need to log in to DNAnexus so that we can access your input and output files.
 					</div>
-					<div @click="login()" class="btn btn-large btn-stjude">Log In</div>
-				</div>
-			</div>
-			<div v-show="loginState == 'waiting-2' " class='theater-body'>
-				<div class="col-xs-6 login-option">
-					<div class="login-option-content">
-						<div class="login-option-title">St. Jude</div>
-						<div class="login-option-body">
-							<img src="http://via.placeholder.com/175x175">
-						</div>
-						<div @click="external()" class="btn btn-large btn-stjude-warning" style="margin-top: 20px">Next</div>
+					<div @click="external()" class="btn btn-large btn-stjude" style="margin-bottom: 0px">Log In</div>
+					<div>
+						<a class="stjude-link" @click="internal()">St. Jude users click here</a>
 					</div>
-				</div>
-				<div class="col-xs-6 login-option">
-					<div class="login-option-content">
-						<div class="login-option-title">External</div>
-						<div class="login-option-body">
-							<img src="http://via.placeholder.com/175x175">
-						</div>
-						<div @click="login()" class="btn btn-large btn-stjude" style="margin-top:20px">Next</div>
-					</div>
-				</div>
-			</div>
-			<div v-show="loginState == 'token'" class='theater-body'>
-				<div class="col-xs-8 col-xs-offset-2">
-					<div id="status-text">Please enter your token here</div>
-					<br/>
-					<div class="form-group">
-					  <input v-model.trim="token" type="text" class="form-control">
-					</div>
-					<div @click="validate()" class="btn btn-large btn-stjude" style="margin-top:20px">Next</div>
 				</div>
 			</div>
 			<div v-show="loginState == 'validating'" class='theater-body'>
@@ -137,34 +110,46 @@ export default {
 		setToken(token) {
 			this.$store.commit('setToken', token);
 		},
-		login() {
-			window.oauth.waitForCode(function(err, code) {
-				console.log("Code inside: " + code);
+		internal() {
+			window.oauth.getToken(true, (err, token) => {
+				this.$store.commit('setToken', token);
+				console.log(token);
+				this.$store.commit('setLoginState', 'validating');
+			
+				const that = this;
+
+				window.dx.login(token, function (err, result) {
+					if (err) {
+						that.$store.commit('setLoginState', 'failed');
+					} else {
+						that.$store.commit('setLoginState', 'completed');
+						setTimeout(function (){
+							that.$router.push('upload');
+						}, 2500);
+					}
+				});
 			});
 		},
 		external(openURL=true) {
-			this.$store.commit('setLoginState', 'token');
-			if (openURL) {
-				window.utils.openExternal("https://platform.dnanexus.com/profile/");
-			}
-		},
-		validate() {
-			this.$store.commit('setLoginState', 'validating');
+			window.oauth.getToken(false, (err, token) => {
+				this.$store.commit('setToken', token);
+				console.log(token);
+				this.$store.commit('setLoginState', 'validating');
 			
-			const token = this.$store.getters.token;
-			const that = this;
+				const that = this;
 
-			window.dx.login(token, function (err, result) {
-				if (err) {
-					that.$store.commit('setLoginState', 'failed');
-				} else {
-					that.$store.commit('setLoginState', 'completed');
-					setTimeout(function (){
-						that.$router.push('upload');
-					}, 4000);
-				}
-			});			
-		}
+				window.dx.login(token, function (err, result) {
+					if (err) {
+						that.$store.commit('setLoginState', 'failed');
+					} else {
+						that.$store.commit('setLoginState', 'completed');
+						setTimeout(function (){
+							that.$router.push('upload');
+						}, 2500);
+					}
+				});
+			});
+		},
 	}
 }
 </script>
@@ -183,6 +168,13 @@ export default {
 
 	.main {
 		margin-bottom: 50px;
+	}
+
+	.stjude-link {
+		color: #7c132f;
+		font-style: bold;
+		font-size: 14px;
+		/* text-decoration: underline; */
 	}
 
 	.theater-heading {

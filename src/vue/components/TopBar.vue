@@ -5,7 +5,7 @@
 				<img class="sjcda-top-bar__logo" src="img/stjude-logo-child-white.png">
 			</a>
 		</div>
-		<span v-on:click='goHome'>ST. JUDE CLOUD</span>
+		<span class="bold-font" v-on:click='goHome'>ST. JUDE CLOUD</span>
 		<span class="lighter-font" v-on:click='goHome'>PLATFORM</span>
 	</div>
 </template>
@@ -45,6 +45,10 @@ export default {
 
 .sjcda-top-bar__logo {
 	height: 50px;
+}
+
+.bold-font {
+	font-weight: bold;
 }
 
 .lighter-font {

@@ -9,25 +9,24 @@
 			</thead>
 			<tbody>
 				<tr v-for='tool in tools'
-					v-bind:style='tool.name==currTool.name ? styles.activeTr : styles.inactiveTr' 
-					v-on:click='setCurrTool(tool.name)'>
+					  v-bind:style='tool.name==currTool.name ? styles.activeTr : styles.inactiveTr' 
+					  v-on:click='setCurrTool(tool.name)'>
 					<td>{{ tool.name }}</td>
-					<td v-bind:style='tool.name==currTool.name ? styles.activeTd : styles.inactiveTd' style="text-align: right">{{ tool.size }} GB</td>
+					<td v-bind:style='tool.name==currTool.name ? styles.activeTd : styles.inactiveTd' style="text-align: right">{{ tool.size }}</td>
 				</tr>
 			</tbody>
 		</table>
 	</div>
 </template>
 <script>
-
 const activeTool = {
 	'color' :'#010304',
-	'font-size': '16pt',
+	'font-size': '14pt',
 	'background-color':'rgba(19,129,179,0.3)',
 }
 const inactiveTool = {
 	color:'#a3a3a3',
-	'font-size': '16pt',
+	'font-size': '14pt',
 	'background-color':'transparent'
 }
 
@@ -64,8 +63,7 @@ export default {
 			});
 		}
 	},
-	updated() {
-	},
+	updated() {},
 	computed: {
 		currTool() {
 			return this.$store.getters.currTool
@@ -96,6 +94,7 @@ export default {
 
 .leftPanel table {
 	width: 100%;
+	table-layout: fixed;
 	margin-top: 20px;
 }
 
@@ -105,7 +104,7 @@ export default {
 }
 
 .leftPanel table tbody {
-	font-size: 14pt;
+	font-size: 13pt;
 }
 
 .leftPanel table tbody tr {

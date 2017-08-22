@@ -17,7 +17,7 @@
 						<input type='checkbox' name='sjcda-files' v-bind:value='file.name' v-bind:checked='file.checked' v-on:click.stop='toggleFileChecked(file,$event)'/>
 					</td>
 					<td>{{ file.name }}</td>
-					<td style='text-align:center'>{{ file.size }} GB</td>
+					<td style='text-align:center'>{{ file.size }}</td>
 					<td style='text-align:center'>
 						<div 
 							style='height:20px; width:100%; background-color:#fff; border: 1px solid #ececec'>
@@ -71,14 +71,12 @@ export default {
 
 <style>
 .rightPanel {
-	height: 400px;
-	overflow: scroll;
-	margin-top: 15px;
-	max-height: 500px;
+	height: 100%;
 }
 
 .rightPanel table {
 	width: 100%;
+	margin-top: 18px;
 }
 
 .rightPanel th {

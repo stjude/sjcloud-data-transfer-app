@@ -76,7 +76,7 @@ export default new Vuex.Store({
     downloadStatus: "Downloading...",
 
     /** Login **/
-    loginState: "waiting-2",
+    loginState: "waiting",
     token: "",
 
     /** Upload/Download **/

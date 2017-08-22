@@ -1,28 +1,54 @@
-const ui = require('./ui');
-const pem = require('pem');
-const https = require('https');
-const express = require('express');
+const ui = require("./ui");
+const pem = require("pem");
+const https = require("https");
+const express = require("express");
+const $ = require("jquery");
 
-module.exports.waitForCode = function (cb) {
-	ui.createOauthWindow(function (loginWindow) {
-		pem.createCertificate({
-			days: 1,
-			selfSigned: true
-		}, function (err, keys) {
-			var app = express();
 
-			app.get('/authcb', function (req, res) {
-				console.log("Code: " + req.query.code);
-				loginWindow.close();
-				return cb(null, req.query.code);
-			});
+module.exports.parseCode = function(url, callback) {
+  let raw_code = /code=([^&]*)/.exec(url) || null;
+  let code = (raw_code && raw_code.length > 1) ? raw_code[1] : null;
+  let error = /\?error=(.+)$/.exec(url);
 
-			https.createServer({
-				key: keys.serviceKey,
-				cert: keys.certificate
-			}, app).listen(4433);
+  return callback(error, code);
+};
 
-			console.log("Running on port 4433.");
-		});
-	});
+module.exports.waitForCode = function(internal, cb) {
+  ui.createOauthWindow(internal, function(window) {
+    pem.createCertificate({
+      days: 1,
+      selfSigned: true,
+    }, function(err, keys) {
+      let app = express();
+
+	    let server = https.createServer({
+        key: keys.serviceKey,
+        cert: keys.certificate,
+	    }, app);
+
+      app.get("/authcb", function(req, res) {
+	      server.close();
+        window.close();
+        return cb(null, req.query.code);
+      });
+
+      server.listen(4433);
+      console.log("Running on port 4433.");
+    });
+  });
+};
+
+module.exports.getToken = function(internal, callback) {
+  module.exports.waitForCode(internal, function(err, code) {
+
+    console.log("Code: '" + code + "'");
+    $.post("https://auth.dnanexus.com/oauth2/token", {
+      grant_type: "authorization_code",
+      code: code,
+      redirect_uri: "https://localhost:4433/authcb",
+    }, (data) => {
+      let authToken = data.access_token;
+      return callback(null, authToken);
+    });
+  });
 };
