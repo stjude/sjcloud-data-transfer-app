@@ -183,7 +183,7 @@ module.exports.openFileDialog = function(callback, defaultPath) {
 // Base function derived from stack overflow.
 // Credit: https://stackoverflow.com/a/14919494
 
-module.exports.readableFileSize = function(bytes) {
+module.exports.readableFileSize = function(bytes, roundNumbers=false) {
   if (bytes === 0) {
     return "0 GB";
   }
@@ -200,7 +200,14 @@ module.exports.readableFileSize = function(bytes) {
     bytes /= thresh;
     ++u;
   } while (Math.abs(bytes) >= thresh && u < units.length - 1);
-  return bytes.toFixed(1)+" "+units[u];
+
+  let number = bytes.toFixed(1);
+
+  if (roundNumbers) {
+    number = Math.round(number);
+  }
+
+  return number+" "+units[u];
 };
 
 module.exports._sjcloud_homedir = _sjcloud_homedir;

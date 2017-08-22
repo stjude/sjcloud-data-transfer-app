@@ -219,7 +219,7 @@ module.exports.getToolsInformation = function(callback) {
       };
 
       module.exports.describeProject(elem.dx_location, (err, describe) => {
-        item.size = utils.readableFileSize(describe.dataUsage * 1e9);
+        item.size = utils.readableFileSize(describe.dataUsage * 1e9, true);
 
         module.exports.listDownloadableFiles(elem.dx_location, (err, files) => {
           let downloadableFiles = [];
