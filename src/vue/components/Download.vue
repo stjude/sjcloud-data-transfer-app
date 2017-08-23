@@ -10,7 +10,6 @@
 			<div class="no-files-container" v-show="hasTools && !hasFiles">
 				<img src="http://via.placeholder.com/175x175">
 				<h3>No files to download!</h3>
-				<div></div>
 			</div>
 
 			<div class="bottom-bar">
@@ -47,9 +46,6 @@ export default {
 		NavBar,
 		FileStatus,
 		UploadTarget
-	},
-	data() {
-		return {}
 	},
 	computed: {
 		hasFiles() {

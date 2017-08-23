@@ -35,6 +35,14 @@
 				</tr>
 			</tbody>
 		</table>
+		<div>
+			<div class="checkbox first-checkbox">
+				<label><input type="checkbox" :checked="showAllFiles" @click="updateShowAllFiles">Show all files</label></div>
+			</div>
+			<div class="checkbox second-checkbox">
+				<label><input type="checkbox" :checked="showAllProjects" @click="updateShowAllProjects">Show non St. Jude Cloud projects</label></div>
+			</div>
+		</div>
 	</div>
 </template>
 <script>
@@ -73,17 +81,16 @@ export default {
 		}
 	},
 	created() { 
-		if (!this.$store.getters.tools.length) {
-			window.dx.getToolsInformation(this.$store.getters.showAllProjects, this.$store.getters.showAllFiles, (results) => {
-				if (results.length > 0) {
-					this.$store.commit('setTools', results);
-					this.$store.commit('setCurrToolName', results[0].name);
-				}
-			});
-		}
+		this.$store.dispatch('updateToolsFromRemote');
 	},
 	updated() {},
 	computed: {
+		showAllFiles() {
+			return this.$store.getters.showAllFiles;
+		},
+		showAllProjects() {
+			return this.$store.getters.showAllProjects;
+		},
 		currTool() {
 			return this.$store.getters.currTool
 		},
@@ -98,6 +105,12 @@ export default {
 		}
 	},
 	methods: {
+		updateShowAllFiles (e) {
+			this.$store.commit('setShowAllFiles', e.target.checked);
+		},
+		updateShowAllProjects (e) {
+			this.$store.commit('setShowAllProjects', e.target.checked);
+		},
 		setCurrTool(toolName) {
 			this.$store.commit('setCurrToolName',toolName)
 		}
@@ -143,6 +156,18 @@ export default {
 	.loading-text {
 		font-size: 18px;
 		text-align: center;
+	}
+	
+	.first-checkbox {
+		position: absolute;
+		top: 485px;
+		left: 25px;
+	}
+
+	.second-checkbox {
+		position: absolute;
+		top: 505px;
+		left: 25px;
 	}
 
 	/**

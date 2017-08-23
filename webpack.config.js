@@ -23,8 +23,8 @@ module.exports = function(env={}) {
 	          {
 	            loader: "babel-loader",
 	            options: {
-	              presets: [["es2015", {modules: false}]],
-	              plugins: ["syntax-dynamic-import"],
+	              presets: [["es2015", {modules: false}], 'stage-2'],
+                plugins: [ "syntax-dynamic-import" ],
 	            },
 	          },
 	        ],

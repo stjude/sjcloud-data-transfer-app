@@ -132,14 +132,18 @@ module.exports.login = (token, callback) => {
   );
 };
 
-module.exports.listProjects = (callback) => {
+module.exports.listProjects = (allProjects, callback) => {
   if (os.platform() == "darwin" || os.platform() == "linux") {
     var tabliteral = "$'\t'";
   } else if (os.platform() == "win32") {
     var tabliteral = "`t";
   }
 
-  utils.runCommand("dx find projects --level UPLOAD --tag " + PROJECT_TAG + " --delim " + tabliteral, (err, stdout) => {
+  let cmd = "dx find projects --level UPLOAD --delim " + tabliteral; 
+  if (!allProjects) {
+    cmd += " --tag " + PROJECT_TAG;
+  }
+  utils.runCommand(cmd, (err, stdout) => {
     if (err) {
       return callback(err, []);
     }
@@ -200,9 +204,7 @@ module.exports.uploadFile = (file, project, callback) => {
 };
 
 module.exports.downloadFile = function(downloadLocation, fileName, fileRawSize, fileId, updateCb, finishedCb) {
-
   let outputPath = expandHomeDir(path.join(downloadLocation, fileName));
-
   let cmd = "dx download -f " + fileId + " -o " + outputPath;
 
   utils.runCommand("rm " + outputPath + "; touch " + outputPath, () => {
@@ -222,7 +224,7 @@ module.exports.downloadFile = function(downloadLocation, fileName, fileRawSize, 
 };
 
 module.exports.getToolsInformation = function(allProjects, allFiles, callback) {
-  module.exports.listProjects(function(err, results) {
+  module.exports.listProjects(allProjects, function(err, results) {
     async.map(results, function(elem, cb) {
       let item = {
         name: elem.project_name,
