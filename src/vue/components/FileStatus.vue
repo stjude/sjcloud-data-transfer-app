@@ -18,10 +18,12 @@
 					</td>
 					<td>{{ file.name }}</td>
 					<td style='text-align:center'>{{ file.size }}</td>
-					<td style='text-align:center'>
-						<div 
-							style='height:20px; width:100%; background-color:#fff; border: 1px solid #ececec'>
+					<td style='text-align:center; padding: 0px; margin: 0px;'>
+						<div v-show="!file.finished" style='height:20px; width:100%; background-color:#fff; border: 1px solid #ececec'>
 							<div class='bg-success' v-bind:style="{height:'20px',width:file.status+'%'}"></div>
+						</div>
+						<div v-show="file.finished">
+							<i style="color: #4F8A10; font-size: 14pt;" class="material-icons">check_circle</i>
 						</div>
 					</td>
 				</tr>

@@ -16,7 +16,7 @@
   },
   "author": "Clay McLeod, Andrew Frantz, Edgar Sioson",
   "build": {
-  	"appId": "org.stjude.cloud",
+    "appId": "org.stjude.cloud",
     "dmg": {
       "contents": [
         {
@@ -44,6 +44,7 @@
   "dependencies": {
     "async": "^2.4.1",
     "bootstrap": "^3.3.7",
+    "expand-home-dir": "0.0.3",
     "express": "^4.15.4",
     "jquery": "^3.2.1",
     "mkdirp": "^0.5.1",

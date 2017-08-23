@@ -87,17 +87,17 @@ export default {
 			this.$store.getters.currTool.download.forEach((elem) => {
 				if (elem.checked) {
 					window.dx.downloadFile(this.$store.getters.downloadLocation,
+										   elem.name,
+										   elem.raw_size,
 										   elem.dx_location,
 										   function(progress) {
 											   elem.status = progress;
 										   },
 										   function(err, result) {
-
+											   elem.finished = true;
 										   });
-					console.log("Downloading:", elem.name)
 				}
 			});
-			//this.$store.commit('downloadFiles')
 		},
 		cancelFiles() {}
 	}

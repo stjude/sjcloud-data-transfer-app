@@ -1,10 +1,12 @@
 // TODO: add documentationin the style of http://usejsdoc.org/
 
+const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const async = require("async");
 const utils = require("./utils");
 const child_process = require("child_process");
+const expandHomeDir = require("expand-home-dir");
 
 // TODO: move these variables to a JSON config file in the root directory
 // of the project.
@@ -193,19 +195,26 @@ module.exports.uploadFile = (file, project, callback) => {
   });
 };
 
-module.exports.downloadFile = function(downloadLocation, fileId, updateCb, finishedCb) {
-  let cmd = "cd " + downloadLocation + "; dx download -f " + fileId;
+module.exports.downloadFile = function(downloadLocation, fileName, fileRawSize, fileId, updateCb, finishedCb) {
 
-  utils.runCommandSpawn(cmd,
-    function(data) {
-      console.log("STDIN:", data);
-    }, function(data) {
-      console.log("STDERR:", data);
-    }, function(code) {
-      console.log("Exitting:", code)
+  let outputPath = expandHomeDir(path.join(downloadLocation, fileName));
+
+  let cmd = "dx download -f " + fileId + " -o " + outputPath;
+
+  utils.runCommand("rm " + outputPath + "; touch " + outputPath, () => {
+    fs.watchFile(outputPath, {interval: 200}, () => {
+      fs.stat(outputPath, (err, stats) => {
+        if (stats !== undefined) {
+          let progress = Math.round(stats.size / fileRawSize * 100.0);
+          updateCb(progress);
+        }
+      });
     });
-  updateCb(100);
-  return finishedCb(null, true);
+
+    utils.runCommand(cmd, function(err, result) {
+      return finishedCb(err, result);
+    });
+  });
 };
 
 module.exports.getToolsInformation = function(callback) {
@@ -229,7 +238,9 @@ module.exports.getToolsInformation = function(callback) {
               name: elem.describe.name,
               status: 0,
               checked: false,
+              finished: false,
               size: utils.readableFileSize(elem.describe.size),
+              raw_size: elem.describe.size,
               dx_location: elem.project + ":" + elem.id,
             };
 

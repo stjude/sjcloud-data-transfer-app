@@ -78,49 +78,6 @@ module.exports.runCommand = function(cmd, callback) {
   }
 };
 
-module.exports.runCommandSpawn = function(cmd, stdin, stderr, close) {
-  if (os.platform() == "darwin" || os.platform() == "linux") {
-    const dxToolkitEnvFile = module.exports._dx_toolkit_env_file;
-    fs.stat(module.exports._dx_toolkit_env_file, function(err, stats) {
-	  // fs.stat() is only to check if "dx" commands can be sourced. If it fails other commands can still be run.
-      if (!err) { cmd = "source " + dxToolkitEnvFile + "; " + cmd; }
-
-	  let process = spawn(cmd,
-        {
-          shell: "/bin/bash",
-          stdio: "pipe",
-        }
-	  );
-
-	  process.stdout.on("data", (data) => {
-        console.log(`child stdout:\n${data}`);
-	  });
-
-	  process.stderr.on("data", (data) => {
-        console.error(`child stderr:\n${data}`);
-	  });
-
-	  process.on("close", close);
-    });
-  } else if (os.platform() == "win32") {
-    const dnanexusPSscript = path.join( module.exports._dnanexus_CLI_dir, "dnanexus-shell.ps1" );
-    fs.stat(dnanexusPSscript, function(err, stats) {
-      if (!err) { // fs.stat() is only to check if "dx" commands can be sourced. If it fails other commands can still be run.
-        cmd = ".'" + dnanexusPSscript + "'; " + cmd;
-      }
-      cmd = "powershell.exe " + cmd;
-	  let process = spawn(cmd, 
-						  {
-							stdio: 'pipe',
-						  }
-						);
-	  process.stdout.on("data", stdin);
-	  process.stderr.on("data", stderr);
-	  process.on("close", close);
-    });
-  }
-};
-
 module.exports.dxToolkitOnPath = function(callback) {
   if (os.platform() == "linux" || os.platform() == "darwin") {
     this.runCommand("which dx", callback);
