@@ -3,29 +3,29 @@
 		<table style='position:fixed; width:570px; border:1px solid #ccc;'>
 			<thead>
 				<tr style='color:#000; background-color:#ececec'>
-					<th style='text-align:center;width:5%'>
+					<th class='cellCheckBox'>
 						<input type='checkbox' name='sjcda-file-all' id='sjcda-file-checkbox-all' value='all' v-on:click.stop='toggleCheckBoxes($event)'/>
 					</th>
-					<th style='text-align:center;width:50%'>FILENAME</th>
-					<th style='text-align:center;width:25%'>SIZE</th>
-					<th style='text-align:center;width:10%'>STATUS</th>
+					<th class='cellFileName'>FILENAME</th>
+					<th class='cellFileSize'>SIZE</th>
+					<th class='cellStatus'>STATUS</th>
 				</tr>
 			</thead>
 		</table>
 		<table  style='width:570px; margin-top:34px'>
 			<tbody>
 				<tr v-for='file in files'>
-					<td style='text-align:center;width:5%'>
+					<td class='cellCheckBox'>
 						<input type='checkbox' name='sjcda-files' v-bind:value='file.name' v-bind:checked='file.checked' v-on:click.stop='toggleFileChecked(file,$event)'/>
 					</td>
-					<td style='width:50%; padding-left:10px'>{{ file.name }}</td>
-					<td style='text-align:center;width:25%'>{{ file.size }}</td>
-					<td style='text-align:center; padding: 0px; margin: 0px; width:10%'>
-						<div v-show="!file.finished" style='height:20px; width:80%; background-color:#fff; border: 1px solid #ececec; margin: auto'>
+					<td class='cellFileName' style='text-align:left;padding-left:10px'>{{ file.name }}</td>
+					<td class='cellFileSize'>{{ file.size }}</td>
+					<td class='cellStatus'>
+						<div v-show="!file.finished" style='height:20px; width:80%; background-color:#fff; border: 1px solid #ececec; margin: 0 auto'>
 							<div v-bind:style="progressStyle(file)"></div>
 						</div>
-						<div v-show="file.finished">
-							<i style="color: #4F8A10; font-size: 14pt;" class="material-icons">check_circle</i>
+						<div v-show="file.finished" style='max-height:20pt'>
+							<i style="color: #4F8A10; font-size:20pt; line-height:20pt" class="material-icons">check_circle</i>
 						</div>
 					</td>
 				</tr>
@@ -92,11 +92,30 @@ table {
 
 th {
 	padding: 3px 0 3px 0px;
+	font-weight:600;
+	text-align:center;
 }
 
 td {
 	padding: 7px 0 7px 0px;
 	border: 1px solid #ccc;
+	text-align:center;
+}
+
+.cellCheckBox {
+	width: 25px;
+}
+
+.cellFileName {
+	width: 250px;
+}
+
+.cellFileSize {
+	width:150px;
+}
+
+.cellStatus {
+	width: 80px;
 }
 
 input[type='checkbox'] {
