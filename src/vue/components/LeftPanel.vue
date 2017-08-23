@@ -73,11 +73,11 @@ export default {
 		}
 	},
 	created() { 
-		if (this.$store.getters.environment !== 'dev') {
+		if (!this.$store.getters.tools.length) {
 			window.dx.getToolsInformation((results) => {
 				if (results.length > 0) {
-					this.$store.commit("setTools", results);
-					this.$store.commit("setCurrToolName", results[0].name);
+					this.$store.commit('setTools', results);
+					this.$store.commit('setCurrToolName', results[0].name);
 				}
 			});
 		}
