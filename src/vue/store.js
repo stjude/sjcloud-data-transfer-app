@@ -82,6 +82,8 @@ export default new Vuex.Store({
     /** Upload/Download **/
     currPath: "upload",
     downloadLocation: "~/Downloads/",
+    showAllFiles: true,
+    showAllProjects: false,
   },
   getters: {
     /** Global **/
@@ -106,6 +108,12 @@ export default new Vuex.Store({
     },
 
     /** Upload/Download **/
+    showAllFiles(state) {
+      return state.showAllFiles;
+    },
+    showAllProjects(state) {
+      return state.showAllProjects;
+    },
     currTool(state) {
       return state.tools.filter((t)=>t.name==state.currToolName)[0];
     },

@@ -64,7 +64,7 @@ module.exports.runCommand = function(cmd, callback) {
         cmd = "source " + dxToolkitEnvFile + "; " + cmd;
 	  }
 
-      return exec(cmd, {shell: "/bin/bash"}, inner_callback);
+      return exec(cmd, {shell: "/bin/bash", maxBuffer: 10000000}, inner_callback);
     });
   } else if (os.platform() == "win32") {
     const dnanexusPSscript = path.join( module.exports._dnanexus_CLI_dir, "dnanexus-shell.ps1" );
@@ -73,7 +73,7 @@ module.exports.runCommand = function(cmd, callback) {
         cmd = ".'" + dnanexusPSscript + "'; " + cmd;
       }
       cmd = "powershell.exe " + cmd;
-      return exec(cmd, inner_callback); // Warning: the dnanexus-shell.ps1 script used to source environment variables on Windows sends a DNAnexus banner to STDOUT. Banner will be first 3 lines of STDOUT
+      return exec(cmd, {maxBuffer: 10000000}, inner_callback); // Warning: the dnanexus-shell.ps1 script used to source environment variables on Windows sends a DNAnexus banner to STDOUT. Banner will be first 3 lines of STDOUT
     });
   }
 };

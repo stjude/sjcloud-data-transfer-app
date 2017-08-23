@@ -74,7 +74,7 @@ export default {
 	},
 	created() { 
 		if (!this.$store.getters.tools.length) {
-			window.dx.getToolsInformation((results) => {
+			window.dx.getToolsInformation(this.$store.getters.showAllProjects, this.$store.getters.showAllFiles, (results) => {
 				if (results.length > 0) {
 					this.$store.commit('setTools', results);
 					this.$store.commit('setCurrToolName', results[0].name);

@@ -166,8 +166,12 @@ module.exports.describeProject = function(projectId, cb) {
   });
 };
 
-module.exports.listDownloadableFiles = function(projectId, cb) {
-  let cmd = "dx find data --path " + projectId + ":/ --tag " + DOWNLOADABLE_TAG + " --json";
+module.exports.listDownloadableFiles = function(projectId, allFiles, cb) {
+  let cmd = "dx find data --path " + projectId + ":/ --json";
+  if (!allFiles) {
+    cmd += " --tag " + DOWNLOADABLE_TAG;
+  }
+
   utils.runCommand(cmd, (err, stdout) => {
     return cb(err, JSON.parse(stdout));
   });
@@ -217,7 +221,7 @@ module.exports.downloadFile = function(downloadLocation, fileName, fileRawSize, 
   });
 };
 
-module.exports.getToolsInformation = function(callback) {
+module.exports.getToolsInformation = function(allProjects, allFiles, callback) {
   module.exports.listProjects(function(err, results) {
     async.map(results, function(elem, cb) {
       let item = {
@@ -230,8 +234,9 @@ module.exports.getToolsInformation = function(callback) {
       module.exports.describeProject(elem.dx_location, (err, describe) => {
         item.size = utils.readableFileSize(describe.dataUsage * 1e9, true);
 
-        module.exports.listDownloadableFiles(elem.dx_location, (err, files) => {
+        module.exports.listDownloadableFiles(elem.dx_location, allFiles, (err, files) => {
           let downloadableFiles = [];
+          console.log(err);
 
           files.forEach((elem) => {
             let dl_file = {

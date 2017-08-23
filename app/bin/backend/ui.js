@@ -23,7 +23,6 @@ module.exports.createWindow = (callback) => {
   });
 
   mainWindow.setResizable(false);
-
   return callback(mainWindow);
 };
 
