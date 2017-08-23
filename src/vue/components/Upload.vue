@@ -76,35 +76,6 @@ export default {
 </script>
 
 <style scoped>
-.row {
-	margin-left:0;
-	margin-right:0;
-}
 
-.left-panel-container {
-	padding: 0px;
-}
-
-.right-panel-container {
-	height: 100%;
-}
-
-.bottom-bar {
-	position: absolute;
-	bottom: 20px;
-	left: 10px;
-	width: 570px;
-	margin-left: 10px;
-}
-
-.bottom-bar-left {
-	text-align: left;
-	float: left;
-}
-
-.bottom-bar-right {
-	text-align: right;
-	float: right;
-}
 
 </style>

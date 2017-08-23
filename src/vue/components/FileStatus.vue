@@ -1,26 +1,28 @@
 <template>
-	<div class='rightPanel'>
-		<table>
+	<div id='fileStatusDiv' style='margin-top:18px;'>
+		<table style='position:fixed; width:570px; border:1px solid #ccc;'>
 			<thead>
 				<tr style='color:#000; background-color:#ececec'>
-					<th style='width:10%'>
+					<th style='text-align:center;width:5%'>
 						<input type='checkbox' name='sjcda-file-all' id='sjcda-file-checkbox-all' value='all' v-on:click.stop='toggleCheckBoxes($event)'/>
 					</th>
-					<th style='text-align:center;width:50%'>Filename</th>
-					<th style='text-align:center;width:25%'>Size</th>
-					<th style='text-align:center;width:15%'>Status</th>
+					<th style='text-align:center;width:50%'>FILENAME</th>
+					<th style='text-align:center;width:25%'>SIZE</th>
+					<th style='text-align:center;width:10%'>STATUS</th>
 				</tr>
 			</thead>
+		</table>
+		<table  style='width:570px; margin-top:34px'>
 			<tbody>
 				<tr v-for='file in files'>
-					<td>
+					<td style='text-align:center;width:5%'>
 						<input type='checkbox' name='sjcda-files' v-bind:value='file.name' v-bind:checked='file.checked' v-on:click.stop='toggleFileChecked(file,$event)'/>
 					</td>
-					<td>{{ file.name }}</td>
-					<td style='text-align:center'>{{ file.size }}</td>
-					<td style='text-align:center; padding: 0px; margin: 0px;'>
-						<div v-show="!file.finished" style='height:20px; width:100%; background-color:#fff; border: 1px solid #ececec'>
-							<div class='bg-success' v-bind:style="{height:'20px',width:file.status+'%'}"></div>
+					<td style='width:50%; padding-left:10px'>{{ file.name }}</td>
+					<td style='text-align:center;width:25%'>{{ file.size }}</td>
+					<td style='text-align:center; padding: 0px; margin: 0px; width:10%'>
+						<div v-show="!file.finished" style='height:20px; width:80%; background-color:#fff; border: 1px solid #ececec; margin: auto'>
+							<div v-bind:style="progressStyle(file)"></div>
 						</div>
 						<div v-show="file.finished">
 							<i style="color: #4F8A10; font-size: 14pt;" class="material-icons">check_circle</i>
@@ -62,31 +64,56 @@ export default {
 		toggleCheckBoxes(event) {
 			const checked=event.target.checked; 
 			this.files.forEach(f=>f.checked=checked);
-			this.$forceUpdate()
 		},
 		progressStyle(file) {
 			return {height:'20px',width:file.status/100+'%'}
+		},
+		progressStyle(file) {
+			return {
+				height:'19px',
+				'background-color':'rgb(27, 120, 55)', 
+				width:file.status+'%'
+			}
 		}
 	}
 }
 </script>
 
-<style>
-.rightPanel {
-	height: 100%;
+<style scoped>
+#fileStatusDiv {
+	height: 410px;
+	overflow:scroll;
+	border-bottom: 1px solid #ccc;
 }
 
-.rightPanel table {
-	width: 100%;
-	margin-top: 18px;
+table {
+	max-height:500px;
 }
 
-.rightPanel th {
-	padding: 10px;
-	border: 2px solid #ececec;
+th {
+	padding: 3px 0 3px 0px;
 }
-.rightPanel td {
-	padding: 10px;
+
+td {
+	padding: 7px 0 7px 0px;
 	border: 1px solid #ccc;
 }
+
+input[type='checkbox'] {
+    -webkit-appearance:none;
+    width:18px;
+    height:18px;
+    background:white;
+    border-radius:3px;
+    border:1px solid #555;
+    overflow:hidden;
+    font-size:17px;
+    line-height:17px;
+    color:#555;
+}
+
+input[type='checkbox']:checked:before {
+    content:"  \2714";
+}
+
 </style>

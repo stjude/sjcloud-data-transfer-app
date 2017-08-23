@@ -61,6 +61,7 @@ export default {
 
 <style>
 body {
+	position:fixed;
 	width: 900px;
 	height: 600px;
 	margin: 0px auto;
@@ -68,12 +69,49 @@ body {
 }
 
 .app-route-placement {
-	height: 560px;
-	width: 900px;
 }
 
 .sjcda-container {
 	background-color: #FFFFFF;
+	overflow: hidden;
+}
+
+
+.row {
+	margin-left:0;
+	margin-right:0;
+}
+
+.left-panel-container {
+	padding: 0px;
+}
+
+.right-panel-container {
+	height: 570px;
+    overflow: scroll;
+}
+
+.right-panel {
+    border-bottom: 1px solid #ccc;
+}
+
+.bottom-bar {
+	position: absolute;
+	bottom: 20px;
+	left: 10px;
+	width: 570px;
+	margin-left: 10px;
+	background-color: #fff;
+}
+
+.bottom-bar-left {
+	text-align: left;
+	float: left;
+}
+
+.bottom-bar-right {
+	text-align: right;
+	float: right;
 }
 
 </style>
