@@ -34,6 +34,7 @@ export default new Vuex.Store({
     currToolName: "",
     downloadLocation: "~/Downloads/",
     tools: [], // see ../tests/testdata/fakeTools.json for expected schema
+    noProjectsFound: false,
     showAllFiles: false,
     showAllProjects: false,
   },
@@ -60,6 +61,9 @@ export default new Vuex.Store({
     },
 
     /** Upload/Download **/
+    noProjectsFound(state) {
+      return state.noProjectsFound;
+    },
     showAllFiles(state) {
       return state.showAllFiles;
     },
@@ -109,6 +113,9 @@ export default new Vuex.Store({
     },
 
     /** Upload/Download **/
+    setNoProjectsFound(state, value) {
+      state.noProjectsFound = value;
+    },
     setShowAllFiles(state, value) {
       state.showAllFiles = value;
     },
@@ -132,6 +139,7 @@ export default new Vuex.Store({
     updateToolsFromRemote({commit, state}, force=false) {
       let previousTool = state.currToolName;
 
+      commit("setNoProjectsFound", false);
       if (force) state.tools = [];
 
       if (!state.tools.length) {
@@ -140,12 +148,15 @@ export default new Vuex.Store({
           state.showAllFiles,
           (results) => { console.log(results)
             if (results.length > 0) {
+              commit("setNoProjectsFound", false);
               commit("setTools", results);
               for (let i = 0; i < results.length; i++) {
                 let result = results[i];
                 if (result.name === previousTool) return;
               }
               commit("setCurrToolName", results[0].name);
+            } else {
+              commit("setNoProjectsFound", true);
             }
           });
       }

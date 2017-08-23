@@ -1,6 +1,9 @@
 <template>
 	<div class='leftPanel'>
-		<div v-show="!hasTools">
+		<div v-show="!hasTools && noProjectsFound">
+			No projects found! Please create one!
+		</div>
+		<div v-show="!hasTools && !noProjectsFound">
 			<div class="col-xs-12">
 				<div class="sk-circle">
 					<div class="sk-circle1 sk-child"></div>
@@ -85,6 +88,9 @@ export default {
 	},
 	updated() {},
 	computed: {
+		noProjectsFound() {
+			return this.$store.getters.noProjectsFound;
+		},
 		showAllFiles() {
 			return this.$store.getters.showAllFiles;
 		},
