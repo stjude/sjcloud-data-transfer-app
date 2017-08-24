@@ -12,9 +12,9 @@ export default {
   methods: {
     dropped(e) {
       e.preventDefault();
-
+      console.log(window.path);
       for (let f of e.dataTransfer.files) {
-        this.$store.commit('addFile', {name: f.path, size: 0});
+        this.$store.commit('addFile', window.utils.fileInfoFromPath(f.path));
       }
     }
   }

@@ -167,6 +167,15 @@ module.exports.readableFileSize = function(bytes, roundNumbers=false) {
   return number+" "+units[u];
 };
 
+module.exports.fileInfoFromPath = function(filepath) {
+  name = path.basename(filepath);
+  size = fs.statSync(filepath).size;
+  return {
+    name,
+    size: module.exports.readableFileSize(size)
+  }
+}
+
 module.exports._sjcloud_homedir = _sjcloud_homedir;
 module.exports._dx_toolkit_dir = _dx_toolkit_dir;
 module.exports._dx_toolkit_env_file = _dx_toolkit_env_file;

@@ -143,7 +143,7 @@ export default new Vuex.Store({
 
       const this_file = {
         name: file.name,
-        size: file.size * 1e-9,
+        size: file.size,
         status: 0,
         checked: false,
       };
@@ -161,7 +161,7 @@ export default new Vuex.Store({
       files.forEach((f) => {
         const this_file = {
           name: f.name,
-          size: f.size * 1e-9,
+          size: f.size, 
           status: 0,
           checked: false,
         };
