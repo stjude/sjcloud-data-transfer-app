@@ -34,6 +34,9 @@ export default new Vuex.Store({
     noProjectsFound: false,
     showAllFiles: false,
     showAllProjects: false,
+    modals: {
+      toolkit: 0
+    }
   },
   getters: {
     /** Global **/
@@ -133,6 +136,9 @@ export default new Vuex.Store({
 
       return true;
     },
+    modalVisibility(state,getters) {
+      return name => state.modals[name]
+    }
   },
   mutations: {
     /** Install **/
@@ -216,6 +222,12 @@ export default new Vuex.Store({
 
       tool[state.currPath] = tool[state.currPath].filter((t) => !t.checked);
     },
+    showModal(state,name) {
+      state.modals[name]=1
+    },
+    hideModal(state,name) {
+      state.modals[name]=0
+    }
   },
   actions: {
     updateToolsFromRemote({commit, state}, force=false) {

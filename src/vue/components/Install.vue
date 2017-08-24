@@ -22,7 +22,7 @@
 						The St. Jude Cloud desktop application requires the installation of third-party software. We'll take care of installing that for you. 
 						<div class='info-icon-wrapper-div' @click='showModal()'>
 							<i class='material-icons' 
-							style='color:#018dc4'>
+							style='color:#018dc4; cursor:pointer'>
 							info
 							</i>
 						</div>
@@ -58,20 +58,20 @@
 			</div>
 		</div>
 
-		<!--<toolkit-info :showModal='openModal'></toolkit-info>-->
+		<toolkit-modal v-show='toolkitModalVisibility'></toolkit-modal>
 	</div>
 </template>
 
 <script>
 import StepOutcome from './StepOutcome.vue'
 import SpinKit from './SpinKit.vue'
-import ToolkitInfo from './ToolkitInfo.vue'
+import ToolkitModal from './ToolkitModal.vue'
 
 export default {
 	components: {
 		StepOutcome,
 		SpinKit,
-		ToolkitInfo
+		ToolkitModal
 	},
 	data() {
 		return {
@@ -87,6 +87,9 @@ export default {
 		},
 		downloadStatus() {
 			return this.$store.getters.downloadStatus;
+		},
+		toolkitModalVisibility() {
+			return this.$store.getters.modalVisibility('toolkit')
 		}
 	},
 	methods: {
@@ -122,7 +125,7 @@ export default {
 			});
 		},
 		showModal() { console.log('showModal')
-			this.openModal=true
+			this.$store.commit('showModal','toolkit')
 		}
 	}
 }

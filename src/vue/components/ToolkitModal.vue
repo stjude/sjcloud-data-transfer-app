@@ -1,34 +1,37 @@
 <template>
 	<transition name="modal">
-		<div class="modal-mask">
+		<div class="modal-mask" @click='hide'>
 		  <div class="modal-wrapper">
-		    <div class="modal-container">
-
-		      <div class="modal-header">
+		    <div class="modal-container" style='position:relative'>
+		      <div 
+		      	@click='hide'
+		      	style='position:absolute; top:20px; right:20px; cursor:default'>
+		      	<i class='material-icons'>close</i>
+		      </div>
+		      <!--<div class="modal-header">
 		        <slot name="header">
 		        </slot>
-		      </div>
+		      </div>-->
 
 		      <div class="modal-body">
 		        <slot name="body">
-		          <p>The St. Jude Cloud Platform is powered by the genomics processing company <a https='https://www.dnanexus.com/'>DNAnexus</a>. This desktop application uses their "dx-toolkit" software: a suite of tools that enables reliable uploads and downloads of files from their servers.</p>
+		          <p>The St. Jude Cloud Platform is powered by the genomics processing company <a https='https://www.dnanexus.com/'>DNAnexus</a>. This desktop application uses their "dx-toolkit" software, a suite of tools that enables reliable uploads and downloads of files from their servers.</p>
 		          <h3>Learn more</h3>
 		          <ul>
 		          	<li><a href='https://github.com/dnanexus/dx-toolkit'>View dx-toolkit source</a></li>
 		          	<li><a href='https://wiki.dnanexus.com/Downloads#DNAnexus-Platform-SDK'>Install the dx-toolkit yourself</a></li>
-		          	<li><a href='https://wiki.dnanexus.com/Home'></a>DNAnexus documentation</li>
+		          	<li><a href='https://wiki.dnanexus.com/Home'>DNAnexus documentation</a></li>
 		          </ul>
 		        </slot>
 		      </div>
 
-		      <div class="modal-footer">
+		      <!--<div class="modal-footer">
 		        <slot name="footer">
-		          default footer
-		          <button class="modal-default-button" @click="$emit('close')">
+		          <button class="btn btn-stjude" @click="">
 		            OK
 		          </button>
 		        </slot>
-		      </div>
+		      </div>-->
 		    </div>
 		  </div>
 		</div>
@@ -37,9 +40,11 @@
 
 <script>
 export default {
-	props: [
-		'showModal'
-	]
+	methods: {
+		hide() {
+			this.$store.commit('hideModal','toolkit')
+		}
+	}
 }
 </script>
 
@@ -51,6 +56,7 @@ export default {
 	left: 0;
 	width: 100%;
 	height: 100%;
+	max-height: 640px;
 	background-color: rgba(0, 0, 0, .5);
 	display: table;
 	transition: opacity .3s ease;
@@ -62,7 +68,7 @@ export default {
 }
 
 .modal-container {
-	width: 300px;
+	width: 450px;
 	margin: 0px auto;
 	padding: 20px 30px;
 	background-color: #fff;
@@ -79,6 +85,7 @@ export default {
 
 .modal-body {
 	margin: 20px 0;
+	font-size: 18px;
 }
 
 .modal-default-button {
