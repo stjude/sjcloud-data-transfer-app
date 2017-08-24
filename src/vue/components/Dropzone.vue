@@ -1,6 +1,14 @@
 <template>
-  <div class="dropzone" @dragover.prevent @drop="dropped">
-    <div class="dropzone-content-container">
+  <div class="dropzone"
+       @dragover.prevent
+       @dragenter.prevent="dragging = true"
+       @dragexit.prevent="dragging = false"
+       @dragleave.prevent="dragging = false"
+       @drop.prevent="dropped"
+       :style="dragging ? draggingDropzoneStyle : nondraggingDropzoneStyle">
+
+    <div class="dropzone-content-container"
+       :style="dragging ? draggingColorStyle : nondraggingColorStyle">
       <i class="material-icons md-48" style="height: 60px;">cloud_upload</i>
       <span class="dropzone-container-text">Click or drop files here</span>
     </div>
@@ -9,6 +17,23 @@
 
 <script>
 export default {
+  data: () => {
+    return {
+      dragging: false,
+      nondraggingDropzoneStyle: {
+        border: "3pt dashed #dedede",
+      },
+      draggingDropzoneStyle: {
+        border: "3pt dashed #BF355B",
+      },
+      nondraggingColorStyle: {
+        color: "#dedede"
+      },
+      draggingColorStyle: {
+        color: "#BF355B"
+      }
+    }
+  },
   methods: {
     dropped(e) {
       e.preventDefault();
@@ -26,9 +51,10 @@ export default {
   margin-top: 25px;
   height: 450px;
   width: 540px;
-  border: 3pt dashed #dedede;
   border-radius: 15px;
   font-size: 30px;
+  -webkit-transition: border .5s;
+  transition: border .5s;
 }
 
 .dropzone-content-container {
@@ -36,7 +62,8 @@ export default {
   left: 115px;
   top: 275px;
   height: 60px;
-  color: #dedede;
+  -webkit-transition: color .5s;
+  transition: color .5s;
 }
 
 .dropzone-container-text {
