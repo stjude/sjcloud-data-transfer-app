@@ -42,14 +42,14 @@ export default {
     clicked(e) {
       window.utils.openFileDialog((files) => {
         for (let f of files) {
-          this.$store.commit('addFile', window.utils.fileInfoFromPath(f));
+          this.$store.commit('addFile', window.utils.fileInfoFromPath(f, true));
         }
       })
     },
     dropped(e) {
       this.dragging = false;
       for (let f of e.dataTransfer.files) {
-        this.$store.commit('addFile', window.utils.fileInfoFromPath(f.path));
+        this.$store.commit('addFile', window.utils.fileInfoFromPath(f.path, true));
       }
     }
   }

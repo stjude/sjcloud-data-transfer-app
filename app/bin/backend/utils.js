@@ -47,7 +47,9 @@ module.exports.initSJCloudHome = function(callback) {
 module.exports.getDXToolkitDir = function() {
   if (!fs.existsSync(module.exports.dxToolkitDirectory)) {
     mkdirp(module.exports.dxToolkitDirectory, function(err) {
-      if (err) { return null; }
+      if (err) {
+ return null; 
+}
       return module.exports.dxToolkitDirectory;
     });
   }
@@ -225,7 +227,9 @@ module.exports.openFileDialog = function(callback) {
  * @return {string} Human-readable size.
  **/
 module.exports.readableFileSize = function(bytes, roundNumbers=false) {
-  if (bytes === 0) { return "0 GB"; }
+  if (bytes === 0) {
+ return "0 GB"; 
+}
 
   let thresh = 1000;
   if (Math.abs(bytes) < thresh) {
@@ -253,16 +257,34 @@ module.exports.readableFileSize = function(bytes, roundNumbers=false) {
  * Return the basename and size of a file from the path.
  * 
  * @param {string} filepath Path where the file resides.
+ * @param {boolean} checked Whether the entry should start out checked.
  * @return {object} object containing name and size properties.
  */
-module.exports.fileInfoFromPath = function(filepath) {
+module.exports.fileInfoFromPath = function(filepath, checked) {
   name = path.basename(filepath);
   size = fs.statSync(filepath).size;
   return {
     name,
+    path: filepath,
     size: module.exports.readableFileSize(size),
-  }
-}
+    raw_size: size,
+    status: 0,
+    checked,
+  };
+};
+
+/**
+ * Generate a random number between min and max.
+ * 
+ * @param {integer} min minimum number
+ * @param {integer} max maximum number
+ * @return {integer} random integer.
+ */
+module.exports.randomInt = function(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min)) + min;
+};
 
 /** EXPORTS **/
 

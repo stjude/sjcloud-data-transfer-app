@@ -17,7 +17,7 @@ const projectToolScopeWatcher = (store) => {
 export default new Vuex.Store({
   state: {
     environment,
-    concurrentOperations: 1,
+    concurrentOperations: 3,
 
     /** Install **/
     downloadStatus: "Downloading...",
@@ -183,21 +183,14 @@ export default new Vuex.Store({
     setDownloadLocation(state, location) {
       state.downloadLocation = location;
     },
-    addFile(state, file) {
+    addFile(state, file, checked) {
       const tool = state.tools.filter((t) => t.name === state.currToolName)[0];
       if (!tool || !tool[state.currPath]) {
         console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
         return;
       }
 
-      const this_file = {
-        name: file.name,
-        size: file.size,
-        status: 0,
-        checked: false,
-      };
-
-      tool[state.currPath].push(this_file);
+      tool[state.currPath].push(file);
     },
     addFiles(state, files) {
       const tool = state.tools.filter((t) => t.name === state.currToolName)[0];

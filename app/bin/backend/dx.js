@@ -22,11 +22,12 @@ const config = require("../../../config.json");
 */
 function getDxDownloadUrlFromPlatform(platform) {
   if (platform == "darwin") {
-return config.DOWNLOAD_INFO.MAC.URL;} else if (platform == "linux") {
-return config.DOWNLOAD_INFO.LINUX.URL;
-}
-  else if (platform == "win32") {
-return config.DOWNLOAD_INFO.WINDOWS.URL;} else throw new Error("Invalid platform: " + platform);
+    return config.DOWNLOAD_INFO.MAC.URL;
+} else if (platform == "linux") {
+    return config.DOWNLOAD_INFO.LINUX.URL;
+  } else if (platform == "win32") {
+    return config.DOWNLOAD_INFO.WINDOWS.URL;
+} else throw new Error("Invalid platform: " + platform);
 }
 
 /**
@@ -39,11 +40,12 @@ return config.DOWNLOAD_INFO.WINDOWS.URL;} else throw new Error("Invalid platform
 */
 function getSha256sumFromPlatform(platform) {
   if (platform == "darwin") {
-return config.DOWNLOAD_INFO.MAC.SHA256SUM;} else if (platform == "linux") {
-return config.DOWNLOAD_INFO.LINUX.SHA256SUM;} else if (platform == "win32") {
-return config.DOWNLOAD_INFO.WINDOWS.SHA256SUM;
-}
-  else throw new Config("Invalid platform: " + platform);
+    return config.DOWNLOAD_INFO.MAC.SHA256SUM;
+} else if (platform == "linux") {
+    return config.DOWNLOAD_INFO.LINUX.SHA256SUM;
+} else if (platform == "win32") {
+    return config.DOWNLOAD_INFO.WINDOWS.SHA256SUM;
+  } else throw new Config("Invalid platform: " + platform);
 }
 
 /**
@@ -141,7 +143,9 @@ module.exports.listProjects = (allProjects, callback) => {
   }
 
   let cmd = "dx find projects --level UPLOAD --delim " + tabliteral;
-  if (!allProjects) {cmd += " --tag " + config.PROJECT_TAG;}
+  if (!allProjects) {
+    cmd += " --tag " + config.PROJECT_TAG;
+  }
 
   utils.runCommand(cmd, (err, stdout) => {
     let results = [];
@@ -167,13 +171,14 @@ module.exports.listProjects = (allProjects, callback) => {
 };
 
 /**
- * Use the dx-toolkit to describe a project through JSON.
+ * Use the dx-toolkit to describe a dnanexus item through JSON.
  *
- * @param {string} projectId The DNAnexus identifier (project-*).
+ * @param {string} dnanexusId The DNAnexus identifier.
  * @param {callback} callback
  **/
-module.exports.describeProject = function(projectId, callback) {
-  utils.runCommand("dx describe " + projectId + " --json", (err, stdout) => {
+module.exports.describeDXItem = function(dnanexusId, callback) {
+  let cmd = "dx describe " + dnanexusId + " --json";
+  utils.runCommand(cmd, (err, stdout) => {
     return callback(err, JSON.parse(stdout));
   });
 };
@@ -187,7 +192,9 @@ module.exports.describeProject = function(projectId, callback) {
  **/
 module.exports.listDownloadableFiles = function(projectId, allFiles, callback) {
   let cmd = "dx find data --path " + projectId + ":/ --json";
-  if (!allFiles) { cmd += " --tag " + config.DOWNLOADABLE_TAG; }
+  if (!allFiles) {
+ cmd += " --tag " + config.DOWNLOADABLE_TAG; 
+}
 
   utils.runCommand(cmd, (err, stdout) => {
     return callback(err, JSON.parse(stdout));
@@ -197,27 +204,48 @@ module.exports.listDownloadableFiles = function(projectId, allFiles, callback) {
 /**
  * Uploads a file to the /uploads/ directory of a project
  * 
- * @param {string} file Name of file being uploaded
- * @param {string} projectId DNAnexus ID of projectId being uploaded to
- * @param {callback} callback
+ * @param {string} filePath Path to the file being uploaded.
+ * @param {string} projectId DNAnexus ID of projectId being uploaded to.
+ * @param {integer} rawFileSize File size in bytes.
+ * @param {callback} progressCb 
+ * @param {callback} finishedCb 
 */
-module.exports.uploadFile = (file, projectId, callback) => {
-  let dxPath = projectId + ":/uploads/" + path.basename(file.trim());
+module.exports.uploadFile = (filePath, projectId, rawFileSize, progressCb, finishedCb) => {
+  let dxPath = projectId + ":/uploads/" + path.basename(filePath.trim());
   let rmCommand = "dx rm -a '" + dxPath + "'";
   utils.runCommand(rmCommand, () => {
-    let command = "dx upload -p --path '" + dxPath + "' '" + file + "'";
+    let command = "dx upload -p --path '" + dxPath + "' '" + filePath + "'";
+
+    let sizeCheckerInterval = setInterval(() => {
+      let lowestValue = -1;
+
+      module.exports.describeDXItem(dxPath, (err, obj) => {
+        let totalSize = 0;
+
+        for (let part in obj.parts) { totalSize += obj.parts[part].size; }
+
+        if (lowestValue > totalSize) {
+          totalSize = lowestValue;
+        } else {
+          lowestValue = totalSize;
+        }
+        let progress = totalSize / rawFileSize * 100.0;
+        progressCb(progress);
+      });
+    }, utils.randomInt(250, 500));
+
+    let innerCb = (err, result) => {
+      clearInterval(sizeCheckerInterval);
+      return finishedCb(err, result);
+    };
+
     utils.runCommand(command, (err, stdout) => {
-      if (err) {
-        return callback(err, null);
-      }
+      if (err) { return innerCb(err, null); }
 
       let tagCommand = "dx tag '" + dxPath + "' sj-needs-analysis";
       utils.runCommand(tagCommand, (err, stdout) => {
-        if (err) {
-          return callback(err, null);
-        }
-
-        return callback(null, stdout);
+        if (err) { return innerCb(err, null); }
+        return innerCb(null, stdout);
       });
     });
   });
@@ -262,18 +290,19 @@ module.exports.downloadFile = function(downloadLocation, fileName, fileRawSize, 
  * @param {callback} callback
  */
 module.exports.getToolsInformation = function(allProjects, allFiles, callback) {
-
   module.exports.listProjects(allProjects, function(err, results) {
     async.map(results, function(elem, cb) {
       let item = {
         name: elem.project_name,
         size: 0,
+        dnanexus_location: "",
         upload: [],
         download: [],
       };
 
-      module.exports.describeProject(elem.dx_location, (err, describe) => {
+      module.exports.describeDXItem(elem.dx_location, (err, describe) => {
         item.size = utils.readableFileSize(describe.dataUsage * 1e9, true);
+        item.dnanexus_location = describe.id;
 
         module.exports.listDownloadableFiles(elem.dx_location, allFiles, (err, files) => {
           let downloadableFiles = [];

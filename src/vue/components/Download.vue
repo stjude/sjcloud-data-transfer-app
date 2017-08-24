@@ -89,6 +89,7 @@ export default {
 
 			files.forEach(function(file) {
 				file.started = true;
+				file.finished = true;
 			});
 
 			mapLimit(files, concurrency, (file, callback) => {

@@ -18,8 +18,8 @@
 					<div class="bottom-bar-left"></div>
 					<div class="bottom-bar-right">
 						<button class='btn btn-primary btn-stjude download-btn'
-									  v-bind:disabled='!hasFilesInStaging'>
-							<!-- v-on:click='downloadFiles'> -->
+									  v-bind:disabled='!hasFilesInStaging'
+										@click='uploadFiles'>
 							Upload
 						</button>
 						<button class='btn btn-danger btn-stjude-warning delete-btn'
@@ -54,6 +54,7 @@
 </template>
 
 <script>
+import mapLimit from 'async/mapLimit';
 import LeftPanel from './LeftPanel.vue'
 import NavBar from './NavBar.vue';
 import FileStatus from './FileStatus.vue';
@@ -98,7 +99,34 @@ export default {
 	},
 	methods: {
 		uploadFiles() {
-			this.$store.commit('trackProgress')
+			const files = this.$store.getters.currTool.upload.filter((f) => f.checked);
+
+			const dnanexusProjectId = this.$store.getters.currTool.dnanexus_location;
+			const concurrency = this.$store.getters.concurrentOperations;
+			console.log("Uploading", files.length, "files with a concurrency of", concurrency);
+
+			files.forEach(function(file) {
+				file.started = true;
+				file.finished = false;
+				file.checked = false;
+			});
+
+			mapLimit(files, concurrency, (file, callback) => {
+				// console.log(file);
+				// callback(null, file);
+				window.dx.uploadFile(file.path,
+															dnanexusProjectId,
+															file.raw_size,
+															(progress) => {
+																file.status = progress
+															},
+															(err, result) => {
+																file.status = 100;
+																file.finished = true;
+																callback(err, result)
+															}
+														);
+			});
 		},
 		removeCheckedFiles() {
 			this.$store.commit('removeCheckedFiles');
