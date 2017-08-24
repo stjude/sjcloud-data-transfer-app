@@ -157,7 +157,7 @@ module.exports.listProjects = (allProjects, callback) => {
         results.push({
           project_name: name,
           dx_location: dxLocation,
-          access_level: access_level,
+          access_level: accessLevel,
         });
       }
     });
@@ -277,7 +277,6 @@ module.exports.getToolsInformation = function(allProjects, allFiles, callback) {
 
         module.exports.listDownloadableFiles(elem.dx_location, allFiles, (err, files) => {
           let downloadableFiles = [];
-          console.log(err);
 
           files.forEach((elem) => {
             let dl_file = {
