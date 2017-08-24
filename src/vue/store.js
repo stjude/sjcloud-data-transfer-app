@@ -17,7 +17,7 @@ const projectToolScopeWatcher = (store) => {
 export default new Vuex.Store({
   state: {
     environment,
-    concurrency: 1,
+    concurrentOperations: 1,
 
     /** Install **/
     downloadStatus: "Downloading...",
@@ -43,6 +43,9 @@ export default new Vuex.Store({
     /** Global **/
     environment(state, getters) {
       return state.environment;
+    },
+    concurrentOperations(state, getters) {
+      return state.concurrentOperations;
     },
 
     /** Install **/

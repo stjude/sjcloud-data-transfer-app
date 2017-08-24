@@ -87,8 +87,11 @@ export default {
 			const concurrency = this.$store.getters.concurrentOperations;
 			console.log("Downloading", files.length, "files with a concurrency of", concurrency);
 
-			mapLimit(files, concurrency, (item, callback) => {
-					file.started = true;
+			files.forEach(function(file) {
+				file.started = true;
+			});
+
+			mapLimit(files, concurrency, (file, callback) => {
 					window.dx.downloadFile(
 						downloadLocation,
 					  file.name,
@@ -98,8 +101,9 @@ export default {
 						  file.status = progress;
 					  },
 					  function(err, result) {
-						 file.started = false;
-						  file.finished = true;
+						  file.started = false;
+							file.finished = true;
+							callback(null, file);
 					  }
 					);
 			});

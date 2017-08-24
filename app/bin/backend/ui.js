@@ -61,7 +61,6 @@ module.exports.createOauthWindow = (internal, callback) => {
       let timer = setInterval(() => {
         if (loginWindow.webContents.getURL() === "https://platform.dnanexus.com/") {
           clearInterval(timer);
-          //loginWindow.webContents.removeListener('did-get-redirect-request');
           loginWindow.loadURL(oauth_url);
         }
       }, 1000);
