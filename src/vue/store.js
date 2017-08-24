@@ -134,6 +134,40 @@ export default new Vuex.Store({
     setDownloadLocation(state, location) {
       state.downloadLocation = location;
     },
+    addFile(state, file) {
+      const tool = state.tools.filter((t) => t.name === state.currToolName)[0];
+      if (!tool || !tool[state.currPath]) {
+        console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
+        return;
+      }
+
+      const this_file = {
+        name: file.name,
+        size: file.size * 1e-9,
+        status: 0,
+        checked: false,
+      };
+
+      tool[state.currPath].push(this_file);
+    },
+    addFiles(state, files) {
+      const tool = state.tools.filter((t) => t.name === state.currToolName)[0];
+      if (!tool || !tool[state.currPath]) {
+        console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
+        return;
+      }
+
+      const currFiles = tool[state.currPath];
+      files.forEach((f) => {
+        const this_file = {
+          name: f.name,
+          size: f.size * 1e-9,
+          status: 0,
+          checked: false,
+        };
+        currFiles.push(this_file);
+      });
+    },
   },
   actions: {
     updateToolsFromRemote({commit, state}, force=false) {
