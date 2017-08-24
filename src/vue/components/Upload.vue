@@ -17,12 +17,19 @@
 				<div class="bottom-bar" v-show="hasTools && hasFiles">
 					<div class="bottom-bar-left"></div>
 					<div class="bottom-bar-right">
-						<button class='btn btn-primary btn-stjude download-btn' v-bind:disabled='!checkedFiles.length'>
+						<button class='btn btn-primary btn-stjude download-btn'
+									  v-bind:disabled='!hasFilesInStaging'>
 							<!-- v-on:click='downloadFiles'> -->
 							Upload
 						</button>
-						<button class='btn btn-danger btn-stjude-warning cancel-btn' v-bind:disabled='!checkedFiles.length'>
-							<!-- v-on:click='cancelFiles'> -->
+						<button class='btn btn-danger btn-stjude-warning delete-btn'
+									  v-bind:disabled='!hasFilesInStaging'
+										@click="removeCheckedFiles()"
+										>
+							Delete
+						</button>
+						<button class='btn btn-danger btn-stjude-warning cancel-btn'
+						        v-bind:disabled='!hasFilesInTransit'>
 							Cancel
 						</button>
 					</div>
@@ -73,6 +80,12 @@ export default {
 		hasFiles() {
 			return this.$store.getters.currFiles.length
 		},
+		hasFilesInStaging() {
+			return this.$store.getters.hasFilesInStaging
+		},
+		hasFilesInTransit() {
+			return this.$store.getters.hasFilesInTransit
+		},
 		hasTools() {
 			return this.$store.getters.tools.length
 		},
@@ -87,8 +100,8 @@ export default {
 		uploadFiles() {
 			this.$store.commit('trackProgress')
 		},
-		deleteFiles() {
-
+		removeCheckedFiles() {
+			this.$store.commit('removeCheckedFiles');
 		},
 		resetCheckedFiles() {
 			console.log('resetCheckedFiles')
@@ -106,5 +119,9 @@ export default {
 .alert-container {
 	margin-top: 90px;
 	text-align: center;
+}
+
+.bottom-bar-right button {
+	margin: 2px;
 }
 </style>

@@ -35,6 +35,9 @@ export default {
       }
     }
   },
+  created() {
+    this.dragging = false;
+  },
   methods: {
     clicked(e) {
       window.utils.openFileDialog((files) => {
@@ -44,6 +47,7 @@ export default {
       })
     },
     dropped(e) {
+      this.dragging = false;
       for (let f of e.dataTransfer.files) {
         this.$store.commit('addFile', window.utils.fileInfoFromPath(f.path));
       }

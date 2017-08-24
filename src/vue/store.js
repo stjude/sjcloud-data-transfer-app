@@ -2,7 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 
 Vue.use(Vuex);
-const environment = "dev";
+const environment = "prod";
 
 /** Plugins **/
 const projectToolScopeWatcher = (store) => {
@@ -11,8 +11,6 @@ const projectToolScopeWatcher = (store) => {
         mutation.type === "setShowAllProjects") {
       store.dispatch("updateToolsFromRemote", true);
     }
-
-    console.log(mutation);
   });
 };
 
@@ -70,7 +68,7 @@ export default new Vuex.Store({
       return state.showAllProjects;
     },
     currTool(state) {
-      return state.tools.filter((t)=>t.name==state.currToolName)[0];
+      return state.tools.filter((t) => t.name === state.currToolName)[0];
     },
     currPath(state) {
       return state.currPath;
@@ -79,29 +77,62 @@ export default new Vuex.Store({
       return state.downloadLocation;
     },
     tool(state) {
-      return (name)=>state.tools.filter((t)=>t.name==name)[0];
+      return (name) => state.tools.filter((t) => t.name === name)[0];
     },
     tools(state) {
       return state.tools;
     },
     currFiles(state, getters) {
-	    const tool=getters.currTool;
+	    const tool = getters.currTool;
       return !tool || !Array.isArray(tool[state.currPath]) ? [] : tool[state.currPath];
     },
     checkedFiles(state, getters) {
-      const tool=getters.currTool;
+      const tool = getters.currTool;
       return !tool || !Array.isArray(tool[state.currPath]) ? []
-        : tool[state.currPath].filter((f)=>f.checked);
+        : tool[state.currPath].filter((f) => f.checked);
     },
-    transferComplete(state,getters) {
-      const checkedFiles=getters.checkedFiles
-      if (!checkedFiles.length) return false
-      let completed=false
-      for(let i=0;i<checkedFiles.length;i++) {
-        if (!checkedFiles[i].finished) return false
+    hasFilesInStaging(state, getters) {
+      const checkedFiles = getters.checkedFiles;
+      if (!checkedFiles.length) {
+        return false;
+      };
+
+      for (let i = 0; i < checkedFiles.length; i++) {
+        if (checkedFiles[i].status == 0 && !checkedFiles[i].finished) {
+          return true;
+        }
       }
-      return true
-    }
+
+      return false;
+    },
+    hasFilesInTransit(state, getters) {
+      const checkedFiles = getters.checkedFiles;
+      if (!checkedFiles.length) {
+        return false;
+      };
+
+      for (let i = 0; i < checkedFiles.length; i++) {
+        if (checkedFiles[i].status > 0 && checkedFiles[i].status < 100) {
+          return true;
+        }
+      }
+
+      return false;
+    },
+    transferComplete(state, getters) {
+      const checkedFiles = getters.checkedFiles;
+      if (!checkedFiles.length) {
+        return false;
+      };
+
+      for (let i = 0; i < checkedFiles.length; i++) {
+        if (!checkedFiles[i].finished) {
+          return false;
+        }
+      }
+
+      return true;
+    },
   },
   mutations: {
     /** Install **/
@@ -169,12 +200,21 @@ export default new Vuex.Store({
       files.forEach((f) => {
         const this_file = {
           name: f.name,
-          size: f.size, 
+          size: f.size,
           status: 0,
           checked: false,
         };
         currFiles.push(this_file);
       });
+    },
+    removeCheckedFiles(state) {
+      const tool = state.tools.filter((t) => t.name === state.currToolName)[0];
+      if (!tool || !tool[state.currPath]) {
+        console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
+        return;
+      }
+
+      tool[state.currPath] = tool[state.currPath].filter((t) => !t.checked);
     },
   },
   actions: {
@@ -188,7 +228,7 @@ export default new Vuex.Store({
         window.dx.getToolsInformation(
           state.showAllProjects,
           state.showAllFiles,
-          (results) => { console.log(results)
+          (results) => {
             if (results.length > 0) {
               commit("setNoProjectsFound", false);
               commit("setTools", results);
