@@ -114,9 +114,7 @@ export default {
 					that.$store.commit('setInstallingDxToolkit', "failed");
 				} else {
 					that.$store.commit('setInstallingDxToolkit', "completed");
-					console.log("Sending to /")
 					setTimeout(function (){
-						console.log("Logging in")
 						that.$router.push('login');
 					}, 4000);
 				}

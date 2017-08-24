@@ -64,7 +64,6 @@ app.on("activate", () => {
 });
 
 app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
-  console.log(url);
   if (url.startsWith("https://localhost:4433/authcb?code=")) {
     event.preventDefault();
     callback(true);

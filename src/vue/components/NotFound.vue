@@ -9,9 +9,6 @@ export default {
 	data() {
 		return {}
 	},
-	mounted() {
-		console.log('NotFound mounted')
-	}
 }
 </script>
 

@@ -27,21 +27,20 @@ module.exports.waitForCode = function(internal, cb) {
 	    }, app);
 
       app.get("/authcb", function(req, res) {
+        window.webContents.removeListener("did-get-redirect-request");
 	      server.close();
         window.close();
         return cb(null, req.query.code);
       });
 
       server.listen(4433);
-      console.log("Running on port 4433.");
+      console.log("Running OAuth listener on port 4433.");
     });
   });
 };
 
 module.exports.getToken = function(internal, callback) {
   module.exports.waitForCode(internal, function(err, code) {
-
-    console.log("Code: '" + code + "'");
     $.post("https://auth.dnanexus.com/oauth2/token", {
       grant_type: "authorization_code",
       code: code,

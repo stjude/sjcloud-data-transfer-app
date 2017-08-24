@@ -97,7 +97,6 @@ export default {
 		internal() {
 			window.oauth.getToken(true, (err, token) => {
 				this.$store.commit('setToken', token);
-				console.log(token);
 				this.$store.commit('setLoginState', 'validating');
 			
 				const that = this;
@@ -117,7 +116,6 @@ export default {
 		external(openURL=true) {
 			window.oauth.getToken(false, (err, token) => {
 				this.$store.commit('setToken', token);
-				console.log(token);
 				this.$store.commit('setLoginState', 'validating');
 			
 				const that = this;

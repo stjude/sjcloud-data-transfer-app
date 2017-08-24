@@ -25,9 +25,6 @@ export default {
 	data() {
 		return {}
 	},
-	created() { 
-		//console.log('NavBar created')
-	},
 	computed: {
 		uploadLinkStyle() {
 			return this.$store.getters.currPath=='upload' ? active : inactive   

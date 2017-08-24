@@ -27,11 +27,7 @@ export default {
 		window.addEventListener('keydown', this.toggleToolPath)
 		this.$store.commit('setCurrPath',this.$route.path.slice(1))
 	},
-	mounted() {
-		console.log('App mounted')
-	},
 	updated() {
-		//console.log('App updated')
 		this.$store.commit('setCurrPath',this.$route.path.slice(1))
 	},
 	methods: {

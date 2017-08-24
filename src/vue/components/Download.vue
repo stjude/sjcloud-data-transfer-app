@@ -39,6 +39,7 @@
 </template>
 
 <script>
+import mapLimit from 'async/mapLimit';
 import LeftPanel from './LeftPanel.vue'
 import NavBar from './NavBar.vue';
 import FileStatus from './FileStatus.vue';
@@ -68,15 +69,8 @@ export default {
 			return this.$store.getters.downloadLocation
 		}
 	},
-	mounted() {
-		//console.log('Download component mounted')
-	},
-	updated() {
-		//console.log('Upload component updated')
-	},
 	methods: {
 		selectDownloadLocation() {
-			console.log("Selecting download location...");
 			const defaultLocation = this.$store.getters.downloadLocation
 			window.utils.openDirectoryDialog(
 				(files) => {
@@ -88,22 +82,26 @@ export default {
 			);
 		},
 		downloadFiles() {
-			this.$store.getters.currTool.download.forEach((file) => {
-				if (file.checked) {
+			const files = this.$store.getters.currTool.download.filter((f) => f.checked);
+			const downloadLocation = this.$store.getters.downloadLocation;
+			const concurrency = this.$store.getters.concurrentOperations;
+			console.log("Downloading", files.length, "files with a concurrency of", concurrency);
+
+			mapLimit(files, concurrency, (item, callback) => {
 					file.started = true;
 					window.dx.downloadFile(
-					   this.$store.getters.downloadLocation,
-					   file.name,
-					   file.raw_size,
-					   file.dx_location,
-					   function(progress) {
-						   file.status = progress;
-					   },
-					   function(err, result) {
-						   file.finished = true;
-					   }
+						downloadLocation,
+					  file.name,
+					  file.raw_size,
+					  file.dx_location,
+					  function(progress) {
+						  file.status = progress;
+					  },
+					  function(err, result) {
+						 file.started = false;
+						  file.finished = true;
+					  }
 					);
-				}
 			});
 		},
 		cancelFiles() {}
