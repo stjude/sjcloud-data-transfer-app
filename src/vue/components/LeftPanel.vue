@@ -25,7 +25,7 @@
 		<table v-show="hasTools"> 
 			<thead>
 				<tr>
-					<th style='width:70%'>TOOL</th>
+					<th style='width:70%'>{{showAllProjects ? "PROJECT" : "TOOL"}}</th>
 					<th style='width:30%; text-align: right;'>SIZE</th>
 				</tr>
 			</thead>
