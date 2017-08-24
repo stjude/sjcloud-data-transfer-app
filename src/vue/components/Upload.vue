@@ -58,12 +58,6 @@ export default {
 			return this.$store.getters.checkedFiles
 		},
 	},
-	mounted() {
-		//console.log('Upload component mounted')
-	},
-	updated() {
-		console.log('Upload component updated')
-	},
 	methods: {
 		uploadFiles() {
 			this.$store.commit('trackProgress')
