@@ -1,5 +1,3 @@
-// TODO: add documentationin the style of http://usejsdoc.org/
-
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
@@ -8,8 +6,6 @@ const utils = require("./utils");
 const child_process = require("child_process");
 const expandHomeDir = require("expand-home-dir");
 
-// TODO: move these variables to a JSON config file in the root directory
-// of the project.
 const PROJECT_TAG = "sjcp-project";
 const DOWNLOADABLE_TAG = "sjcp-result-file";
 
@@ -36,7 +32,6 @@ function getDxDownloadUrlFromPlatform(platform) {
   } else if (platform == "win32") {
     return DOWNLOAD_INFO.WINDOWS.URL;
   }
-  // TODO: handle unrecognized platform.
 }
 
 function getSha256sumFromPlatform(platform) {
@@ -47,7 +42,6 @@ function getSha256sumFromPlatform(platform) {
   } else if (platform == "win32") {
     return DOWNLOAD_INFO.WINDOWS.SHA256SUM;
   }
-  // TODO: handle unrecognized platform.
 }
 
 module.exports.install = (updateProgress, failProgress, callback) => {

@@ -11,7 +11,7 @@
     <div class="dropzone-content-container"
        :style="dragging ? draggingColorStyle : nondraggingColorStyle">
       <i class="material-icons md-48" style="height: 60px;">cloud_upload</i>
-      <span class="dropzone-container-text">Click or drop files here</span>
+      <span class="dropzone-container-text">CLICK OR DROP FILES HERE</span>
     </div>
   </div>
 </template>
@@ -70,7 +70,7 @@ export default {
 
 .dropzone-content-container {
   position: absolute;
-  left: 115px;
+  left: 75px;
   top: 275px;
   height: 60px;
   -webkit-transition: color .5s;
