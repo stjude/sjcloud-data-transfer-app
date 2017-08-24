@@ -93,6 +93,15 @@ export default new Vuex.Store({
       return !tool || !Array.isArray(tool[state.currPath]) ? []
         : tool[state.currPath].filter((f)=>f.checked);
     },
+    transferComplete(state,getters) {
+      const checkedFiles=getters.checkedFiles
+      if (!checkedFiles.length) return false
+      let completed=false
+      for(let i=0;i<checkedFiles.length;i++) {
+        if (!checkedFiles[i].finished) return false
+      }
+      return true
+    }
   },
   mutations: {
     /** Install **/
