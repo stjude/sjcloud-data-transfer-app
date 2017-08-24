@@ -1,10 +1,12 @@
 <template>
 	<div id='fileStatusDiv' style='margin-top:18px;'>
-		<table style='position:fixed; width:570px; border:1px solid #ccc;'>
+		<table style='position:fixed; width:571px; border:1px solid #ccc;'>
 			<thead>
-				<tr style='color:#000; background-color:#ececec'>
+				<tr style='color:#000; background-color:#ccc'>
 					<th class='cellCheckBox'>
-						<input type='checkbox' name='sjcda-file-all' id='sjcda-file-checkbox-all' value='all' v-on:click.stop='toggleCheckBoxes($event)'/>
+						<div class='checkDiv' v-on:click.stop='toggleCheckBoxes'>
+							<i v-show='checkedAll' style="color: #555;font-size:17px" class="material-icons">done</i>
+						</div>
 					</th>
 					<th class='cellFileName'>FILENAME</th>
 					<th class='cellFileSize'>SIZE</th>
@@ -12,20 +14,22 @@
 				</tr>
 			</thead>
 		</table>
-		<table  style='width:570px; margin-top:34px'>
+		<table  style='width:570px; margin-top:28px'>
 			<tbody>
 				<tr v-for='file in files'>
 					<td class='cellCheckBox'>
-						<input type='checkbox' name='sjcda-files' v-bind:value='file.name' v-bind:checked='file.checked' v-on:click.stop='toggleFileChecked(file,$event)'/>
+						<div class='checkDiv' v-on:click.stop='toggleFileChecked(file)'>
+							<i v-show='file.checked' style="color: #555;font-size:17px" class="material-icons">done</i>
+						</div>
 					</td>
 					<td class='cellFileName' style='text-align:left;padding-left:10px'>{{ file.name }}</td>
 					<td class='cellFileSize'>{{ file.size }}</td>
-					<td class='cellStatus'>
-						<div v-show="!file.finished" style='height:20px; width:80%; background-color:#fff; border: 1px solid #ececec; margin: 0 auto'>
+					<td class='cellStatus' style='padding-top:0'>
+						<div v-show="file.started && !file.finished" style='height:20px; width:80%; background-color:#fff; border: 1px solid #ececec; margin: 0 auto'>
 							<div v-bind:style="progressStyle(file)"></div>
 						</div>
-						<div v-show="file.finished" style='max-height:20pt'>
-							<i style="color: #4F8A10; font-size:20pt; line-height:20pt" class="material-icons">check_circle</i>
+						<div v-show="file.finished" style='height:25px;overflow:hidden'>
+							<i style="color: #4F8A10; font-size:25px; line-height:25px" class="material-icons">check_circle</i>
 						</div>
 					</td>
 				</tr>
@@ -41,7 +45,9 @@ let prevPath='upload'
 
 export default {
 	data() {
-		return {}
+		return {
+			checkedAll: false
+		}
 	},
 	computed: {
 		files() {
@@ -55,15 +61,15 @@ export default {
 		if (this.$store.currTool==prevTool && this.$store.currPath==prevPath) return
 		prevTool=this.$store.currTool
 		prevPath=this.$store.currPath
-		document.querySelector('#sjcda-file-checkbox-all').checked=false
+		this.checkedAll=false
 	},
 	methods: {
-		toggleFileChecked(file,event) {
-			file.checked=event.target.checked;
+		toggleFileChecked(file) {
+			file.checked=!file.checked;
 		},
-		toggleCheckBoxes(event) {
-			const checked=event.target.checked; 
-			this.files.forEach(f=>f.checked=checked);
+		toggleCheckBoxes() {
+			this.checkedAll=!this.checkedAll; 
+			this.files.forEach(f=>f.checked=this.checkedAll);
 		},
 		progressStyle(file) {
 			return {height:'20px',width:file.status/100+'%'}
@@ -118,7 +124,7 @@ td {
 	width: 80px;
 }
 
-input[type='checkbox'] {
+.checkDiv, input[type='checkbox'] {
     -webkit-appearance:none;
     width:18px;
     height:18px;
@@ -129,10 +135,8 @@ input[type='checkbox'] {
     font-size:17px;
     line-height:17px;
     color:#555;
-}
-
-input[type='checkbox']:checked:before {
-    content:"  \2714";
+    cursor:pointer;
+    margin-left:4px;
 }
 
 </style>

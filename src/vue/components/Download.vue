@@ -81,18 +81,21 @@ export default {
 			);
 		},
 		downloadFiles() {
-			this.$store.getters.currTool.download.forEach((elem) => {
-				if (elem.checked) {
-					window.dx.downloadFile(this.$store.getters.downloadLocation,
-										   elem.name,
-										   elem.raw_size,
-										   elem.dx_location,
-										   function(progress) {
-											   elem.status = progress;
-										   },
-										   function(err, result) {
-											   elem.finished = true;
-										   });
+			this.$store.getters.currTool.download.forEach((file) => {
+				if (file.checked) {
+					file.started = true;
+					window.dx.downloadFile(
+					   this.$store.getters.downloadLocation,
+					   file.name,
+					   file.raw_size,
+					   file.dx_location,
+					   function(progress) {
+						   file.status = progress;
+					   },
+					   function(err, result) {
+						   file.finished = true;
+					   }
+					);
 				}
 			});
 		},
