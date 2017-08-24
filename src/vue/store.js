@@ -1,63 +1,9 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import fakeProgress from "../../tests/fakeProgress";
 
 Vue.use(Vuex);
 
 const environment = "prod";
-const tools = environment == "dev" ?
-  [{
-    name: "Rapid RNA-Seq",
-    size: 168,
-    upload: [
-      {name: "file_u1", size: 12, status: 0, checked: false, finished: false},
-      {name: "file_u2", size: 10, status: 0, checked: false, finished: false},
-      {name: "file_u3", size: 8, status: 0, checked: false, finished: false},
-      {name: "file_u4", size: 16, status: 0, checked: false, finished: false},
-      {name: "file_u5", size: 20, status: 0, checked: false, finished: false},
-      {name: "file_u6", size: 5, status: 0, checked: false, finished: false},
-      {name: "file_u7", size: 11, status: 0, checked: false, finished: false},
-    ],
-    download: [
-      {name: "file_d1", size: 12, status: 0, checked: false, finished: false},
-      {name: "file_d2", size: 10, status: 0, checked: false, finished: false},
-      {name: "file_d3", size: 8, status: 0, checked: false, finished: false},
-    ],
-  }, {
-    name: "WARDEN",
-    size: 501,
-    upload: [],
-    download: [
-      {name: "file_dw1", size: 12, status: 0, checked: false, finished: false},
-      {name: "file_dw2", size: 10, status: 0, checked: false, finished: false},
-      {name: "file_dw3", size: 8, status: 0, checked: false, finished: false},
-    ],
-  }, {
-    name: "ChIP-Seq",
-    size: 192,
-    upload: [
-      {name: "file_uc1", size: 9, status: 0, checked: false, finished: false},
-      {name: "file_uc2", size: 101, status: 0, checked: false, finished: false},
-    ],
-    download: [
-      {name: "file_c0", size: 12, status: 0, checked: false, finished: false},
-      {name: "file_c1", size: 12, status: 0, checked: false, finished: false},
-      {name: "file_c2", size: 10, status: 0, checked: false, finished: false},
-      {name: "file_c3", size: 8, status: 0, checked: false, finished: false},
-      {name: "file_c4", size: 16, status: 0, checked: false, finished: false},
-      {name: "file_c5", size: 20, status: 0, checked: false, finished: false},
-      {name: "file_s1", size: 12, status: 0, checked: false, finished: false},
-      {name: "file_s2", size: 10, status: 0, checked: false, finished: false},
-      {name: "file_s3", size: 8, status: 0, checked: false, finished: false},
-      {name: "file_s4", size: 16, status: 0, checked: false, finished: false},
-      {name: "file_s5", size: 20, status: 0, checked: false, finished: false},
-      {name: "file_s1", size: 12, status: 0, checked: false, finished: false},
-      {name: "file_s2", size: 10, status: 0, checked: false, finished: false},
-      {name: "file_s3", size: 8, status: 0, checked: false, finished: false},
-      {name: "file_s4", size: 16, status: 0, checked: false, finished: false},
-      {name: "file_s5", size: 20, status: 0, checked: false, finished: false},
-    ],
-  }] : [];
 
 /** Plugins **/
 const projectToolScopeWatcher = (store) => {
@@ -87,7 +33,7 @@ export default new Vuex.Store({
     currPath: "upload",
     currToolName: "",
     downloadLocation: "~/Downloads/",
-    tools,
+    tools: [], // see ../tests/testdata/fakeTools.json for expected schema
     showAllFiles: false,
     showAllProjects: false,
   },
@@ -192,7 +138,7 @@ export default new Vuex.Store({
         window.dx.getToolsInformation(
           state.showAllProjects,
           state.showAllFiles,
-          (results) => {
+          (results) => { console.log(results)
             if (results.length > 0) {
               commit("setTools", results);
               for (let i = 0; i < results.length; i++) {

@@ -1,0 +1,50 @@
+[{
+  "name": "Rapid RNA-Seq",
+  "size": 168,
+  "upload": [],
+  "download": [
+    {"name": "file_d1", "size": 12000000, "status": 0, "checked": false, "started": false, "finished": false},
+    {"name": "file_d2", "size": 10, "status": 0, "checked": false, "started": false, "finished": false},
+    {"name": "file_d3", "size": 8, "status": 0, "checked": true, "started": true, "finished": false},
+    {"name": "file_d1", "size": 12000000, "status": 20, "checked": true, "started": true, "finished": false},
+    {"name": "file_d3", "size": 8, "status": 40, "checked": true, "started": true, "finished": false},
+    {"name": "file_d1", "size": 12000000, "status": 60, "checked": true, "started": true, "finished": false},
+    {"name": "file_d1", "size": 12000000, "status": 80, "checked": true, "started": true, "finished": false},
+    {"name": "file_d2", "size": 10, "status": 0, "checked": true, "started": true, "finished": true},
+    {"name": "file_d3", "size": 8, "status": 0, "checked": true, "started": true, "finished": true}
+  ]
+}, {
+  "name": "WARDEN",
+  "size": 501,
+  "upload": [],
+  "download": [
+    {"name": "file_dw1", "size": 12, "status": 0, "checked": false, "finished": false},
+    {"name": "file_dw2", "size": 10, "status": 0, "checked": false, "finished": false},
+    {"name": "file_dw3", "size": 8, "status": 0, "checked": false, "finished": false}
+  ]
+}, {
+  "name": "ChIP-Seq",
+  "size": 192,
+  "upload": [
+    {"name": "file_uc1", "size": 9, "status": 0, "checked": false, "finished": false},
+    {"name": "file_uc2", "size": 101, "status": 0, "checked": false, "finished": false}
+  ],
+  "download": [
+    {"name": "file_c0", "size": 12, "status": 0, "checked": false, "finished": false},
+    {"name": "file_c1", "size": 12, "status": 0, "checked": false, "finished": false},
+    {"name": "file_c2", "size": 10, "status": 0, "checked": false, "finished": false},
+    {"name": "file_c3", "size": 8, "status": 0, "checked": false, "finished": false},
+    {"name": "file_c4", "size": 16, "status": 0, "checked": false, "finished": false},
+    {"name": "file_c5", "size": 20, "status": 0, "checked": false, "finished": false},
+    {"name": "file_s1", "size": 12, "status": 0, "checked": false, "finished": false},
+    {"name": "file_s2", "size": 10, "status": 0, "checked": false, "finished": false},
+    {"name": "file_s3", "size": 8, "status": 0, "checked": false, "finished": false},
+    {"name": "file_s4", "size": 16, "status": 0, "checked": false, "finished": false},
+    {"name": "file_s5", "size": 20, "status": 0, "checked": false, "finished": false},
+    {"name": "file_s1", "size": 12, "status": 0, "checked": false, "finished": false},
+    {"name": "file_s2", "size": 10, "status": 0, "checked": false, "finished": false},
+    {"name": "file_s3", "size": 8, "status": 0, "checked": false, "finished": false},
+    {"name": "file_s4", "size": 16, "status": 0, "checked": false, "finished": false},
+    {"name": "file_s5", "size": 20, "status": 0, "checked": false, "finished": false}
+  ]
+}]
