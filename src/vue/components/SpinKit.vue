@@ -1,6 +1,6 @@
 <template>
 	<div class="col-xs-12">
-		<div id="status-text">{{downloadStatus}}</div>
+		<div class="loading-text">{{ topLabel }}</div>
 		<div class="sk-circle">
 			<div class="sk-circle1 sk-child"></div>
 			<div class="sk-circle2 sk-child"></div>
@@ -14,19 +14,27 @@
 			<div class="sk-circle10 sk-child"></div>
 			<div class="sk-circle11 sk-child"></div>
 			<div class="sk-circle12 sk-child"></div>
-		</div>	
+		</div>
+    <div class="loading-text">{{ btmLabel }}</div>
 	</div>
 </template>
 
 <script>
 export default {
-	props: [
-		'downloadStatus'
-	]
+	props: {
+		topLabel: {default:''},
+    btmLabel: {default:''}
+	}
 }
 </script>
 
 <style scoped>
+.loading-text {
+  font-size: 18px;
+  text-align: center;
+}
+
+
 /**
  * Graciously taken from SpinKit and adapted for our needs
  *

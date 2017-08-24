@@ -7,7 +7,7 @@
 					done
 				</i>
 			</div>
-			<div id="status-text" style='font-size:32pt'>
+			<div class="status-text" style='font-size:32pt'>
 				{{ successMessage }}
 			</div>
 		</div>
@@ -18,7 +18,7 @@
 					error_outline
 				</i>
 			</div>
-			<div id="status-text" style='font-size:32pt'>
+			<div class="status-text" style='font-size:32pt'>
 				{{ failureMessage }}
 			</div>
 		</div>

@@ -4,7 +4,8 @@
 			No projects found! Please create one!
 		</div>
 		<div v-show="!hasTools && !noProjectsFound">
-			<spin-kit :status='0'></spin-kit>
+			<spin-kit status='0' btmLabel='Loading ...' 
+				style='position: absolute; margin-top:100px'></spin-kit>
 		</div>
 		<table v-show="hasTools"> 
 			<thead>
@@ -143,11 +144,6 @@ th {
 	padding: 10px;
 }
 
-.loading-text {
-	font-size: 18px;
-	text-align: center;
-}
-
 .first-checkbox {
 	position: absolute;
 	font-size: 12pt;
@@ -165,10 +161,5 @@ th {
 td {
 	padding: 10px;
 	cursor: pointer;
-}
-
-.loading-text {
-	font-size: 18px;
-	text-align: center;
 }
 </style>
