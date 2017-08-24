@@ -89,6 +89,8 @@ export default {
 #fileStatusDiv {
 	height: 410px;
 	overflow: scroll;
+	font-family: 'Lato';
+	color: #222222;
 	/* border-bottom: 1px solid #ccc; */
 }
 

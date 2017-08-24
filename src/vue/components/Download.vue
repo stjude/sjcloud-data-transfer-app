@@ -113,6 +113,14 @@ export default {
 
 <style>
 
+.left-panel-container {
+	font-family: 'Open Sans';
+}
+
+.right-panel-container {
+	font-family: 'Lato';
+}
+
 #downloadTextInput {
 	height: 45px;
 	width: 350px;

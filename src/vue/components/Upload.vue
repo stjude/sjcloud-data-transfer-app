@@ -112,8 +112,14 @@ export default {
 </script>
 
 <style scoped>
+
+.left-panel-container {
+	font-family: 'Open Sans';
+}
+
 .right-panel-container {
 	height: 570px;
+	font-family: 'Lato';
 }
 
 .alert-container {
