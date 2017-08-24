@@ -3,11 +3,10 @@
 		<div class='col-xs-4 left-panel-container'>
 			<left-panel></left-panel>
 		</div>
-		<div class='col-xs-8 rightPanel'>
+		<div class='col-xs-8 right-panel-container'>
 			<nav-bar></nav-bar>
 			
 			<file-status class="middle" v-show='hasTools && hasFiles'></file-status>
-			<!-- <upload-target class="middle" v-show='hasTools && !hasFiles'></upload-target> -->
 			<dropzone class="middle" v-show='hasTools && !hasFiles'></dropzone>
 
 			<div class="bottom-bar" v-show="hasTools && hasFiles">
@@ -71,5 +70,8 @@ export default {
 
 <style scoped>
 
+.right-panel-container {
+	height: 570px;
+}
 
 </style>
