@@ -69,7 +69,10 @@ body {
 }
 
 .app-route-placement {
+	height: 560px;
+	width: 900px;
 }
+
 
 .sjcda-container {
 	background-color: #FFFFFF;
