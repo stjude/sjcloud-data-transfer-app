@@ -31,7 +31,7 @@
 				</div>
 			</div>
 			<div v-show="installingDxToolkit == 'installing'" class='theater-body'>
-				<spin-kit :status='downloadStatus'></spin-kit>
+				<spin-kit :status='downloadStatus' :topLabel='downloadStatus'></spin-kit>
 			</div>
 			<div v-show="installingDxToolkit == 'completed'" class='theater-body'>
 				<div class="col-xs-12">

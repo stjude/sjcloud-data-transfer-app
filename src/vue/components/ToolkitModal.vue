@@ -18,9 +18,9 @@
 		          <p>The St. Jude Cloud Platform is powered by the genomics processing company <a https='https://www.dnanexus.com/'>DNAnexus</a>. This desktop application uses their "dx-toolkit" software, a suite of tools that enables reliable uploads and downloads of files from their servers.</p>
 		          <h3>Learn more</h3>
 		          <ul>
-		          	<li><a href='https://github.com/dnanexus/dx-toolkit'>View dx-toolkit source</a></li>
-		          	<li><a href='https://wiki.dnanexus.com/Downloads#DNAnexus-Platform-SDK'>Install the dx-toolkit yourself</a></li>
-		          	<li><a href='https://wiki.dnanexus.com/Home'>DNAnexus documentation</a></li>
+		          	<li><a href='' target='_blank' @click.prevent='open("https://github.com/dnanexus/dx-toolkit",$event)'>View dx-toolkit source</a></li>
+		          	<li><a href='' target='_blank' @click.prevent='open("https://wiki.dnanexus.com/Downloads#DNAnexus-Platform-SDK",$event)'>Install the dx-toolkit yourself</a></li>
+		          	<li><a href='' target='_blank' @click.prevent='open("https://wiki.dnanexus.com/Home",$event)'>DNAnexus documentation</a></li>
 		          </ul>
 		        </slot>
 		      </div>
@@ -43,6 +43,12 @@ export default {
 	methods: {
 		hide() {
 			this.$store.commit('hideModal','toolkit')
+		},
+		open(url,event) {
+			event.preventDefault();
+			event.stopPropagation();
+			window.utils.openExternal(url)
+			return false
 		}
 	}
 }
