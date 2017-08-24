@@ -14,15 +14,32 @@ if (window.location.host!='localhost:3057') {
 			// to-do: write more elegantly
 			const testdata=window.location.search.split('testdata=')[1];
 			if (!testdata) return [];
-			
-			fetch('testdata/'+testdata+'.json')
-				.then(response=>response.json())
-				.then(callback)
-				.catch(err=>console.log(err))
+				
+			setTimeout(()=>{
+				fetch('testdata/'+testdata+'.json')
+					.then(response=>response.json())
+					.then(callback)
+					.catch(err=>console.log(err))
+			},500)
+		},
+		install(updateProgress, failProgress, callback) {
+			updateProgress("30%", "Downloading...");
+
+			setTimeout(()=>{
+				updateProgress("100%", "Success!");
+        		return callback(null, true);
+			},1500)
+		},
+		login(token, callback) {
+			setTimeout(callback, 1500);
 		}
 	};
 
-	window.oauth = {};
+	window.oauth = {
+		getToken(internal, callback) {
+			return callback(null, "abcxyz");
+		}
+	};
 	window.state = {};
 	window.ui = {};
 	window.utils = {};

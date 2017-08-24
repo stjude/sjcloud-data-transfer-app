@@ -7,24 +7,24 @@
   "name": "Tool-Loading",
   "size": 168,
   "upload": [
-    {"name": "file_up1", "size": 12000000, "status": 0, "checked": false, "started": false, "finished": false},
-    {"name": "file_up2", "size": 10, "status": 0, "checked": false, "started": false, "finished": false},
-    {"name": "file_up3", "size": 8, "status": 0, "checked": true, "started": true, "finished": false},
-    {"name": "file_up1", "size": 12000000, "status": 20, "checked": true, "started": true, "finished": false},
-    {"name": "file_up3", "size": 8, "status": 40, "checked": true, "started": true, "finished": false},
-    {"name": "file_up1", "size": 12000000, "status": 60, "checked": true, "started": true, "finished": false},
-    {"name": "file_up1", "size": 12000000, "status": 80, "checked": true, "started": true, "finished": false},
-    {"name": "file_up2", "size": 10, "status": 0, "checked": true, "started": true, "finished": true},
-    {"name": "file_up3", "size": 8, "status": 0, "checked": true, "started": true, "finished": true}
+    {"name": "not_checked_0", "size": 12000000, "status": 0, "checked": false, "started": false, "finished": false},
+    {"name": "not_checked_1", "size": 10, "status": 0, "checked": false, "started": false, "finished": false},
+    {"name": "started_0", "size": 8, "status": 0, "checked": true, "started": true, "finished": false},
+    {"name": "started_20", "size": 12000000, "status": 20, "checked": true, "started": true, "finished": false},
+    {"name": "started_40", "size": 8, "status": 40, "checked": true, "started": true, "finished": false},
+    {"name": "started_60", "size": 12000000, "status": 60, "checked": true, "started": true, "finished": false},
+    {"name": "started_80", "size": 12000000, "status": 80, "checked": true, "started": true, "finished": false},
+    {"name": "finished_0", "size": 10, "status": 0, "checked": true, "started": true, "finished": true},
+    {"name": "finished_1", "size": 8, "status": 0, "checked": true, "started": true, "finished": true}
   ],
   "download": [
     {"name": "file_d1", "size": 12000000, "status": 0, "checked": false, "started": false, "finished": false},
     {"name": "file_d2", "size": 10, "status": 0, "checked": false, "started": false, "finished": false},
     {"name": "file_d3", "size": 8, "status": 0, "checked": true, "started": true, "finished": false},
-    {"name": "file_d1", "size": 12000000, "status": 20, "checked": true, "started": true, "finished": false},
-    {"name": "file_d3", "size": 8, "status": 40, "checked": true, "started": true, "finished": false},
-    {"name": "file_d1", "size": 12000000, "status": 60, "checked": true, "started": true, "finished": false},
-    {"name": "file_d1", "size": 12000000, "status": 80, "checked": true, "started": true, "finished": false},
+    {"name": "file_d1", "size": 12000000, "status": 33, "checked": true, "started": true, "finished": false},
+    {"name": "file_d3", "size": 8, "status": 10, "checked": true, "started": true, "finished": false},
+    {"name": "file_d1", "size": 12000000, "status": 43, "checked": true, "started": true, "finished": false},
+    {"name": "file_d1", "size": 12000000, "status": 95, "checked": true, "started": true, "finished": false},
     {"name": "file_d2", "size": 10, "status": 0, "checked": true, "started": true, "finished": true},
     {"name": "file_d3", "size": 8, "status": 0, "checked": true, "started": true, "finished": true}
   ]
