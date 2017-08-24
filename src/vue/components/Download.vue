@@ -6,8 +6,12 @@
 		
 		<div class='col-xs-8 right-panel-container'>
 			<nav-bar></nav-bar>
-			<file-status v-show="hasTools && hasFiles"></file-status>
-			<div class="no-files-container" v-show="hasTools && !hasFiles">
+			<div class="alert-container" v-show="noProjectsFound">
+				<img src="http://via.placeholder.com/175x175">
+				<h3>Could not find any projects!</h3>
+			</div>
+			<file-status v-show="hasTools && hasFiles && !noProjectsFound"></file-status>
+			<div class="alert-container" v-show="hasTools && !hasFiles && !noProjectsFound">
 				<img src="http://via.placeholder.com/175x175">
 				<h3>No files to download!</h3>
 			</div>
@@ -48,6 +52,9 @@ export default {
 		UploadTarget
 	},
 	computed: {
+		noProjectsFound() {
+			return this.$store.getters.noProjectsFound
+		},
 		hasFiles() {
 			return this.$store.getters.currFiles.length
 		},
@@ -113,7 +120,7 @@ export default {
 	font-size: 12pt;
 }
 
-.no-files-container {
+.alert-container {
 	margin-top: 90px;
 	text-align: center;
 }

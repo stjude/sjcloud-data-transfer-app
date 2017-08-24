@@ -6,6 +6,10 @@
 		<div class='col-xs-8 right-panel-container'>
 			<nav-bar></nav-bar>
 			
+			<div class="alert-container" v-show="noProjectsFound">
+				<img src="http://via.placeholder.com/175x175">
+				<h3>Could not find any projects!</h3>
+			</div>
 			<file-status class="middle" v-show='hasTools && hasFiles'></file-status>
 			<dropzone class="middle" v-show='hasTools && !hasFiles'></dropzone>
 
@@ -47,6 +51,9 @@ export default {
 		return {}
 	},
 	computed: {
+		noProjectsFound() {
+			return this.$store.getters.noProjectsFound
+		},
 		hasFiles() {
 			return this.$store.getters.currFiles.length
 		},
@@ -74,4 +81,8 @@ export default {
 	height: 570px;
 }
 
+.alert-container {
+	margin-top: 90px;
+	text-align: center;
+}
 </style>

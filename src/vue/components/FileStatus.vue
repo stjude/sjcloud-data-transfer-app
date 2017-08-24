@@ -14,7 +14,7 @@
 				</tr>
 			</thead>
 		</table>
-		<table  style='width:570px; margin-top:28px'>
+		<table style='width:570px; margin-top:28px'>
 			<tbody>
 				<tr v-for='file in files'>
 					<td class='cellCheckBox'>
@@ -88,24 +88,24 @@ export default {
 <style scoped>
 #fileStatusDiv {
 	height: 410px;
-	overflow:scroll;
-	border-bottom: 1px solid #ccc;
+	overflow: scroll;
+	/* border-bottom: 1px solid #ccc; */
 }
 
 table {
-	max-height:500px;
+	max-height: 500px;
 }
 
 th {
 	padding: 3px 0 3px 0px;
-	font-weight:600;
-	text-align:center;
+	font-weight: 600;
+	text-align: center;
 }
 
 td {
 	padding: 7px 0 7px 0px;
 	border: 1px solid #ccc;
-	text-align:center;
+	text-align: center;
 }
 
 .cellCheckBox {
