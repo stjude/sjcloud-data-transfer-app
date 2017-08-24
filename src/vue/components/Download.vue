@@ -80,7 +80,7 @@ export default {
 			const defaultLocation = this.$store.getters.downloadLocation
 			window.utils.openDirectoryDialog(
 				(files) => {
-					if (files.length > 0) {
+					if (files && files.length > 0) {
 						this.$store.commit('setDownloadLocation', files[0]);
 					}
 				}, 
