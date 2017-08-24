@@ -71,7 +71,7 @@ export default {
 		progressStyle(file) {
 			return {
 				height:'19px',
-				'background-color':'rgb(27, 120, 55)', 
+				'background-color':'#4F8A10', 
 				width:file.status+'%'
 			}
 		}

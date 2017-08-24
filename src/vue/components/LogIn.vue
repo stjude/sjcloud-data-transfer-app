@@ -50,18 +50,12 @@
 			</div>
 			<div v-show="loginState == 'completed'" class='theater-body'>
 				<div class="col-xs-12">
-					<div id="status-text">Success!</div>
-					<div style="margin-top: 20px">
-						<img src="http://via.placeholder.com/225x225">
-					</div>
+					<step-outcome successMessage='Authenticated!' outcome='done'></step-outcome>
 				</div>
 			</div>
 			<div v-show="loginState == 'failed'" class='theater-body'>
 				<div class="col-xs-12">
-					<div id="status-text">Failure!</div>
-					<div style="margin-top: 20px">
-						<img src="http://via.placeholder.com/225x225">
-					</div>
+					<step-outcome failureMessage='Failed!' outcome='error'></step-outcome>
 					<div style="margin-top: 20px">
 						<div @click="external(false)" class="btn btn-large btn-stjude-warning" style="margin-top:20px">Retry</div>
 					</div>
@@ -85,8 +79,12 @@
 </template>
 
 <script>
+import StepOutcome from './StepOutcome.vue'
 
 export default {
+	components: {
+		StepOutcome
+	},
 	computed: {
 		loginState() {
 			return this.$store.getters.loginState;

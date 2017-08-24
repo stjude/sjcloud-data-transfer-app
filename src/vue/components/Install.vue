@@ -45,18 +45,12 @@
 			</div>
 			<div v-show="installingDxToolkit == 'completed'" class='theater-body'>
 				<div class="col-xs-12">
-					<div id="status-text">Success!</div>
-					<div style="margin-top: 20px">
-						<img src="http://via.placeholder.com/225x225">
-					</div>
+					<step-outcome successMessage='Completed!' outcome='done'></step-outcome>
 				</div>
 			</div>
 			<div v-show="installingDxToolkit == 'failed'" class='theater-body'>
 				<div class="col-xs-12">
-					<div id="status-text">Failure!</div>
-					<div style="margin-top: 20px">
-						<img src="http://via.placeholder.com/225x225">
-					</div>
+					<step-outcome failureMessage='Failed!' outcome='error'></step-outcome>
 				</div>
 			</div>
 		</div>
@@ -77,7 +71,12 @@
 </template>
 
 <script>
+import StepOutcome from './StepOutcome.vue'
+
 export default {
+	components: {
+		StepOutcome
+	},
 	computed: {
 		installingDxToolkit() {
 			return this.$store.getters.installingDxToolkit;
