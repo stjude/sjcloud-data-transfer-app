@@ -1,5 +1,6 @@
 {
-  "PROJECT_TAG": "SJCP",
+  "PROJECT_TAG": "sjcp-project",
+  "DOWNLOADABLE_TAG": "sjcp-result-file",
   "DOWNLOAD_INFO": {
     "WINDOWS": {
       "URL": "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0.exe",

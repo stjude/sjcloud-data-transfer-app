@@ -1,3 +1,7 @@
+/**
+ * @fileOverview Controls the UI
+*/
+
 const url = require("url");
 const path = require("path");
 const electron = require("electron");

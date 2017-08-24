@@ -1,27 +1,32 @@
+/**
+  * @fileOverview Utility functions.
+  **/
+
 const os = require("os");
 const fs = require("fs");
 const path = require("path");
 const https = require("https");
 const mkdirp = require("mkdirp");
 const crypto = require("crypto");
-const {exec, execSync, spawn} = require("child_process");
+const {exec} = require("child_process");
 const {remote, shell} = require("electron");
 
-
-_sjcloud_homedir = path.join( os.homedir(), ".sjcloud" );
-_dx_toolkit_dir = path.join( _sjcloud_homedir, "dx-toolkit" );
-_dx_toolkit_env_file = path.join( _dx_toolkit_dir, "environment" ); // file only on Linux and Mac installations
-_dnanexus_CLI_dir = "C:\\Program Files (x86)\\DNAnexus CLI"; // default install location of dx toolkit install wizard (windows)
+sjcloudHomeDirectory = path.join( os.homedir(), ".sjcloud" );
+dxToolkitDirectory = path.join( sjcloudHomeDirectory, "dx-toolkit" );
+dxToolkitEnvironmentFile = path.join( dxToolkitDirectory, "environment" );
+dnanexusCLIDirectory = "C:\\Program Files (x86)\\DNAnexus CLI";
 
 /**
  * Creates the ~/.sjcloud directory, if it doesn't exist.
  * Callback takes args (error, created_dir) to determine
  * whether this is the user's first time to run the app.
+ * 
+ * @param {callback} callback
  **/
 module.exports.initSJCloudHome = function(callback) {
-  fs.exists(_sjcloud_homedir, function(exists) {
+  fs.exists(sjcloudHomeDirectory, function(exists) {
     if (!exists) {
-      mkdirp(_sjcloud_homedir, function(err) {
+      mkdirp(sjcloudHomeDirectory, function(err) {
         if (err) {
           return callback(err, null);
         }
@@ -33,19 +38,28 @@ module.exports.initSJCloudHome = function(callback) {
   });
 };
 
+/**
+ * Find or create the "dx-toolkit" directory in the ".sjcloud"
+ * directory and return its path.
+ * 
+ * @return {string} Path of "dx-toolkit" directory
+*/
 module.exports.getDXToolkitDir = function() {
-  if (!fs.existsSync(module.exports._dx_toolkit_dir)) {
-    mkdirp(module.exports._dx_toolkit_dir, function(err) {
-      if (err) {
-        return null;
-      }
-
-      return module.exports._dx_toolkit_dir;
+  if (!fs.existsSync(module.exports.dxToolkitDirectory)) {
+    mkdirp(module.exports.dxToolkitDirectory, function(err) {
+      if (err) { return null; }
+      return module.exports.dxToolkitDirectory;
     });
   }
-  return module.exports._dx_toolkit_dir;
+  return module.exports.dxToolkitDirectory;
 };
 
+/**
+ * Runs commands on the system command line.
+ * 
+ * @param {string} cmd Text to be entered at the command line
+ * @param {callback} callback
+*/
 module.exports.runCommand = function(cmd, callback) {
   let inner_callback = function(err, stdout, stderr) {
     if (err) {
@@ -58,8 +72,8 @@ module.exports.runCommand = function(cmd, callback) {
   };
 
   if (os.platform() == "darwin" || os.platform() == "linux") {
-    const dxToolkitEnvFile = module.exports._dx_toolkit_env_file;
-    fs.stat(module.exports._dx_toolkit_env_file, function(err, stats) {
+    const dxToolkitEnvFile = module.exports.dxToolkitEnvironmentFile;
+    fs.stat(module.exports.dxToolkitEnvironmentFile, function(err, stats) {
       if (!err) { // fs.stat() is only to check if "dx" commands can be sourced. If it fails other commands can still be run.
         cmd = "source " + dxToolkitEnvFile + "; " + cmd;
 	  }
@@ -67,7 +81,7 @@ module.exports.runCommand = function(cmd, callback) {
       return exec(cmd, {shell: "/bin/bash", maxBuffer: 10000000}, inner_callback);
     });
   } else if (os.platform() == "win32") {
-    const dnanexusPSscript = path.join( module.exports._dnanexus_CLI_dir, "dnanexus-shell.ps1" );
+    const dnanexusPSscript = path.join( module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1" );
     fs.stat(dnanexusPSscript, function(err, stats) {
       if (!err) { // fs.stat() is only to check if "dx" commands can be sourced. If it fails other commands can still be run.
         cmd = ".'" + dnanexusPSscript + "'; " + cmd;
@@ -78,6 +92,11 @@ module.exports.runCommand = function(cmd, callback) {
   }
 };
 
+/**
+ * Determines if dx-toolkit is correctly installed on the system.
+ * 
+ * @param {callback} callback
+*/
 module.exports.dxToolkitOnPath = function(callback) {
   if (os.platform() == "linux" || os.platform() == "darwin") {
     this.runCommand("which dx", callback);
@@ -86,10 +105,18 @@ module.exports.dxToolkitOnPath = function(callback) {
   }
 };
 
+/**
+ * Determines if the user is logged into DNAnexus
+ * @param {callback} callback
+*/
 module.exports.dxLoggedIn = (callback) => {
   this.runCommand("dx whoami", callback);
 };
 
+/**
+ * Checks if there's at least one project the user can upload data to.
+ * @param {callback} callback
+*/
 module.exports.dxCheckProjectAccess = (callback) => {
   if (os.platform() == "linux" || os.platform() == "darwin") {
     this.runCommand("echo '0' | dx select --level UPLOAD", callback);
@@ -98,6 +125,13 @@ module.exports.dxCheckProjectAccess = (callback) => {
   }
 };
 
+/**
+ * Downloads a file.
+ *
+ * @param {string} url URL of download
+ * @param {string} dest Path for newly downloaded file
+ * @param {Function} callback Callback function
+*/
 module.exports.downloadFile = (url, dest, cb) => {
   let file = fs.createWriteStream(dest);
   let request = https.get(url, (response) => {
@@ -108,10 +142,23 @@ module.exports.downloadFile = (url, dest, cb) => {
   });
 };
 
+/**
+ * Untars a file to a new location.
+ * 
+ * @param {string} file Path to tarballed file
+ * @param {string} parentDir Path to the directory the tarballs contents should be dumped in
+ * @param {callback} callback
+ **/
 module.exports.untarTo = (file, parentDir, callback) => {
   module.exports.runCommand("tar -C " + parentDir + " -zxf " + file, callback);
 };
 
+/**
+ * Computes the SHA256 sum of a given file.
+ * 
+ * @param {string} filepath Path to file being checksummed
+ * @param {Function} callback Callback function
+ **/
 module.exports.computeSHA256 = (filepath, callback) => {
   let shasum = crypto.createHash("SHA256");
   let s = fs.ReadStream(filepath);
@@ -124,18 +171,41 @@ module.exports.computeSHA256 = (filepath, callback) => {
   });
 };
 
+/**
+ * Opens a URL in the default browser.
+ * 
+ * @param {string} url URL to open
+ */
 module.exports.openExternal = function(url) {
-  return shell.openExternal(url);
+  shell.openExternal(url);
 };
 
-module.exports.openDirectoryDialog = function(callback, defaultPath) {
-  return callback(remote.dialog.showOpenDialog({
+/**
+ * Open a file dialog that can be used to select a directory.
+ * 
+ * @param {callback} callback
+ * @param {string} defaultPath 
+ * @return {callback}
+ */
+module.exports.openDirectoryDialog = function(callback, defaultPath = undefined) {
+  let options = {
     buttonLabel: "Select",
-    defaultPath,
     properties: ["openDirectory", "createDirectory"],
-  }));
+  };
+
+  if (defaultPath !== undefined) {
+    options = Object.assign( options, {defaultPath} );
+  }
+
+  return callback(remote.dialog.showOpenDialog(options));
 };
 
+/**
+ * Open a file dialog that can be used to select a file.
+ * 
+ * @param {callback} callback
+ * @return {callback}
+ */
 module.exports.openFileDialog = function(callback) {
   return callback(remote.dialog.showOpenDialog({
     properties: ["openFile", "multiSelections"],
@@ -145,10 +215,17 @@ module.exports.openFileDialog = function(callback) {
 // Base function derived from stack overflow.
 // Credit: https://stackoverflow.com/a/14919494
 
+/**
+ * Returns a readable size from a raw byte count.
+ * Base function derived from stack overflow.
+ * Credit: https://stackoverflow.com/a/14919494
+ * 
+ * @param {integer} bytes number of bytes
+ * @param {boolean} roundNumbers round the output numbers
+ * @return {string} Human-readable size.
+ **/
 module.exports.readableFileSize = function(bytes, roundNumbers=false) {
-  if (bytes === 0) {
-    return "0 GB";
-  }
+  if (bytes === 0) { return "0 GB"; }
 
   let thresh = 1000;
   if (Math.abs(bytes) < thresh) {
@@ -172,16 +249,24 @@ module.exports.readableFileSize = function(bytes, roundNumbers=false) {
   return number+" "+units[u];
 };
 
+/**
+ * Return the basename and size of a file from the path.
+ * 
+ * @param {string} filepath Path where the file resides.
+ * @return {object} object containing name and size properties.
+ */
 module.exports.fileInfoFromPath = function(filepath) {
   name = path.basename(filepath);
   size = fs.statSync(filepath).size;
   return {
     name,
-    size: module.exports.readableFileSize(size)
+    size: module.exports.readableFileSize(size),
   }
 }
 
-module.exports._sjcloud_homedir = _sjcloud_homedir;
-module.exports._dx_toolkit_dir = _dx_toolkit_dir;
-module.exports._dx_toolkit_env_file = _dx_toolkit_env_file;
-module.exports._dnanexus_CLI_dir = _dnanexus_CLI_dir;
+/** EXPORTS **/
+
+module.exports.sjcloudHomeDirectory = sjcloudHomeDirectory;
+module.exports.dxToolkitDirectory = dxToolkitDirectory;
+module.exports.dxToolkitEnvironmentFile = dxToolkitEnvironmentFile;
+module.exports.dnanexusCLIDirectory = dnanexusCLIDirectory;
