@@ -50,12 +50,16 @@ module.exports.createOauthWindow = (internal, callback) => {
     // oauth page rather than landing on platform.dnanexus.com after
     // login.
 
-    const match = /https:\/\/platform.dnanexus.com\/login\/scope/g.exec(newUrl) ||
-                  /.*stjude.org/g.exec(newUrl) || null;
+    const match = /https:\/\/platform.dnanexus.com\/login\?code/g.exec(newUrl);
 
-    if (match === null) {
+    if (match !== null) {
       event.preventDefault();
-      loginWindow.loadURL(oauth_url);
+      let timer = setInterval(() => {
+        if (loginWindow.webContents.getURL() === "https://platform.dnanexus.com/") {
+          clearInterval(timer);
+          loginWindow.loadURL(oauth_url);
+        }
+      }, 1000);
     }
   });
 
