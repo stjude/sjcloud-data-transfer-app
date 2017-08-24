@@ -71,7 +71,7 @@ export default {
 		selectDownloadLocation() {
 			console.log("Selecting download location...");
 			const defaultLocation = this.$store.getters.downloadLocation
-			window.utils.openFileDialog(
+			window.utils.openDirectoryDialog(
 				(files) => {
 					if (files.length > 0) {
 						this.$store.commit('setDownloadLocation', files[0]);

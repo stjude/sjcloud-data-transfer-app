@@ -128,12 +128,17 @@ module.exports.openExternal = function(url) {
   return shell.openExternal(url);
 };
 
-module.exports.openFileDialog = function(callback, defaultPath) {
-  console.log(defaultPath);
+module.exports.openDirectoryDialog = function(callback, defaultPath) {
   return callback(remote.dialog.showOpenDialog({
     buttonLabel: "Select",
     defaultPath,
     properties: ["openDirectory", "createDirectory"],
+  }));
+};
+
+module.exports.openFileDialog = function(callback) {
+  return callback(remote.dialog.showOpenDialog({
+    properties: ["openFile", "multiSelections"],
   }));
 };
 

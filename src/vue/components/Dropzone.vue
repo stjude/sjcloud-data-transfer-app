@@ -4,6 +4,7 @@
        @dragenter.prevent="dragging = true"
        @dragexit.prevent="dragging = false"
        @dragleave.prevent="dragging = false"
+       @click.prevent="clicked"
        @drop.prevent="dropped"
        :style="dragging ? draggingDropzoneStyle : nondraggingDropzoneStyle">
 
@@ -35,8 +36,14 @@ export default {
     }
   },
   methods: {
+    clicked(e) {
+      window.utils.openFileDialog((files) => {
+        for (let f of files) {
+          this.$store.commit('addFile', window.utils.fileInfoFromPath(f));
+        }
+      })
+    },
     dropped(e) {
-      e.preventDefault();
       for (let f of e.dataTransfer.files) {
         this.$store.commit('addFile', window.utils.fileInfoFromPath(f.path));
       }

@@ -166,14 +166,16 @@ export default {
 	
 	.first-checkbox {
 		position: absolute;
-		top: 485px;
-		left: 25px;
+		font-size: 12pt;
+		top: 490px;
+		left: 20px;
 	}
 
 	.second-checkbox {
 		position: absolute;
-		top: 505px;
-		left: 25px;
+		font-size: 12pt;
+		top: 515px;
+		left: 20px;
 	}
 
 	/**
