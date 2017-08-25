@@ -27,7 +27,7 @@ module.exports.waitForCode = function(internal, cb) {
 	    }, app);
 
       app.get("/authcb", function(req, res) {
-        window.webContents.removeListener("did-get-redirect-request");
+        // window.webContents.removeListener("did-get-redirect-request");
 	      server.close();
         window.close();
         return cb(null, req.query.code);

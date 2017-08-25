@@ -18,7 +18,7 @@
 					<img src="http://via.placeholder.com/350x300">
 				</div>
 				<div class="col-xs-6">
-					<div>
+					<div style="margin-top: 15px;">
 						The St. Jude Cloud desktop application requires the installation of third-party software. We'll take care of installing that for you. 
 						<div class='info-icon-wrapper-div' @click='showModal()'>
 							<i class='material-icons' 
@@ -31,7 +31,7 @@
 				</div>
 			</div>
 			<div v-show="installingDxToolkit == 'installing'" class='theater-body'>
-				<spin-kit :status='downloadStatus' :topLabel='downloadStatus'></spin-kit>
+				<spin-kit :status='downloadStatus' :btmLabel='downloadStatus'></spin-kit>
 			</div>
 			<div v-show="installingDxToolkit == 'completed'" class='theater-body'>
 				<div class="col-xs-12">
@@ -116,7 +116,7 @@ export default {
 					that.$store.commit('setInstallingDxToolkit', "completed");
 					setTimeout(function (){
 						that.$router.push('login');
-					}, 4000);
+					}, 2500);
 				}
 
 				return result;
@@ -168,13 +168,19 @@ export default {
 	text-align: center;
 	font-style: 'Open Sans', 'Helvetica Neue';
 	font-size: 24px;
-	height: 310px;
+	height: 300px;
 }
 
 .theater-body .btn {
 	margin: 35px 0px 50px 0px;
 	width: 145px;
 	font-size: 24px;
+}
+
+.footer {
+	position: absolute;
+	top: 545px;
+	left: -10px;
 }
 
 .footer .progress {

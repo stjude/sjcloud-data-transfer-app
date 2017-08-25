@@ -2,7 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 
 Vue.use(Vuex);
-const environment = "prod";
+const environment = "dev";
 
 /** Plugins **/
 const projectToolScopeWatcher = (store) => {

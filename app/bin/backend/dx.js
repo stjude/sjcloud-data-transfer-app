@@ -222,7 +222,7 @@ module.exports.uploadFile = (filePath, projectId, rawFileSize, progressCb, finis
       module.exports.describeDXItem(dxPath, (err, obj) => {
         let totalSize = 0;
 
-        for (let part in obj.parts) { totalSize += obj.parts[part].size; }
+        for (let part in obj.parts) { totalSize += obj.parts[part].size; } // eslint-disable-line
 
         if (lowestValue > totalSize) {
           totalSize = lowestValue;

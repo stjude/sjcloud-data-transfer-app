@@ -1,13 +1,11 @@
 <template>
 	<div class="row">
 		<div class="dev-box" v-show="environment == 'dev'">
-			<b>State:</b> {{loginState}}
 			<select @change="setLoginState($event.target.value)">
 				<option>waiting</option>
 				<option>completed</option>
 				<option>failed</option>
-				<option>waiting-2</option>
-				<option>token</option>
+				<option>validating</option>
 			</select>
 		</div>
 		<div class='col-xs-12 main'>
@@ -30,7 +28,7 @@
 				</div>
 			</div>
 			<div v-show="loginState == 'validating'" class='theater-body'>
-				<spin-kit status='0'></spin-kit>
+				<spin-kit :status='validating' :btmLabel='validating'></spin-kit>
 			</div>
 			<div v-show="loginState == 'completed'" class='theater-body'>
 				<div class="col-xs-12">
@@ -41,7 +39,7 @@
 				<div class="col-xs-12">
 					<step-outcome failureMessage='Failed!' outcome='error'></step-outcome>
 					<div style="margin-top: 20px">
-						<div @click="external(false)" class="btn btn-large btn-stjude-warning" style="margin-top:20px">Retry</div>
+						<div @click="setLoginState('waiting')" class="btn btn-large btn-stjude" style="margin-top:20px">Retry</div>
 					</div>
 				</div>
 			</div>
@@ -70,6 +68,11 @@ export default {
 	components: {
 		StepOutcome,
 		SpinKit
+	},
+	data: () => {
+		return {
+			validating: "Validating..."
+		}
 	},
 	computed: {
 		loginState() {
@@ -215,6 +218,12 @@ export default {
 
 .login-option .login-option-content .login-option-body {
 	margin-top: 30px;
+}
+
+.footer {
+	position: absolute;
+	top: 545px;
+	left: -10px;
 }
 
 .footer .progress {

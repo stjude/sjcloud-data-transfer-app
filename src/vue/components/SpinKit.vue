@@ -30,7 +30,7 @@ export default {
 
 <style scoped>
 .loading-text {
-  font-size: 18px;
+  font-size: 32pt;
   text-align: center;
 }
 
@@ -44,8 +44,8 @@ export default {
 
 .sk-circle {
   margin: 0px auto;
-  margin-top: 50px;
-  margin-bottom: 100px;
+  margin-top: 40px;
+  margin-bottom: 30px;
   width: 120px;
   height: 120px;
   position: relative;
