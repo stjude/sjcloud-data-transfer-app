@@ -6,11 +6,11 @@ const os = require("os");
 const fs = require("fs");
 const utils = require("./utils");
 
-module.exports.state_to_route = {
-  NEED_DOWNLOAD: {htmlfile: "download"},
-  NEED_LOGIN: {htmlfile: "login"},
-  UPLOAD: {htmlfile: "upload"},
-  UNKNOWN: {htmlfile: "unknown"},
+module.exports.state = {
+  NEED_INSTALL: {path: "install"},
+  NEED_LOGIN: {path: "login"},
+  UPLOAD: {path: "upload"},
+  UNKNOWN: {path: "unknown"},
 };
 
 /**
@@ -33,7 +33,7 @@ module.exports.getState = function(callback) {
 
     utils.dxToolkitOnPath( function(err, res) {
       if (err) {
-        return callback(self.state.NEED_DOWNLOAD);
+        return callback(self.state.NEED_INSTALL);
       }
 
       utils.dxLoggedIn( (err, res) => {

@@ -3,6 +3,7 @@ import VueRouter from "vue-router";
 import routes from "./routes.js";
 import App from "./App.vue";
 import store from "./store";
+import Config from "../../config.json";
 
 // configure Vue
 Vue.config.debug = true;
@@ -23,3 +24,11 @@ const _App = new Vue({
   router,
   store,
 });
+
+_App.$router.replace("/");
+
+if (Config.ENVIRONMENT === "dev") {
+  _App.$router.replace('home');
+} else {
+  window.state.getState((state) => { _App.$router.replace(state); });
+}

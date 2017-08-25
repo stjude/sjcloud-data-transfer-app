@@ -1,4 +1,5 @@
 import Home from "./components/Home.vue";
+import Startup from "./components/Startup.vue";
 import NotFound from "./components/NotFound.vue";
 import Upload from "./components/Upload.vue";
 import Download from "./components/Download.vue";
@@ -23,7 +24,7 @@ export default function() {
     component: Download,
   }, {
     path: "/",
-    component: Home,
+    component: Startup,
   }, {
     path: "*",
     component: NotFound,
