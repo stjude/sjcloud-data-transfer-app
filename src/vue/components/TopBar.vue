@@ -14,7 +14,11 @@
 export default {
 	methods: {
 		goHome() {
-			this.$router.replace('/home')
+			if (this.$store.getters.environment === "dev") {
+				this.$router.replace('/home');
+			} else {
+				console.error("Tried to go home, but we are not in 'dev' mode!");
+			}
 		}
 	}
 }
