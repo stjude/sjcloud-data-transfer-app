@@ -31,7 +31,7 @@ export default {
 	border-style: solid;
 	border-color: #1381B3;
 	color: #FFFFFF;
-	cursor: pointer;
+	/* cursor: pointer; */
 	display:inline-block; 
 	font-family: "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 24px; 
