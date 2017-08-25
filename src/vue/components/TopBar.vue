@@ -1,12 +1,12 @@
 <template>
-	<div class='sjcda-top-bar'>
+	<div class='sjcda-top-bar unselectable'>
 		<div class='sjcda-top-bar__logo_container'>
-			<a href='#/home'>
-				<img class="sjcda-top-bar__logo" src="img/stjude-logo-child-white.png">
-			</a>
+			<img class="sjcda-top-bar__logo"
+					 src="img/stjude-logo-child-white.png"
+					 @click='goHome'>
 		</div>
-		<span class="bold-font" v-on:click='goHome'>ST. JUDE CLOUD</span>
-		<span class="lighter-font" v-on:click='goHome'>PLATFORM</span>
+		<span class="bold-font" @click='goHome'>ST. JUDE CLOUD</span>
+		<span class="lighter-font" @click='goHome'>PLATFORM</span>
 	</div>
 </template>
 
@@ -31,8 +31,8 @@ export default {
 	border-style: solid;
 	border-color: #1381B3;
 	color: #FFFFFF;
-	/* cursor: pointer; */
-	display:inline-block; 
+	cursor: default;
+	display: inline-block; 
 	font-family: "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 24px; 
 	height: 60px;
