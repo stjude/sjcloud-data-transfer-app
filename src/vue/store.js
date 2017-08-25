@@ -219,6 +219,15 @@ export default new Vuex.Store({
 
       tool[state.currPath] = tool[state.currPath].filter((t) => !t.checked);
     },
+    removeAllFiles(state) {
+      const tool = state.tools.filter((t) => t.name === state.currToolName)[0];
+      if (!tool || !tool[state.currPath]) {
+        console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
+        return;
+      }
+
+      tool[state.currPath] = [];
+    },
     showModal(state,name) {
       state.modals[name]=1
     },

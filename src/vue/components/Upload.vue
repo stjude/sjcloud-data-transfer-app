@@ -36,14 +36,14 @@
 				</div>
 			</div>
 
-			<div v-show='transferComplete' style='margin-top:100px; text-align:center'>
+			<div v-show='transferComplete && hasFiles' style='margin-top:100px; text-align:center'>
 				<step-outcome successMessage='Upload complete!' outcome='done'></step-outcome>
 				<div style="margin-top:30px">
-					<button class='btn btn-primary'>
+					<button class='btn btn-stjude'>
 						<i class='material-icons' style='vertical-align:bottom'>open_in_browser</i>
 						READY TO RUN
 					</button>
-					<button class='btn btn-primary' v-on:click='resetCheckedFiles'>
+					<button class='btn btn-stjude' v-on:click='removeAllFiles'>
 						<i class='material-icons' style='vertical-align:bottom'>cloud_upload</i>
 						UPLOAD MORE DATA
 					</button>
@@ -131,9 +131,8 @@ export default {
 		removeCheckedFiles() {
 			this.$store.commit('removeCheckedFiles');
 		},
-		resetCheckedFiles() {
-			console.log('resetCheckedFiles')
-			//this.$store.commit('resetCheckedFiles')
+		removeAllFiles() {
+			this.$store.commit('removeAllFiles')
 		}
 	}
 }
