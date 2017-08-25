@@ -35,6 +35,7 @@ export default new Vuex.Store({
     noProjectsFound: false,
     showAllFiles: false,
     showAllProjects: false,
+    searchTerm: '',
     modals: {
       toolkit: 0
     }
@@ -80,6 +81,9 @@ export default new Vuex.Store({
     currPath(state) {
       return state.currPath;
     },
+    searchTerm(state) {
+      return state.searchTerm;
+    },
     downloadLocation(state) {
       return state.downloadLocation;
     },
@@ -91,7 +95,10 @@ export default new Vuex.Store({
     },
     currFiles(state, getters) {
 	    const tool = getters.currTool;
-      return !tool || !Array.isArray(tool[state.currPath]) ? [] : tool[state.currPath];
+      const files=!tool || !Array.isArray(tool[state.currPath]) ? [] : tool[state.currPath]
+      return state.currPath!='download' || !state.searchTerm ? files : files.filter(f=>{
+        return f.name.includes(state.searchTerm ) || (""+f.size).includes(state.searchTerm)
+      });
     },
     checkedFiles(state, getters) {
       const tool = getters.currTool;
@@ -228,6 +235,11 @@ export default new Vuex.Store({
 
       tool[state.currPath] = [];
     },
+    setSearchTerm(state, term) {
+      state.searchTerm=term.toLowerCase()
+    },
+
+    /** modals **/
     showModal(state,name) {
       state.modals[name]=1
     },

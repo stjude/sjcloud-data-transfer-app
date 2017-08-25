@@ -10,8 +10,9 @@
 				<img src="http://via.placeholder.com/175x175">
 				<h3>Could not find any projects!</h3>
 			</div>
-			<file-status v-show="hasTools && hasFiles && !noProjectsFound"></file-status>
-			<div class="alert-container" v-show="hasTools && !hasFiles && !noProjectsFound">
+
+			<file-status v-show="filesVisible"></file-status>
+			<div class="alert-container" v-show="noFilesVisible">
 				<img src="http://via.placeholder.com/175x175">
 				<h3>No files to download!</h3>
 			</div>
@@ -56,17 +57,23 @@ export default {
 		noProjectsFound() {
 			return this.$store.getters.noProjectsFound
 		},
-		hasFiles() {
-			return this.$store.getters.currFiles.length
-		},
-		hasTools() {
-			return this.$store.getters.tools.length
-		},
 		checkedFiles() {
 			return this.$store.getters.checkedFiles
 		},
 		downloadLocation() {
 			return this.$store.getters.downloadLocation
+		},
+		filesVisible() {
+			return !this.$store.getters.noProjectsFound && (
+				this.$store.getters.searchTerm || 
+				(this.$store.getters.tools.length && this.$store.getters.currFiles.length)
+			)
+		},
+		noFilesVisible() {
+			return !this.$store.getters.noProjectsFound && (
+				!this.$store.getters.searchTerm &&
+				(!this.$store.getters.tools.length || !this.$store.getters.currFiles.length)
+			)
 		}
 	},
 	methods: {

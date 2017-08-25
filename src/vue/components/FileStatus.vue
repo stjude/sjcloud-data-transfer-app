@@ -1,6 +1,6 @@
 <template>
-	<div id='fileStatusDiv' style='margin-top:18px;'>
-		<table style='position:fixed; width:571px; border:1px solid #ccc;'>
+	<div id='fileStatusDiv' :style='rootDivStyle'>
+		<table id='sjcda-file-table-header'>
 			<thead>
 				<tr style='color:#000; background-color:#ccc'>
 					<th class='cellCheckBox' v-on:click.stop='toggleCheckBoxes'>
@@ -12,14 +12,14 @@
 				</tr>
 			</thead>
 		</table>
-		<table style='width:570px; margin-top:28px'>
+		<table style='width:570px; margin-top:28px' id='sjcda-file-table-body'>
 			<tbody>
 				<tr v-for='file in files'>
 					<td class='cellCheckBox' v-on:click.stop='toggleFileChecked(file)'>
 						<input type="checkbox" :checked='file.checked' />
 					</td>
-					<td class='cellFileName' style='text-align:left;padding-left:10px'>{{ file.name }}</td>
-					<td class='cellFileSize'>{{ file.size }}</td>
+					<td class='cellFileName' style='text-align:left;padding-left:10px' v-html='matchedStr(file.name)'></td>
+					<td class='cellFileSize' v-html='matchedStr(file.size)'></td>
 					<td class='cellStatus' style='padding-top:0'>
 						<div v-show="file.started && !file.finished" style='position:relative; height:20px; width:80%; background-color:#fff; border: 1px solid #ececec; margin: 0 auto'>
 							<div v-bind:style="progressStyle(file)"></div>
@@ -31,10 +31,15 @@
 				</tr>
 			</tbody>
 		</table>
+		<div v-show="noFilesMatched"
+			style='width:100%; text-align:center; padding: 20px;'>
+			No matching files found for the search term.
+		</div>
 	</div>
 </template>
 
 <script>
+import Vue from 'vue';
 let i="0"
 let prevTool={}
 let prevPath='upload'
@@ -42,24 +47,31 @@ let prevPath='upload'
 export default {
 	data() {
 		return {
-			checkedAll: false
+			checkedAll: false,
+			rootDivStyle: {
+				'border-bottom': 'none'
+			}
 		}
 	},
 	computed: {
 		files() {
 			return this.$store.getters.currFiles
+		},
+		noFilesMatched() {
+			return !this.$store.getters.noProjectsFound &&
+				this.$store.getters.searchTerm && 
+				!this.$store.getters.currFiles.length
 		}
 	},
-	mounted() {
-		
-	},
-	updated() {
-		if (this.$store.currTool==prevTool && this.$store.currPath==prevPath) return
-		prevTool=this.$store.currTool
-		prevPath=this.$store.currPath
-		this.checkedAll=false
-	},
 	methods: {
+		matchedStr(str="") {
+			if (!str) return str;
+			const strlc=str.toLowerCase();
+			const term=this.$store.getters.searchTerm;
+			if (!term || !strlc.includes(term)) return str;
+			const s=str.substr(strlc.search(term),term.length)
+			return str.replace(s, "<span style='background-color:#ff0'>"+s+"</span>")
+		},
 		toggleFileChecked(file) {
 			file.checked=!file.checked;
 		},
@@ -84,6 +96,7 @@ export default {
 
 <style scoped>
 #fileStatusDiv {
+	margin-top:18px;
 	height: 410px;
 	overflow: scroll;
 	font-family: 'Lato';
@@ -121,6 +134,13 @@ td {
 
 .cellStatus {
 	width: 80px;
+}
+
+#sjcda-file-table-header {
+	position:fixed; 
+	width:571px; 
+	border:1px solid #ccc; 
+	z-index:1
 }
 
 /*.checkDiv, input[type='checkbox'] {

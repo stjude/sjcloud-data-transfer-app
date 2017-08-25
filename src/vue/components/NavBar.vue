@@ -1,11 +1,18 @@
 <template>
-	<div class="nav-bar">
+	<div class="nav-bar" style='width:100%'>
 		<router-link to='/upload'>
 			<div class='nav-span' v-bind:style='uploadLinkStyle'>Upload</div>
 		</router-link>
 		<router-link to='/download'>
 			<div class='nav-span' v-bind:style='downloadLinkStyle'>Download</div>
 		</router-link>
+
+		<div v-show="searchVisible" style='float:right;'>
+			<input type='text' value='' 
+				placeholder="Search files ..."
+				style='width: 300px; font-size: 16px;'
+				@input='setSearchTerm($event)'>
+		</div>
 	</div>
 </template>
 
@@ -31,9 +38,20 @@ export default {
 		},
 		downloadLinkStyle() {
 			return this.$store.getters.currPath=='download' ? active : inactive
+		},
+		searchVisible() {
+			return this.$store.getters.currPath=='download' && (
+				this.$store.getters.searchTerm ||
+				(this.$store.getters.tools.length &&
+				this.$store.getters.currFiles.length &&
+				!this.$store.getters.noProjectsFound)
+			)
 		}
 	},
 	methods: {
+		setSearchTerm(event) {
+			this.$store.commit('setSearchTerm',event.target.value)
+		},
 	}
 }
 </script>
