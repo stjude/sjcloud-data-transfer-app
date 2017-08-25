@@ -3,10 +3,8 @@
 		<table style='position:fixed; width:571px; border:1px solid #ccc;'>
 			<thead>
 				<tr style='color:#000; background-color:#ccc'>
-					<th class='cellCheckBox'>
-						<div class='checkDiv' v-on:click.stop='toggleCheckBoxes'>
-							<i v-show='checkedAll' style="color: #555;font-size:17px" class="material-icons">done</i>
-						</div>
+					<th class='cellCheckBox' v-on:click.stop='toggleCheckBoxes'>
+						<input type="checkbox" :checked='checkedAll' />
 					</th>
 					<th class='cellFileName'>FILENAME</th>
 					<th class='cellFileSize'>SIZE</th>
@@ -17,15 +15,13 @@
 		<table style='width:570px; margin-top:28px'>
 			<tbody>
 				<tr v-for='file in files'>
-					<td class='cellCheckBox'>
-						<div class='checkDiv' v-on:click.stop='toggleFileChecked(file)'>
-							<i v-show='file.checked' style="color: #555;font-size:17px" class="material-icons">done</i>
-						</div>
+					<td class='cellCheckBox' v-on:click.stop='toggleFileChecked(file)'>
+						<input type="checkbox" :checked='file.checked' />
 					</td>
 					<td class='cellFileName' style='text-align:left;padding-left:10px'>{{ file.name }}</td>
 					<td class='cellFileSize'>{{ file.size }}</td>
 					<td class='cellStatus' style='padding-top:0'>
-						<div v-show="file.started && !file.finished" style='height:20px; width:80%; background-color:#fff; border: 1px solid #ececec; margin: 0 auto'>
+						<div v-show="file.started && !file.finished" style='position:relative; height:20px; width:80%; background-color:#fff; border: 1px solid #ececec; margin: 0 auto'>
 							<div v-bind:style="progressStyle(file)"></div>
 						</div>
 						<div v-show="file.finished" style='height:25px;overflow:hidden'>
@@ -72,13 +68,14 @@ export default {
 			this.files.forEach(f=>f.checked=this.checkedAll);
 		},
 		progressStyle(file) {
-			return {height:'20px',width:file.status/100+'%'}
-		},
-		progressStyle(file) {
 			return {
-				height:'19px',
+				position:'relative',
+				height:'20px',
 				'background-color':'#4F8A10', 
-				width:file.status+'%'
+				width:file.status+'%',
+				top:'-1px',
+				left:'-1px',
+				'border-bottom':'1px solid #4F8A10'
 			}
 		}
 	}
@@ -126,7 +123,7 @@ td {
 	width: 80px;
 }
 
-.checkDiv, input[type='checkbox'] {
+/*.checkDiv, input[type='checkbox'] {
     -webkit-appearance:none;
     width:18px;
     height:18px;
@@ -139,6 +136,6 @@ td {
     color:#555;
     cursor:pointer;
     margin-left:4px;
-}
+}*/
 
 </style>

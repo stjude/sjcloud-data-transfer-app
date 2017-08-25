@@ -42,5 +42,9 @@ if (window.location.host!='localhost:3057') {
 	};
 	window.state = {};
 	window.ui = {};
-	window.utils = {};
+	window.utils = {
+		openExternal(url) {
+			window.open(url,'_blank')
+		}
+	};
 }
