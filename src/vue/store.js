@@ -97,7 +97,8 @@ export default new Vuex.Store({
 	    const tool = getters.currTool;
       const files=!tool || !Array.isArray(tool[state.currPath]) ? [] : tool[state.currPath]
       return state.currPath!='download' || !state.searchTerm ? files : files.filter(f=>{
-        return f.name.includes(state.searchTerm ) || (""+f.size).includes(state.searchTerm)
+        return f.name.toLowerCase().includes(state.searchTerm ) || 
+          (""+f.size).toLowerCase().includes(state.searchTerm)
       });
     },
     checkedFiles(state, getters) {

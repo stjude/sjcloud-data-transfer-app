@@ -110,7 +110,7 @@ table {
 
 th {
 	padding: 3px 0 3px 0px;
-	font-weight: 600;
+	font-weight: 300;
 	text-align: center;
 }
 
