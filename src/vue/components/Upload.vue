@@ -106,12 +106,14 @@ export default {
 			console.log("Uploading", files.length, "files with a concurrency of", concurrency);
 
 			files.forEach(function(file) {
-				file.started = true;
+				file.waiting = true;
+				file.started = false;
 				file.finished = false;
 				file.checked = false;
 			});
 
 			mapLimit(files, concurrency, (file, callback) => {
+				file.started = true;
 				// console.log(file);
 				// callback(null, file);
 				window.dx.uploadFile(file.path,
@@ -119,11 +121,18 @@ export default {
 															file.raw_size,
 															(progress) => {
 																file.status = progress
+																console.log("Progress", progress, "for name", file.name)
 															},
 															(err, result) => {
+																console.log("Done for name", file.name)
 																file.status = 100;
 																file.finished = true;
-																callback(err, result)
+																// Just to make the green progress bar
+																// Last a little longer.
+																setTimeout( 
+																	callback(err, result),
+																	1000
+																)
 															}
 														);
 			});

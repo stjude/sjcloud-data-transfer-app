@@ -21,11 +21,14 @@
 					<td class='cellFileName' style='text-align:left;padding-left:10px' v-html='matchedStr(file.name)'></td>
 					<td class='cellFileSize' v-html='matchedStr(file.size)'></td>
 					<td class='cellStatus' style='padding-top:0'>
-						<div v-show="file.started && !file.finished" style='position:relative; height:20px; width:80%; background-color:#fff; border: 1px solid #ececec; margin: 0 auto'>
+						<div v-if="file.finished" style='height:25px;overflow:hidden'>
+							<i style="color: #4F8A10; font-size:25px; line-height:25px" class="material-icons">check_circle</i>
+						</div>
+						<div v-else-if="file.started" style='position:relative; height:20px; width:80%; background-color:#fff; border: 1px solid #ececec; margin: 0 auto'>
 							<div v-bind:style="progressStyle(file)"></div>
 						</div>
-						<div v-show="file.finished" style='height:25px;overflow:hidden'>
-							<i style="color: #4F8A10; font-size:25px; line-height:25px" class="material-icons">check_circle</i>
+						<div v-else-if="file.waiting">
+							Waiting...
 						</div>
 					</td>
 				</tr>

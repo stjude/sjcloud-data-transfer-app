@@ -11,6 +11,7 @@ const winston = require("winston");
 const ui = require("./bin/backend/ui");
 const state = require("./bin/backend/state");
 const protocolhandler = require("./bin/backend/protocol");
+const config = require('../config.json');
 
 if (os.platform() == "darwin" || os.platform == "linux") {
   winston.add(winston.transports.File, { filename: path.join(process.env.HOME, ".sjcloud/log.txt") });
@@ -27,25 +28,28 @@ app.on("ready", () => {
     mainWindow = mw;
     mainWindow.loadURL(`file://${__dirname}/index.html`);
 
-    var template = [{
-      label: "SJCPUploader",
-      submenu: [
-        { label: "About SJCPUploader", selector: "orderFrontStandardAboutPanel:" },
-        { type: "separator" },
-        { label: "Quit", accelerator: "Command+Q", click: () => { app.quit(); }}
-      ]}, {
-      label: "Edit",
-      submenu: [
-        { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-        { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
-        { type: "separator" },
-        { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-        { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-        { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-        { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
-      ]}
-    ];
-    //menu.setApplicationMenu(menu.buildFromTemplate(template));
+    if (config.ENVIRONMENT !== "dev") {
+      let template = [{
+        label: "SJCPUploader",
+        submenu: [
+          { label: "About SJCPUploader", selector: "orderFrontStandardAboutPanel:" },
+          { type: "separator" },
+          { label: "Quit", accelerator: "Command+Q", click: () => { app.quit(); }}
+        ]}, {
+        label: "Edit",
+        submenu: [
+          { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
+          { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
+          { type: "separator" },
+          { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
+          { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
+          { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
+          { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
+        ]}
+      ];
+
+      menu.setApplicationMenu(menu.buildFromTemplate(template));
+    }
   });
 });
 

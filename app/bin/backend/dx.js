@@ -63,10 +63,10 @@ module.exports.install = (updateProgress, failProgress, callback) => {
   if (platform === "darwin" || platform === "linux") {
     const dxFolderPath = utils.getDXToolkitDir();
     const dxTarDownloadPath = path.join(tmpdir, "dx-toolkit.tar.gz");
-    updateProgress("30%", "Downloading dx-toolkit...");
+    updateProgress("30%", "Downloading...");
     utils.downloadFile(downloadURL, dxTarDownloadPath, () => {
       // TODO(clay): handle download failure.
-      updateProgress("60%", "Verifying dx-toolkit...");
+      updateProgress("60%", "Verifying...");
       // NOTE: I unzip to the parent directory because the unzip creates a
       // structure like dx-toolkit/dx-toolkit/...
       utils.computeSHA256(dxTarDownloadPath, (err, shasum) => {
@@ -216,11 +216,13 @@ module.exports.uploadFile = (filePath, projectId, rawFileSize, progressCb, finis
   utils.runCommand(rmCommand, () => {
     let command = "dx upload -p --path '" + dxPath + "' '" + filePath + "'";
 
+    let lowestValue = -1;
     let sizeCheckerInterval = setInterval(() => {
-      let lowestValue = -1;
 
       module.exports.describeDXItem(dxPath, (err, obj) => {
         let totalSize = 0;
+
+        if (!obj || !obj.parts) return;
 
         for (let part in obj.parts) { totalSize += obj.parts[part].size; } // eslint-disable-line
 
@@ -229,6 +231,7 @@ module.exports.uploadFile = (filePath, projectId, rawFileSize, progressCb, finis
         } else {
           lowestValue = totalSize;
         }
+
         let progress = totalSize / rawFileSize * 100.0;
         progressCb(progress);
       });
@@ -312,6 +315,8 @@ module.exports.getToolsInformation = function(allProjects, allFiles, callback) {
               name: elem.describe.name,
               status: 0,
               checked: false,
+              waiting: false,
+              started: false,
               finished: false,
               size: utils.readableFileSize(elem.describe.size),
               raw_size: elem.describe.size,

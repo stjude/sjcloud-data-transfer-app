@@ -270,6 +270,9 @@ module.exports.fileInfoFromPath = function(filepath, checked) {
     raw_size: size,
     status: 0,
     checked,
+    waiting: false,
+    started: false,
+    finished: false,
   };
 };
 

@@ -1,8 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
+import Config from "../../config.json";
 
 Vue.use(Vuex);
-const environment = "dev";
 
 /** Plugins **/
 const projectToolScopeWatcher = (store) => {
@@ -16,8 +16,8 @@ const projectToolScopeWatcher = (store) => {
 
 export default new Vuex.Store({
   state: {
-    environment,
-    concurrentOperations: 3,
+    environment: Config.ENVIRONMENT,
+    concurrentOperations: Config.DEFAULT_CONCURRENT_OPTERATIONS,
 
     /** Install **/
     downloadStatus: "Downloading...",
@@ -37,7 +37,7 @@ export default new Vuex.Store({
     showAllProjects: false,
     searchTerm: '',
     modals: {
-      toolkit: 0
+      toolkit: 0,
     }
   },
   getters: {
