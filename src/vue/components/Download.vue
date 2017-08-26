@@ -12,14 +12,15 @@
 			</div>
 
 			<file-status v-if="filesVisible"></file-status>
+
 			<div class="alert-container" v-else-if="noFilesVisible">
-				<img src="http://via.placeholder.com/175x175">
-				<h3>No files to download!</h3>
+				<step-outcome failureMessage='No files to download!'
+										  textStyle='font-size: 20pt; text-align: center;'
+										  outcome='error'></step-outcome>
 			</div>
+
 			<div class="alert-container" v-else-if="filesLoading">
 				<spin-kit></spin-kit>
-				<!-- <img src="http://via.placeholder.com/175x175">
-				<h3>Loading...</h3> -->
 			</div>
 
 			<div class="bottom-bar">
@@ -51,6 +52,8 @@ import NavBar from './NavBar.vue';
 import FileStatus from './FileStatus.vue';
 import UploadTarget from './UploadTarget.vue';
 import SpinKit from './SpinKit.vue';
+import InfoTooltip from './InfoTooltip.vue';
+import StepOutcome from './StepOutcome.vue';
 
 export default {
 	components: {
@@ -59,6 +62,8 @@ export default {
 		FileStatus,
 		UploadTarget,
 		SpinKit,
+		InfoTooltip,
+		StepOutcome,
 	},
 	computed: {
 		noProjectsFound() {
@@ -158,7 +163,7 @@ export default {
 }
 
 .alert-container {
-	margin-top: 90px;
+	margin-top: 110px;
 	text-align: center;
 }
 </style>

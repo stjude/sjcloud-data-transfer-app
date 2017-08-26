@@ -7,7 +7,7 @@
 					done
 				</i>
 			</div>
-			<div class="status-text" style='font-size:32pt'>
+			<div class="status-text" v-bind:style='textStyle'>
 				{{ successMessage }}
 			</div>
 		</div>
@@ -18,7 +18,7 @@
 					error_outline
 				</i>
 			</div>
-			<div class="status-text" style='font-size:32pt'>
+			<div class="status-text" v-bind:style='textStyle'>
 				{{ failureMessage }}
 			</div>
 		</div>
@@ -27,10 +27,23 @@
 
 <script>
 export default {
-	props: [
-		'outcome',
-		'successMessage',
-		'failureMessage'
-	]
+	props: {
+		'outcome': {
+			default: ''
+		},
+		'successMessage': {
+			default: ''
+		},
+		'failureMessage': {
+			default: ''
+		},
+		'textStyle': {
+			default: () => {
+				return {
+					'font-size': '32pt',
+				}
+			}	
+		}
+	}
 }
 </script>
