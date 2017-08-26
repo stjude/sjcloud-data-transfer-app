@@ -1,39 +1,40 @@
 <template>
-	<div class='leftPanel'>
-		<div v-show="!hasTools && noProjectsFound">
+	<div class='left-panel'>
+		<div v-if="!hasTools && noProjectsFound">
 			No projects found! Please create one!
 		</div>
-		<div v-show="!hasTools && !noProjectsFound">
+		<div v-else-if="!hasTools && !noProjectsFound">
 			<spin-kit btmLabel='Loading...' 
 								:textStyle="styles.loadingTextStyle"
 								style='position: absolute; margin-top:100px'></spin-kit>
 		</div>
-		<table v-show="hasTools"> 
-			<thead>
-				<tr>
-					<th style='width:70%'>{{showAllProjects ? "PROJECT" : "TOOL"}}</th>
-					<th style='width:30%; text-align: right;'>SIZE</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr v-for='tool in tools'
-					  v-bind:style='tool.name==currTool.name ? styles.activeTr : styles.inactiveTr' 
-					  v-on:click='setCurrTool(tool.name)'>
-					<td>{{ tool.name }}</td>
-					<td v-bind:style='tool.name==currTool.name ? styles.activeTd : styles.inactiveTd'>
-						{{tool.size !== 0 ? tool.size : ''}}
-					</td>
-
-				</tr>
-			</tbody>
-		</table>
-		<div>
-			<div class="checkbox first-checkbox">
-				<label><input type="checkbox" :checked="showAllFiles" @click="updateShowAllFiles">Show all files</label></div>
+		<div v-else-if="hasTools">
+			<div class="left-panel-table-container">
+				<table> 
+					<thead>
+						<tr>
+							<th style='width:70%'>{{showAllProjects ? "PROJECT" : "TOOL"}}</th>
+							<th style='width:30%; text-align: right;'>SIZE</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr v-for='tool in tools'
+								v-bind:style='tool.name==currTool.name ? styles.activeTr : styles.inactiveTr' 
+								v-on:click='setCurrTool(tool.name)'>
+							<td>{{ tool.name }}</td>
+							<td v-bind:style='tool.name==currTool.name ? styles.activeTd : styles.inactiveTd'>
+								{{tool.size && tool.size !== 0 && tool.size !== '' ? tool.size : 'Loading...'}}
+							</td>
+						</tr>
+					</tbody>
+				</table>
 			</div>
-			<div class="checkbox second-checkbox">
-				<label><input type="checkbox" :checked="showAllProjects" @click="updateShowAllProjects">Show non St. Jude Cloud projects</label></div>
-			</div>
+		</div>
+		<div class="checkbox first-checkbox">
+			<label><input type="checkbox" :checked="showAllFiles" @click="updateShowAllFiles">Show all files</label>
+		</div>
+		<div class="checkbox second-checkbox">
+			<label><input type="checkbox" :checked="showAllProjects" @click="updateShowAllProjects">Show non St. Jude Cloud projects</label>
 		</div>
 	</div>
 </template>
@@ -123,28 +124,34 @@ export default {
 </script>
 
 <style scoped>
-.leftPanel {
+.left-panel {
 	height: 560px;
 	border: 3px solid #ececec;
 	padding: 0px;
 }
 
-.leftPanel table {
+.left-panel-table-container {
+	height: 490px;
+	max-height: 490px;
+	overflow: scroll;
+}
+
+.left-panel table {
 	width: 100%;
 	table-layout: fixed;
 	margin-top: 20px;
 }
 
-.leftPanel table thead {
+.left-panel table thead {
 	font-size: 10pt;
 	color: #a3a3a3;
 }
 
-.leftPanel table tbody {
+.left-panel table tbody {
 	font-size: 13pt;
 }
 
-.leftPanel table tbody tr {
+.left-panel table tbody tr {
 	height: 70px;
 }
 
@@ -162,7 +169,7 @@ th {
 .second-checkbox {
 	position: absolute;
 	font-size: 12pt;
-	top: 515px;
+	top: 530px;
 	left: 20px;
 }
 
