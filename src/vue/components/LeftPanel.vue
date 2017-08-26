@@ -19,7 +19,10 @@
 					  v-bind:style='tool.name==currTool.name ? styles.activeTr : styles.inactiveTr' 
 					  v-on:click='setCurrTool(tool.name)'>
 					<td>{{ tool.name }}</td>
-					<td v-bind:style='tool.name==currTool.name ? styles.activeTd : styles.inactiveTd'>{{tool.size }}</td>
+					<td v-bind:style='tool.name==currTool.name ? styles.activeTd : styles.inactiveTd'>
+						{{tool.size !== 0 ? tool.size : ''}}
+					</td>
+
 				</tr>
 			</tbody>
 		</table>

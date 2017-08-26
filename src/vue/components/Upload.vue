@@ -101,7 +101,7 @@ export default {
 		uploadFiles() {
 			const files = this.$store.getters.currTool.upload.filter((f) => f.checked);
 
-			const dnanexusProjectId = this.$store.getters.currTool.dnanexus_location;
+			const dnanexusProjectId = this.$store.getters.currTool.dx_location;
 			const concurrency = this.$store.getters.concurrentOperations;
 			console.log("Uploading", files.length, "files with a concurrency of", concurrency);
 

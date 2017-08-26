@@ -1,14 +1,18 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import Config from "../../config.json";
+import mapLimit from "async/mapLimit";
 
 Vue.use(Vuex);
 
 /** Plugins **/
 const projectToolScopeWatcher = (store) => {
   store.subscribe((mutation, state) => {
-    if (mutation.type === "setShowAllFiles" ||
-        mutation.type === "setShowAllProjects") {
+    if (mutation.type === "setShowAllFiles") {
+      store.dispatch("refreshFiles");
+    }
+
+    if (mutation.type === "setShowAllProjects") {
       store.dispatch("updateToolsFromRemote", true);
     }
   });
@@ -35,10 +39,10 @@ export default new Vuex.Store({
     noProjectsFound: false,
     showAllFiles: false,
     showAllProjects: false,
-    searchTerm: '',
+    searchTerm: "",
     modals: {
       toolkit: 0,
-    }
+    },
   },
   getters: {
     /** Global **/
@@ -95,10 +99,10 @@ export default new Vuex.Store({
     },
     currFiles(state, getters) {
 	    const tool = getters.currTool;
-      const files=!tool || !Array.isArray(tool[state.currPath]) ? [] : tool[state.currPath]
-      return state.currPath!='download' || !state.searchTerm ? files : files.filter(f=>{
-        return f.name.toLowerCase().includes(state.searchTerm ) || 
-          (""+f.size).toLowerCase().includes(state.searchTerm)
+      const files=!tool || !Array.isArray(tool[state.currPath]) ? [] : tool[state.currPath];
+      return state.currPath!="download" || !state.searchTerm ? files : files.filter((f)=>{
+        return f.name.toLowerCase().includes(state.searchTerm ) ||
+          (""+f.size).toLowerCase().includes(state.searchTerm);
       });
     },
     checkedFiles(state, getters) {
@@ -148,9 +152,9 @@ export default new Vuex.Store({
 
       return true;
     },
-    modalVisibility(state,getters) {
-      return name => state.modals[name]
-    }
+    modalVisibility(state, getters) {
+      return (name) => state.modals[name];
+    },
   },
   mutations: {
     /** Install **/
@@ -184,6 +188,36 @@ export default new Vuex.Store({
     },
     setCurrToolName(state, toolName) {
       state.currToolName = toolName;
+      let tool = state.tools.filter((t) => t.name === toolName)[0];
+
+      if (!tool.download.length) {
+        window.dx.listDownloadableFiles(
+          tool.dx_location,
+          state.showAllFiles,
+          (err, files) => {
+            let downloadableFiles = [];
+
+            files.forEach((elem) => {
+              let dl_file = {
+                name: elem.describe.name,
+                status: 0,
+                checked: false,
+                waiting: false,
+                started: false,
+                finished: false,
+                size: window.utils.readableFileSize(elem.describe.size),
+                raw_size: elem.describe.size,
+                dx_location: elem.project + ":" + elem.id,
+              };
+
+              downloadableFiles.push(dl_file);
+            });
+
+            tool.loadedAvailableDownloads = true;
+            tool.download = downloadableFiles;
+          }
+        );
+      }
     },
     setCurrPath(state, path) {
       state.currPath=path;
@@ -237,18 +271,27 @@ export default new Vuex.Store({
       tool[state.currPath] = [];
     },
     setSearchTerm(state, term) {
-      state.searchTerm=term.toLowerCase()
+      state.searchTerm=term.toLowerCase();
     },
 
     /** modals **/
-    showModal(state,name) {
-      state.modals[name]=1
+    showModal(state, name) {
+      state.modals[name]=1;
     },
-    hideModal(state,name) {
-      state.modals[name]=0
-    }
+    hideModal(state, name) {
+      state.modals[name]=0;
+    },
   },
   actions: {
+    refreshFiles({commit, state}) {
+      state.tools.forEach((tool) => {
+        tool.upload = [];
+        tool.download = [];
+        tool.loadedAvailableDownloads = false;
+      });
+      // reset curr tool name to refresh downloads.
+      commit("setCurrToolName", state.currToolName);
+    },
     updateToolsFromRemote({commit, state}, force=false) {
       let previousTool = state.currToolName;
 
@@ -256,22 +299,60 @@ export default new Vuex.Store({
       if (force) state.tools = [];
 
       if (!state.tools.length) {
-        window.dx.getToolsInformation(
+        window.dx.listProjects(
           state.showAllProjects,
-          state.showAllFiles,
-          (results) => {
+          (err, results) => {
             if (results.length > 0) {
               commit("setNoProjectsFound", false);
-              commit("setTools", results);
-              for (let i = 0; i < results.length; i++) {
-                let result = results[i];
-                if (result.name === previousTool) return;
+
+              let tools = [];
+              results.forEach((elem) => {
+                let item = {
+                  name: elem.project_name,
+                  dx_location: elem.dx_location,
+                  access_level: elem.access_level,
+                  size: 0,
+                  dnanexus_location: "",
+                  upload: [],
+                  download: [],
+                  loadedAvailableDownloads: false,
+                };
+
+                tools.push(item);
+              });
+
+              commit("setTools", tools);
+              let setCurrTool = true;
+              for (let i = 0; i < tools.length; i++) {
+                let tool = tools[i];
+                if (tool.name === previousTool) {
+                  setCurrTool = false;
+                  break;
+                };
               }
-              commit("setCurrToolName", results[0].name);
+
+              if (setCurrTool) {
+                commit("setCurrToolName", tools[0].name);
+              }
+
+              mapLimit(
+                tools,
+                5,
+                (item, callback) => {
+                  let thisTool = state.tools.filter((t) => t.dx_location == item.dx_location)[0];
+                  window.dx.describeDXItem(item.dx_location, (err, describe) => {
+                    thisTool.size = utils.readableFileSize(describe.dataUsage * 1e9, true);
+                    return callback(null, describe);
+                  });
+                },
+                (err, results) => {
+                  console.log("Finished", results);
+                });
             } else {
               commit("setNoProjectsFound", true);
             }
-          });
+          }
+        );
       }
     },
   },

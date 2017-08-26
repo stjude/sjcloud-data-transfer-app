@@ -11,10 +11,14 @@
 				<h3>Could not find any projects!</h3>
 			</div>
 
-			<file-status v-show="filesVisible"></file-status>
-			<div class="alert-container" v-show="noFilesVisible">
+			<file-status v-if="filesVisible"></file-status>
+			<div class="alert-container" v-else-if="noFilesVisible">
 				<img src="http://via.placeholder.com/175x175">
 				<h3>No files to download!</h3>
+			</div>
+			<div class="alert-container" v-else-if="filesLoading">
+				<img src="http://via.placeholder.com/175x175">
+				<h3>Loading...</h3>
 			</div>
 
 			<div class="bottom-bar">
@@ -64,15 +68,24 @@ export default {
 			return this.$store.getters.downloadLocation
 		},
 		filesVisible() {
-			return !this.$store.getters.noProjectsFound && (
+			return !this.$store.getters.noProjectsFound &&
+			(
 				this.$store.getters.searchTerm || 
-				(this.$store.getters.tools.length && this.$store.getters.currFiles.length)
+				(this.$store.getters.tools.length &&
+					(this.$store.getters.currFiles.length)
+				)
 			)
 		},
+		filesLoading() {
+			return !this.$store.getters.noProjectsFound && !this.$store.getters.currTool.loadedAvailableDownloads;
+		}, 
 		noFilesVisible() {
-			return !this.$store.getters.noProjectsFound && (
+			return !this.$store.getters.noProjectsFound &&
+			(
 				!this.$store.getters.searchTerm &&
-				(!this.$store.getters.tools.length || !this.$store.getters.currFiles.length)
+				(!this.$store.getters.tools.length ||
+					(!this.$store.getters.currFiles.length && this.$store.getters.currTool.loadedAvailableDownloads)
+				)
 			)
 		}
 	},

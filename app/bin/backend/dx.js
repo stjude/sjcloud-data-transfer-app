@@ -306,29 +306,30 @@ module.exports.getToolsInformation = function(allProjects, allFiles, callback) {
       module.exports.describeDXItem(elem.dx_location, (err, describe) => {
         item.size = utils.readableFileSize(describe.dataUsage * 1e9, true);
         item.dnanexus_location = describe.id;
+        return cb(null, item);
 
-        module.exports.listDownloadableFiles(elem.dx_location, allFiles, (err, files) => {
-          let downloadableFiles = [];
+        // module.exports.listDownloadableFiles(elem.dx_location, allFiles, (err, files) => {
+        //   let downloadableFiles = [];
 
-          files.forEach((elem) => {
-            let dl_file = {
-              name: elem.describe.name,
-              status: 0,
-              checked: false,
-              waiting: false,
-              started: false,
-              finished: false,
-              size: utils.readableFileSize(elem.describe.size),
-              raw_size: elem.describe.size,
-              dx_location: elem.project + ":" + elem.id,
-            };
+        //   files.forEach((elem) => {
+        //     let dl_file = {
+        //       name: elem.describe.name,
+        //       status: 0,
+        //       checked: false,
+        //       waiting: false,
+        //       started: false,
+        //       finished: false,
+        //       size: utils.readableFileSize(elem.describe.size),
+        //       raw_size: elem.describe.size,
+        //       dx_location: elem.project + ":" + elem.id,
+        //     };
 
-            downloadableFiles.push(dl_file);
-          });
+        //     downloadableFiles.push(dl_file);
+        //   });
 
-          item.download = downloadableFiles;
-          return cb(null, item);
-        });
+        //   item.download = downloadableFiles;
+        //   return cb(null, item);
+        // });
       });
     }, function(err, allTools) {
       return callback(allTools);
