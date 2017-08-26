@@ -114,25 +114,18 @@ export default {
 
 			mapLimit(files, concurrency, (file, callback) => {
 				file.started = true;
-				// console.log(file);
-				// callback(null, file);
-				window.dx.uploadFile(file.path,
+				window.dx.uploadFile(file,
 															dnanexusProjectId,
-															file.raw_size,
 															(progress) => {
 																file.status = progress
-																console.log("Progress", progress, "for name", file.name)
 															},
 															(err, result) => {
-																console.log("Done for name", file.name)
 																file.status = 100;
-																file.finished = true;
-																// Just to make the green progress bar
-																// Last a little longer.
-																setTimeout( 
-																	callback(err, result),
-																	1000
-																)
+																setTimeout(() => {
+																	file.started = false;
+																	file.finished = true;
+																	return callback(err, result);
+																}, 1000);
 															}
 														);
 			});

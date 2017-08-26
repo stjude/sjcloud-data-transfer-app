@@ -204,22 +204,27 @@ module.exports.listDownloadableFiles = function(projectId, allFiles, callback) {
 /**
  * Uploads a file to the /uploads/ directory of a project
  * 
- * @param {string} filePath Path to the file being uploaded.
+ * @param {string} file File object from the Vuex store.
  * @param {string} projectId DNAnexus ID of projectId being uploaded to.
- * @param {integer} rawFileSize File size in bytes.
  * @param {callback} progressCb 
  * @param {callback} finishedCb 
 */
-module.exports.uploadFile = (filePath, projectId, rawFileSize, progressCb, finishedCb) => {
-  let dxPath = projectId + ":/uploads/" + path.basename(filePath.trim());
+module.exports.uploadFile = (file, projectId, progressCb, finishedCb) => {
+  let dxPath = projectId + ":/uploads/" + path.basename(file.path.trim());
   let rmCommand = "dx rm -a '" + dxPath + "'";
   utils.runCommand(rmCommand, () => {
-    let command = "dx upload -p --path '" + dxPath + "' '" + filePath + "'";
+    let command = "dx upload -p --path '" + dxPath + "' '" + file.path + "'";
 
     let lowestValue = -1;
     let sizeCheckerInterval = setInterval(() => {
+      if (file.sizeCheckingLock) {
+        return;
+      }
 
+      file.sizeCheckingLock = true;
       module.exports.describeDXItem(dxPath, (err, obj) => {
+        file.sizeCheckingLock = false;
+
         let totalSize = 0;
 
         if (!obj || !obj.parts) return;
@@ -232,10 +237,10 @@ module.exports.uploadFile = (filePath, projectId, rawFileSize, progressCb, finis
           lowestValue = totalSize;
         }
 
-        let progress = totalSize / rawFileSize * 100.0;
+        let progress = totalSize / file.raw_size * 100.0;
         progressCb(progress);
       });
-    }, utils.randomInt(250, 500));
+    }, utils.randomInt(500, 750));
 
     let innerCb = (err, result) => {
       clearInterval(sizeCheckerInterval);

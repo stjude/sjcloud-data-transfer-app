@@ -125,9 +125,12 @@ export default {
 						  file.status = progress;
 					  },
 					  function(err, result) {
-						  file.started = false;
-							file.finished = true;
-							callback(null, file);
+							file.status = 100;
+							setTimeout(() => {
+						    file.started = false;
+							  file.finished = true;
+								callback(null, file);
+							}, 1000);
 					  }
 					);
 			});
