@@ -1,6 +1,9 @@
 <template>
 	<div class="col-xs-12">
-		<div class="loading-text">{{ topLabel }}</div>
+		<div class="loading-text"
+         v-bind:style='textStyle'>
+         {{ topLabel }}
+    </div>
 		<div class="sk-circle">
 			<div class="sk-circle1 sk-child"></div>
 			<div class="sk-circle2 sk-child"></div>
@@ -15,25 +18,35 @@
 			<div class="sk-circle11 sk-child"></div>
 			<div class="sk-circle12 sk-child"></div>
 		</div>
-    <div class="loading-text">{{ btmLabel }}</div>
+		<div class="loading-text"
+         v-bind:style='textStyle'>
+         {{ btmLabel }}
+    </div>
 	</div>
 </template>
 
 <script>
 export default {
 	props: {
-		topLabel: {default:''},
-    btmLabel: {default:''}
+    topLabel: {
+      default:''
+    },
+    btmLabel: {
+      default:''
+    },
+    textStyle: {
+      default: () => {
+        return {
+        'font-size': '32pt',
+        'text-align': 'center',
+        }
+      }
+    }
 	}
 }
 </script>
 
 <style scoped>
-.loading-text {
-  font-size: 32pt;
-  text-align: center;
-}
-
 
 /**
  * Graciously taken from SpinKit and adapted for our needs

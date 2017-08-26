@@ -21,7 +21,7 @@ const projectToolScopeWatcher = (store) => {
 export default new Vuex.Store({
   state: {
     environment: Config.ENVIRONMENT,
-    concurrentOperations: Config.DEFAULT_CONCURRENT_OPTERATIONS,
+    concurrentOperations: Config.DEFAULT_CONCURRENT_OPERATIONS,
 
     /** Install **/
     downloadStatus: "Downloading...",
@@ -311,8 +311,7 @@ export default new Vuex.Store({
                   name: elem.project_name,
                   dx_location: elem.dx_location,
                   access_level: elem.access_level,
-                  size: 0,
-                  dnanexus_location: "",
+                  size: "",
                   upload: [],
                   download: [],
                   loadedAvailableDownloads: false,
@@ -322,32 +321,27 @@ export default new Vuex.Store({
               });
 
               commit("setTools", tools);
-              let setCurrTool = true;
+
+              let resetCurrToolName = true;
               for (let i = 0; i < tools.length; i++) {
                 let tool = tools[i];
                 if (tool.name === previousTool) {
-                  setCurrTool = false;
+                  resetCurrToolName = false;
                   break;
                 };
               }
 
-              if (setCurrTool) {
+              if (resetCurrToolName) {
                 commit("setCurrToolName", tools[0].name);
               }
 
-              mapLimit(
-                tools,
-                5,
-                (item, callback) => {
-                  let thisTool = state.tools.filter((t) => t.dx_location == item.dx_location)[0];
-                  window.dx.describeDXItem(item.dx_location, (err, describe) => {
-                    thisTool.size = utils.readableFileSize(describe.dataUsage * 1e9, true);
-                    return callback(null, describe);
-                  });
-                },
-                (err, results) => {
-                  console.log("Finished", results);
+              mapLimit(tools, 5, (item, callback) => {
+                let thisTool = state.tools.filter((t) => t.dx_location == item.dx_location)[0];
+                window.dx.describeDXItem(item.dx_location, (err, describe) => {
+                  thisTool.size = utils.readableFileSize(describe.dataUsage * 1e9, true);
+                  return callback(null, describe);
                 });
+              }, (err, results) => {});
             } else {
               commit("setNoProjectsFound", true);
             }

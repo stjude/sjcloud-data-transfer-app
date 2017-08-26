@@ -1,5 +1,5 @@
 {
-  "ENVIRONMENT": "prod",
+  "ENVIRONMENT": "dev",
   "DEFAULT_CONCURRENT_OPERATIONS": 3,
   "PROJECT_TAG": "sjcp-project",
   "DOWNLOADABLE_TAG": "sjcp-result-file",

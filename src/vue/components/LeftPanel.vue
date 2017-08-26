@@ -4,8 +4,9 @@
 			No projects found! Please create one!
 		</div>
 		<div v-show="!hasTools && !noProjectsFound">
-			<spin-kit status='0' btmLabel='Loading ...' 
-				style='position: absolute; margin-top:100px'></spin-kit>
+			<spin-kit btmLabel='Loading...' 
+								:textStyle="styles.loadingTextStyle"
+								style='position: absolute; margin-top:100px'></spin-kit>
 		</div>
 		<table v-show="hasTools"> 
 			<thead>
@@ -72,6 +73,10 @@ export default {
 				inactiveTd: {
 					'text-align':'right',
 					'border-right':''
+				},
+				loadingTextStyle: {
+					'font-size': '16pt',
+					'text-align': 'center',
 				}
 			}
 		}

@@ -17,8 +17,9 @@
 				<h3>No files to download!</h3>
 			</div>
 			<div class="alert-container" v-else-if="filesLoading">
-				<img src="http://via.placeholder.com/175x175">
-				<h3>Loading...</h3>
+				<spin-kit></spin-kit>
+				<!-- <img src="http://via.placeholder.com/175x175">
+				<h3>Loading...</h3> -->
 			</div>
 
 			<div class="bottom-bar">
@@ -49,13 +50,15 @@ import LeftPanel from './LeftPanel.vue'
 import NavBar from './NavBar.vue';
 import FileStatus from './FileStatus.vue';
 import UploadTarget from './UploadTarget.vue';
+import SpinKit from './SpinKit.vue';
 
 export default {
 	components: {
 		LeftPanel,
 		NavBar,
 		FileStatus,
-		UploadTarget
+		UploadTarget,
+		SpinKit,
 	},
 	computed: {
 		noProjectsFound() {
