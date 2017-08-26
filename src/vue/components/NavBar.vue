@@ -9,7 +9,7 @@
 
 		<div v-show="searchVisible" style='float:right;'>
 			<input type='text' value='' 
-				placeholder="Search files ..."
+				placeholder="SEARCH..."
 				style='width: 300px; font-size: 16px;'
 				@input='setSearchTerm($event)'>
 		</div>
