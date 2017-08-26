@@ -2,11 +2,11 @@
 	<div id='fileStatusDiv' :style='rootDivStyle'>
 		<table id='sjcda-file-table-header'>
 			<thead>
-				<tr style='color:#000; background-color:#ccc'>
+				<tr style='color:#000; background-color:#eeeeee'>
 					<th class='cellCheckBox' v-on:click.stop='toggleCheckBoxes'>
 						<input type="checkbox" :checked='checkedAll' />
 					</th>
-					<th class='cellFileName'>FILENAME</th>
+					<th class='cellFileName' style='text-align:left; padding-left:10px'>FILENAME</th>
 					<th class='cellFileSize'>SIZE</th>
 					<th class='cellStatus'>STATUS</th>
 				</tr>
@@ -73,7 +73,8 @@ export default {
 			const term=this.$store.getters.searchTerm;
 			if (!term || !strlc.includes(term)) return str;
 			const s=str.substr(strlc.search(term),term.length)
-			return str.replace(s, "<span style='background-color:#ff0'>"+s+"</span>")
+			const rgx=new RegExp(s,'gim');
+			return str.replace(rgx, "<span style='background-color:#ff0'>"+s+"</span>")
 		},
 		toggleFileChecked(file) {
 			file.checked=!file.checked;
@@ -109,6 +110,7 @@ export default {
 
 table {
 	max-height: 500px;
+	table-layout: fixed;
 }
 
 th {
@@ -119,7 +121,7 @@ th {
 
 td {
 	padding: 7px 0 7px 0px;
-	border: 1px solid #ccc;
+	border: 1px solid #eeeeee;
 	text-align: center;
 }
 
@@ -128,21 +130,23 @@ td {
 }
 
 .cellFileName {
-	width: 250px;
+	width: 340px;
+	overflow: scroll;
 }
 
 .cellFileSize {
-	width:150px;
+	width:60px;
 }
 
 .cellStatus {
 	width: 80px;
+	overflow: hidden;
 }
 
 #sjcda-file-table-header {
 	position:fixed; 
 	width:571px; 
-	border:1px solid #ccc; 
+	border:1px solid #eeeeee; 
 	z-index:1
 }
 
