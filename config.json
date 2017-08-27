@@ -1,6 +1,6 @@
 {
   "ENVIRONMENT": "dev",
-  "DEFAULT_CONCURRENT_OPERATIONS": 3,
+  "DEFAULT_CONCURRENT_OPERATIONS": 2,
   "PROJECT_TAG": "sjcp-project",
   "DOWNLOADABLE_TAG": "sjcp-result-file",
   "DOWNLOAD_INFO": {
