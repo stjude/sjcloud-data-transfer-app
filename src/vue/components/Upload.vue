@@ -6,7 +6,6 @@
 		<div class='col-xs-8 right-panel-container'>
 			<div v-show='!transferComplete'>
 				<nav-bar></nav-bar>
-
 				<div class="alert-container" v-show="noProjectsFound">
 					<img src="http://via.placeholder.com/175x175">
 					<h3>Could not find any projects!</h3>
@@ -39,7 +38,7 @@
 			<div v-show='transferComplete && hasFiles' style='margin-top:100px; text-align:center'>
 				<step-outcome successMessage='Upload complete!' outcome='done'></step-outcome>
 				<div style="margin-top:30px">
-					<button class='btn btn-stjude'>
+					<button class='btn btn-stjude' v-on:click="openExternal('https://platform.stjude.cloud/tools/7')">
 						<i class='material-icons' style='vertical-align:bottom'>open_in_browser</i>
 						READY TO RUN
 					</button>
@@ -98,6 +97,9 @@ export default {
 		}
 	},
 	methods: {
+		openExternal(url) {
+			window.utils.openExternal(url);
+		},
 		uploadFiles() {
 			const files = this.$store.getters.currTool.upload.filter((f) => f.checked);
 
@@ -107,9 +109,9 @@ export default {
 
 			files.forEach(function(file) {
 				file.waiting = true;
+				file.checked = true;
 				file.started = false;
 				file.finished = false;
-				file.checked = false;
 			});
 
 			mapLimit(files, concurrency, (file, callback) => {
