@@ -21,7 +21,7 @@
 						<tr v-for='tool in tools'
 								v-bind:style='tool.name==currTool.name ? styles.activeTr : styles.inactiveTr' 
 								v-on:click='setCurrTool(tool.name)'>
-							<td>{{ tool.name }}</td>
+							<td>{{ tool.name }} <span v-show="tool.isSJCPTool" class="badge">TOOL</span></td>
 							<td v-bind:style='tool.name==currTool.name ? styles.activeTd : styles.inactiveTd'>
 								{{tool.size && tool.size !== 0 && tool.size !== '' ? tool.size : 'Loading...'}}
 							</td>

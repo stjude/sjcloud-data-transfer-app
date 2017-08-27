@@ -320,6 +320,8 @@ export default new Vuex.Store({
                   upload: [],
                   download: [],
                   loadedAvailableDownloads: false,
+                  isSJCPTool: false,
+                  SJCPToolURL: "",
                 };
 
                 tools.push(item);
@@ -343,6 +345,10 @@ export default new Vuex.Store({
               mapLimit(tools, 5, (item, callback) => {
                 let thisTool = state.tools.filter((t) => t.dx_location == item.dx_location)[0];
                 window.dx.describeDXItem(item.dx_location, (err, describe) => {
+                  if (describe.properties && describe.properties['sjcp-tool-url']) {
+                    thisTool.isSJCPTool = true;
+                    thisTool.SJCPToolURL = describe.properties['sjcp-tool-url']
+                  }
                   thisTool.size = utils.readableFileSize(describe.dataUsage * 1e9, true);
                   return callback(null, describe);
                 });

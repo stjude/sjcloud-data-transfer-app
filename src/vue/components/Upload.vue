@@ -38,7 +38,9 @@
 			<div v-show='transferComplete && hasFiles' style='margin-top:100px; text-align:center'>
 				<step-outcome successMessage='Upload complete!' outcome='done'></step-outcome>
 				<div style="margin-top:30px">
-					<button class='btn btn-stjude' v-on:click="openExternal('https://platform.stjude.cloud/tools/7')">
+					<button class='btn btn-stjude'
+					        v-show="currTool && currTool.isSJCPTool"
+					        v-on:click="openExternal(currTool.SJCPToolURL)">
 						<i class='material-icons' style='vertical-align:bottom'>open_in_browser</i>
 						READY TO RUN
 					</button>
@@ -74,6 +76,9 @@ export default {
 		return {}
 	},
 	computed: {
+		currTool() {
+			return this.$store.getters.currTool
+		},
 		noProjectsFound() {
 			return this.$store.getters.noProjectsFound
 		},
