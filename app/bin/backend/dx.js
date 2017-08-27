@@ -78,7 +78,7 @@ module.exports.install = (updateProgress, failProgress, callback) => {
           failProgress("Could not verify download!");
           return callback("SHA sum doesn't match!", null);
         }
-        updateProgress("90%", "Extracting dx-toolkit...");
+        updateProgress("90%", "Extracting...");
         const parentDir = path.dirname(dxFolderPath);
         utils.untarTo(dxTarDownloadPath, parentDir, function(err, res) {
           if (err) {
