@@ -3,11 +3,13 @@ import VueRouter from "vue-router";
 import routes from "./routes.js";
 import App from "./App.vue";
 import store from "./store";
+import vueTippy from "vue-tippy";
 import Config from "../../config.json";
 
 // configure Vue
 Vue.config.debug = true;
 Vue.use(VueRouter);
+Vue.use(vueTippy);
 
 // create router
 const router = new VueRouter({

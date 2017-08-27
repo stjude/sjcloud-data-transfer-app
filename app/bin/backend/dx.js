@@ -23,11 +23,11 @@ const config = require("../../../config.json");
 function getDxDownloadUrlFromPlatform(platform) {
   if (platform == "darwin") {
     return config.DOWNLOAD_INFO.MAC.URL;
-} else if (platform == "linux") {
+  } else if (platform == "linux") {
     return config.DOWNLOAD_INFO.LINUX.URL;
   } else if (platform == "win32") {
     return config.DOWNLOAD_INFO.WINDOWS.URL;
-} else throw new Error("Invalid platform: " + platform);
+  } else throw new Error("Invalid platform: " + platform);
 }
 
 /**
@@ -41,9 +41,9 @@ function getDxDownloadUrlFromPlatform(platform) {
 function getSha256sumFromPlatform(platform) {
   if (platform == "darwin") {
     return config.DOWNLOAD_INFO.MAC.SHA256SUM;
-} else if (platform == "linux") {
+  } else if (platform == "linux") {
     return config.DOWNLOAD_INFO.LINUX.SHA256SUM;
-} else if (platform == "win32") {
+  } else if (platform == "win32") {
     return config.DOWNLOAD_INFO.WINDOWS.SHA256SUM;
   } else throw new Config("Invalid platform: " + platform);
 }
@@ -191,10 +191,10 @@ module.exports.describeDXItem = function(dnanexusId, callback) {
  * @param {callback} callback
  **/
 module.exports.listDownloadableFiles = function(projectId, allFiles, callback) {
-  let cmd = "dx find data --path " + projectId + ":/ --json";
+  let cmd = "dx find data --path " + projectId + ":/ --json --state closed --class file";
   if (!allFiles) {
- cmd += " --tag " + config.DOWNLOADABLE_TAG; 
-}
+    cmd += " --tag " + config.DOWNLOADABLE_TAG;
+  }
 
   utils.runCommand(cmd, (err, stdout) => {
     return callback(err, JSON.parse(stdout));
@@ -248,11 +248,15 @@ module.exports.uploadFile = (file, projectId, progressCb, finishedCb) => {
     };
 
     utils.runCommand(command, (err, stdout) => {
-      if (err) { return innerCb(err, null); }
+      if (err) {
+ return innerCb(err, null); 
+}
 
       let tagCommand = "dx tag '" + dxPath + "' sj-needs-analysis";
       utils.runCommand(tagCommand, (err, stdout) => {
-        if (err) { return innerCb(err, null); }
+        if (err) {
+ return innerCb(err, null); 
+}
         return innerCb(null, stdout);
       });
     });

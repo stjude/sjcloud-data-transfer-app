@@ -9,6 +9,8 @@
 			</div>
 			<div class="status-text" v-bind:style='textStyle'>
 				{{ successMessage }}
+				<info-tooltip v-show='tooltipText.length'
+								      :tooltipText="tooltipText"></info-tooltip>
 			</div>
 		</div>
 		<div  v-show='outcome=="error"'>
@@ -20,14 +22,24 @@
 			</div>
 			<div class="status-text" v-bind:style='textStyle'>
 				{{ failureMessage }}
+				<info-tooltip v-show='tooltipText.length'
+							        :tooltipText="tooltipText"></info-tooltip>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
+import InfoTooltip from './InfoTooltip.vue';
+
 export default {
+	components: {
+		InfoTooltip,
+	},
 	props: {
+		'tooltipText': {
+			default: ''
+		},
 		'outcome': {
 			default: ''
 		},

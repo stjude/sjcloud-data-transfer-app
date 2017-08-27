@@ -227,9 +227,8 @@ module.exports.openFileDialog = function(callback) {
  * @return {string} Human-readable size.
  **/
 module.exports.readableFileSize = function(bytes, roundNumbers=false) {
-  if (bytes === 0) {
- return "0 GB"; 
-}
+  if (isNaN(bytes)) { return '0 B'; }
+  if (bytes === 0) { return "0 GB"; }
 
   let thresh = 1000;
   if (Math.abs(bytes) < thresh) {

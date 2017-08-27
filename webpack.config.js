@@ -55,7 +55,7 @@ module.exports = function(env={}) {
   const frontend = {
 	  entry: {
 	    app: ["./src/vue/main.js"],
-	    vendor: ["vue", "vue-router", "jquery"],
+	    vendor: ["vue", "vue-router", "jquery", "tippy.js"],
 	    less: ["./src/css/app.less"],
 	  },
 	  output: {

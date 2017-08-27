@@ -198,6 +198,11 @@ export default new Vuex.Store({
             let downloadableFiles = [];
 
             files.forEach((elem) => {
+
+              if (isNaN(elem.describe.size)) {
+                console.log(elem);
+              }
+
               let dl_file = {
                 name: elem.describe.name,
                 status: 0,

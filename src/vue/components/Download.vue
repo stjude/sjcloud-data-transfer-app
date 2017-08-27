@@ -15,7 +15,8 @@
 
 			<div class="alert-container" v-else-if="noFilesVisible">
 				<step-outcome failureMessage='No files to download!'
-										  textStyle='font-size: 20pt; text-align: center;'
+										  textStyle='font-size: 24pt; text-align: center;'
+											tooltipText="If you don't see all of the files you expect, try toggling 'Show all files'."
 										  outcome='error'></step-outcome>
 			</div>
 
@@ -52,8 +53,8 @@ import NavBar from './NavBar.vue';
 import FileStatus from './FileStatus.vue';
 import UploadTarget from './UploadTarget.vue';
 import SpinKit from './SpinKit.vue';
-import InfoTooltip from './InfoTooltip.vue';
 import StepOutcome from './StepOutcome.vue';
+import InfoTooltip from './InfoTooltip.vue';
 
 export default {
 	components: {
@@ -62,8 +63,8 @@ export default {
 		FileStatus,
 		UploadTarget,
 		SpinKit,
-		InfoTooltip,
 		StepOutcome,
+		InfoTooltip,
 	},
 	computed: {
 		noProjectsFound() {
