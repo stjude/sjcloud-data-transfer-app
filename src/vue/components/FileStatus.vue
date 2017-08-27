@@ -24,6 +24,7 @@
 						<div v-if="file.finished" style='height:25px;overflow:hidden'>
 							<i style="color: #4F8A10; font-size:25px; line-height:25px" class="material-icons">check_circle</i>
 						</div>
+						<div v-else-if="file.started && file.status == 0">Starting...</div>
 						<div v-else-if="file.started" style='position:relative; height:20px; width:80%; background-color:#fff; border: 1px solid #ececec; margin: 0 auto'>
 							<div v-bind:style="progressStyle(file)"></div>
 						</div>
