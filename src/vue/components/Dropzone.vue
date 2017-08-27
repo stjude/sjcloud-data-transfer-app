@@ -9,6 +9,10 @@
        :style="dragging ? draggingDropzoneStyle : nondraggingDropzoneStyle">
 
     <div class="dropzone-content-container"
+       @dragover.prevent
+       @dragenter.prevent="dragging = true"
+       @dragexit.prevent="dragging = false"
+       @dragleave.prevent="dragging = false"
        :style="dragging ? draggingColorStyle : nondraggingColorStyle">
       <i class="material-icons md-48" style="height: 60px;">cloud_upload</i>
       <span class="dropzone-container-text">CLICK OR DROP FILES HERE</span>
@@ -25,13 +29,13 @@ export default {
         border: "3pt dashed #dedede",
       },
       draggingDropzoneStyle: {
-        border: "3pt dashed #BF355B",
+        border: "3pt dashed #2A8BB6",
       },
       nondraggingColorStyle: {
         color: "#dedede"
       },
       draggingColorStyle: {
-        color: "#BF355B"
+        color: "#2A8BB6"
       }
     }
   },
