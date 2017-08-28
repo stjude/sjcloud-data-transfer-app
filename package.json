@@ -53,6 +53,7 @@
     "spinkit": "^1.2.5",
     "tippy.js": "^1.2.0",
     "todc-bootstrap": "^3.3.7-3.3.13",
+    "tree-kill": "^1.1.0",
     "vue-tippy": "^0.2.8",
     "winston": "^2.3.1"
   },
