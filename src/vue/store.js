@@ -35,6 +35,7 @@ export default new Vuex.Store({
     currPath: "upload",
     currToolName: "",
     downloadLocation: "~/Downloads/",
+    operationProcesses: {},
     tools: [], // see ../tests/testdata/fakeTools.json for expected schema
     noProjectsFound: false,
     showAllFiles: false,
@@ -98,9 +99,9 @@ export default new Vuex.Store({
       return state.tools;
     },
     currFiles(state, getters) {
-	    const tool = getters.currTool;
-      const files=!tool || !Array.isArray(tool[state.currPath]) ? [] : tool[state.currPath];
-      return state.currPath!="download" || !state.searchTerm ? files : files.filter((f)=>{
+      const tool = getters.currTool;
+      const files = !tool || !Array.isArray(tool[state.currPath]) ? [] : tool[state.currPath];
+      return state.currPath != "download" || !state.searchTerm ? files : files.filter((f) => {
         return f.name.toLowerCase().includes(state.searchTerm ) ||
           (""+f.size).toLowerCase().includes(state.searchTerm);
       });
@@ -198,7 +199,6 @@ export default new Vuex.Store({
             let downloadableFiles = [];
 
             files.forEach((elem) => {
-
               if (isNaN(elem.describe.size)) {
                 console.log(elem);
               }
@@ -225,7 +225,7 @@ export default new Vuex.Store({
       }
     },
     setCurrPath(state, path) {
-      state.currPath=path;
+      state.currPath = path;
     },
     setDownloadLocation(state, location) {
       state.downloadLocation = location;
@@ -248,13 +248,13 @@ export default new Vuex.Store({
 
       const currFiles = tool[state.currPath];
       files.forEach((f) => {
-        const this_file = {
+        const thisFile = {
           name: f.name,
           size: f.size,
           status: 0,
           checked: false,
         };
-        currFiles.push(this_file);
+        currFiles.push(thisFile);
       });
     },
     removeCheckedFiles(state) {
@@ -276,16 +276,21 @@ export default new Vuex.Store({
       tool[state.currPath] = [];
     },
     setSearchTerm(state, term) {
-      state.searchTerm=term.toLowerCase();
+      state.searchTerm = term.toLowerCase();
     },
 
-    /** modals **/
+    /** Modals **/
     showModal(state, name) {
-      state.modals[name]=1;
+      state.modals[name] = 1;
     },
     hideModal(state, name) {
-      state.modals[name]=0;
+      state.modals[name] = 0;
     },
+
+    /** Operation Processes */
+    addOperationProcess(state, file, process) {
+      state.operationProcesses[file] = process;
+    }
   },
   actions: {
     refreshFiles({commit, state}) {
@@ -345,9 +350,9 @@ export default new Vuex.Store({
               mapLimit(tools, 5, (item, callback) => {
                 let thisTool = state.tools.filter((t) => t.dx_location == item.dx_location)[0];
                 window.dx.describeDXItem(item.dx_location, (err, describe) => {
-                  if (describe.properties && describe.properties['sjcp-tool-url']) {
+                  if (describe.properties && describe.properties["sjcp-tool-url"]) {
                     thisTool.isSJCPTool = true;
-                    thisTool.SJCPToolURL = describe.properties['sjcp-tool-url']
+                    thisTool.SJCPToolURL = describe.properties["sjcp-tool-url"];
                   }
                   thisTool.size = utils.readableFileSize(describe.dataUsage * 1e9, true);
                   return callback(null, describe);

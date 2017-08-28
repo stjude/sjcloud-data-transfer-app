@@ -11,7 +11,7 @@
 export default {
   props: {
     tooltipText: {
-      default: 'Fill me in!'
+      default: 'Hello world!'
     }
   },
   data: () => {

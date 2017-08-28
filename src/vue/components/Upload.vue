@@ -107,7 +107,6 @@ export default {
 		},
 		uploadFiles() {
 			const files = this.$store.getters.currTool.upload.filter((f) => f.checked);
-
 			const dnanexusProjectId = this.$store.getters.currTool.dx_location;
 			const concurrency = this.$store.getters.concurrentOperations;
 			console.log("Uploading", files.length, "files with a concurrency of", concurrency);
@@ -116,25 +115,27 @@ export default {
 				file.waiting = true;
 				file.checked = true;
 				file.started = false;
+				file.errored = false;
 				file.finished = false;
 			});
 
 			mapLimit(files, concurrency, (file, callback) => {
 				file.started = true;
-				window.dx.uploadFile(file,
-															dnanexusProjectId,
-															(progress) => {
-																file.status = progress
-															},
-															(err, result) => {
-																file.status = 100;
-																setTimeout(() => {
-																	file.started = false;
-																	file.finished = true;
-																	return callback(err, result);
-																}, 1000);
-															}
-														);
+				window.dx.uploadFile(
+					file,
+					dnanexusProjectId,
+					(progress) => {
+						file.status = progress
+					},
+					(err, result) => {
+						file.status = 100;
+						setTimeout(() => {
+							file.started = false;
+							file.finished = true;
+							return callback(err, result);
+						}, 1000);
+					}
+				);
 			});
 		},
 		removeCheckedFiles() {

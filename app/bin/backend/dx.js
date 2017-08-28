@@ -213,8 +213,7 @@ module.exports.uploadFile = (file, projectId, progressCb, finishedCb) => {
   let dxPath = projectId + ":/uploads/" + path.basename(file.path.trim());
   let rmCommand = "dx rm -a '" + dxPath + "'";
   utils.runCommand(rmCommand, () => {
-    let command = "dx upload -p --path '" + dxPath + "' '" + file.path + "'";
-
+    /** Setup remote size callback **/
     let lowestValue = -1;
     let sizeCheckerInterval = setInterval(() => {
       if (file.sizeCheckingLock) {
@@ -225,12 +224,9 @@ module.exports.uploadFile = (file, projectId, progressCb, finishedCb) => {
       module.exports.describeDXItem(dxPath, (err, obj) => {
         file.sizeCheckingLock = false;
 
-        let totalSize = 0;
-
         if (!obj || !obj.parts) return;
-
+        let totalSize = 0;
         for (let part in obj.parts) { totalSize += obj.parts[part].size; } // eslint-disable-line
-
         if (lowestValue > totalSize) {
           totalSize = lowestValue;
         } else {
@@ -240,23 +236,20 @@ module.exports.uploadFile = (file, projectId, progressCb, finishedCb) => {
         let progress = totalSize / file.raw_size * 100.0;
         progressCb(progress);
       });
-    }, utils.randomInt(500, 750));
+    }, utils.randomInt(500, 750)); // randomized interval for jitter.
 
     let innerCb = (err, result) => {
       clearInterval(sizeCheckerInterval);
       return finishedCb(err, result);
     };
 
-    utils.runCommand(command, (err, stdout) => {
-      if (err) {
- return innerCb(err, null); 
-}
+    let command = "dx upload -p --path '" + dxPath + "' '" + file.path + "'";
+    let uploadProcess = utils.runCommand(command, (err, stdout) => {
+      if (err) { return innerCb(err, null); }
 
       let tagCommand = "dx tag '" + dxPath + "' sj-needs-analysis";
       utils.runCommand(tagCommand, (err, stdout) => {
-        if (err) {
- return innerCb(err, null); 
-}
+        if (err) { return innerCb(err, null); }
         return innerCb(null, stdout);
       });
     });

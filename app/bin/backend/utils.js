@@ -65,32 +65,33 @@ module.exports.getDXToolkitDir = function() {
 module.exports.runCommand = function(cmd, callback) {
   let inner_callback = function(err, stdout, stderr) {
     if (err) {
-      return callback(err, null);
+      callback(err, null);
     }
     if (stderr.length > 0) {
-      return callback(stderr, null);
+      callback(stderr, null);
     }
-    return callback(null, stdout);
+    callback(null, stdout);
   };
 
   if (os.platform() == "darwin" || os.platform() == "linux") {
     const dxToolkitEnvFile = module.exports.dxToolkitEnvironmentFile;
-    fs.stat(module.exports.dxToolkitEnvironmentFile, function(err, stats) {
-      if (!err) { // fs.stat() is only to check if "dx" commands can be sourced. If it fails other commands can still be run.
-        cmd = "source " + dxToolkitEnvFile + "; " + cmd;
-	  }
-
-      return exec(cmd, {shell: "/bin/bash", maxBuffer: 10000000}, inner_callback);
-    });
+    // fs.statSync() is only to check if "dx" commands can be sourced.
+    // If it fails other commands can still be run.
+    let stats = fs.statSync(module.exports.dxToolkitEnvironmentFile);
+    if (stats) { cmd = "source " + dxToolkitEnvFile + "; " + cmd; }
+    return exec(cmd, {shell: "/bin/bash", maxBuffer: 10000000}, inner_callback);
   } else if (os.platform() == "win32") {
     const dnanexusPSscript = path.join( module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1" );
-    fs.stat(dnanexusPSscript, function(err, stats) {
-      if (!err) { // fs.stat() is only to check if "dx" commands can be sourced. If it fails other commands can still be run.
-        cmd = ".'" + dnanexusPSscript + "'; " + cmd;
-      }
-      cmd = "powershell.exe " + cmd;
-      return exec(cmd, {maxBuffer: 10000000}, inner_callback); // Warning: the dnanexus-shell.ps1 script used to source environment variables on Windows sends a DNAnexus banner to STDOUT. Banner will be first 3 lines of STDOUT
-    });
+    // fs.statSync() is only to check if "dx" commands can be sourced.
+    // If it fails other commands can still be run.
+    let stats = fs.statSync(dnanexusPSscript);
+    if (stats) { cmd = ".'" + dnanexusPSscript + "'; " + cmd; }
+
+    // Warning: the dnanexus-shell.ps1 script used to source environment variables
+    // on Windows sends a DNAnexus banner to STDOUT. Banner will be first 3 lines
+    // of STDOUT.
+    cmd = "powershell.exe " + cmd;
+    return exec(cmd, {maxBuffer: 10000000}, inner_callback); 
   }
 };
 
