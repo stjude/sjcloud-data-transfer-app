@@ -25,24 +25,27 @@ export default {
 	},
 	created() {
 		window.addEventListener('keydown', this.toggleToolPath)
-		this.$store.commit('setCurrPath',this.$route.path.slice(1))
+		this.$store.commit('setCurrPath', this.$route.path.slice(1))
 	},
 	updated() {
-		this.$store.commit('setCurrPath',this.$route.path.slice(1))
+		this.$store.commit('setCurrPath', this.$route.path.slice(1))
+	},
+	mounted() {
+		window.VueApp = this;
 	},
 	methods: {
 		toggleToolPath() {
-			if (this.$store.getters.currPath!="upload" && this.$store.getters.currPath!="download") {
+			if (this.$store.getters.currPath != "upload" && this.$store.getters.currPath != "download") {
 				return;
 			}
 
-			if (event.keyCode==38 || event.keyCode==40) {
-				const names=[]
-				const incr=event.keyCode==38 ? -1 : 1
-				let i=-1
-				this.tools.forEach((t,j)=>{
+			if (event.keyCode == 38 || event.keyCode == 40) {
+				const names = []
+				const incr = event.keyCode == 38 ? -1 : 1;
+				let i = -1;
+				this.tools.forEach((t,j) => {
 					names.push(t.name)
-					if (t.name==this.currTool.name) i=j;
+					if (t.name == this.currTool.name) i = j;
 				});
 				
 				const toolName=i<0 || i+incr<0 ? names[0] 
