@@ -32,6 +32,10 @@ export default {
 	},
 	methods: {
 		toggleToolPath() {
+			if (this.$store.getters.currPath!="upload" && this.$store.getters.currPath!="download") {
+				return;
+			}
+
 			if (event.keyCode==38 || event.keyCode==40) {
 				const names=[]
 				const incr=event.keyCode==38 ? -1 : 1
