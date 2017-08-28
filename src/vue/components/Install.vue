@@ -27,7 +27,11 @@
 							</i>
 						</div>
 					</div>
-					<div @click="downloadDxToolkit()" class="btn btn-large btn-stjude">Install</div>
+					<div @click="downloadDxToolkit()" 
+						class="btn btn-large btn-stjude"
+						style="width:auto">
+						INSTALL
+					</div>
 				</div>
 			</div>
 			<div v-show="installingDxToolkit == 'installing'" class='theater-body'>

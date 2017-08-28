@@ -39,13 +39,22 @@
 				<step-outcome successMessage='Upload complete!' outcome='done'></step-outcome>
 				<div style="margin-top:30px">
 					<button class='btn btn-stjude'
+							style='margin-right:24px; font-size:22px;'
 					        v-show="currTool && currTool.isSJCPTool"
 					        v-on:click="openExternal(currTool.SJCPToolURL)">
-						<i class='material-icons' style='vertical-align:bottom'>open_in_browser</i>
+						<i class='material-icons' 
+							style='vertical-align:bottom; font-size:28px'>
+							open_in_browser
+						</i>
 						READY TO RUN
 					</button>
-					<button class='btn btn-stjude' v-on:click='removeAllFiles'>
-						<i class='material-icons' style='vertical-align:bottom'>cloud_upload</i>
+					<button class='btn btn-stjude' 
+						style='font-size:22px;'
+						v-on:click='removeAllFiles'>
+						<i class='material-icons' 
+							style='vertical-align:bottom; font-size:28px'>
+							cloud_upload
+						</i>
 						UPLOAD MORE DATA
 					</button>
 				</div>
