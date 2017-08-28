@@ -139,6 +139,7 @@ export default {
 						}
 					},
 					(err, result) => {
+						this.$store.commit('removeOperationProcess', { filename: file.name });
 						file.status = 100;
 
 						if (err) {
@@ -176,6 +177,7 @@ export default {
 		},
 		removeAllFiles() {
 			this.$store.commit('removeAllFiles');
+			this.$store.dispatch('updateToolsFromRemote', true);
 		},
 		cancelCheckedFiles() {
 			this.$store.commit('cancelCheckedFiles');

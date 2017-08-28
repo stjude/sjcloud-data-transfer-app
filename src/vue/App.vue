@@ -48,12 +48,12 @@ export default {
 				const toolName=i<0 || i+incr<0 || i+incr>=names.length ? names[0] : names[i+incr]
 				this.$store.commit('setCurrToolName',toolName)
 			}
-			else if (event.keyCode==37) {
-				this.$router.push('/upload')
-			}
-			else if (event.keyCode==39) {
-				this.$router.push('/download')
-			}
+			// else if (event.keyCode==37) {
+			// 	this.$router.push('/upload')
+			// }
+			// else if (event.keyCode==39) {
+			// 	this.$router.push('/download')
+			// }
 		}
 	}
 }

@@ -203,7 +203,7 @@ export default new Vuex.Store({
           state.showAllFiles,
           (err, files) => {
             /* TO-DO: there must be a better place for this test data handling */
-            if (window.location.host=='localhost:3057') { console.log(files)
+            if (window.location.host=='localhost:3057') {
               state.tools.splice(0, state.tools.length, ...files);
               tool.loadedAvailableDownloads = true;
               tool.download = state.tools.filter(t=>{
@@ -219,7 +219,7 @@ export default new Vuex.Store({
 
             files.forEach((elem) => {
               if (isNaN(elem.describe.size)) {
-                console.log(elem);
+                console.error("Handle this NaN case:", elem);
               }
 
               let dl_file = {
@@ -323,8 +323,12 @@ export default new Vuex.Store({
 
     /** Operation Processes */
     addOperationProcess(state, info) {
+      console.log("Adding", info.filename, "to operation processes.");
       state.operationProcesses[info.filename] = info.process;
-      console.log(state.operationProcesses);
+    },
+    removeOperationProcess(state, info) {
+      console.log("Removing", info.filename, "from operation processes.");
+      delete state.operationProcesses[info.filename];
     },
   },
   actions: {

@@ -65,6 +65,7 @@ module.exports.getDXToolkitDir = function() {
  * @return {child_process.ChildProcess}
 */
 module.exports.runCommand = function(cmd, callback) {
+  console.log("Running command", cmd);
   let inner_callback = function(err, stdout, stderr) {
     if (err) { return callback(err, null); }
     if (stderr.length > 0) { return callback(stderr, null); }

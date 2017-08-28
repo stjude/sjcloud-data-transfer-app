@@ -13,14 +13,14 @@
 
 			<file-status v-if="filesVisible"></file-status>
 
-			<div class="alert-container" v-else-if="noFilesVisible">
+			<div class="alert-container" v-else-if="hasTools && noFilesVisible">
 				<step-outcome failureMessage='No files to download!'
 										  textStyle='font-size: 24pt; text-align: center;'
 											tooltipText="If you don't see all of the files you expect, try toggling 'Show all files'."
 										  outcome='error'></step-outcome>
 			</div>
 
-			<div class="alert-container" v-else-if="filesLoading">
+			<div class="alert-container" v-else-if="hasTools && filesLoading">
 				<spin-kit></spin-kit>
 			</div>
 
@@ -33,12 +33,12 @@
 				</div>
 				<div class="bottom-bar-right">
 					<button class='btn btn-primary btn-stjude download-btn' 
-						    v-bind:disabled='!checkedFiles.length'
+						    v-bind:disabled='!hasFilesInStaging'
 						    v-on:click='downloadFiles'>
 						Download
 					</button>
 					<button class='btn btn-danger btn-stjude-warning cancel-btn'
-						    v-bind:disabled='!checkedFiles.length'
+						    v-bind:disabled='!hasFilesInTransit'
 						    v-on:click='cancelFiles'>Cancel</button>
 				</div>
 			</div>
@@ -69,6 +69,15 @@ export default {
 	computed: {
 		noProjectsFound() {
 			return this.$store.getters.noProjectsFound
+		},
+		hasFilesInStaging() {
+			return this.$store.getters.hasFilesInStaging;
+		},
+		hasFilesInTransit() {
+			return this.$store.getters.hasFilesInTransit;
+		},
+		hasTools() {
+			return this.$store.getters.tools.length
 		},
 		checkedFiles() {
 			return this.$store.getters.checkedFiles
@@ -122,16 +131,35 @@ export default {
 			});
 
 			mapLimit(files, concurrency, (file, callback) => {
-					window.dx.downloadFile(
+					let process = window.dx.downloadFile(
 						downloadLocation,
 					  file.name,
 					  file.raw_size,
 					  file.dx_location,
-					  function(progress) {
+					  (progress) => {
 						  file.status = progress;
 					  },
-					  function(err, result) {
+					  (err, result) => {
 							file.status = 100;
+							this.$store.commit('removeOperationProcess',
+								{filename: file.name}
+							);
+
+							if (err) {
+								if (file.cancelled) {
+									file.status = 0;
+									file.started = false;
+									file.waiting = false;
+									file.finished = false;
+									file.errored = false;
+									file.checked = false;
+									return callback(null, result);
+								} else {
+									file.errored = true;
+									file.finished = true;
+									return callback(err, null);
+								}
+							}
 							setTimeout(() => {
 						    file.started = false;
 							  file.finished = true;
@@ -139,9 +167,16 @@ export default {
 							}, 1000);
 					  }
 					);
+
+					this.$store.commit('addOperationProcess', {
+						filename: file.name,
+						process
+					});
 			});
 		},
-		cancelFiles() {}
+		cancelFiles() {
+			this.$store.commit('cancelCheckedFiles');
+		}
 	}
 }
 </script>

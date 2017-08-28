@@ -273,18 +273,24 @@ module.exports.uploadFile = (file, projectId, progressCb, finishedCb) => {
 */
 module.exports.downloadFile = function(downloadLocation, fileName, fileRawSize, fileId, updateCb, finishedCb) {
   const outputPath = expandHomeDir(path.join(downloadLocation, fileName));
+
+  try {
+    utils.runCommandSync(`dx rm -a '${dxPath}'`);
+  } catch (e) {
+    // If this fails, not a big deal. Just means there is no file at
+    // this path to begin with.
+  }
+  utils.runCommandSync("touch " + outputPath);
+
   const cmd = "dx download -f " + fileId + " -o " + outputPath;
-
-  utils.runCommand("rm " + outputPath + "; touch " + outputPath, () => {
-    fs.watchFile(outputPath, {interval: 200}, () => {
-      fs.stat(outputPath, (err, stats) => {
-        if (stats !== undefined) {
-          let progress = Math.round(stats.size / fileRawSize * 100.0);
-          updateCb(progress);
-        }
-      });
+  fs.watchFile(outputPath, {interval: 200}, () => {
+    fs.stat(outputPath, (err, stats) => {
+      if (stats !== undefined) {
+        let progress = Math.round(stats.size / fileRawSize * 100.0);
+        updateCb(progress);
+      }
     });
-
-    return utils.runCommand(cmd, finishedCb);
   });
+
+  return utils.runCommand(cmd, finishedCb);
 };
