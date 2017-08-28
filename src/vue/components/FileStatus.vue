@@ -44,6 +44,8 @@
 
 <script>
 import Vue from 'vue';
+import globToRegExp from 'glob-to-regexp';
+
 let i="0"
 let prevTool={}
 let prevPath='upload'
@@ -52,7 +54,7 @@ export default {
 	data() {
 		return {
 			checkedAll: false,
-			rootDivStyle: {
+			rootDivStyle: {  
 				'border-bottom': 'none'
 			}
 		}
@@ -69,13 +71,16 @@ export default {
 	},
 	methods: {
 		matchedStr(str="") {
+			return str
+			/* 
+			// harder to highlight matching substr against glob pattern 
 			if (!str) return str;
-			const strlc=str.toLowerCase();
 			const term=this.$store.getters.searchTerm;
-			if (!term || !strlc.includes(term)) return str;
-			const s=str.substr(strlc.search(term),term.length)
-			const rgx=new RegExp(s,'gim');
+			const rgx=globToRegExp(term,{flags:'gim'});
+			if (!rgx.test(str)) return str; 
+			const s=str.substr(str.search(rgx),term.length);
 			return str.replace(rgx, "<span style='background-color:#ff0'>"+s+"</span>")
+			*/
 		},
 		toggleFileChecked(file) {
 			file.checked=!file.checked;

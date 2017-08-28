@@ -8,7 +8,8 @@
 		</router-link>
 
 		<div v-show="searchVisible" style='float:right;'>
-			<input type='text' value='' 
+			<input id='sjcda-nav-search-bar'
+				type='text' value='' 
 				placeholder="SEARCH..."
 				style='width: 300px; font-size: 16px;'
 				@input='setSearchTerm($event)'>
@@ -31,6 +32,9 @@ const inactive={
 export default {
 	data() {
 		return {}
+	},
+	mounted() {
+		document.querySelector('#sjcda-nav-search-bar').value=this.$store.getters.searchTerm
 	},
 	computed: {
 		uploadLinkStyle() {

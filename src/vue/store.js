@@ -2,6 +2,7 @@ import Vue from "vue";
 import Vuex from "vuex";
 import Config from "../../config.json";
 import mapLimit from "async/mapLimit";
+import globToRegExp from 'glob-to-regexp' 
 
 Vue.use(Vuex);
 
@@ -101,9 +102,10 @@ export default new Vuex.Store({
     currFiles(state, getters) {
       const tool = getters.currTool;
       const files = !tool || !Array.isArray(tool[state.currPath]) ? [] : tool[state.currPath];
+      const rgx=globToRegExp(state.searchTerm,{flags:'gim'});
+      
       return state.currPath != "download" || !state.searchTerm ? files : files.filter((f) => {
-        return f.name.toLowerCase().includes(state.searchTerm ) ||
-          (""+f.size).toLowerCase().includes(state.searchTerm);
+        return rgx.test(f.name) || rgx.test(""+f.size)
       });
     },
     checkedFiles(state, getters) {
@@ -310,7 +312,7 @@ export default new Vuex.Store({
       });
     },
     setSearchTerm(state, term) {
-      state.searchTerm = term.toLowerCase();
+      state.searchTerm = term
     },
 
     /** Modals **/

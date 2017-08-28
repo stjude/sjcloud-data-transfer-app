@@ -1,10 +1,10 @@
-if (window.location.host!="localhost:3057") {
-  // electron app
-  window.dx = require("./bin/backend/dx");
-  window.oauth = require("./bin/backend/oauth");
-  window.state = require("./bin/backend/state");
-  window.ui = require("./bin/backend/ui");
-  window.utils = require("./bin/backend/utils");
+if (window.location.host!='localhost:3057') {
+	// electron app
+	window.dx = require('./bin/backend/dx');
+	window.oauth = require('./bin/backend/oauth');
+	window.state = require('./bin/backend/state');
+	window.ui = require('./bin/backend/ui');
+	window.utils = require('./bin/backend/utils');
 } else {
 	// for regular browser based testing only
 	// mostly for simplified testing of styles, work flow
@@ -21,18 +21,9 @@ if (window.location.host!="localhost:3057") {
 		},
 		install(updateProgress, failProgress, callback) {
 			updateProgress("30%", "Downloading...");
-      setTimeout(()=>{
-        fetch("testdata/"+testdata+".json")
-          .then((response)=>response.json())
-          .then(callback)
-          .catch((err)=>console.log(err));
-      }, 500);
-    },
-    install(updateProgress, failProgress, callback) {
-      updateProgress("30%", "Downloading...");
 
-      setTimeout(()=>{
-        updateProgress("100%", "Success!");
+			setTimeout(()=>{
+				updateProgress("100%", "Success!");
         		return callback(null, true);
 			},1500)
 		},
@@ -73,16 +64,17 @@ if (window.location.host!="localhost:3057") {
 		  
 		}
 	};
-  window.oauth = {
-    getToken(internal, callback) {
-      return callback(null, "abcxyz");
-    },
-  };
-  window.state = {};
-  window.ui = {};
-  window.utils = {
-    openExternal(url) {
-      window.open(url, "_blank");
-    },
-  };
+
+	window.oauth = {
+		getToken(internal, callback) {
+			return callback(null, "abcxyz");
+		}
+	};
+	window.state = {};
+	window.ui = {};
+	window.utils = {
+		openExternal(url) {
+			window.open(url,'_blank')
+		}
+	};
 }
