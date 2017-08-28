@@ -32,16 +32,16 @@
   "name": "Tool-Completed",
   "size": "501 MB",
   "upload": [
-    {"name": "file_uc1", "size": 9, "status": 0, "checked": false, "finished": false, "waiting": false},
-    {"name": "file_uc2", "size": 101, "status": 0, "checked": false, "finished": false, "waiting": false},
-    {"name": "file_d2", "size": 10, "status": 0, "checked": true, "started": true, "finished": true, "waiting": false},
-    {"name": "file_d3", "size": 8, "status": 0, "checked": true, "started": true, "finished": true, "waiting": false}
+    {"name": "file_uc1", "size": "969.9GB", "status": 0, "checked": false, "finished": false, "waiting": false},
+    {"name": "file_uc2", "size": "808MB", "status": 0, "checked": false, "finished": false, "waiting": false},
+    {"name": "file_d2", "size": "899KB", "status": 0, "checked": true, "started": true, "finished": true, "waiting": false},
+    {"name": "file_d3", "size": "0.7MB", "status": 0, "checked": true, "started": true, "finished": true, "waiting": false}
   ],
   "download": [
-    {"name": "file_uc1", "size": 9, "status": 0, "checked": false, "finished": false, "waiting": false},
-    {"name": "file_uc2", "size": 101, "status": 0, "checked": false, "finished": false, "waiting": false},
-    {"name": "file_d2", "size": 10, "status": 0, "checked": true, "started": true, "finished": true, "waiting": false},
-    {"name": "file_d3", "size": 8, "status": 0, "checked": true, "started": true, "finished": true}
+    {"name": "file_uc1", "size": "969.9GB", "status": 0, "checked": false, "finished": false, "waiting": false},
+    {"name": "file_uc2", "size": "880MB", "status": 0, "checked": false, "finished": false, "waiting": false},
+    {"name": "file_d2", "size": "66MB", "status": 0, "checked": true, "started": true, "finished": true, "waiting": false},
+    {"name": "file_d3", "size": "9.06GB", "status": 0, "checked": true, "started": true, "finished": true}
   ]
 },{
   "name": "Tool-Long-List",

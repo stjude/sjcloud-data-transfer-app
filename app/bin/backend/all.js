@@ -12,9 +12,6 @@ if (window.location.host!='localhost:3057') {
 		getToolsInformation(showAllProjects,showAllFiles,callback){
 			if (!window.location.search) return [];
 			// to-do: write more elegantly
-			const testdata=window.location.search.split('testdata=')[1];
-			if (!testdata) return [];
-				
 			setTimeout(()=>{
 				fetch('testdata/'+testdata+'.json')
 					.then(response=>response.json())
@@ -32,6 +29,39 @@ if (window.location.host!='localhost:3057') {
 		},
 		login(token, callback) {
 			setTimeout(callback, 1500);
+		},
+		listProjects(allProjects, callback) {
+			callback(null, [{
+	          project_name: 'Tool-Empty',
+	          dx_location: 'test',
+	          access_level: 5,
+	        },{
+	          project_name: 'Tool-Loading',
+	          dx_location: 'test',
+	          access_level: 5,
+	        },{
+	          project_name: 'Tool-Completed',
+	          dx_location: 'test',
+	          access_level: 5,
+	        },{
+	          project_name: 'Tool-Long-List',
+	          dx_location: 'test',
+	          access_level: 5,
+	        },])
+		},
+		listDownloadableFiles(projectId, allFiles, callback) {
+			const testdata=window.location.search.split('testdata=')[1];
+			if (!testdata) return [];
+
+			setTimeout(()=>{
+				fetch('testdata/'+testdata+'.json')
+					.then(response=>response.json())
+					.then(arr=>callback(null,arr))
+					.catch(err=>console.log(err))
+			},500)
+		},
+		describeDXItem(dnanexusId, callback) {
+		  
 		}
 	};
 

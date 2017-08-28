@@ -20,7 +20,7 @@
 					</td>
 					<td class='cellFileName' style='text-align:left;padding-left:10px' v-html='matchedStr(file.name)'></td>
 					<td class='cellFileSize' v-html='matchedStr(file.size)'></td>
-					<td class='cellStatus' style='padding-top:0'>
+					<td class='cellStatus'>
 						<div v-if="file.finished" style='height:25px;overflow:hidden'>
 							<i style="color: #4F8A10; font-size:25px; line-height:25px" class="material-icons">check_circle</i>
 						</div>
@@ -124,6 +124,7 @@ td {
 	padding: 7px 0 7px 0px;
 	border: 1px solid #eeeeee;
 	text-align: center;
+	align-items: center;
 }
 
 .cellCheckBox {

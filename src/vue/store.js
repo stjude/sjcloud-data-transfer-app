@@ -196,6 +196,19 @@ export default new Vuex.Store({
           tool.dx_location,
           state.showAllFiles,
           (err, files) => {
+            /* TO-DO: there must be a better place for this test data handling */
+            if (window.location.host=='localhost:3057') { console.log(files)
+              state.tools.splice(0, state.tools.length, ...files);
+              tool.loadedAvailableDownloads = true;
+              tool.download = state.tools.filter(t=>{
+                t.raw_size=t.size;
+                t.waiting=0;
+                t.started=false;
+                return t.name==toolName
+              })[0].download;
+              return
+            }
+
             let downloadableFiles = [];
 
             files.forEach((elem) => {
