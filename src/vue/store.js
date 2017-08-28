@@ -118,7 +118,10 @@ export default new Vuex.Store({
       };
 
       for (let i = 0; i < checkedFiles.length; i++) {
-        if (checkedFiles[i].status == 0 && !checkedFiles[i].finished) {
+        if (checkedFiles[i].status == 0 &&
+            !checkedFiles[i].waiting &&
+            !checkedFiles[i].started &&
+            !checkedFiles[i].finished) {
           return true;
         }
       }
@@ -140,13 +143,16 @@ export default new Vuex.Store({
       return false;
     },
     transferComplete(state, getters) {
-      const checkedFiles = getters.checkedFiles;
-      if (!checkedFiles.length) {
+      const currFiles = getters.currFiles.filter((f) => f.started);
+      if (!currFiles.length) {
         return false;
       };
 
-      for (let i = 0; i < checkedFiles.length; i++) {
-        if (!checkedFiles[i].finished) {
+      for (let i = 0; i < currFiles.length; i++) {
+        if (
+          (currFiles[i].waiting || currFiles[i].started) // either waiting or started
+          && !currFiles[i].finished // and not finished
+        ) {
           return false;
         }
       }
@@ -223,6 +229,7 @@ export default new Vuex.Store({
                 waiting: false,
                 started: false,
                 finished: false,
+                cancelled: false,
                 size: window.utils.readableFileSize(elem.describe.size),
                 raw_size: elem.describe.size,
                 dx_location: elem.project + ":" + elem.id,
@@ -288,6 +295,20 @@ export default new Vuex.Store({
 
       tool[state.currPath] = [];
     },
+    cancelCheckedFiles(state) {
+      const tool = state.tools.filter((t) => t.name === state.currToolName)[0];
+      if (!tool || !tool[state.currPath]) {
+        console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
+        return;
+      }
+
+      let files = tool[state.currPath].filter((t) => t.checked && t.started && !t.finished);
+      files.forEach((elem) => {
+        elem.cancelled = true;
+        let process = state.operationProcesses[elem.name];
+        window.utils.killProcess(process.pid);
+      });
+    },
     setSearchTerm(state, term) {
       state.searchTerm = term.toLowerCase();
     },
@@ -301,9 +322,10 @@ export default new Vuex.Store({
     },
 
     /** Operation Processes */
-    addOperationProcess(state, file, process) {
-      state.operationProcesses[file] = process;
-    }
+    addOperationProcess(state, info) {
+      state.operationProcesses[info.filename] = info.process;
+      console.log(state.operationProcesses);
+    },
   },
   actions: {
     refreshFiles({commit, state}) {

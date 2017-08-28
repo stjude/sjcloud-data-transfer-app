@@ -16,7 +16,7 @@
 			<tbody>
 				<tr v-for='file in files'>
 					<td class='cellCheckBox' v-on:click.stop='toggleFileChecked(file)'>
-						<input type="checkbox" :checked='file.checked' />
+						<input type="checkbox" :checked='file.checked' :disabled='file.finished'/>
 					</td>
 					<td class='cellFileName' style='text-align:left;padding-left:10px' v-html='matchedStr(file.name)'></td>
 					<td class='cellFileSize' v-html='matchedStr(file.size)'></td>

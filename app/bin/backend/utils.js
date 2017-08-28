@@ -8,7 +8,8 @@ const path = require("path");
 const https = require("https");
 const mkdirp = require("mkdirp");
 const crypto = require("crypto");
-const {exec} = require("child_process");
+const kill = require("tree-kill");
+const {exec, execSync} = require("child_process");
 const {remote, shell} = require("electron");
 
 sjcloudHomeDirectory = path.join( os.homedir(), ".sjcloud" );
@@ -61,16 +62,13 @@ module.exports.getDXToolkitDir = function() {
  * 
  * @param {string} cmd Text to be entered at the command line
  * @param {callback} callback
+ * @return {child_process.ChildProcess}
 */
 module.exports.runCommand = function(cmd, callback) {
   let inner_callback = function(err, stdout, stderr) {
-    if (err) {
-      callback(err, null);
-    }
-    if (stderr.length > 0) {
-      callback(stderr, null);
-    }
-    callback(null, stdout);
+    if (err) { return callback(err, null); }
+    if (stderr.length > 0) { return callback(stderr, null); }
+    return callback(null, stdout);
   };
 
   if (os.platform() == "darwin" || os.platform() == "linux") {
@@ -92,6 +90,35 @@ module.exports.runCommand = function(cmd, callback) {
     // of STDOUT.
     cmd = "powershell.exe " + cmd;
     return exec(cmd, {maxBuffer: 10000000}, inner_callback); 
+  }
+};
+
+/**
+ * Runs commands on the system command line synchronously.
+ * 
+ * @param {string} cmd Text to be entered at the command line
+ * @return {child_process.ChildProcess}
+*/
+module.exports.runCommandSync = function(cmd) {
+  if (os.platform() == "darwin" || os.platform() == "linux") {
+    const dxToolkitEnvFile = module.exports.dxToolkitEnvironmentFile;
+    // fs.statSync() is only to check if "dx" commands can be sourced.
+    // If it fails other commands can still be run.
+    let stats = fs.statSync(module.exports.dxToolkitEnvironmentFile);
+    if (stats) { cmd = "source " + dxToolkitEnvFile + "; " + cmd; }
+    return execSync(cmd, {shell: "/bin/bash", maxBuffer: 10000000});
+  } else if (os.platform() == "win32") {
+    const dnanexusPSscript = path.join( module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1" );
+    // fs.statSync() is only to check if "dx" commands can be sourced.
+    // If it fails other commands can still be run.
+    let stats = fs.statSync(dnanexusPSscript);
+    if (stats) { cmd = ".'" + dnanexusPSscript + "'; " + cmd; }
+
+    // Warning: the dnanexus-shell.ps1 script used to source environment variables
+    // on Windows sends a DNAnexus banner to STDOUT. Banner will be first 3 lines
+    // of STDOUT.
+    cmd = "powershell.exe " + cmd;
+    return execSync(cmd, {maxBuffer: 10000000}); 
   }
 };
 
@@ -288,6 +315,10 @@ module.exports.randomInt = function(min, max) {
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min;
 };
+
+module.exports.killProcess = function(pid) {
+  return kill(pid);
+}
 
 /** EXPORTS **/
 

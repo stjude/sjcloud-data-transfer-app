@@ -179,6 +179,7 @@ module.exports.listProjects = (allProjects, callback) => {
 module.exports.describeDXItem = function(dnanexusId, callback) {
   let cmd = "dx describe " + dnanexusId + " --json";
   utils.runCommand(cmd, (err, stdout) => {
+    if (!stdout) return callback(err, stdout);
     return callback(err, JSON.parse(stdout));
   });
 };
@@ -211,51 +212,53 @@ module.exports.listDownloadableFiles = function(projectId, allFiles, callback) {
 */
 module.exports.uploadFile = (file, projectId, progressCb, finishedCb) => {
   let dxPath = projectId + ":/uploads/" + path.basename(file.path.trim());
-  let rmCommand = "dx rm -a '" + dxPath + "'";
-  utils.runCommand(rmCommand, () => {
-    /** Setup remote size callback **/
-    let lowestValue = -1;
-    let sizeCheckerInterval = setInterval(() => {
-      if (file.sizeCheckingLock) {
-        return;
+  try {
+    utils.runCommandSync(`dx rm -a '${dxPath}'`);
+  } catch (e) {
+    // If this fails, not a big deal. Just means there is no file at
+    // this path to begin with.
+  }
+
+  /** Setup remote size callback **/
+  let lowestValue = -1;
+  let sizeCheckerInterval = setInterval(() => {
+    if (file.sizeCheckingLock) {
+      return;
+    }
+
+    file.sizeCheckingLock = true;
+    module.exports.describeDXItem(dxPath, (err, obj) => {
+      file.sizeCheckingLock = false;
+
+      if (!obj || !obj.parts) return;
+      let totalSize = 0;
+      for (let part in obj.parts) { totalSize += obj.parts[part].size; } // eslint-disable-line
+      if (lowestValue > totalSize) {
+        totalSize = lowestValue;
+      } else {
+        lowestValue = totalSize;
       }
 
-      file.sizeCheckingLock = true;
-      module.exports.describeDXItem(dxPath, (err, obj) => {
-        file.sizeCheckingLock = false;
-
-        if (!obj || !obj.parts) return;
-        let totalSize = 0;
-        for (let part in obj.parts) { totalSize += obj.parts[part].size; } // eslint-disable-line
-        if (lowestValue > totalSize) {
-          totalSize = lowestValue;
-        } else {
-          lowestValue = totalSize;
-        }
-
-        let progress = totalSize / file.raw_size * 100.0;
-        progressCb(progress);
-      });
-    }, utils.randomInt(500, 750)); // randomized interval for jitter.
-
-    let innerCb = (err, result) => {
-      clearInterval(sizeCheckerInterval);
-      return finishedCb(err, result);
-    };
-
-    let command = "dx upload -p --path '" + dxPath + "' '" + file.path + "'";
-    let uploadProcess = utils.runCommand(command, (err, stdout) => {
-      if (err) { return innerCb(err, null); }
-
-      let tagCommand = "dx tag '" + dxPath + "' sj-needs-analysis";
-      utils.runCommand(tagCommand, (err, stdout) => {
-        if (err) { return innerCb(err, null); }
-        return innerCb(null, stdout);
-      });
+      let progress = totalSize / file.raw_size * 100.0;
+      progressCb(progress);
     });
+  }, utils.randomInt(500, 750)); // randomized interval for jitter.
 
+  let innerCb = (err, result) => {
+    clearInterval(sizeCheckerInterval);
+    finishedCb(err, result);
+  };
 
+  let command = "dx upload -p --path '" + dxPath + "' '" + file.path + "'";
+  let process = utils.runCommand(command, (err, stdout) => {
+    if (err) { return innerCb(err, null); }
+    let tagCommand = "dx tag '" + dxPath + "' sjcp-needs-analysis";
+    utils.runCommand(tagCommand, (err, stdout) => {
+      if (err) { innerCb(err, null); }
+      innerCb(null, stdout);
+    });
   });
+  return process;
 };
 
 /**

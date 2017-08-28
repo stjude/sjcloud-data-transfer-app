@@ -126,7 +126,7 @@ export default {
 				return result;
 			});
 		},
-		showModal() { console.log('showModal')
+		showModal() {
 			this.$store.commit('showModal','toolkit')
 		}
 	}
