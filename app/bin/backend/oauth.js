@@ -24,12 +24,15 @@ module.exports.waitForCode = function(internal, cb) {
 	    let server = https.createServer({
         key: keys.serviceKey,
         cert: keys.certificate,
-	    }, app);
+      }, app);
+      
+      window.on('close', () => {
+        server.close();
+        window = null;
+      });
 
       app.get("/authcb", function(req, res) {
-        // window.webContents.removeListener("did-get-redirect-request");
-	      server.close();
-        window.close();
+        if (window) { window.close(); }
         return cb(null, req.query.code);
       });
 
@@ -41,6 +44,7 @@ module.exports.waitForCode = function(internal, cb) {
 
 module.exports.getToken = function(internal, callback) {
   module.exports.waitForCode(internal, function(err, code) {
+    if (err) return callback(err, null);
     $.post("https://auth.dnanexus.com/oauth2/token", {
       grant_type: "authorization_code",
       code: code,

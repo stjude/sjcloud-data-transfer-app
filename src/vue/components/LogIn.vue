@@ -105,16 +105,20 @@ export default {
 			window.oauth.getToken(true, (err, token) => {
 				this.$store.commit('setToken', token);
 				this.$store.commit('setLoginState', 'validating');
-			
-				const that = this;
 
-				window.dx.login(token, function (err, result) {
+				if (err) {
+					console.error("Error retrieving token:". token);
+					this.$store.commit('setLoginState', 'failed');
+					return;
+				}
+			
+				window.dx.login(token, (err, result) => {
 					if (err) {
-						that.$store.commit('setLoginState', 'failed');
+						this.$store.commit('setLoginState', 'failed');
 					} else {
-						that.$store.commit('setLoginState', 'completed');
-						setTimeout(function (){
-							that.$router.push('upload');
+						this.$store.commit('setLoginState', 'completed');
+						setTimeout(() => {
+							this.$router.push('upload');
 						}, 2500);
 					}
 				});

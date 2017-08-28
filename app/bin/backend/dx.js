@@ -253,6 +253,8 @@ module.exports.uploadFile = (file, projectId, progressCb, finishedCb) => {
         return innerCb(null, stdout);
       });
     });
+
+
   });
 };
 
