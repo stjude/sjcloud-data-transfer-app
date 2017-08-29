@@ -11,8 +11,12 @@
 			<input id='sjcda-nav-search-bar'
 				type='text' value='' 
 				placeholder="SEARCH..."
-				style='width: 300px; font-size: 16px;'
+				style='width: 300px; font-size: 14px; padding: 2px'
 				@input='setSearchTerm($event)'>
+			<div class='material-icons'
+				style='position: absolute; top: 30px; right: 18px; background-color: #fff; color: #848484'>
+				search	
+			</div>
 		</div>
 	</div>
 </template>
