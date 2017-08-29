@@ -23,7 +23,7 @@
 						<tr v-for='tool in tools'
 								v-bind:style='tool.name==currTool.name ? styles.activeTr : styles.inactiveTr' 
 								v-on:click='setCurrTool(tool.name)'>
-							<td>{{ tool.name }} <span v-show="tool.isSJCPTool" class="badge">TOOL</span></td>
+							<td style='width:70%'>{{ tool.name }} <span v-show="tool.isSJCPTool" class="badge">TOOL</span></td>
 							<td v-bind:style='tool.name==currTool.name ? styles.activeTd : styles.inactiveTd'>
 								{{tool.size && tool.size !== 0 && tool.size !== '' ? tool.size : 'Loading...'}}
 							</td>
@@ -70,10 +70,12 @@ export default {
 					'background-color':'transparent'
 				},
 				activeTd: {
+					width: '30%',
 					'text-align':'right',
 					'border-right':'4px solid #1381B3'
 				},
 				inactiveTd: {
+					width: '30%',
 					'text-align':'right',
 					'border-right':'4px solid #fff'
 				},
