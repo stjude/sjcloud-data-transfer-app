@@ -9,6 +9,8 @@ Vue.use(Vuex);
 /** Plugins **/
 const projectToolScopeWatcher = (store) => {
   store.subscribe((mutation, state) => {
+    console.log(mutation);
+
     if (mutation.type === "setShowAllFiles") {
       store.dispatch("refreshFiles");
     }
@@ -23,6 +25,7 @@ export default new Vuex.Store({
   state: {
     environment: Config.ENVIRONMENT,
     concurrentOperations: Config.DEFAULT_CONCURRENT_OPERATIONS,
+    uriProject: "",
 
     /** Install **/
     downloadStatus: "Downloading...",
@@ -84,6 +87,18 @@ export default new Vuex.Store({
     currTool(state) {
       return state.tools.filter((t) => t.name === state.currToolName)[0];
     },
+    toolByName(state) {
+      return (name) => {
+        if (!name) return null;
+
+        let toolsWithName = state.tools.filter((t) => t.name === name);
+        if (!toolsWithName || !toolsWithName.length) {
+          return null;
+        }
+
+        return toolsWithName[0];
+      };
+    },
     currPath(state) {
       return state.currPath;
     },
@@ -112,6 +127,9 @@ export default new Vuex.Store({
       const tool = getters.currTool;
       return !tool || !Array.isArray(tool[state.currPath]) ? []
         : tool[state.currPath].filter((f) => f.checked);
+    },
+    uriProject(state, getters) {
+      return state.uriProject;
     },
     hasFilesInStaging(state, getters) {
       const checkedFiles = getters.checkedFiles;
@@ -166,6 +184,10 @@ export default new Vuex.Store({
     },
   },
   mutations: {
+    setURIProject(state, value) {
+      state.uriProject = value;
+    },
+
     /** Install **/
     setInstallingDxToolkit(state, installing) {
       state.installingDxToolkit = installing;
@@ -195,26 +217,42 @@ export default new Vuex.Store({
     setTools(state, tools) {
       state.tools.splice(0, state.tools.length, ...tools);
     },
-    setCurrToolName(state, toolName) {
+    setCurrToolName(state, toolName, removeURI=false) {
+      console.log("Trying to set tool", toolName);
+      console.log(state.tools);
+      state.searchTerm = "";
       state.currToolName = toolName;
-      let tool = state.tools.filter((t) => t.name === toolName)[0];
+      let tools = state.tools.filter((t) => t.name === toolName);
 
+      if (!tools || !tools.length) {
+        if(!state.tools || !state.tools.length) {
+          console.log("Appears the tools haven't loaded yet.");
+          return;
+        } else {
+          console.error("Could not find tool:", toolName);
+          return;
+        }
+      }
+
+      let tool = tools[0];
       if (!tool.download.length) {
         window.dx.listDownloadableFiles(
           tool.dx_location,
           state.showAllFiles,
           (err, files) => {
+            // files = files.filter((f) => f.types.length == 0);
+
             /* TO-DO: there must be a better place for this test data handling */
-            if (window.location.host=='localhost:3057') {
+            if (window.location.host == "localhost:3057") {
               state.tools.splice(0, state.tools.length, ...files);
               tool.loadedAvailableDownloads = true;
-              tool.download = state.tools.filter(t=>{
-                t.raw_size=t.size;
-                t.waiting=0;
-                t.started=false;
-                return t.name==toolName
+              tool.download = state.tools.filter((t) => {
+                t.raw_size = t.size;
+                t.waiting = 0;
+                t.started = false;
+                return t.name == toolName;
               })[0].download;
-              return
+              return;
             }
 
             let downloadableFiles = [];
@@ -242,6 +280,10 @@ export default new Vuex.Store({
 
             tool.loadedAvailableDownloads = true;
             tool.download = downloadableFiles;
+
+            if(removeURI) {
+              state.uriProject = "";
+            }
           }
         );
       }
@@ -332,6 +374,7 @@ export default new Vuex.Store({
       console.log("Removing", info.filename, "from operation processes.");
       delete state.operationProcesses[info.filename];
     },
+
   },
   actions: {
     refreshFiles({commit, state}) {
@@ -343,7 +386,24 @@ export default new Vuex.Store({
       // reset curr tool name to refresh downloads.
       commit("setCurrToolName", state.currToolName);
     },
-    updateToolsFromRemote({commit, state}, force=false) {
+    updateCurrentToolFromURI({commit, state, getters}) {
+      console.log("Updating current tool from URI.");
+      let projectToPick = getters.uriProject;
+      if (!projectToPick) return false;
+
+      let tool = getters.toolByName(projectToPick);
+      if (!tool) {
+        // TODO: add red alert here to say project could not be picked.
+        console.error(`Could not pick project (does not exist): ${tool}`);
+        return false;
+      }
+
+      console.log(`Selecting project: ${projectToPick}`);
+      commit("setCurrToolName", projectToPick);
+      window.utils.setURIProject(undefined);
+      return true;
+    },
+    updateToolsFromRemote({commit, state, getters, dispatch}, force=false) {
       let previousTool = state.currToolName;
 
       commit("setNoProjectsFound", false);
@@ -383,9 +443,13 @@ export default new Vuex.Store({
                   break;
                 };
               }
-
-              if (resetCurrToolName) {
-                commit("setCurrToolName", tools[0].name);
+              
+              if (getters.uriProject) {
+                commit("setCurrToolName", getters.uriProject, true);
+              } else {
+                if (resetCurrToolName) {
+                  commit("setCurrToolName", tools[0].name);
+                }
               }
 
               mapLimit(tools, 5, (item, callback) => {

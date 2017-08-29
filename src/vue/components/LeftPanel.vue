@@ -87,7 +87,13 @@ export default {
 	created() { 
 		this.$store.dispatch('updateToolsFromRemote');
 	},
+	updated() {
+		// this.$store.dispatch('updateCurrentToolFromURI');
+	},
 	computed: {
+		uriProject() {
+			return this.$store.getters.uriProject;
+		},
 		noProjectsFound() {
 			return this.$store.getters.noProjectsFound;
 		},
@@ -108,6 +114,12 @@ export default {
 		},
 		environment() {
 			return this.$store.getters.environment
+		}
+	},
+	watch: {
+		uriProject: function (val) {
+			console.log("URI project changed!", val);
+			this.$store.commit('setCurrToolName', val, true);
 		}
 	},
 	methods: {

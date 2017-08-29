@@ -1,11 +1,7 @@
-function hello(name) {
-	console.log("Hello, " + name);
-};
-
 function openApp() {
-	var openAppLink = document.createElement("a");
-	openAppLink.href = "sjcloud://rapid-rnaseq";
-	document.body.append(openAppLink);
-	openAppLink.click();
-	document.body.remove(openAppLink);
+  let openAppLink = document.createElement("a");
+  openAppLink.href = "sjcloud://" + encodeURIComponent("Rapid RNA-Seq");
+  document.body.append(openAppLink);
+  openAppLink.click();
+  document.body.remove(openAppLink);
 }

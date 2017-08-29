@@ -4,6 +4,7 @@
 const os = require("os");
 const electron = require("electron");
 const app = electron.app;
+
 app.setAsDefaultProtocolClient("sjcloud");
 
 /**
@@ -16,6 +17,8 @@ app.setAsDefaultProtocolClient("sjcloud");
  * URLs with spaces are passed as multiple arguments, so they must be concatenated.
  **/
 const platform = os.platform();
+let cmd = "";
+
 if (platform == "win32") {
   args = process.argv.slice(1);
   if (args[0] && args[0].search("sjcloud://") != -1) { // app called by sjcloud:// URI
@@ -26,10 +29,12 @@ if (platform == "win32") {
     if (project_name.slice(-1) == "/") {
       project_name = project_name.substring(0, project_name.length - 1); // remove trailing '/'
     }
-    global.sjcloudURI = project_name;
+    project_name = decodeURIComponent(project_name);
+    cmd = `window.VueApp.$store.commit('setURIProject', '${project_name}');`;
   } else {
-    global.sjcloudURI = null;
+    cmd = "window.VueApp.$store.commit('setURIProject', '');";
   }
+  mainWindow.webContents.executeJavaScript(cmd);
 }
 /**
  * Mac protocol handler
@@ -37,15 +42,17 @@ if (platform == "win32") {
  * On Mac, the url which called the app is passed as a string through the
  * app.on("open-url") event.
  **/
-app.on("open-url", function (event, url) {
+app.on("open-url", (event, url) => {
   event.preventDefault();
   if (url && url.search("sjcloud://") != -1) { // app called by sjcloud:// URI
     project_name = url.replace("sjcloud://", "");
     if (project_name.slice(-1) == "/") {
       project_name = project_name.substring(0, project_name.length - 1); // remove trailing '/'
     }
-    global.sjcloudURI = project_name;
+    project_name = decodeURIComponent(project_name);
+    cmd = `window.VueApp.$store.commit('setURIProject', '${project_name}');`;
   } else {
-    global.sjcloudURI = null;
+    cmd = "window.VueApp.$store.commit('setURIProject', '');";
   }
+  mainWindow.webContents.executeJavaScript(cmd);
 });
