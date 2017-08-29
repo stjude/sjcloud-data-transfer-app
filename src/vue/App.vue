@@ -27,9 +27,6 @@ export default {
 		window.addEventListener('keydown', this.toggleToolPath)
 		this.$store.commit('setCurrPath', this.$route.path.slice(1))
 	},
-	mounted() {
-		window.VueApp = this;
-	},
 	updated() {
 		this.$store.commit('setCurrPath', this.$route.path.slice(1))
 	},
