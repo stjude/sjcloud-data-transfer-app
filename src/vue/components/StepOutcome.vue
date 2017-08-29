@@ -9,11 +9,11 @@
 			</div>
 			<div class="status-text" v-bind:style='textStyle'>
 				{{ successMessage }}
-				<info-tooltip v-show='tooltipText.length'
+				<info-tooltip v-show='tooltipText.length && tooltipText!="_empty_tip_"'
 								      :tooltipText="tooltipText"></info-tooltip>
 			</div>
 		</div>
-		<div  v-show='outcome=="error"'>
+		<div v-show='outcome=="error"'>
 			<div style="margin-top: 20px">
 				<i class='material-icons'
 				style="font-size: 120pt; color: #b71c1c">
@@ -22,7 +22,7 @@
 			</div>
 			<div class="status-text" v-bind:style='textStyle'>
 				{{ failureMessage }}
-				<info-tooltip v-show='tooltipText.length'
+				<info-tooltip v-show='tooltipText.length && tooltipText!="_empty_tip_"'
 							        :tooltipText="tooltipText"></info-tooltip>
 			</div>
 		</div>

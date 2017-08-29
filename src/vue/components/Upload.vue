@@ -37,7 +37,11 @@
 			</div>
 
 			<div v-show='transferComplete && hasFiles' style='margin-top:100px; text-align:center'>
-				<step-outcome successMessage='Upload complete!' outcome='done'></step-outcome>
+				<!-- _empty_tip_ prevents tippy destroy error -->
+				<step-outcome 
+					successMessage='Upload complete!' 
+					outcome='done'
+					tooltipText="_empty_tip_"></step-outcome>
 				<div style="margin-top:30px">
 					<button class='btn btn-stjude'
 							style='margin-right:24px; font-size:22px;'
