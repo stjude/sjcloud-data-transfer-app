@@ -45,7 +45,9 @@ export default {
 					if (t.name==this.currTool.name) i=j;
 				});
 				
-				const toolName=i<0 || i+incr<0 || i+incr>=names.length ? names[0] : names[i+incr]
+				const toolName=i<0 || i+incr<0 ? names[0] 
+					: i+incr>=names.length ? names[names.length-1]
+					: names[i+incr]
 				this.$store.commit('setCurrToolName',toolName)
 			}
 			// else if (event.keyCode==37) {

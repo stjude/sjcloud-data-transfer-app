@@ -10,13 +10,15 @@
 		</div>
 		<div v-else-if="hasTools">
 			<div class="left-panel-table-container">
-				<table> 
+				<table id='sjcda-left-panel-table-header'> 
 					<thead>
-						<tr>
+						<tr style='background-color:#fff'>
 							<th style='width:70%'>{{showAllProjects ? "PROJECT" : "TOOL"}}</th>
-							<th style='width:30%; text-align: right;'>SIZE</th>
+							<th style='width:30%; text-align: right; padding-right:25px'>SIZE</th>
 						</tr>
 					</thead>
+				</table>
+				<table style='margin-top:40px'>
 					<tbody>
 						<tr v-for='tool in tools'
 								v-bind:style='tool.name==currTool.name ? styles.activeTr : styles.inactiveTr' 
@@ -30,10 +32,10 @@
 				</table>
 			</div>
 		</div>
-		<div class="checkbox first-checkbox">
+		<div class="checkbox first-checkbox" style=''>
 			<label><input type="checkbox" :checked="showAllFiles" @click="updateShowAllFiles">Show all files</label>
 		</div>
-		<div class="checkbox second-checkbox">
+		<div class="checkbox second-checkbox" style='background-color:#fff'>
 			<label><input type="checkbox" :checked="showAllProjects" @click="updateShowAllProjects">Show non St. Jude Cloud projects</label>
 		</div>
 	</div>
@@ -73,7 +75,7 @@ export default {
 				},
 				inactiveTd: {
 					'text-align':'right',
-					'border-right':''
+					'border-right':'4px solid #fff'
 				},
 				loadingTextStyle: {
 					'font-size': '16pt',
@@ -85,7 +87,6 @@ export default {
 	created() { 
 		this.$store.dispatch('updateToolsFromRemote');
 	},
-	updated() {},
 	computed: {
 		noProjectsFound() {
 			return this.$store.getters.noProjectsFound;
@@ -131,8 +132,10 @@ export default {
 }
 
 .left-panel-table-container {
-	height: 490px;
-	max-height: 490px;
+	height: 478px;
+	max-height: 478px;
+	margin-top: 20px;
+	padding-bottom: 20px;
 	overflow: scroll;
 }
 
@@ -140,6 +143,14 @@ export default {
 	width: 100%;
 	table-layout: fixed;
 	margin-top: 20px;
+}
+
+#sjcda-left-panel-table-header {
+	position: fixed; 
+	width: 293px;
+	margin-top: 0;
+	z-index:1;
+	/* border-bottom: 1px solid #ccc; */
 }
 
 .left-panel table thead {
@@ -161,16 +172,21 @@ th {
 
 .first-checkbox {
 	position: absolute;
+	width: 290px;
 	font-size: 12pt;
-	top: 490px;
-	left: 20px;
+	top: 480px;
+	padding-top: 10px;
+	padding-left: 20px;
+	background-color:#fff;
 }
 
 .second-checkbox {
 	position: absolute;
+	width: 290px;
 	font-size: 12pt;
 	top: 530px;
-	left: 20px;
+	padding-left: 20px;
+	background-color:#fff;
 }
 
 td {
