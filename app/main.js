@@ -1,7 +1,7 @@
 const electron = require("electron");
 const app = electron.app;
 const protocol = electron.protocol;
-const menu = electron.Menu; 
+const menu = electron.Menu;
 
 const url = require("url");
 const path = require("path");
@@ -11,13 +11,13 @@ const winston = require("winston");
 const ui = require("./bin/backend/ui");
 const state = require("./bin/backend/state");
 const protocolhandler = require("./bin/backend/protocol");
-const config = require('../config.json');
+const config = require("../config.json");
 
 if (os.platform() == "darwin" || os.platform == "linux") {
-  winston.add(winston.transports.File, { filename: path.join(process.env.HOME, ".sjcloud/log.txt") });
+  winston.add(winston.transports.File, {filename: path.join(process.env.HOME, ".sjcloud/log.txt")});
 }
 if (os.platform() == "win32") {
-  winston.add(winston.transports.File, { filename: path.join(process.env.HOMEPATH, ".sjcloud/log.txt") });
+  winston.add(winston.transports.File, {filename: path.join(process.env.HOMEPATH, ".sjcloud/log.txt")});
 }
 
 let mainWindow;
@@ -32,23 +32,25 @@ app.on("ready", () => {
       let template = [{
         label: "SJCPUploader",
         submenu: [
-          { label: "About SJCPUploader", selector: "orderFrontStandardAboutPanel:" },
-          { type: "separator" },
-          { label: "Quit", accelerator: "Command+Q", click: () => { app.quit(); }}
+          {label: "About SJCPUploader", selector: "orderFrontStandardAboutPanel:"},
+          {type: "separator"},
+          {label: "Quit", accelerator: "Command+Q", click: () => {
+ app.quit(); 
+}},
         ]}, {
         label: "Edit",
         submenu: [
-          { label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:" },
-          { label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:" },
-          { type: "separator" },
-          { label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:" },
-          { label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:" },
-          { label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:" },
-          { label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:" }
-        ]}
+          {label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:"},
+          {label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:"},
+          {type: "separator"},
+          {label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:"},
+          {label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:"},
+          {label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:"},
+          {label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:"},
+        ]},
       ];
 
-      menu.setApplicationMenu(menu.buildFromTemplate(template));
+      // menu.setApplicationMenu(menu.buildFromTemplate(template));
     }
   });
 });
@@ -67,7 +69,7 @@ app.on("activate", () => {
   }
 });
 
-app.on('certificate-error', (event, webContents, url, error, certificate, callback) => {
+app.on("certificate-error", (event, webContents, url, error, certificate, callback) => {
   if (url.startsWith("https://localhost:4433/authcb?code=")) {
     event.preventDefault();
     callback(true);

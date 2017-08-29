@@ -49,8 +49,8 @@ module.exports.getDXToolkitDir = function() {
   if (!fs.existsSync(module.exports.dxToolkitDirectory)) {
     mkdirp(module.exports.dxToolkitDirectory, function(err) {
       if (err) {
- return null; 
-}
+        return null;
+      }
       return module.exports.dxToolkitDirectory;
     });
   }
@@ -65,10 +65,13 @@ module.exports.getDXToolkitDir = function() {
  * @return {child_process.ChildProcess}
 */
 module.exports.runCommand = function(cmd, callback) {
-  console.log("Running command", cmd);
   let inner_callback = function(err, stdout, stderr) {
-    if (err) { return callback(err, null); }
-    if (stderr.length > 0) { return callback(stderr, null); }
+    if (err) {
+      return callback(err, null);
+    }
+    if (stderr.length > 0) {
+      return callback(stderr, null);
+    }
     return callback(null, stdout);
   };
 
@@ -77,20 +80,24 @@ module.exports.runCommand = function(cmd, callback) {
     // fs.statSync() is only to check if "dx" commands can be sourced.
     // If it fails other commands can still be run.
     let stats = fs.statSync(module.exports.dxToolkitEnvironmentFile);
-    if (stats) { cmd = "source " + dxToolkitEnvFile + "; " + cmd; }
+    if (stats) {
+      cmd = "source " + dxToolkitEnvFile + "; " + cmd;
+    }
     return exec(cmd, {shell: "/bin/bash", maxBuffer: 10000000}, inner_callback);
   } else if (os.platform() == "win32") {
     const dnanexusPSscript = path.join( module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1" );
     // fs.statSync() is only to check if "dx" commands can be sourced.
     // If it fails other commands can still be run.
     let stats = fs.statSync(dnanexusPSscript);
-    if (stats) { cmd = ".'" + dnanexusPSscript + "'; " + cmd; }
+    if (stats) {
+      cmd = ".'" + dnanexusPSscript + "'; " + cmd;
+    }
 
     // Warning: the dnanexus-shell.ps1 script used to source environment variables
     // on Windows sends a DNAnexus banner to STDOUT. Banner will be first 3 lines
     // of STDOUT.
     cmd = "powershell.exe " + cmd;
-    return exec(cmd, {maxBuffer: 10000000}, inner_callback); 
+    return exec(cmd, {maxBuffer: 10000000}, inner_callback);
   }
 };
 
@@ -106,20 +113,24 @@ module.exports.runCommandSync = function(cmd) {
     // fs.statSync() is only to check if "dx" commands can be sourced.
     // If it fails other commands can still be run.
     let stats = fs.statSync(module.exports.dxToolkitEnvironmentFile);
-    if (stats) { cmd = "source " + dxToolkitEnvFile + "; " + cmd; }
+    if (stats) {
+      cmd = "source " + dxToolkitEnvFile + "; " + cmd;
+    }
     return execSync(cmd, {shell: "/bin/bash", maxBuffer: 10000000});
   } else if (os.platform() == "win32") {
     const dnanexusPSscript = path.join( module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1" );
     // fs.statSync() is only to check if "dx" commands can be sourced.
     // If it fails other commands can still be run.
     let stats = fs.statSync(dnanexusPSscript);
-    if (stats) { cmd = ".'" + dnanexusPSscript + "'; " + cmd; }
+    if (stats) {
+      cmd = ".'" + dnanexusPSscript + "'; " + cmd;
+    }
 
     // Warning: the dnanexus-shell.ps1 script used to source environment variables
     // on Windows sends a DNAnexus banner to STDOUT. Banner will be first 3 lines
     // of STDOUT.
     cmd = "powershell.exe " + cmd;
-    return execSync(cmd, {maxBuffer: 10000000}); 
+    return execSync(cmd, {maxBuffer: 10000000});
   }
 };
 
@@ -256,8 +267,12 @@ module.exports.openFileDialog = function(callback) {
  * @return {string} Human-readable size.
  **/
 module.exports.readableFileSize = function(bytes, roundNumbers=false) {
-  if (isNaN(bytes)) { return '0 B'; }
-  if (bytes === 0) { return "0 GB"; }
+  if (isNaN(bytes)) {
+    return "0 B";
+  }
+  if (bytes === 0) {
+    return "0 GB";
+  }
 
   let thresh = 1000;
   if (Math.abs(bytes) < thresh) {
@@ -319,7 +334,7 @@ module.exports.randomInt = function(min, max) {
 
 module.exports.killProcess = function(pid) {
   return kill(pid);
-}
+};
 
 /** EXPORTS **/
 
