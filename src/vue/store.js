@@ -9,7 +9,7 @@ Vue.use(Vuex);
 /** Plugins **/
 const projectToolScopeWatcher = (store) => {
   store.subscribe((mutation, state) => {
-    console.log(mutation);
+    //console.log(mutation);
 
     if (mutation.type === "setShowAllFiles") {
       store.dispatch("refreshFiles");
@@ -20,6 +20,41 @@ const projectToolScopeWatcher = (store) => {
     }
   });
 };
+
+
+/** Helpers **/
+function sortFiles(state,files) {
+  if (!state.currFileSortKey || state.currFileSortDirection===0) return
+  const i=state.currFileSortDirection;
+  const j=-i;
+
+  if (state.currFileSortKey=='filename') {
+    files.sort((a,b)=>{
+       return a.name < b.name ? i : j;
+    });
+  }
+  else if (state.currFileSortKey=='size') {
+    files.sort((a,b)=>{
+       return a.raw_size < b.raw_size ? j : i;
+    });
+  }
+  else if (state.currFileSortKey=='status') {
+    files.sort((a,b)=>{
+      if (a.finished && b.finished) return 0;
+      else if (a.finished) return i;
+      else if (b.finished) return j;
+      else if (a.started && b.started) {
+        return a.status > b.status ? i : j;
+      }
+      else if (a.started) return i;
+      else if (b.started) return j;
+      else return 0;
+    });
+  }
+  else if (state.currFileSortKey=='checked') {
+    files.sort((a,b)=>a.checked==b.checked ? 0 : a.checked ? i : j)
+  }
+} 
 
 export default new Vuex.Store({
   state: {
@@ -48,6 +83,8 @@ export default new Vuex.Store({
     modals: {
       toolkit: 0,
     },
+    currFileSortKey: '',
+    currFileSortDirection: 0 
   },
   getters: {
     /** Global **/
@@ -117,11 +154,20 @@ export default new Vuex.Store({
     currFiles(state, getters) {
       const tool = getters.currTool;
       const files = !tool || !Array.isArray(tool[state.currPath]) ? [] : tool[state.currPath];
-      const rgx=globToRegExp(state.searchTerm,{flags:'gim'});
-      
-      return state.currPath != "download" || !state.searchTerm ? files : files.filter((f) => {
-        return rgx.test(f.name) || rgx.test(""+f.size)
-      });
+      sortFiles(state,files);
+
+      if (state.currPath != "download" || !state.searchTerm) {
+        return files;
+      } 
+      else {
+        const rgx=globToRegExp(state.searchTerm,{flags:'gim'});
+        return files.filter((f) => {
+          return rgx.test(f.name) || rgx.test(""+f.size);
+        });
+      }
+    },
+    currFileSortKey(state) {
+      return state.currFileSortKey;
     },
     checkedFiles(state, getters) {
       const tool = getters.currTool;
@@ -218,8 +264,8 @@ export default new Vuex.Store({
       state.tools.splice(0, state.tools.length, ...tools);
     },
     setCurrToolName(state, toolName, removeURI=false) {
-      console.log("Trying to set tool", toolName);
-      console.log(state.tools);
+      //console.log("Trying to set tool", toolName);
+      //console.log(state.tools);
       state.searchTerm = "";
       state.currToolName = toolName;
       let tools = state.tools.filter((t) => t.name === toolName);
@@ -355,6 +401,10 @@ export default new Vuex.Store({
     },
     setSearchTerm(state, term) {
       state.searchTerm = term
+    },
+    setFileSorting(state, obj) {
+      state.currFileSortKey=obj.key
+      state.currFileSortDirection=obj.direction
     },
 
     /** Modals **/

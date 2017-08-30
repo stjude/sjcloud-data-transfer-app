@@ -6,9 +6,18 @@
 					<th class='cellCheckBox' v-on:click.stop='toggleCheckBoxes'>
 						<input type="checkbox" :checked='checkedAll' />
 					</th>
-					<th class='cellFileName' style='text-align:left; padding-left:10px'>FILENAME</th>
-					<th class='cellFileSize'>SIZE</th>
-					<th class='cellStatus'>STATUS</th>
+					<th class='cellFileName' style='text-align:left; padding-left:10px; overflow:hidden'>
+						<span>FILENAME</span>
+						<sort-arrows sortkey='filename'></sort-arrows>
+					</th>
+					<th class='cellFileSize' style='overflow:hidden'>
+						<span>SIZE</span>
+						<sort-arrows sortkey='size'></sort-arrows>
+					</th>
+					<th class='cellStatus' style='overflow:hidden'>
+						<span>STATUS</span>
+						<sort-arrows sortkey='status'></sort-arrows>
+					</th>
 				</tr>
 			</thead>
 		</table>
@@ -44,6 +53,7 @@
 
 <script>
 import Vue from 'vue';
+import SortArrows from './SortArrows.vue';
 import globToRegExp from 'glob-to-regexp';
 
 let i="0"
@@ -51,6 +61,9 @@ let prevTool={}
 let prevPath='upload'
 
 export default {
+	components: {
+		SortArrows
+	},
 	data() {
 		return {
 			checkedAll: false,
