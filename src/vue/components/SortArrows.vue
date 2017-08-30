@@ -1,10 +1,10 @@
 <template>
 	<div style='float:right; position:relative; height:20px; right:20px' @click.stop='toggleSortDirection'>
-		<div class='material-icons sjcda-sort-arrow' v-show='direction!=-1 || !isCurrSortKey' style='top:-3px; transform:rotate(-90deg)'>
-			play_arrow
+		<div class='material-icons sjcda-sort-arrow' v-show='direction!=-1 || !isCurrSortKey' style='top:-5px;'>
+			arrow_drop_up
 		</div>
-		<div class='material-icons sjcda-sort-arrow' v-show='direction!=1 || !isCurrSortKey' style='top:6px; height:15px; transform:rotate(90deg);'>
-			play_arrow
+		<div class='material-icons sjcda-sort-arrow' v-show='direction!=1 || !isCurrSortKey' style='top:1px; height:15px;'>
+			arrow_drop_down
 		</div>
 	</div>	
 </template>
@@ -49,7 +49,7 @@ export default {
 
 <style>
 .sjcda-sort-arrow {
-	font-size:16px; 
+	font-size:24px; 
 	/*vertical-align:middle;*/
 	cursor:default;
 	position: absolute;

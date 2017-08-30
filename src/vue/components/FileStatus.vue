@@ -30,8 +30,8 @@
 					<td class='cellFileName' style='text-align:left;padding-left:10px' v-html='matchedStr(file.name)'></td>
 					<td class='cellFileSize' v-html='matchedStr(file.size)'></td>
 					<td class='cellStatus'>
-						<div v-if="file.finished" style='height:25px;overflow:hidden'>
-							<i style="color: #4F8A10; font-size:25px; line-height:25px" class="material-icons">check_circle</i>
+						<div v-if="file.finished" style='height:20px;overflow:hidden'>
+							<i style="color: #4F8A10; font-size:20px; line-height:20px" class="material-icons">check_circle</i>
 						</div>
 						<div v-else-if="file.started && file.status == 0">Starting...</div>
 						<div v-else-if="file.started" style='position:relative; height:20px; width:80%; background-color:#fff; border: 1px solid #ececec; margin: 0 auto'>
@@ -136,6 +136,8 @@ th {
 	padding: 3px 0 3px 0px;
 	font-weight: 300;
 	text-align: center;
+	height: 20px;
+	overflow: hidden;
 }
 
 td {
@@ -143,6 +145,8 @@ td {
 	border: 1px solid #eeeeee;
 	text-align: center;
 	align-items: center;
+	height: 20px;
+	overflow: hidden;
 }
 
 .cellCheckBox {
