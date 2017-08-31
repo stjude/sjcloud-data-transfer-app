@@ -12,6 +12,7 @@ module.exports.createWindow = (callback) => {
     width: 900,
     height: 642,
     frame: true,
+    icon: path.join(__dirname, "assets/icons/png/64x64.png"),
   });
 
   /** Attach key libraries to window **/

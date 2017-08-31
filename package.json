@@ -1,5 +1,5 @@
 {
-  "name": "SJCPUploader",
+  "name": "SJCloudUploader",
   "version": "1.0.0",
   "description": "The St. Jude Cloud desktop app, designed for getting data in the St. Jude Cloud easily and reliably.",
   "main": "app/main.js",
@@ -16,7 +16,7 @@
   },
   "author": "Clay McLeod, Andrew Frantz, Edgar Sioson",
   "build": {
-    "appId": "org.stjude.cloud",
+    "appId": "cloud.stjude.platform",
     "dmg": {},
     "linux": {
       "target": [
