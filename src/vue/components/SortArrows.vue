@@ -10,11 +10,13 @@
 </template>
 
 <script>
-const sortTracker={}
 /*
-Expects a vuex-store with a mutation function for 
-setFileSorting with a key and direction property
+This vue template expects a vuex-store with a mutation 
+function of setFileSorting that expects key and direction 
+values
 */
+
+const sortTracker={}
 export default {
 	data() {
 		return {
