@@ -61,8 +61,8 @@ module.exports = function(env={}) {
 	  output: {
 	    path: __dirname + "/app/bin/frontend",
 	    filename: "[name].bundle.js",
-	    publicPath: "",
-	    jsonpFunction: "sjcdappJsonp",
+	    publicPath: ""//,
+	    //jsonpFunction: "sjcdappJsonp",
 	  },
 	  devtool: "source-map",
 	  plugins: [

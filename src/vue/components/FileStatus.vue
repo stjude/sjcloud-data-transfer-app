@@ -34,8 +34,9 @@
 							<i style="color: #4F8A10; font-size:20px; line-height:20px" class="material-icons">check_circle</i>
 						</div>
 						<div v-else-if="file.started && file.status == 0">Starting...</div>
-						<div v-else-if="file.started" style='position:relative; height:20px; width:80%; background-color:#fff; border: 1px solid #ececec; margin: 0 auto'>
-							<div v-bind:style="progressStyle(file)"></div>
+						<div v-else-if="file.started" class='sjcda-progress-outline'>
+							<div class='sjcda-progress-filled' 
+								v-bind:style="progressStyle(file)"></div>
 						</div>
 						<div v-else-if="file.waiting">
 							Waiting...
@@ -104,13 +105,7 @@ export default {
 		},
 		progressStyle(file) {
 			return {
-				position:'relative',
-				height:'20px',
-				'background-color':'#4F8A10', 
-				width:file.status+'%',
-				top:'-1px',
-				left:'-1px',
-				'border-bottom':'1px solid #4F8A10'
+				width:file.status+'%'
 			}
 		}
 	}
@@ -172,6 +167,25 @@ td {
 	width:571px; 
 	border:1px solid #eeeeee; 
 	z-index:1
+}
+
+.sjcda-progress-outline {
+	position:relative; 
+	height:20px; 
+	width:80%; 
+	background-color:#fff; 
+	border: 1px solid #ececec; 
+	margin: 0 auto;
+}
+
+.sjcda-progress-filled {
+	position: relative;
+	height: 20px;
+	background-color: #4F8A10;
+	width: 0%;
+	top: -1px;
+	left: -1px;
+	border-bottom:1px solid #4F8A10
 }
 
 /*.checkDiv, input[type='checkbox'] {

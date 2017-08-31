@@ -289,7 +289,7 @@ export default new Vuex.Store({
             // files = files.filter((f) => f.types.length == 0);
 
             /* TO-DO: there must be a better place for this test data handling */
-            if (window.location.host == "localhost:3057") {
+            if (window.location.host == "localhost:3057" || window.testdata) {
               state.tools.splice(0, state.tools.length, ...files);
               tool.loadedAvailableDownloads = true;
               tool.download = state.tools.filter((t) => {
