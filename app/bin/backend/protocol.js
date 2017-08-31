@@ -34,7 +34,7 @@ if (platform == "win32") {
   } else {
     cmd = "window.VueApp.$store.commit('setURIProject', '');";
   }
-  mainWindow.webContents.executeJavaScript(cmd);
+  module.exports.setURIprojectCmd = cmd;
 }
 /**
  * Mac protocol handler

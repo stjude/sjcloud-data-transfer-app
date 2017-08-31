@@ -26,6 +26,7 @@ winston.info(process.argv);
 app.on("ready", () => {
   ui.createWindow( (mw) => {
     mainWindow = mw;
+    mainWindow.webContents.executeJavaScript(protocolhandler.setURIprojectCmd); // have to wait till mainWindow is created before setting default project found in protocol.js
     mainWindow.loadURL(`file://${__dirname}/index.html`);
 
     if (config.ENVIRONMENT !== "dev") {

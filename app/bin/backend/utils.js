@@ -72,6 +72,9 @@ module.exports.runCommand = function(cmd, callback) {
     if (stderr.length > 0) {
       return callback(stderr, null);
     }
+    if (os.platform() == "win32" && stdout.startsWith("DNAnexus CLI initialized")) { // removes banner printed by dnanexus-shell.ps1 script
+      stdout = stdout.split("\n").slice(4).join("\n")
+    }
     return callback(null, stdout);
   };
 
@@ -93,9 +96,6 @@ module.exports.runCommand = function(cmd, callback) {
       cmd = ".'" + dnanexusPSscript + "'; " + cmd;
     }
 
-    // Warning: the dnanexus-shell.ps1 script used to source environment variables
-    // on Windows sends a DNAnexus banner to STDOUT. Banner will be first 3 lines
-    // of STDOUT.
     cmd = "powershell.exe " + cmd;
     return exec(cmd, {maxBuffer: 10000000}, inner_callback);
   }
