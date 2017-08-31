@@ -1,6 +1,6 @@
 {
   "name": "SJCloudUploader",
-  "version": "0.0.1a",
+  "version": "1.0.0a",
   "description": "The St. Jude Cloud desktop app, designed for getting data in the St. Jude Cloud easily and reliably.",
   "main": "app/main.js",
   "scripts": {
