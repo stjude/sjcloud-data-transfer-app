@@ -1,3 +1,7 @@
 node_modules/
-dist/
+dist/*
 yarn.lock
+app/bin/frontend/*
+**/.DS_Store
+
+package-lock.json

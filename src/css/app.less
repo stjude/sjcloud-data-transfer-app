@@ -1,0 +1,75 @@
+@import "~bootstrap/less/bootstrap.less";
+@import "fonts.less";
+
+
+.btn-stjude {
+	display: inline-block;
+	.box-sizing(content-box);
+	cursor: pointer;
+	padding: 10px 20px;
+	border: 1px solid #018dc4;
+	border-bottom: 3px solid #0f6282;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	font: normal 16px/normal "Open Sans", "Roboto", Times, serif;
+	color: rgba(255,255,255,0.9);
+	&:hover { color: rgba(255,255,255,1.0) }
+	&:active {
+		background-color: #0076AD;
+		transform: translateY(1px);
+	}
+	-o-text-overflow: clip;
+	text-overflow: clip;
+	background: #158cba;
+	.transition(all 100ms cubic-bezier(0.42, 0, 0.58, 1));
+}
+
+.btn-stjude-warning {
+	display: inline-block;
+	.box-sizing(content-box);
+	cursor: pointer;
+	padding: 10px 20px;
+	// border: 1px solid #c37c8f;
+	border-bottom: 3px solid #4d0b1e;
+	-webkit-border-radius: 3px;
+	border-radius: 3px;
+	font: normal 16px/normal "Open Sans", "Roboto", Times, serif;
+	color: rgba(255,255,255,0.9);
+	&:hover { color: rgba(255,255,255,1.0) }
+	&:active {
+		background-color: #7c132f;
+		transform: translateY(1px);
+	}
+	-o-text-overflow: clip;
+	text-overflow: clip;
+	background: #921638;
+	.transition(all 100ms cubic-bezier(0.42, 0, 0.58, 1));
+}
+.nav-side-menu {
+  overflow: auto;
+  font-size: 12px;
+  font-weight: 200;
+  background-color: #FFFFFF;
+  position: fixed;
+  top: 0px;
+  width: 300px;
+  height: 100%;
+  box-shadow: 6px 0px 5px -5px #999, -6px 0px 5px -5px #999;
+  color: #e1ffff;
+}
+
+.badge {
+  color: white;
+  padding: 2px 10px;
+  background: #0094BE;
+  border-radius: 15px;
+}
+
+.unselectable {
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  -khtml-user-select: none;
+  -moz-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+}
