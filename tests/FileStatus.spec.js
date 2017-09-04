@@ -22,7 +22,7 @@ describe('FileStatus table for an empty project', function () {
 	it('should show a drop-zone for uploads', function (done) {
 		app.$router.push('/upload');
 		setTimeout(()=>{
-			expect(select('#aaa').selectAll('.dropzone').size()).toEqual(1);
+			expect(selectAll('.dropzone').size()).toEqual(1);
 			done();
 		},600);
 	});

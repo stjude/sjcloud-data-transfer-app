@@ -77,26 +77,28 @@ if (window.location.host != "localhost:3057" && !window.testdata) {
 
     },
   };
-
-  window.oauth = {
-    getToken(internal, callback) {
-      return callback(null, "abcxyz");
-    },
-  };
-  window.state = {};
-  window.ui = {};
-  window.utils = {
-    openExternal(url) {
-      window.open(url, "_blank");
-    },
-    readableFileSize(bytes, roundNumbers=false) {
-console.log(bytes);
-      if (isNaN(bytes)) {
-        return "0 B";
-      }
-      if (bytes === 0) {
-        return "0 GB";
-      }
+	window.oauth = {
+		getToken(internal, callback) {
+			return callback(null, "abcxyz");
+		}
+	};
+	window.state = {
+		getState() {
+			
+		}
+	};
+	window.ui = {};
+	window.utils = {
+		openExternal(url) {
+			window.open(url,'_blank')
+		},
+		readableFileSize(bytes, roundNumbers=false) { console.log(bytes)
+		  if (isNaN(bytes)) {
+		    return "0 B";
+		  }
+		  if (bytes === 0) {
+		    return "0 GB";
+		  }
 
       let thresh = 1000;
       if (Math.abs(bytes) < thresh) {

@@ -81,7 +81,11 @@ window.oauth = {
 		return callback(null, "abcxyz");
 	}
 };
-window.state = {};
+window.state = {
+	getState() {
+			
+	}
+};
 window.ui = {};
 window.utils = {
 	openExternal(url) {
