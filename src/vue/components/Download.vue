@@ -140,6 +140,9 @@ export default {
 						  file.status = progress;
 					  },
 					  (err, result) => {
+							if (err) {
+								console.error(err);
+							}
 							file.status = 100;
 							this.$store.commit('removeOperationProcess',
 								{filename: file.name}
