@@ -280,9 +280,9 @@ module.exports.downloadFile = function(downloadLocation, fileName, fileRawSize, 
     // If this fails, not a big deal. Just means there is no file at
     // this path to begin with.
   }
-  utils.runCommandSync("touch " + outputPath);
+  utils.runCommandSync("touch '" + outputPath + "'");
 
-  const cmd = "dx download -f " + fileId + " -o " + outputPath;
+  const cmd = "dx download -f " + fileId + " -o '" + outputPath + "'";
   fs.watchFile(outputPath, {interval: 200}, () => {
     fs.stat(outputPath, (err, stats) => {
       if (stats !== undefined) {
