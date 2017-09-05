@@ -32,7 +32,6 @@
   },
   "dependencies": {
     "async": "^2.4.1",
-    "babel-preset-stage-2": "^6.24.1",
     "bootstrap": "^3.3.7",
     "expand-home-dir": "0.0.3",
     "express": "^4.15.4",
