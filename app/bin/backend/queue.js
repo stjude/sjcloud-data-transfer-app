@@ -1,5 +1,5 @@
 let async = require("async");
-let debug = true;
+let debug = false;
 
 /**
  * Queue functionality
@@ -149,7 +149,7 @@ let workQueue = async.priorityQueue(
   }, 2
 );
 
-workQueue.drain = function () {
+workQueue.drain = function() {
   if (debug) console.log("The queue is now empty and awaiting more tasks.");
 };
 
@@ -209,10 +209,23 @@ function addToolInfoTask(task) {
 }
 
 /**
+ * Remove certain types of tasks from the queue.
+ * 
+ * @param {string} type Type of tasks to remove
+ */
+function removeAllTaskOfType(type) {
+  if (debug) console.log("Removing all tasks of type", type);
+  workQueue.remove(function(task) {
+    return task.data.type === type;
+  });
+}
+
+/**
  * Only export the specific upload task functions.
  */
 module.exports = {
   addUploadTask,
   addDownloadTask,
   addToolInfoTask,
+  removeAllTaskOfType,
 };

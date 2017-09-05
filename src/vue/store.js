@@ -15,6 +15,7 @@ const projectToolScopeWatcher = (store) => {
     }
 
     if (mutation.type === "setShowAllProjects") {
+      window.queue.removeAllTaskOfType("toolInfo");
       store.dispatch("updateToolsFromRemote", true);
     }
   });
