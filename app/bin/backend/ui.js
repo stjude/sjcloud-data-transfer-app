@@ -2,15 +2,25 @@
  * @fileOverview Controls the UI
 */
 
+const os = require("os");
 const url = require("url");
 const path = require("path");
 const electron = require("electron");
 const BrowserWindow = electron.BrowserWindow;
 
+const platform = os.platform();
+let width = 900;
+let height = 642;
+
+if (platform === 'linux') {
+  width = 900;
+  height = 620;
+}
+
 module.exports.createWindow = (callback) => {
   mainWindow = new BrowserWindow({
-    width: 900,
-    height: 642,
+    width: width,
+    height: height,
     frame: true,
     icon: path.join(__dirname, "assets/icons/png/64x64.png"),
   });
