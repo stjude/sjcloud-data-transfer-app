@@ -150,7 +150,11 @@ export default {
 	max-height: 478px;
 	margin-top: 20px;
 	padding-bottom: 20px;
-	overflow: scroll;
+	overflow: hidden;
+}
+
+.left-panel-table-container:hover {
+	overflow: auto;
 }
 
 .left-panel table {
