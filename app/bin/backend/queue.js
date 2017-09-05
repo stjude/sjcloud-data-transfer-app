@@ -8,7 +8,7 @@ let debug = true;
 let PRIORITY = {
   UPLOAD: 1,
   DOWNLOAD: 2,
-  OTHER: 3,
+  TOOL_INFO: 3,
 };
 
 /**
@@ -73,7 +73,7 @@ function downloadTask(task, callback) {
  * @param {callback} callback Takes (err, result) as parameters.
  */
 function uploadTask(task, callback) {
-  if (debug) console.log("Upload task:", task);
+  if (debug) console.log("Starting upload task:", task);
 
   task._rawFile.started = true;
   let process = window.dx.uploadFile(
@@ -116,15 +116,25 @@ function uploadTask(task, callback) {
 }
 
 /**
- * Handles processing for other tasks.
+ * Handles processing for tool information tasks.
  * 
  * @param {object} task Task to run. Required keys should be evident
  *                      from the code below. 
  * @param {callback} callback Takes (err, result) as parameters.
  */
-function otherTask(task, callback) {
-  if (debug) console.log("Other task:", task);
-  callback();
+function toolInfoTask(task, callback) {
+  if (debug) console.log("Tool info task:", task);
+
+  window.dx.describeDXItem(
+    task._rawTool.dx_location,
+    (err, describe) => {
+      if (describe.properties && describe.properties["sjcp-tool-url"]) {
+        task._rawTool.isSJCPTool = true;
+        task._rawTool.SJCPToolURL = describe.properties["sjcp-tool-url"];
+      }
+      task._rawTool.size = window.utils.readableFileSize(describe.dataUsage * 1e9, true);
+      return callback(null, describe);
+    });
 }
 
 let workQueue = async.priorityQueue(
@@ -134,12 +144,12 @@ let workQueue = async.priorityQueue(
     } else if (task.type === "upload") {
       uploadTask(task, callback);
     } else {
-      otherTask(task, callback);
+      toolInfoTask(task, callback);
     }
   }, 2
 );
 
-workQueue.drain = function() {
+workQueue.drain = function () {
   if (debug) console.log("The queue is now empty and awaiting more tasks.");
 };
 
@@ -159,8 +169,8 @@ function add(task) {
     workQueue.push(task, PRIORITY.UPLOAD);
   } else if (task.type == "download") {
     workQueue.push(task, PRIORITY.DOWNLOAD);
-  } else if (task.type == "other") {
-    workQueue.push(task, PRIORITY.OTHER);
+  } else if (task.type == "toolInfo") {
+    workQueue.push(task, PRIORITY.TOOL_INFO);
   } else {
     throw new Error("Invalid task type:", task.type);
   }
@@ -189,12 +199,12 @@ function addDownloadTask(task) {
 }
 
 /**
- * Adds an other task to the queue.
+ * Adds an tool info task to the queue.
  * 
- * @param {Object} task Other task to add to the queue.
+ * @param {Object} task Tool info task to add to the queue.
  */
-function addOtherTask(task) {
-  task.type = "other";
+function addToolInfoTask(task) {
+  task.type = "toolInfo";
   add(task);
 }
 
@@ -204,5 +214,5 @@ function addOtherTask(task) {
 module.exports = {
   addUploadTask,
   addDownloadTask,
-  addOtherTask,
+  addToolInfoTask,
 };

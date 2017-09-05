@@ -2,14 +2,14 @@ import Vue from "vue";
 import Vuex from "vuex";
 import Config from "../../config.json";
 import mapLimit from "async/mapLimit";
-import globToRegExp from 'glob-to-regexp' 
+import globToRegExp from "glob-to-regexp";
 
 Vue.use(Vuex);
 
 /** Plugins **/
 const projectToolScopeWatcher = (store) => {
   store.subscribe((mutation, state) => {
-    //console.log(mutation);
+    // console.log(mutation);
 
     if (mutation.type === "setShowAllFiles") {
       store.dispatch("refreshFiles");
@@ -23,38 +23,34 @@ const projectToolScopeWatcher = (store) => {
 
 
 /** Helpers **/
-function sortFiles(state,files) {
-  if (!state.currFileSortKey || state.currFileSortDirection===0) return
+function sortFiles(state, files) {
+  if (!state.currFileSortKey || state.currFileSortDirection===0) return;
   const i=state.currFileSortDirection;
   const j=-i;
 
-  if (state.currFileSortKey=='filename') {
-    files.sort((a,b)=>{
-       return a.name < b.name ? i : j;
+  if (state.currFileSortKey=="filename") {
+    files.sort((a, b)=>{
+      return a.name < b.name ? i : j;
     });
-  }
-  else if (state.currFileSortKey=='size') {
-    files.sort((a,b)=>{
-       return a.raw_size < b.raw_size ? j : i;
+  } else if (state.currFileSortKey=="size") {
+    files.sort((a, b)=>{
+      return a.raw_size < b.raw_size ? j : i;
     });
-  }
-  else if (state.currFileSortKey=='status') {
-    files.sort((a,b)=>{
+  } else if (state.currFileSortKey=="status") {
+    files.sort((a, b)=>{
       if (a.finished && b.finished) return 0;
       else if (a.finished) return i;
       else if (b.finished) return j;
       else if (a.started && b.started) {
         return a.status > b.status ? i : j;
-      }
-      else if (a.started) return i;
+      } else if (a.started) return i;
       else if (b.started) return j;
       else return 0;
     });
+  } else if (state.currFileSortKey=="checked") {
+    files.sort((a, b)=>a.checked==b.checked ? 0 : a.checked ? i : j);
   }
-  else if (state.currFileSortKey=='checked') {
-    files.sort((a,b)=>a.checked==b.checked ? 0 : a.checked ? i : j)
-  }
-} 
+}
 
 export default new Vuex.Store({
   state: {
@@ -83,8 +79,8 @@ export default new Vuex.Store({
     modals: {
       toolkit: 0,
     },
-    currFileSortKey: '',
-    currFileSortDirection: 0 
+    currFileSortKey: "",
+    currFileSortDirection: 0,
   },
   getters: {
     /** Global **/
@@ -154,13 +150,12 @@ export default new Vuex.Store({
     currFiles(state, getters) {
       const tool = getters.currTool;
       const files = !tool || !Array.isArray(tool[state.currPath]) ? [] : tool[state.currPath];
-      sortFiles(state,files);
+      sortFiles(state, files);
 
       if (state.currPath != "download" || !state.searchTerm) {
         return files;
-      } 
-      else {
-        const rgx=globToRegExp(state.searchTerm,{flags:'gim'});
+      } else {
+        const rgx=globToRegExp(state.searchTerm, {flags: "gim"});
         return files.filter((f) => {
           return rgx.test(f.name) || rgx.test(""+f.size);
         });
@@ -264,14 +259,12 @@ export default new Vuex.Store({
       state.tools.splice(0, state.tools.length, ...tools);
     },
     setCurrToolName(state, toolName, removeURI=false) {
-      //console.log("Trying to set tool", toolName);
-      //console.log(state.tools);
       state.searchTerm = "";
       state.currToolName = toolName;
       let tools = state.tools.filter((t) => t.name === toolName);
 
       if (!tools || !tools.length) {
-        if(!state.tools || !state.tools.length) {
+        if (!state.tools || !state.tools.length) {
           console.log("Appears the tools haven't loaded yet.");
           return;
         } else {
@@ -286,8 +279,6 @@ export default new Vuex.Store({
           tool.dx_location,
           state.showAllFiles,
           (err, files) => {
-            // files = files.filter((f) => f.types.length == 0);
-
             /* TO-DO: there must be a better place for this test data handling */
             if (window.location.host == "localhost:3057" || window.testdata) {
               state.tools.splice(0, state.tools.length, ...files);
@@ -327,7 +318,7 @@ export default new Vuex.Store({
             tool.loadedAvailableDownloads = true;
             tool.download = downloadableFiles;
 
-            if(removeURI) {
+            if (removeURI) {
               state.uriProject = "";
             }
           }
@@ -400,11 +391,11 @@ export default new Vuex.Store({
       });
     },
     setSearchTerm(state, term) {
-      state.searchTerm = term
+      state.searchTerm = term;
     },
     setFileSorting(state, obj) {
-      state.currFileSortKey=obj.key
-      state.currFileSortDirection=obj.direction
+      state.currFileSortKey = obj.key;
+      state.currFileSortDirection = obj.direction;
     },
 
     /** Modals **/
@@ -415,13 +406,11 @@ export default new Vuex.Store({
       state.modals[name] = 0;
     },
 
-    /** Operation Processes */
+    /** Operation Processes **/
     addOperationProcess(state, info) {
-      console.log("Adding", info.filename, "to operation processes.");
       state.operationProcesses[info.filename] = info.process;
     },
     removeOperationProcess(state, info) {
-      console.log("Removing", info.filename, "from operation processes.");
       delete state.operationProcesses[info.filename];
     },
 
@@ -457,6 +446,13 @@ export default new Vuex.Store({
       let previousTool = state.currToolName;
 
       commit("setNoProjectsFound", false);
+
+      /** TODO: this is not an elegant solution. **/
+      let uploadMap = {};
+      state.tools.forEach((tool) => {
+        uploadMap[tool.dx_location] = tool.upload;
+      });
+
       if (force) state.tools = [];
 
       if (!state.tools.length) {
@@ -480,6 +476,11 @@ export default new Vuex.Store({
                   SJCPToolURL: "",
                 };
 
+                /** TODO: see todo above **/
+                if (item.dx_location in uploadMap) {
+                  item.upload = uploadMap[item.dx_location];
+                }
+
                 tools.push(item);
               });
 
@@ -493,7 +494,7 @@ export default new Vuex.Store({
                   break;
                 };
               }
-              
+
               if (getters.uriProject) {
                 commit("setCurrToolName", getters.uriProject, true);
               } else {
@@ -502,17 +503,11 @@ export default new Vuex.Store({
                 }
               }
 
-              mapLimit(tools, 5, (item, callback) => {
-                let thisTool = state.tools.filter((t) => t.dx_location == item.dx_location)[0];
-                window.dx.describeDXItem(item.dx_location, (err, describe) => {
-                  if (describe.properties && describe.properties["sjcp-tool-url"]) {
-                    thisTool.isSJCPTool = true;
-                    thisTool.SJCPToolURL = describe.properties["sjcp-tool-url"];
-                  }
-                  thisTool.size = window.utils.readableFileSize(describe.dataUsage * 1e9, true);
-                  return callback(null, describe);
+              tools.forEach((elem) => {
+                window.queue.addToolInfoTask({
+                  _rawTool: elem,
                 });
-              }, (err, results) => {});
+              });
             } else {
               commit("setNoProjectsFound", true);
             }
