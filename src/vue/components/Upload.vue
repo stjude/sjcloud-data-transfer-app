@@ -69,7 +69,6 @@
 </template>
 
 <script>
-import mapLimit from 'async/mapLimit';
 import LeftPanel from './LeftPanel.vue'
 import NavBar from './NavBar.vue';
 import FileStatus from './FileStatus.vue';

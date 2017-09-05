@@ -1,7 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import Config from "../../config.json";
-import mapLimit from "async/mapLimit";
 import globToRegExp from "glob-to-regexp";
 
 Vue.use(Vuex);
