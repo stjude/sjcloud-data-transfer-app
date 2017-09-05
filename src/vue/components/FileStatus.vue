@@ -33,6 +33,9 @@
 						<div v-if="file.finished" style='height:20px;overflow:hidden'>
 							<i style="color: #4F8A10; font-size:20px; line-height:20px" class="material-icons">check_circle</i>
 						</div>
+						<div v-else-if="file.errored" style='height:20px;overflow:hidden'>
+							<i style="color: #DD0000; font-size:20px; line-height:20px" class="material-icons">error</i>
+						</div>
 						<div v-else-if="file.started && file.status == 0">Starting...</div>
 						<div v-else-if="file.started" class='sjcda-progress-outline'>
 							<div class='sjcda-progress-filled' 
@@ -101,7 +104,11 @@ export default {
 		},
 		toggleCheckBoxes() {
 			this.checkedAll=!this.checkedAll; 
-			this.files.forEach(f=>f.checked=this.checkedAll);
+			this.files.forEach((f) => {
+       if (!f.finished) {
+         f.checked = this.checkedAll;
+       } 
+      });
 		},
 		progressStyle(file) {
 			return {

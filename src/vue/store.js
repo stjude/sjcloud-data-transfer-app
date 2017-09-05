@@ -509,7 +509,7 @@ export default new Vuex.Store({
                     thisTool.isSJCPTool = true;
                     thisTool.SJCPToolURL = describe.properties["sjcp-tool-url"];
                   }
-                  thisTool.size = utils.readableFileSize(describe.dataUsage * 1e9, true);
+                  thisTool.size = window.utils.readableFileSize(describe.dataUsage * 1e9, true);
                   return callback(null, describe);
                 });
               }, (err, results) => {});

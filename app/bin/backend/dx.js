@@ -209,9 +209,11 @@ module.exports.listDownloadableFiles = function(projectId, allFiles, callback) {
  * @param {string} projectId DNAnexus ID of projectId being uploaded to.
  * @param {callback} progressCb 
  * @param {callback} finishedCb 
+ * @return {child_process} ChildProcess
 */
 module.exports.uploadFile = (file, projectId, progressCb, finishedCb) => {
   let dxPath = projectId + ":/uploads/" + path.basename(file.path.trim());
+  
   try {
     utils.runCommandSync(`dx rm -a '${dxPath}'`);
   } catch (e) {
@@ -270,6 +272,7 @@ module.exports.uploadFile = (file, projectId, progressCb, finishedCb) => {
  * @param {string} fileId DNAnexus id of the file to be downloaded.
  * @param {callback} updateCb To be called on each update to progress.
  * @param {callback} finishedCb To be called upon completion.
+ * @return {child_process} ChildProcess
 */
 module.exports.downloadFile = function(downloadLocation, fileName, fileRawSize, fileId, updateCb, finishedCb) {
   const outputPath = expandHomeDir(path.join(downloadLocation, fileName));

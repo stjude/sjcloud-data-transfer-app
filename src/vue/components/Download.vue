@@ -123,58 +123,22 @@ export default {
 			const files = this.$store.getters.currTool.download.filter((f) => f.checked);
 			const downloadLocation = this.$store.getters.downloadLocation;
 			const concurrency = this.$store.getters.concurrentOperations;
-			console.log("Downloading", files.length, "files with a concurrency of", concurrency);
+			console.log("Adding", files.length, "files to the task queue.");
 
-			files.forEach(function(file) {
-				file.started = true;
-				file.finished = false;
-			});
+			// Reset the status of all files.
+			files.forEach((file) => {
+				window.utils.resetFileStatus(file);
+				file.waiting = true;
 
-			mapLimit(files, concurrency, (file, callback) => {
-					let process = window.dx.downloadFile(
-						downloadLocation,
-					  file.name,
-					  file.raw_size,
-					  file.dx_location,
-					  (progress) => {
-						  file.status = progress;
-					  },
-					  (err, result) => {
-							if (err) {
-								console.error(err);
-							}
-							file.status = 100;
-							this.$store.commit('removeOperationProcess',
-								{filename: file.name}
-							);
+				let task = {
+					_rawFile: file,
+					name: file.name,
+					raw_size: file.raw_size,
+					local_location: downloadLocation,
+					remote_location: file.dx_location,
+				};
 
-							if (err) {
-								if (file.cancelled) {
-									file.status = 0;
-									file.started = false;
-									file.waiting = false;
-									file.finished = false;
-									file.errored = false;
-									file.checked = false;
-									return callback(null, result);
-								} else {
-									file.errored = true;
-									file.finished = true;
-									return callback(err, null);
-								}
-							}
-							setTimeout(() => {
-						    file.started = false;
-							  file.finished = true;
-								callback(null, file);
-							}, 1000);
-					  }
-					);
-
-					this.$store.commit('addOperationProcess', {
-						filename: file.name,
-						process
-					});
+				window.queue.addDownloadTask(task);
 			});
 		},
 		cancelFiles() {

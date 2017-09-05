@@ -73,7 +73,7 @@ module.exports.runCommand = function(cmd, callback) {
       return callback(stderr, null);
     }
     if (os.platform() == "win32" && stdout.startsWith("DNAnexus CLI initialized")) { // removes banner printed by dnanexus-shell.ps1 script
-      stdout = stdout.split("\n").slice(4).join("\n")
+      stdout = stdout.split("\n").slice(4).join("\n");
     }
     return callback(null, stdout);
   };
@@ -334,6 +334,14 @@ module.exports.randomInt = function(min, max) {
 
 module.exports.killProcess = function(pid) {
   return kill(pid);
+};
+
+module.exports.resetFileStatus = function(file) {
+  file.status = 0;
+  file.waiting = false;
+  file.started = false;
+  file.finished = false;
+  file.errored = false;
 };
 
 /** EXPORTS **/

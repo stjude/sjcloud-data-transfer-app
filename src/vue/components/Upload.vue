@@ -126,54 +126,16 @@ export default {
 			console.log("Uploading", files.length, "files with a concurrency of", concurrency);
 
 			files.forEach(function(file) {
-				file.waiting = true;
-				file.checked = false;
-				file.started = false;
-				file.cancelled = false;
-				file.errored = false;
-				file.finished = false;
-			});
+        window.utils.resetFileStatus(file);
+        file.waiting = true;
+        
+        let task = {
+          _rawFile: file,
+          local_location: file.path,
+          remote_location: dnanexusProjectId,
+        };
 
-			mapLimit(files, concurrency, (file, callback) => {
-				file.started = true;
-				let process = window.dx.uploadFile(file, dnanexusProjectId,
-					(progress) => {
-						if (!file.cancelled) {
-							file.status = progress
-						}
-					},
-					(err, result) => {
-						this.$store.commit('removeOperationProcess', { filename: file.name });
-						file.status = 100;
-
-						if (err) {
-							if (file.cancelled) {
-								file.status = 0;
-								file.started = false;
-								file.waiting = false;
-								file.finished = false;
-								file.errored = false;
-								file.checked = false;
-								return callback(null, result);
-							} else {
-								file.errored = true;
-								file.finished = true;
-								return callback(err, null);
-							}
-						}
-
-						setTimeout(() => {
-							file.finished = true;
-							file.checked = true;
-							return callback(err, result);
-						}, 1000);
-					}
-				);
-
-				this.$store.commit('addOperationProcess', {
-					filename: file.name,
-					process
-				});
+        window.queue.addUploadTask(task);
 			});
 		},
 		removeCheckedFiles() {
