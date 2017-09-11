@@ -9,12 +9,18 @@ const BrowserWindow = electron.BrowserWindow;
 
 module.exports.createWindow = (callback) => {
   mainWindow = new BrowserWindow({
-    width: 900,
-    height: 642,
-    frame: true,
+    width: 890,
+    height: 620,
+    useContentSize: true,
+    maximizable: false,
+    show: false,
     icon: path.join(__dirname, "assets/icons/png/64x64.png"),
   });
-
+    
+  mainWindow.once('ready-to-show', () => {
+    mainWindow.show();
+  });
+  
   /** Attach key libraries to window **/
   mainWindow.$ = require("jquery");
   mainWindow.dx = require("./dx");

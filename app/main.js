@@ -36,8 +36,8 @@ app.on("ready", () => {
           {label: "About SJCPUploader", selector: "orderFrontStandardAboutPanel:"},
           {type: "separator"},
           {label: "Quit", accelerator: "Command+Q", click: () => {
- app.quit(); 
-}},
+            app.quit(); 
+          }},
         ]}, {
         label: "Edit",
         submenu: [
