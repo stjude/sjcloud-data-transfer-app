@@ -5,16 +5,30 @@
 const url = require("url");
 const path = require("path");
 const electron = require("electron");
+const os = require("os");
 const BrowserWindow = electron.BrowserWindow;
+
+const platform = os.platform();
+let width = 900;  // TODO check if these are the right dimensions for Mac. I doubt they are -Andrew
+let height = 642;
+
+if (platform === "linux") {
+  width = 900;
+  height = 630;
+} else if (platform === "win32") {
+  width = 890;
+  height = 630;
+}
 
 module.exports.createWindow = (callback) => {
   mainWindow = new BrowserWindow({
-    width: 890,
-    height: 620,
+    width: width,
+    height: height,
     useContentSize: true,
+    resizable: false,
     maximizable: false,
-    show: false,
     icon: path.join(__dirname, "assets/icons/png/64x64.png"),
+    show: false,
   });
     
   mainWindow.once('ready-to-show', () => {
@@ -33,7 +47,6 @@ module.exports.createWindow = (callback) => {
     mainWindow = null;
   });
 
-  mainWindow.setResizable(false);
   return callback(mainWindow);
 };
 
