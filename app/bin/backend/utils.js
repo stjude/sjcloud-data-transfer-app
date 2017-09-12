@@ -66,6 +66,8 @@ module.exports.getDXToolkitDir = function() {
  * @return {child_process.ChildProcess}
 */
 module.exports.runCommand = function(cmd, callback) {
+  const platform = os.platform();
+  
   let inner_callback = function(err, stdout, stderr) {
     if (err) {
       return callback(err, null);
@@ -73,13 +75,13 @@ module.exports.runCommand = function(cmd, callback) {
     if (stderr.length > 0) {
       return callback(stderr, null);
     }
-    if (os.platform() == "win32" && stdout.startsWith("DNAnexus CLI initialized")) { // removes banner printed by dnanexus-shell.ps1 script
+    if (platform == "win32" && stdout.startsWith("DNAnexus CLI initialized")) { // removes banner printed by dnanexus-shell.ps1 script
       stdout = stdout.split("\n").slice(4).join("\n");
     }
     return callback(null, stdout);
   };
 
-  if (os.platform() == "darwin" || os.platform() == "linux") {
+  if (platform == "darwin" || platform == "linux") {
     const dxToolkitEnvFile = module.exports.dxToolkitEnvironmentFile;
     // fs.statSync() is only to check if "dx" commands can be sourced.
     // If it fails other commands can still be run.
@@ -88,7 +90,7 @@ module.exports.runCommand = function(cmd, callback) {
       cmd = "source " + dxToolkitEnvFile + "; " + cmd;
     }
     return exec(cmd, {shell: "/bin/bash", maxBuffer: 10000000}, inner_callback);
-  } else if (os.platform() == "win32") {
+  } else if (platform == "win32") {
     const dnanexusPSscript = path.join( module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1" );
     // fs.statSync() is only to check if "dx" commands can be sourced.
     // If it fails other commands can still be run.
@@ -109,7 +111,8 @@ module.exports.runCommand = function(cmd, callback) {
  * @return {child_process.ChildProcess}
 */
 module.exports.runCommandSync = function(cmd) {
-  if (os.platform() == "darwin" || os.platform() == "linux") {
+  const platform = os.platform();
+  if (platform == "darwin" || platform == "linux") {
     const dxToolkitEnvFile = module.exports.dxToolkitEnvironmentFile;
     // fs.statSync() is only to check if "dx" commands can be sourced.
     // If it fails other commands can still be run.
@@ -118,7 +121,7 @@ module.exports.runCommandSync = function(cmd) {
       cmd = "source " + dxToolkitEnvFile + "; " + cmd;
     }
     return execSync(cmd, {shell: "/bin/bash", maxBuffer: 10000000});
-  } else if (os.platform() == "win32") {
+  } else if (platform == "win32") {
     const dnanexusPSscript = path.join( module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1" );
     // fs.statSync() is only to check if "dx" commands can be sourced.
     // If it fails other commands can still be run.
@@ -141,9 +144,10 @@ module.exports.runCommandSync = function(cmd) {
  * @param {callback} callback
 */
 module.exports.dxToolkitOnPath = function(callback) {
-  if (os.platform() == "linux" || os.platform() == "darwin") {
+  const platform = os.platform();
+  if (platform == "linux" || platform == "darwin") {
     this.runCommand("which dx", callback);
-  } else if (os.platform() == "win32") {
+  } else if (platform == "win32") {
     this.runCommand("get-command dx", callback);
   }
 };
@@ -161,9 +165,11 @@ module.exports.dxLoggedIn = (callback) => {
  * @param {callback} callback
 */
 module.exports.dxCheckProjectAccess = (callback) => {
-  if (os.platform() == "linux" || os.platform() == "darwin") {
+  const platform = os.platform();
+  
+  if (platform == "linux" || platform == "darwin") {
     this.runCommand("echo '0' | dx select --level UPLOAD", callback);
-  } else if (os.platform() == "win32") {
+  } else if (platform == "win32") {
     this.runCommand("\"echo 0 | dx select --level UPLOAD\"", callback);
   }
 };

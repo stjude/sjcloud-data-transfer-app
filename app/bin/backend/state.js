@@ -21,8 +21,9 @@ module.exports.state = {
  */
 module.exports.getState = function(callback) {
   self = this;
+  const platform = os.platform();
 
-  if (os.platform() != "darwin" && os.platform() != "linux" && os.platform() != "win32") {
+  if (platform != "darwin" && platform != "linux" && platform != "win32") {
     return callback(self.state.UNKNOWN);
   }
 
