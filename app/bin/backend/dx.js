@@ -134,7 +134,7 @@ module.exports.login = (token, callback) => {
 */
 module.exports.listProjects = (allProjects, callback) => {
   let tabliteral;
-  const platform = uitls.getOS;
+  const platform = utils.getOS;
 
   if (platform === "darwin" || platform === "linux") {
     tabliteral = "$'\t'";

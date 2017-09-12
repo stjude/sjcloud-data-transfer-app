@@ -16,6 +16,7 @@ sjcloudHomeDirectory = path.join( os.homedir(), ".sjcloud" );
 dxToolkitDirectory = path.join( sjcloudHomeDirectory, "dx-toolkit" );
 dxToolkitEnvironmentFile = path.join( dxToolkitDirectory, "environment" );
 dnanexusCLIDirectory = "C:\\Program Files (x86)\\DNAnexus CLI";
+defaultDownloadDir =  path.join( os.homedir(), "Downloads" );
 
 /**
  * Returns the operating system.
@@ -370,3 +371,4 @@ module.exports.sjcloudHomeDirectory = sjcloudHomeDirectory;
 module.exports.dxToolkitDirectory = dxToolkitDirectory;
 module.exports.dxToolkitEnvironmentFile = dxToolkitEnvironmentFile;
 module.exports.dnanexusCLIDirectory = dnanexusCLIDirectory;
+module.exports.defaultDownloadDir = defaultDownloadDir;
