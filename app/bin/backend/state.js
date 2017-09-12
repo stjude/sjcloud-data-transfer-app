@@ -2,7 +2,6 @@
  * @fileOverview Determines what html page to display based on what requirements for uploading files are met.
  **/
 
-const os = require("os");
 const fs = require("fs");
 const utils = require("./utils");
 
@@ -21,8 +20,9 @@ module.exports.state = {
  */
 module.exports.getState = function(callback) {
   self = this;
+  const platform = utils.getOS;
 
-  if (os.platform() != "darwin" && os.platform() != "linux" && os.platform() != "win32") {
+  if (platform != "darwin" && platform != "linux" && platform != "win32") {
     return callback(self.state.UNKNOWN);
   }
 
