@@ -5,7 +5,6 @@
 const fs = require("fs");
 const os = require("os");
 const path = require("path");
-const async = require("async");
 const utils = require("./utils");
 const child_process = require("child_process"); // eslint-disable-line
 const expandHomeDir = require("expand-home-dir");
@@ -213,7 +212,7 @@ module.exports.listDownloadableFiles = function(projectId, allFiles, callback) {
 */
 module.exports.uploadFile = (file, projectId, progressCb, finishedCb) => {
   let dxPath = projectId + ":/uploads/" + path.basename(file.path.trim());
-  
+
   try {
     utils.runCommandSync(`dx rm -a '${dxPath}'`);
   } catch (e) {
@@ -253,10 +252,14 @@ module.exports.uploadFile = (file, projectId, progressCb, finishedCb) => {
 
   let command = "dx upload -p --path '" + dxPath + "' '" + file.path + "'";
   let process = utils.runCommand(command, (err, stdout) => {
-    if (err) { return innerCb(err, null); }
+    if (err) {
+      return innerCb(err, null);
+    }
     let tagCommand = "dx tag '" + dxPath + "' sjcp-needs-analysis";
     utils.runCommand(tagCommand, (err, stdout) => {
-      if (err) { innerCb(err, null); }
+      if (err) {
+        innerCb(err, null);
+      }
       innerCb(null, stdout);
     });
   });
