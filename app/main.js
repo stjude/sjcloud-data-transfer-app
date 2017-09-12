@@ -11,6 +11,7 @@ const winston = require("winston");
 const ui = require("./bin/backend/ui");
 const state = require("./bin/backend/state");
 const protocolhandler = require("./bin/backend/protocol");
+const autoupdater = require("./bin/backend/autoupdate");
 const config = require("../config.json");
 
 if (os.platform() == "darwin" || os.platform == "linux") {
