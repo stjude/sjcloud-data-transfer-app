@@ -57,7 +57,7 @@ function getSha256sumFromPlatform(platform) {
 */
 module.exports.install = (updateProgress, failProgress, callback) => {
   const tmpdir = os.tmpdir();
-  const platform = utils.getOS;
+  const platform = os.platform();
   const downloadURL = getDxDownloadUrlFromPlatform(platform);
 
   if (platform === "darwin" || platform === "linux") {
@@ -134,7 +134,7 @@ module.exports.login = (token, callback) => {
 */
 module.exports.listProjects = (allProjects, callback) => {
   let tabliteral;
-  const platform = utils.getOS;
+  const platform = os.platform();
 
   if (platform === "darwin" || platform === "linux") {
     tabliteral = "$'\t'";
@@ -276,7 +276,7 @@ module.exports.uploadFile = (file, projectId, progressCb, finishedCb) => {
 */
 module.exports.downloadFile = function(downloadLocation, fileName, fileRawSize, fileId, updateCb, finishedCb) {
   const outputPath = expandHomeDir(path.join(downloadLocation, fileName));
-  const platform = utils.getOS;
+  const platform = os.platform();
 
   try {
     utils.runCommandSync(`dx rm -a '${dxPath}'`);
