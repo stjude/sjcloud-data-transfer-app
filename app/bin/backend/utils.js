@@ -77,7 +77,7 @@ module.exports.getDXToolkitDir = function() {
  * @return {child_process.ChildProcess}
 */
 module.exports.runCommand = function(cmd, callback) {
-  const platform = module.exports.getOS
+  const platform = module.exports.getOS;
   
   let inner_callback = function(err, stdout, stderr) {
     if (err) {
