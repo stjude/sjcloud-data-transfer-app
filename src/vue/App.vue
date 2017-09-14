@@ -96,7 +96,11 @@ body {
 
 .right-panel-container {
 	height: 570px;
-    overflow: scroll;
+    overflow: hidden;
+}
+
+.right-panel-container:hover {
+	overflow: auto;
 }
 
 .right-panel {

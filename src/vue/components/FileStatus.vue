@@ -123,10 +123,14 @@ export default {
 #fileStatusDiv {
 	margin-top:18px;
 	height: 410px;
-	overflow: scroll;
+	overflow: hidden;
 	font-family: 'Lato';
 	color: #222222;
 	/* border-bottom: 1px solid #ccc; */
+}
+
+#fileStatusDiv:hover {
+	overflow: auto;
 }
 
 table {
@@ -157,7 +161,7 @@ td {
 
 .cellFileName {
 	width: 340px;
-	overflow: scroll;
+	overflow: auto;
 }
 
 .cellFileSize {

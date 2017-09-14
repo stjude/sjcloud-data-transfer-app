@@ -2,6 +2,7 @@
  * @fileOverview Controls the UI
 */
 
+const os = require("os");
 const url = require("url");
 const path = require("path");
 const electron = require("electron");
@@ -14,7 +15,7 @@ let height = 642;
 
 if (platform === "linux") {
   width = 900;
-  height = 630;
+  height = 620;
 } else if (platform === "win32") {
   width = 890;
   height = 630;
@@ -27,6 +28,7 @@ module.exports.createWindow = (callback) => {
     useContentSize: true,
     resizable: false,
     maximizable: false,
+    frame: true,
     icon: path.join(__dirname, "assets/icons/png/64x64.png"),
     show: false,
   });
