@@ -300,17 +300,12 @@ module.exports.downloadFile = function(downloadLocation, fileName, fileRawSize, 
   const outputPath = expandHomeDir(path.join(downloadLocation, fileName));
   const platform = os.platform();
 
-  try {
-    utils.runCommandSync(`dx rm -a '${dxPath}'`);
-  } catch (e) {
-    // If this fails, not a big deal. Just means there is no file at
-    // this path to begin with.
-  }
   if (platform === "darwin" || platform === "linux") {
     utils.runCommandSync("touch '" + outputPath + "'");
   } else if (platform === "win32") {
     utils.runCommandSync("New-Item '" + outputPath + "' -type file -force");
   }
+
   const cmd = "dx download -f " + fileId + " -o '" + outputPath + "'";
   fs.watchFile(outputPath, {interval: 200}, () => {
     fs.stat(outputPath, (err, stats) => {
