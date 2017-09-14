@@ -1,7 +1,8 @@
 {
-  "ENVIRONMENT": "dev",
+  "ENVIRONMENT": "prod",
   "DEFAULT_CONCURRENT_OPERATIONS": 2,
-  "PROJECT_TAG": "sjcp-project",
+  "TOOL_PROJECT_TAG": "sjcp-project-tool",
+  "DATA_PROJECT_TAG": "sjcp-project-data",
   "DOWNLOADABLE_TAG": "sjcp-result-file",
   "DOWNLOAD_INFO": {
     "WINDOWS": {
