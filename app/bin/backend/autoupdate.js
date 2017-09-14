@@ -15,7 +15,7 @@ electron.autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) 
     buttons: ["Restart", "Later"],
     title: "Application Update",
     message: process.platform === "win32" ? releaseNotes : releaseName,
-    detail: "A new version has been downloaded. Restart the application to apply the updates."
+    detail: "A new version has been downloaded. Restart the application to apply the updates.",
   };
 
   electron.dialog.showMessageBox(dialogOpts, (response) => {
@@ -23,4 +23,9 @@ electron.autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) 
       electron.autoUpdater.quitAndInstall();
     }
   });
+});
+
+autoUpdater.on("error", (message) => {
+  console.error("There was a problem updating the application");
+  console.error(message);
 });

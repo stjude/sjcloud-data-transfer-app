@@ -5,8 +5,8 @@
 					 src="img/stjude-logo-child-white.png"
 					 @click='goHome'>
 		</div>
-		<span class="bold-font" @click='goHome'>ST. JUDE CLOUD</span>
-		<span class="lighter-font" @click='goHome'>PLATFORM</span>
+		<span class="bold-font" @click='goHome'>St. Jude Cloud</span>
+		<span class="lighter-font" @click='goHome'>Platform</span>
 	</div>
 </template>
 
@@ -33,7 +33,7 @@ export default {
 	color: #FFFFFF;
 	cursor: default;
 	display: inline-block; 
-	font-family: "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-family: "Open Sans", "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
 	font-size: 24px; 
 	height: 60px;
 	padding-top: 0.3rem; 
@@ -52,10 +52,11 @@ export default {
 }
 
 .bold-font {
-	font-weight: bold;
+	font-weight: 600;
 }
 
 .lighter-font {
-	font-weight: lighter;
+	font-weight: 300;
+  color: #A1CDE1;
 }
 </style>
