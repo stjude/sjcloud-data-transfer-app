@@ -69,7 +69,7 @@ export default new Vuex.Store({
     /** Upload/Download **/
     currPath: "upload",
     currToolName: "",
-    downloadLocation: "~/Downloads/",
+    downloadLocation: window.utils.defaultDownloadDir,
     operationProcesses: {},
     tools: [], // see ../tests/testdata/fakeTools.json for expected schema
     noProjectsFound: false,

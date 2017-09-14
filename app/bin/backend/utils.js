@@ -16,18 +16,7 @@ sjcloudHomeDirectory = path.join( os.homedir(), ".sjcloud" );
 dxToolkitDirectory = path.join( sjcloudHomeDirectory, "dx-toolkit" );
 dxToolkitEnvironmentFile = path.join( dxToolkitDirectory, "environment" );
 dnanexusCLIDirectory = "C:\\Program Files (x86)\\DNAnexus CLI";
-
-/**
- * Returns the operating system.
- * "linux" returns for linux,
- * "darwin" returns for mac,
- * "win32" returns for windows (even 64bit windows)
- *
- * @return {string} operating system
- **/
-module.exports.getOS = function() {
-  return os.platform();
-}
+defaultDownloadDir =  path.join( os.homedir(), "Downloads" );
 
 /**
  * Creates the ~/.sjcloud directory, if it doesn't exist.
@@ -77,7 +66,7 @@ module.exports.getDXToolkitDir = function() {
  * @return {child_process.ChildProcess}
 */
 module.exports.runCommand = function(cmd, callback) {
-  const platform = module.exports.getOS
+  const platform = os.platform();
   
   let inner_callback = function(err, stdout, stderr) {
     if (err) {
@@ -122,8 +111,7 @@ module.exports.runCommand = function(cmd, callback) {
  * @return {child_process.ChildProcess}
 */
 module.exports.runCommandSync = function(cmd) {
-  const platform = module.exports.getOS;
-  
+  const platform = os.platform();
   if (platform == "darwin" || platform == "linux") {
     const dxToolkitEnvFile = module.exports.dxToolkitEnvironmentFile;
     // fs.statSync() is only to check if "dx" commands can be sourced.
@@ -156,8 +144,7 @@ module.exports.runCommandSync = function(cmd) {
  * @param {callback} callback
 */
 module.exports.dxToolkitOnPath = function(callback) {
-  const platform = module.exports.getOS;
-  
+  const platform = os.platform();
   if (platform == "linux" || platform == "darwin") {
     this.runCommand("which dx", callback);
   } else if (platform == "win32") {
@@ -178,7 +165,7 @@ module.exports.dxLoggedIn = (callback) => {
  * @param {callback} callback
 */
 module.exports.dxCheckProjectAccess = (callback) => {
-  const platform = module.exports.getOS;
+  const platform = os.platform();
   
   if (platform == "linux" || platform == "darwin") {
     this.runCommand("echo '0' | dx select --level UPLOAD", callback);
@@ -370,3 +357,4 @@ module.exports.sjcloudHomeDirectory = sjcloudHomeDirectory;
 module.exports.dxToolkitDirectory = dxToolkitDirectory;
 module.exports.dxToolkitEnvironmentFile = dxToolkitEnvironmentFile;
 module.exports.dnanexusCLIDirectory = dnanexusCLIDirectory;
+module.exports.defaultDownloadDir = defaultDownloadDir;
