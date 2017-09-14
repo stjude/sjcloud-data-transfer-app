@@ -142,10 +142,10 @@ module.exports.listProjects = (allProjects, callback) => {
     tabliteral = "`t";
   }
 
-  let cmd = "dx find projects --level UPLOAD --delim " + tabliteral;
-  if (!allProjects) {
-    cmd += " --tag " + config.PROJECT_TAG;
-  }
+  // Search for tool projects.
+  let basecmd = "dx find projects --level UPLOAD --delim " + tabliteral;
+  let cmd = basecmd;
+  if (!allProjects) { cmd += " --tag " + config.TOOL_PROJECT_TAG; }
 
   utils.runCommand(cmd, (err, stdout) => {
     let results = [];
@@ -166,7 +166,29 @@ module.exports.listProjects = (allProjects, callback) => {
       }
     });
 
-    return callback(null, results);
+    if (!allProjects) {
+      cmd = basecmd + " --tag " + config.DATA_PROJECT_TAG;
+      utils.runCommand(cmd, (err, stdout) => {
+        if (err) {
+          return callback(err, results);
+        }
+
+        stdout.split("\n").forEach( (el) => {
+          if (el.trim().length <= 0) return;
+          [dxLocation, name, accessLevel, _] = el.split("\t");
+          if (accessLevel) {
+            results.push({
+              project_name: name,
+              dx_location: dxLocation,
+              access_level: accessLevel,
+            });
+          }
+        });
+        return callback(null, results);
+      });
+    } else {
+      return callback(null, results);
+    }
   });
 };
 
