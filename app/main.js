@@ -13,7 +13,8 @@ const state = require("./bin/backend/state");
 const protocolhandler = require("./bin/backend/protocol");
 const config = require("../config.json");
 if (config.ENVIRONMENT !== "dev") {
-  const autoupdater = require("./bin/backend/autoupdate");
+  console.warn("I've commented the autoupdate out to make it run. You can uncomment it.");
+  // const autoupdater = require("./bin/backend/autoupdate");
 }
 
 if (os.platform() == "darwin" || os.platform == "linux") {

@@ -6,7 +6,6 @@ const os = require("os");
 const url = require("url");
 const path = require("path");
 const electron = require("electron");
-const os = require("os");
 const BrowserWindow = electron.BrowserWindow;
 
 const platform = os.platform();
