@@ -10,7 +10,7 @@ const os = require("os");
 const BrowserWindow = electron.BrowserWindow;
 
 const platform = os.platform();
-let width = 900;  // TODO check if these are the right dimensions for Mac. I doubt they are -Andrew
+let width = 900; // TODO check if these are the right dimensions for Mac. I doubt they are -Andrew
 let height = 642;
 
 if (platform === "linux") {
@@ -32,11 +32,11 @@ module.exports.createWindow = (callback) => {
     icon: path.join(__dirname, "assets/icons/png/64x64.png"),
     show: false,
   });
-    
-  mainWindow.once('ready-to-show', () => {
+
+  mainWindow.once("ready-to-show", () => {
     mainWindow.show();
   });
-  
+
   /** Attach key libraries to window **/
   mainWindow.$ = require("jquery");
   mainWindow.dx = require("./dx");
@@ -64,7 +64,7 @@ module.exports.createOauthWindow = (internal, callback) => {
     frame: true,
     webPreferences: {
       nodeIntegration: false,
-	  },
+    },
   });
 
   loginWindow.webContents.on("did-get-redirect-request", function(event, oldUrl, newUrl) {
@@ -83,7 +83,7 @@ module.exports.createOauthWindow = (internal, callback) => {
       let timer = setInterval(() => {
         if (loginWindow.webContents.getURL() === "https://platform.dnanexus.com/") {
           clearInterval(timer);
-          loginWindow.loadURL(oauth_url);
+          loginWindow.loadURL(oauth-url);
         }
       }, 1000);
     }

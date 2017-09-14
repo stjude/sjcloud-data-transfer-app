@@ -12,6 +12,9 @@ const ui = require("./bin/backend/ui");
 const state = require("./bin/backend/state");
 const protocolhandler = require("./bin/backend/protocol");
 const config = require("../config.json");
+if (config.ENVIRONMENT !== "dev") {
+  const autoupdater = require("./bin/backend/autoupdate");
+}
 
 if (os.platform() == "darwin" || os.platform == "linux") {
   winston.add(winston.transports.File, {filename: path.join(process.env.HOME, ".sjcloud/log.txt")});

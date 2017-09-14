@@ -16,7 +16,7 @@ sjcloudHomeDirectory = path.join( os.homedir(), ".sjcloud" );
 dxToolkitDirectory = path.join( sjcloudHomeDirectory, "dx-toolkit" );
 dxToolkitEnvironmentFile = path.join( dxToolkitDirectory, "environment" );
 dnanexusCLIDirectory = "C:\\Program Files (x86)\\DNAnexus CLI";
-defaultDownloadDir =  path.join( os.homedir(), "Downloads" );
+defaultDownloadDir = path.join( os.homedir(), "Downloads" );
 
 /**
  * Creates the ~/.sjcloud directory, if it doesn't exist.
@@ -67,7 +67,7 @@ module.exports.getDXToolkitDir = function() {
 */
 module.exports.runCommand = function(cmd, callback) {
   const platform = os.platform();
-  
+
   let inner_callback = function(err, stdout, stderr) {
     if (err) {
       return callback(err, null);
@@ -166,7 +166,7 @@ module.exports.dxLoggedIn = (callback) => {
 */
 module.exports.dxCheckProjectAccess = (callback) => {
   const platform = os.platform();
-  
+
   if (platform == "linux" || platform == "darwin") {
     this.runCommand("echo '0' | dx select --level UPLOAD", callback);
   } else if (platform == "win32") {
@@ -181,12 +181,12 @@ module.exports.dxCheckProjectAccess = (callback) => {
  * @param {string} dest Path for newly downloaded file
  * @param {Function} callback Callback function
 */
-module.exports.downloadFile = (url, dest, cb) => {
+module.exports.downloadFile = (url, dest, callback) => {
   let file = fs.createWriteStream(dest);
   let request = https.get(url, (response) => {
     response.pipe(file);
     file.on("finish", () => {
-      file.close(cb);
+      file.close(callback);
     });
   });
 };
