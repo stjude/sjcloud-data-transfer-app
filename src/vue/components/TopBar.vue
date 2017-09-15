@@ -5,8 +5,10 @@
 					 src="img/stjude-logo-child-white.png"
 					 @click='goHome'>
 		</div>
-		<span class="bold-font" @click='goHome'>St. Jude Cloud</span>
-		<span class="lighter-font" @click='goHome'>Platform</span>
+    <div class="sjcda-title-container">
+      <span class="title-font" @click='goHome'>St. Jude Cloud</span>
+      <span class="title-font-thin" @click='goHome'>Platform</span>
+    </div>
 	</div>
 </template>
 
@@ -26,7 +28,8 @@ export default {
 
 <style>
 .sjcda-top-bar {
-	background-color: #2A8BB6;
+	/* background-color: #2A8BB6; */
+	background-color: #1381B3;
 	border-width: 3px;
 	border-style: solid;
 	border-color: #1381B3;
@@ -34,7 +37,7 @@ export default {
 	cursor: default;
 	display: inline-block; 
 	font-family: "Open Sans", "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 24px; 
+	font-size: 22px; 
 	height: 60px;
 	padding-top: 0.3rem; 
 	vertical-align: top; 
@@ -44,19 +47,28 @@ export default {
 
 .sjcda-top-bar__logo_container {
 	display: inline-block;
-	margin-left: 5px;
+	margin-left: 2px;
 }
 
 .sjcda-top-bar__logo {
-	height: 50px;
+  margin-top: 2px;
+  padding: 5px;
+  padding-right: 8px;
+	height: 47px;
   border-right: 1px solid #7DBAD5;
 }
 
-.bold-font {
-	font-weight: 600;
+.sjcda-title-container {
+  display: inline;
+  margin-left: 15px;
+  margin-top: 7px;
 }
 
-.lighter-font {
+.title-font {
+	font-weight: 800;
+}
+
+.title-font-thin {
 	font-weight: 300;
   color: #A1CDE1;
 }
