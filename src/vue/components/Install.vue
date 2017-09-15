@@ -14,8 +14,8 @@
 				<hr>
 			</div>
 			<div v-show="installingDxToolkit == 'waiting' " class='theater-body'>
-				<div class="col-xs-6">
-					<img src="http://via.placeholder.com/350x300">
+				<div class="col-xs-6" style="margin-top: 35px">
+					<img src="img/screen-download.png">
 				</div>
 				<div class="col-xs-6">
 					<div style="margin-top: 15px;">

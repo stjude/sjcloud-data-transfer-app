@@ -49,6 +49,7 @@ export default {
 
 .sjcda-top-bar__logo {
 	height: 50px;
+  border-right: 1px solid #7DBAD5;
 }
 
 .bold-font {
