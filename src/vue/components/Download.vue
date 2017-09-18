@@ -11,7 +11,7 @@
 				<h3>Could not find any projects!</h3>
 			</div>
 
-			<file-status v-if="filesVisible"></file-status>
+			<file-status v-if="filesVisible" showSelectionTotals='1'></file-status>
 
 			<div class="alert-container" v-else-if="hasTools && noFilesVisible">
 				<step-outcome failureMessage='No files to download!'

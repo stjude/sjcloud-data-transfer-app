@@ -92,7 +92,7 @@ if (window.location.host != "localhost:3057" && !window.testdata) {
 		openExternal(url) {
 			window.open(url,'_blank')
 		},
-		readableFileSize(bytes, roundNumbers=false) { console.log(bytes)
+		readableFileSize(bytes, roundNumbers=false) {
 		  if (isNaN(bytes)) {
 		    return "0 B";
 		  }
@@ -122,4 +122,9 @@ if (window.location.host != "localhost:3057" && !window.testdata) {
       return number+" "+units[u];
     },
   };
+  window.queue={
+    addToolInfoTask(task,callback) {
+      if (typeof callback=='function') callback(null,{});
+    }
+  }
 }
