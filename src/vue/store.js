@@ -68,7 +68,7 @@ export default new Vuex.Store({
 
     /** Upload/Download **/
     currPath: "upload",
-    currToolName: "",
+    currToolName: "", // value is project/tool dx_location
     downloadLocation: window.utils.defaultDownloadDir,
     operationProcesses: {},
     tools: [], // see ../tests/testdata/fakeTools.json for expected schema
@@ -118,10 +118,10 @@ export default new Vuex.Store({
       return state.showAllProjects;
     },
     currTool(state) {
-      return state.tools.filter((t) => t.name === state.currToolName)[0];
+      return state.tools.filter((t) => t.dx_location === state.currToolName)[0];
     },
     toolByName(state) {
-      return (name) => {
+      return (name) => { console.log(name)
         if (!name) return null;
 
         let toolsWithName = state.tools.filter((t) => t.name === name);
@@ -261,7 +261,7 @@ export default new Vuex.Store({
     setCurrToolName(state, toolName, removeURI=false) {
       state.searchTerm = "";
       state.currToolName = toolName;
-      let tools = state.tools.filter((t) => t.name === toolName);
+      let tools = state.tools.filter((t) => t.dx_location === toolName);
 
       if (!tools || !tools.length) {
         if (!state.tools || !state.tools.length) {
@@ -287,7 +287,7 @@ export default new Vuex.Store({
                 t.raw_size = t.size;
                 t.waiting = 0;
                 t.started = false;
-                return t.name == toolName;
+                return t.dx_location == toolName;
               })[0].download;
               return;
             }
@@ -489,7 +489,7 @@ export default new Vuex.Store({
               let resetCurrToolName = true;
               for (let i = 0; i < tools.length; i++) {
                 let tool = tools[i];
-                if (tool.name === previousTool) {
+                if (tool.dx_location === previousTool) {
                   resetCurrToolName = false;
                   break;
                 };
@@ -499,7 +499,7 @@ export default new Vuex.Store({
                 commit("setCurrToolName", getters.uriProject, true);
               } else {
                 if (resetCurrToolName) {
-                  commit("setCurrToolName", tools[0].name);
+                  commit("setCurrToolName", tools[0].dx_location);
                 }
               }
 

@@ -15,7 +15,7 @@ module.exports = function (config) {
     browsers: ['Chrome'],
     frameworks: ['jasmine'],
     // this is the entry file for all our tests.
-    files: ['./tests/NavBar.spec.js'],
+    files: ['./tests/FileStatus.spec.js'],
     // we will pass the entry file to webpack for bundling.
     preprocessors: {
       './tests/*.spec.js': ['webpack'],

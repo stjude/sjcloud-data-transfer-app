@@ -4,20 +4,27 @@ import '../app/bin/frontend/app.bundle.css';
 import _App from '../src/vue/main.js';
 
 describe('NavBar search', function () {
-	const holder=select('body').append('div').attr('id','aaa');
+	const holder=select('body').append('div');
+	holder.append('div').attr('id','navbaraaa');
 	let app
 	beforeAll(function (done) {
-		app=_App('#aaa');
+		app=_App('#navbaraaa');
 		app.$router.push('/download');
-		app.$store.commit('setCurrToolName','Tool-Long-List');
-		 // note: simulated data load is delayed by 500 ms
-		setTimeout(()=>done(),600);
+		// note: simulated data load is delayed by 500 ms
+		setTimeout(()=>{
+			app.$store.commit('setCurrToolName','x4');
+			done()
+		},600);
 	});
 
 	it('should display 10 rows for term=_c', function (done) {
-		select('#sjcda-nav-search-bar').property('value','_c').node().change();
-		expect(selectAll('#fileStatusDiv table tr').size()).toEqual(1);
-		done();
+		const searchTerm='_c';
+		holder.select('#sjcda-nav-search-bar').property('value',searchTerm);
+		window.VueApp.$store.commit('setSearchTerm',searchTerm);
+		setTimeout(()=>{
+			expect(holder.selectAll('#fileStatusDiv table tr').size()).toEqual(7);
+			done();
+		},50)
 	});
 
 	afterAll(function(done) {

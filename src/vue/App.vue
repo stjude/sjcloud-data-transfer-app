@@ -44,8 +44,8 @@ export default {
 				const incr = event.keyCode == 38 ? -1 : 1;
 				let i = -1;
 				this.tools.forEach((t,j) => {
-					names.push(t.name)
-					if (t.name == this.currTool.name) i = j;
+					names.push(t.dx_location)
+					if (t.dx_location == this.currTool.dx_location) i = j;
 				});
 				
 				const toolName=i<0 || i+incr<0 ? names[0] 

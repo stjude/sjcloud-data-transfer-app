@@ -4,18 +4,20 @@ import '../app/bin/frontend/app.bundle.css';
 import _App from '../src/vue/main.js';
 
 describe('Download panel for an empty project', function () {
-	const holder=select('body').append('div').attr('id','aaa');
+	const holder=select('body').append('div');
+	holder.append('div').attr('id','downloadaaa');
 	let app;
 	beforeAll(function (done) {
-		app=_App('#aaa');
+		app=_App('#downloadaaa');
 		app.$router.push('/download');
-		app.$store.commit('setCurrToolName','Tool-Empty');
-		 // note: simulated data load is delayed by 500 ms
-		setTimeout(()=>done(),600);
+		setTimeout(()=>{
+			app.$store.commit('setCurrToolName','x1');
+			done()
+		},600);
 	});
 
 	it('should not display spinkit', function (done) {
-		expect(selectAll('.sk-circle').size()).toEqual(0);
+		expect(holder.selectAll('.sk-circle').size()).toEqual(0);
 		done();
 	});
 
@@ -28,25 +30,30 @@ describe('Download panel for an empty project', function () {
 	});*/
 
 	afterAll(function(done) {
-		select('#aaa').remove();
+		holder.remove();
 		done();
 	});
 });
 
 describe('Download panel for a project with completed transfer', function () {
-	const holder=select('body').append('div').attr('id','ccc');
+	const holder=select('body').append('div');
+	holder.append('div').attr('id','downloadccc');
 	let app;
 	
 	beforeAll(function (done) {
-		app=_App('#ccc');
+		app=_App('#downloadccc');
 		app.$router.push('/download');
-		app.$store.commit('setCurrToolName','Tool-Completed');
-		 // note: simulated data load is delayed by 500 ms
-		setTimeout(()=>done(),600);
+		setTimeout(()=>{
+			app.$store.commit('setCurrToolName','x3');
+			done()
+		},1600);
 	});
 
 	it('should have 2 completed icons for downloads', function (done) {
-		expect(select('#sjcda-file-table-body')
+		console.log(holder.selectAll('td .cellStatus .material-icons').size())
+
+		expect(
+			holder.select('#sjcda-file-table-body')
 			.selectAll('.cellStatus .material-icons')
 			.filter(function(d){
 				return select(this).html()=='check_circle'
@@ -57,7 +64,8 @@ describe('Download panel for a project with completed transfer', function () {
 		done();
 	});
 
-	afterAll(function() {
-		select('#ccc').remove();
+	afterAll(function(done) {
+		//holder.remove();
+		done()
 	});
 });

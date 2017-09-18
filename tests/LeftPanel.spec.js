@@ -4,23 +4,26 @@ import '../app/bin/frontend/app.bundle.css';
 import _App from '../src/vue/main.js';
 
 describe('LeftPanel for a user with projects', function () {
-	const holder=select('body').append('div').attr('id','aaa');
-	let app
+	const holder=select('body').append('div');
+	holder.append('div').attr('id','leftaaa');
+	let app;
 	beforeAll(function (done) {
-		app=_App('#aaa');
+		app=_App('#leftaaa');
 		app.$router.push('/download');
-		app.$store.commit('setCurrToolName','Tool-Empty');
 		 // note: simulated data load is delayed by 500 ms
-		setTimeout(()=>done(),600);
+		setTimeout(()=>{
+			app.$store.commit('setCurrToolName','x2');
+			done()
+		},600);
 	});
 
 	it('should have the correct # of rows for tools', function (done) {
-		expect(selectAll('.left-panel-table-container tr').size()).toEqual(12);
+		expect(holder.selectAll('tr').size()).toEqual(12);
 		done();
 	});
 
 	it('should have the correct # of rows for sj tools', function (done) {
-		expect(selectAll('.left-panel-table-container tr .badge')
+		expect(holder.selectAll('tr .badge')
 			.filter(function(b){return this.style.display!='none'})
 			.size()
 		).toEqual(1);
@@ -28,7 +31,7 @@ describe('LeftPanel for a user with projects', function () {
 	});
 
 	afterAll(function(done) {
-		select('#aaa').remove();
+		holder.remove();
 		done();
 	});
 });

@@ -4,14 +4,16 @@ import '../app/bin/frontend/app.bundle.css';
 import _App from '../src/vue/main.js';
 
 describe('Upload panel for an empty project', function () {
-	const holder=select('body').append('div').attr('id','aaa');
+	const holder=select('body').append('div')
+	holder.append('div').attr('id','uploadaaa');
 	let app
 	beforeAll(function (done) {
-		app=_App('#aaa');
+		app=_App('#uploadaaa');
 		app.$router.push('/upload');
-		app.$store.commit('setCurrToolName','Tool-Empty');
-		 // note: simulated data load is delayed by 500 ms
-		setTimeout(()=>done(),600);
+		setTimeout(()=>{
+			app.$store.commit('setCurrToolName','x1');
+			done()
+		},600);
 	});
 
 	it('should not display spinkit', function (done) {
@@ -22,28 +24,30 @@ describe('Upload panel for an empty project', function () {
 	it('should show a drop-zone for uploads', function (done) {
 		app.$router.push('/upload');
 		setTimeout(()=>{
-			expect(selectAll('.dropzone').size()).toEqual(1);
+			expect(holder.selectAll('.dropzone').size()).toEqual(1);
 			done();
 		},600);
 	});
 
 	afterAll(function(done) {
-		select('#aaa').remove();
+		holder.remove();
 		done();
 	});
 });
 
 describe('Upload panel for a project with completed transfer', function () {
 	const holder=select('body').append('div')
-	holder.append('div').attr('id','ccc');
+	holder.append('div').attr('id','uploadccc');
 	let app
 	
 	beforeAll(function (done) {
-		app=_App('#ccc');
+		app=_App('#uploadccc');
 		app.$router.push('/upload');
-		app.$store.commit('setCurrToolName','Tool-Completed');
 		 // note: simulated data load is delayed by 500 ms
-		setTimeout(()=>done(),600);
+		setTimeout(()=>{
+			app.$store.commit('setCurrToolName','x3');
+			done()
+		},600);
 	});
 
 	it('should display a completion message', function (done) {
@@ -74,7 +78,7 @@ describe('Upload panel for a project with completed transfer', function () {
 	});
 
 	afterAll(function() {
-		select('#ccc').remove();
+		holder.remove();
 	});
 });
 
