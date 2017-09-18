@@ -51,8 +51,8 @@
 			</table>
 		</div>
 		<div style='margin-top:5px; padding-left:40px' v-show='showSelectionTotals==1'>
-			<span>
-				Total Selected: {{ numSelectedFiles }} of {{ files.length }} Files ({{ sizeSelectedFiles }})
+			<span v-if="numSelectedFiles > 0">
+				{{ numSelectedFiles }} of {{ files.length }} files selected ({{ sizeSelectedFiles }})
 			</span>
 		</div>
 		<div v-show="noFilesMatched"
