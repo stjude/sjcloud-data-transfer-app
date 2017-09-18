@@ -5,15 +5,27 @@
 					 src="img/stjude-logo-child-white.png"
 					 @click='goHome'>
 		</div>
-    <div class="sjcda-title-container">
-      <span class="title-font" @click='goHome'>St. Jude Cloud</span>
-      <span class="title-font-thin" @click='goHome'>Platform</span>
-    </div>
+	    <div class="sjcda-title-container">
+	      <span class="title-font" @click='goHome'>St. Jude Cloud</span>
+	      <span class="title-font-thin" @click='goHome'>Platform</span>
+	    </div>
+	    <button id='logout-btn' 
+	    	class='btn btn-stjude btn-sm' 
+	    	style='float:right; margin: 6px 10px 0 0'
+	    	v-show='showLogoutBtn'
+	    	@click='logout'>
+	    	Logout
+	    </button>
 	</div>
 </template>
 
 <script>
 export default {
+	computed: {
+		showLogoutBtn() {
+			return this.$route.path=='/download' || this.$route.path=='/upload'
+		}
+	},
 	methods: {
 		goHome() {
 			if (this.$store.getters.environment === "dev") {
@@ -21,6 +33,10 @@ export default {
 			} else {
 				console.error("Tried to go home, but we are not in 'dev' mode!");
 			}
+		},
+		logout() {
+			// TO-DO: logout the user
+			console.log('log-out the user!')
 		}
 	}
 }
@@ -62,6 +78,13 @@ export default {
   display: inline;
   margin-left: 15px;
   margin-top: 7px;
+}
+
+#logout-btn {
+	padding: 5px 10px;
+	font-size: 12px;
+	line-height: 1.5;
+	border-radius: 3px;
 }
 
 .title-font {
