@@ -19,14 +19,6 @@ describe('FileStatus table for an empty project', function () {
 		done();
 	});
 
-	it('should show a drop-zone for uploads', function (done) {
-		app.$router.push('/upload');
-		setTimeout(()=>{
-			expect(selectAll('.dropzone').size()).toEqual(1);
-			done();
-		},600);
-	});
-
 	afterAll(function(done) {
 		select('#aaa').remove();
 		done();
@@ -118,20 +110,14 @@ describe('FileStatus table for a project with completed transfer', function () {
 		setTimeout(()=>done(),600);
 	});
 
-	it('should have 2 completed icons for downloads', function (done) {
-		expect(select('#sjcda-file-table-body')
-			.selectAll('.cellStatus .material-icons')
-			.filter(function(d){
-				return select(this).html()=='check_circle'
-			})
-			.size())
-		.toEqual(2);
-		
+	it('should not be displayed for uploads', function (done) {
+		app.$router.push('/upload');
+		expect(select('#ccc').select('#fileStatusDiv').node()).toEqual(null);
 		done();
 	});
 
-	it('should not be displayed for uploads', function (done) {
-		app.$router.push('/upload');
+	it('should not be displayed for downloads', function (done) {
+		app.$router.push('/download');
 		expect(select('#ccc').select('#fileStatusDiv').node()).toEqual(null);
 		done();
 	});

@@ -1,5 +1,5 @@
 <template>
-	<div>
+	<div class='sjcda-step-outcome-root-div'>
 		<div v-show='outcome=="done"'>
 			<div style="margin-top: 20px">
 				<i class='material-icons'
