@@ -360,6 +360,25 @@ module.exports.resetFileStatus = function(file) {
   file.errored = false;
 };
 
+module.exports.saveToFile = function (filename,content) {
+  fs.writeFile( sjcloudHomeDirectory+'/'+filename, content, function(err) {
+    if(err) {
+      return console.log(err);
+    }
+  });
+}
+
+module.exports.readCachedFile = function (filename, callback, defaultContent=null) {
+  fs.readFile( sjcloudHomeDirectory+'/'+filename, function(err,data) {
+    if(err) {
+      console.log(err);
+      if (!defaultContent) return;
+    }
+    
+    callback(data ? data.toString() : defaultContent);
+  });
+}
+
 /** EXPORTS **/
 
 module.exports.sjcloudHomeDirectory = sjcloudHomeDirectory;
