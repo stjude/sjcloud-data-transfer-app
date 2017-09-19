@@ -43,11 +43,6 @@ module.exports.createWindow = (callback) => {
 
   /** Attach key libraries to window **/
   mainWindow.$ = require("jquery");
-  mainWindow.dx = require("./dx");
-  mainWindow.electron = electron;
-  mainWindow.protocol = require("./protocol");
-  mainWindow.state = require("./state");
-  mainWindow.utils = require("./utils");
 
   mainWindow.on("closed", () => {
     mainWindow = null;

@@ -33,9 +33,11 @@ export default function _App(selector) {
   _App.$router.replace("/");
 
   if (Config.ENVIRONMENT === "dev") {
-    _App.$router.replace('home');
+    _App.$router.replace("home");
   } else {
-    window.state.getState((state) => { _App.$router.replace(state); });
+    window.state.getState((state) => {
+ _App.$router.replace(state); 
+});
   }
 
   return _App;
@@ -44,6 +46,6 @@ export default function _App(selector) {
 // if this code was bundled and included in index.html,
 // where the expected container div is present, 
 // then start the app immediately
-if (document.querySelector('#sjcda-main-div')) {
+if (document.querySelector("#sjcda-main-div")) {
   _App("#sjcda-main-div");
 }

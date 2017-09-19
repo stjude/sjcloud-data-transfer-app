@@ -26,7 +26,7 @@
 						style="margin-bottom: 10px; width:auto">
 						LOG IN WITH DNANEXUS
 					</div>
-					<div>
+					<div style="margin-top: -10px;">
 						<a class="stjude-link" @click="internal()">I'm a St. Jude employee</a>
 					</div>
 				</div>
@@ -36,7 +36,7 @@
 			</div>
 			<div v-show="loginState == 'completed'" class='theater-body'>
 				<div class="col-xs-12">
-					<step-outcome successMessage='Authenticated!' outcome='done'></step-outcome>
+					<step-outcome successMessage='Authenticated' outcome='done'></step-outcome>
 				</div>
 			</div>
 			<div v-show="loginState == 'failed'" class='theater-body'>
