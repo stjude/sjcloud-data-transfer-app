@@ -5,4 +5,3 @@ app/bin/frontend/*
 **/.DS_Store
 
 package-lock.json
-config.json
