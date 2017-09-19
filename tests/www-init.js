@@ -119,7 +119,13 @@ window.utils = {
 	  }
 
 	  return number+" "+units[u];
-	}
+	},
+    readCachedFile(filename,callback) {
+      callback('{}');
+    },
+    saveToFile() {
+      
+    }
 };
 window.queue={
 	addToolInfoTask(task,callback) {
