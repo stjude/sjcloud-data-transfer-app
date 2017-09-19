@@ -1,19 +1,22 @@
-const electron = require("electron");
-const app = electron.app;
-const protocol = electron.protocol;
-const menu = electron.Menu;
-
+const os = require("os");
 const url = require("url");
 const path = require("path");
-const os = require("os");
 const winston = require("winston");
+const electron = require("electron");
+
+const app = electron.app;
+const menu = electron.Menu;
+const protocol = electron.protocol;
 
 const ui = require("./bin/backend/ui");
 const state = require("./bin/backend/state");
 const protocolhandler = require("./bin/backend/protocol");
+
 const config = require("../config.json");
+
 if (config.ENVIRONMENT !== "dev") {
   console.warn("I've commented the autoupdate out to make it run. You can uncomment it.");
+  console.warn("");
   // const autoupdater = require("./bin/backend/autoupdate");
 }
 
@@ -55,7 +58,9 @@ app.on("ready", () => {
         ]},
       ];
 
-      // menu.setApplicationMenu(menu.buildFromTemplate(template));
+      if (config.ENVIRONMENT === "prod") {
+        menu.setApplicationMenu(menu.buildFromTemplate(template));
+      }
     }
   });
 });
