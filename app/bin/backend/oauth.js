@@ -34,7 +34,9 @@ module.exports.waitForCode = function(internal, cb) {
       app.get("/authcb", function(req, res) {
         if (window) {
           window.close();
+          // Do not set window to null here. Weird errors ensue.
         }
+
         return cb(null, req.query.code);
       });
 
