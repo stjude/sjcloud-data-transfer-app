@@ -33,7 +33,7 @@ export default function _App(selector,cachedState={}) {
   VueApp.$router.replace("/");
 
   if (Config.ENVIRONMENT === "dev") {
-    _App.$router.replace("home");
+    VueApp.$router.replace("home");
   } else {
     window.state.getState((state) => {
       VueApp.$router.replace(state); 
