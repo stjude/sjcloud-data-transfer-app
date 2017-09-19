@@ -125,6 +125,17 @@ module.exports.login = (token, callback) => {
 };
 
 /**
+ * Logout of DNAnexus.
+ *
+ * @param {callback} callback
+*/
+module.exports.logout = (callback) => {
+  const cmd = "dx logout";
+  utils.runCommand(cmd, callback);
+};
+
+
+/**
  * Find and return projects the user can upload data to.
  *
  * @param {boolean} allProjects should we limit to St. Jude Cloud

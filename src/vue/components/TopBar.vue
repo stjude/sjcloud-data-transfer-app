@@ -35,8 +35,9 @@ export default {
 			}
 		},
 		logout() {
-			// TO-DO: logout the user
-			console.log('log-out the user!')
+      window.dx.logout((err, result) => {
+        console.log('log-out the user!')
+      });
 		}
 	}
 }
