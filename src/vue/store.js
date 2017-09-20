@@ -5,12 +5,6 @@ import globToRegExp from "glob-to-regexp";
 
 Vue.use(Vuex);
 
-const cachedMutations=[
-  'showAllFiles',
-  'showAllProjects',
-  'concurrentOperations'
-];
-
 /** Plugins **/
 const projectToolScopeWatcher = (store) => {
   store.subscribe((mutation, state) => {
@@ -18,23 +12,27 @@ const projectToolScopeWatcher = (store) => {
 
     if (mutation.type === "setShowAllFiles") {
       store.dispatch("refreshFiles");
+      cacheState(state);
     }
 
     if (mutation.type === "setShowAllProjects") {
       window.queue.removeAllTaskOfType("toolInfo");
       store.dispatch("updateToolsFromRemote", true);
-    }
-
-    if (cachedMutations.includes(mutation.type)) {
-      const obj={};
-      cachedMutations.forEach(k=>obj[k]=state[k]);
-      window.utils.saveToFile('state.json', JSON.stringify(obj));
+      cacheState(state);
     }
   });
 };
 
 
 /** Helpers **/
+function cacheState(state) {
+  window.utils.saveToFile('state.json', JSON.stringify({
+    showAllFiles: state.showAllFiles,
+    showAllProjects: state.showAllProjects,
+    concurrentOperations: state.concurrentOperations
+  }));
+}
+
 function sortFiles(state, files) {
   if (!state.currFileSortKey || state.currFileSortDirection===0) return;
   const i=state.currFileSortDirection;
@@ -64,6 +62,8 @@ function sortFiles(state, files) {
   }
 }
 
+
+/** Default Settings **/
 const defaultState={
   environment: Config.ENVIRONMENT,
   concurrentOperations: Config.DEFAULT_CONCURRENT_OPERATIONS,
@@ -94,8 +94,8 @@ const defaultState={
   currFileSortDirection: 0,
 };
 
-const data={}
 
+/** Store generator **/
 export default function getVuexStore(cachedState={}) {
   return new Vuex.Store({
     state: Object.assign(
