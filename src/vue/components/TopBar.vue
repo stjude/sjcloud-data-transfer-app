@@ -9,13 +9,13 @@
 	      <span class="title-font" @click='goHome'>St. Jude Cloud</span>
 	      <span class="title-font-thin" @click='goHome'>Platform</span>
 	    </div>
-	    <button id='logout-btn' 
-	    	class='btn btn-stjude btn-sm' 
+	    <span id='logout-btn' 
+	    	class='btn btn-sm' 
 	    	style='float:right; margin: 6px 10px 0 0'
 	    	v-show='showLogoutBtn'
 	    	@click='logout'>
 	    	Logout
-	    </button>
+	    </span>
 	</div>
 </template>
 
