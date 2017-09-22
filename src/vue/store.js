@@ -353,7 +353,7 @@ export default function getVuexStore(cachedState={}) {
         state.downloadLocation = location;
       },
       addFile(state, file, checked) {
-        const tool = state.tools.filter((t) => t.name === state.currToolName)[0];
+        const tool = state.tools.filter((t) => t.dx_location === state.currToolName)[0];
         if (!tool || !tool[state.currPath]) {
           console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
           return;
@@ -362,7 +362,7 @@ export default function getVuexStore(cachedState={}) {
         tool[state.currPath].push(file);
       },
       addFiles(state, files) {
-        const tool = state.tools.filter((t) => t.name === state.currToolName)[0];
+        const tool = state.tools.filter((t) => t.dx_location === state.currToolName)[0];
         if (!tool || !tool[state.currPath]) {
           console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
           return;
@@ -380,7 +380,7 @@ export default function getVuexStore(cachedState={}) {
         });
       },
       removeCheckedFiles(state) {
-        const tool = state.tools.filter((t) => t.name === state.currToolName)[0];
+        const tool = state.tools.filter((t) => t.dx_locatin === state.currToolName)[0];
         if (!tool || !tool[state.currPath]) {
           console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
           return;
@@ -389,7 +389,7 @@ export default function getVuexStore(cachedState={}) {
         tool[state.currPath] = tool[state.currPath].filter((t) => !t.checked);
       },
       removeAllFiles(state) {
-        const tool = state.tools.filter((t) => t.name === state.currToolName)[0];
+        const tool = state.tools.filter((t) => t.dx_location === state.currToolName)[0];
         if (!tool || !tool[state.currPath]) {
           console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
           return;
@@ -398,7 +398,7 @@ export default function getVuexStore(cachedState={}) {
         tool[state.currPath] = [];
       },
       cancelCheckedFiles(state) {
-        const tool = state.tools.filter((t) => t.name === state.currToolName)[0];
+        const tool = state.tools.filter((t) => t._dx_location === state.currToolName)[0];
         if (!tool || !tool[state.currPath]) {
           console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
           return;
