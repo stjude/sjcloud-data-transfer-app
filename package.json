@@ -12,12 +12,13 @@
     "dist:mac": "build -m",
     "dist:linux": "build -l",
     "dist:win": "build -w",
-    "postdist:win": "scripts\\change_manifest.bat",
+    "postdist:win": "build\\scripts\\change_manifest.bat",
     "test": "karma start karma.conf.js"
   },
   "author": "Clay McLeod, Andrew Frantz, Edgar Sioson",
   "build": {
-    "appId": "cloud.stjude.platform",
+    "appId": "cloud.stjude",
+	"productName": "SJCP Data Transfer",
     "dmg": {},
     "linux": {
       "target": [

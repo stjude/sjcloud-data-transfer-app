@@ -1,5 +1,5 @@
 {
-  "ENVIRONMENT": "prod",
+  "ENVIRONMENT": "dev",
   "DEFAULT_CONCURRENT_OPERATIONS": 2,
   "TOOL_PROJECT_TAG": "sjcp-project-tool",
   "DATA_PROJECT_TAG": "sjcp-project-data",
