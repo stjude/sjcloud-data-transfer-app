@@ -13,7 +13,7 @@
     "dist:linux": "build -l",
     "dist:win": "build -w",
     "postdist:win": "build\\scripts\\change_manifest.bat",
-    "test": "karma start karma.conf.js"
+    "test": "karma start karma.config.js"
   },
   "author": "Clay McLeod, Andrew Frantz, Edgar Sioson",
   "build": {
