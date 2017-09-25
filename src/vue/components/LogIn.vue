@@ -36,7 +36,7 @@
 			</div>
 			<div v-show="loginState == 'completed'" class='theater-body'>
 				<div class="col-xs-12">
-					<step-outcome successMessage='Authenticated' outcome='done'></step-outcome>
+					<step-outcome successMessage='Authenticated!' outcome='done'></step-outcome>
 				</div>
 			</div>
 			<div v-show="loginState == 'failed'" class='theater-body'>

@@ -76,13 +76,12 @@ module.exports.createOauthWindow = (internal, callback) => {
     // login.
 
     const match = /https:\/\/platform.dnanexus.com\/login\?code/g.exec(newUrl);
-
-    if (match !== null) {
+    if (match != null) {
       event.preventDefault();
-      let timer = setInterval(() => {
+      var timer = setInterval(() => {
         if (loginWindow.webContents.getURL() === "https://platform.dnanexus.com/") {
           clearInterval(timer);
-          loginWindow.loadURL(oauth-url);
+          loginWindow.loadURL(oauth_url);
         }
       }, 1000);
     }
