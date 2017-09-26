@@ -1,7 +1,7 @@
 import {select, selectAll, event} from 'd3-selection';
 import './www-init.js';
 import '../app/bin/frontend/app.bundle.css';
-import _App from '../src/vue/main.js';
+import _App from '../app/src/frontend/vue/main.js';
 
 describe('LeftPanel for a user with projects', function () {
 	const holder=select('body').append('div');

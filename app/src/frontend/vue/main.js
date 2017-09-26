@@ -4,7 +4,7 @@ import routes from "./routes.js";
 import App from "./App.vue";
 import store from "./store";
 import vueTippy from "vue-tippy";
-import Config from "../../config.json";
+import Config from "../../../../config.json";
 
 // configure Vue
 Vue.config.debug = true;
