@@ -2,6 +2,7 @@
   "name": "SJCloudUploader",
   "version": "1.0.0a",
   "description": "The St. Jude Cloud desktop app, designed for getting data in the St. Jude Cloud easily and reliably.",
+  "homepage": "https://github.com/claymcleod/sjcloud-data-transfer",
   "main": "app/main.js",
   "scripts": {
     "start": "electron app/main.js",
@@ -12,15 +13,22 @@
     "dist:mac": "build -m",
     "dist:linux": "build -l",
     "dist:win": "build -w",
+    "dist:all": "build -lwm --x64 --ia32",
+    "release:prerelease": "build -lwm --x64 --ia32 --prerelease -p",
+    "release:all": "build -lwm --x64 --ia32 -p",
     "postdist:win": "build\\scripts\\change_manifest.bat",
     "test": "karma start karma.config.js"
   },
-  "author": "Clay McLeod, Andrew Frantz, Edgar Sioson",
+  "author": {
+	  "name": "Clay McLeod, Andrew Frantz, Edgar Sioson",
+	  "email": "clay.mcleod@stjude.org"
+  },
   "build": {
     "appId": "cloud.stjude",
 	"productName": "SJCP Data Transfer",
     "dmg": {},
     "linux": {
+	  "category": "Utility",
       "target": [
         "AppImage",
         "deb"
