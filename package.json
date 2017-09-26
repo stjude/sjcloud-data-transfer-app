@@ -12,12 +12,13 @@
     "dist:mac": "build -m",
     "dist:linux": "build -l",
     "dist:win": "build -w",
-    "postdist:win": "scripts\\change_manifest.bat",
-    "test": "karma start karma.conf.js"
+    "postdist:win": "build\\scripts\\change_manifest.bat",
+    "test": "karma start karma.config.js"
   },
   "author": "Clay McLeod, Andrew Frantz, Edgar Sioson",
   "build": {
-    "appId": "cloud.stjude.platform",
+    "appId": "cloud.stjude",
+	"productName": "SJCP Data Transfer",
     "dmg": {},
     "linux": {
       "target": [
@@ -32,7 +33,6 @@
   },
   "dependencies": {
     "async": "^2.4.1",
-    "babel-preset-stage-2": "^6.24.1",
     "bootstrap": "^3.3.7",
     "expand-home-dir": "0.0.3",
     "express": "^4.15.4",

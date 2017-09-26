@@ -21,18 +21,22 @@ module.exports.waitForCode = function(internal, cb) {
     }, function(err, keys) {
       let app = express();
 
-	    let server = https.createServer({
+      let server = https.createServer({
         key: keys.serviceKey,
         cert: keys.certificate,
       }, app);
-      
-      window.on('close', () => {
+
+      window.on("close", () => {
         server.close();
         window = null;
       });
 
       app.get("/authcb", function(req, res) {
-        if (window) { window.close(); }
+        if (window) {
+          window.close();
+          // Do not set window to null here. Weird errors ensue.
+        }
+
         return cb(null, req.query.code);
       });
 

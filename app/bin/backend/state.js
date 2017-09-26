@@ -3,7 +3,6 @@
  **/
 
 const os = require("os");
-const fs = require("fs");
 const utils = require("./utils");
 
 module.exports.state = {

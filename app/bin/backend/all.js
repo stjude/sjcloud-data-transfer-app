@@ -1,16 +1,15 @@
 if (window.location.host != "localhost:3057" && !window.testdata) {
-	// electron app
+  // electron app
   window.dx = require("./bin/backend/dx");
   window.queue = require("./bin/backend/queue");
   window.oauth = require("./bin/backend/oauth");
   window.state = require("./bin/backend/state");
   window.ui = require("./bin/backend/ui");
-	window.utils = require("./bin/backend/utils");
-	console.log(window);
+  window.utils = require("./bin/backend/utils");
 } else {
   // for regular browser based testing only
   // mostly for simplified testing of styles, work flow
-	window.dx = {
+  window.dx = {
     getToolsInformation(showAllProjects, showAllFiles, callback) {
       if (!window.location.search) return [];
       // to-do: write more elegantly
@@ -26,7 +25,7 @@ if (window.location.host != "localhost:3057" && !window.testdata) {
 
       setTimeout(()=>{
         updateProgress("100%", "Success!");
-        		return callback(null, true);
+            return callback(null, true);
       }, 1500);
     },
     login(token, callback) {
@@ -34,22 +33,22 @@ if (window.location.host != "localhost:3057" && !window.testdata) {
     },
     listProjects(allProjects, callback) {
       callback(null, [{
-	          project_name: "Tool-Empty",
-	          dx_location: "test",
-	          access_level: 5,
-	        }, {
-	          project_name: "Tool-Loading",
-	          dx_location: "test",
-	          access_level: 5,
-	        }, {
-	          project_name: "Tool-Completed",
-	          dx_location: "test",
-	          access_level: 5,
-	        }, {
-	          project_name: "Tool-Long-List",
-	          dx_location: "test",
-	          access_level: 5,
-	        } ]);
+            project_name: "Tool-Empty",
+            dx_location: "x1",
+            access_level: 5,
+          }, {
+            project_name: "Tool-Loading",
+            dx_location: "x2",
+            access_level: 5,
+          }, {
+            project_name: "Tool-Completed",
+            dx_location: "x3",
+            access_level: 5,
+          }, {
+            project_name: "Tool-Long-List",
+            dx_location: "x4",
+            access_level: 5,
+          }]);
     },
     listDownloadableFiles(projectId, allFiles, callback) {
       const testdata=window.testdata ? window.testdata : window.location.search.split("testdata=")[1];
@@ -78,20 +77,22 @@ if (window.location.host != "localhost:3057" && !window.testdata) {
 
     },
   };
-
-  window.oauth = {
-    getToken(internal, callback) {
-      return callback(null, "abcxyz");
-    },
-  };
-  window.state = {};
-  window.ui = {};
-  window.utils = {
-    openExternal(url) {
-      window.open(url, "_blank");
-    },
-    readableFileSize(bytes, roundNumbers=false) {
- console.log(bytes);
+	window.oauth = {
+		getToken(internal, callback) {
+			return callback(null, "abcxyz");
+		}
+	};
+	window.state = {
+		getState() {
+			
+		}
+	};
+	window.ui = {};
+	window.utils = {
+		openExternal(url) {
+			window.open(url,'_blank')
+		},
+		readableFileSize(bytes, roundNumbers=false) {
 		  if (isNaN(bytes)) {
 		    return "0 B";
 		  }
@@ -99,26 +100,40 @@ if (window.location.host != "localhost:3057" && !window.testdata) {
 		    return "0 GB";
 		  }
 
-		  let thresh = 1000;
-		  if (Math.abs(bytes) < thresh) {
-		    return bytes + " B";
-		  }
+      let thresh = 1000;
+      if (Math.abs(bytes) < thresh) {
+        return bytes + " B";
+      }
 
-		  let units = ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
-		  let u = -1;
+      let units = ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+      let u = -1;
 
-		  do {
-		    bytes /= thresh;
-		    ++u;
-		  } while (Math.abs(bytes) >= thresh && u < units.length - 1);
+      do {
+        bytes /= thresh;
+        ++u;
+      } while (Math.abs(bytes) >= thresh && u < units.length - 1);
 
-		  let number = bytes.toFixed(1);
+      let number = bytes.toFixed(1);
 
-		  if (roundNumbers) {
-		    number = Math.round(number);
-		  }
+      if (roundNumbers) {
+        number = Math.round(number);
+      }
 
-		  return number+" "+units[u];
+      return number+" "+units[u];
     },
+    readCachedFile(filename,callback) {
+      callback('{}');
+    },
+    saveToFile() {
+      
+    }
   };
+  window.queue={
+    addToolInfoTask(task,callback) {
+      if (typeof callback=='function') callback(null,{});
+    },
+    removeAllTaskOfType(type) {
+
+    }
+  }
 }

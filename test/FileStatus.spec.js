@@ -4,49 +4,45 @@ import '../app/bin/frontend/app.bundle.css';
 import _App from '../src/vue/main.js';
 
 describe('FileStatus table for an empty project', function () {
-	const holder=select('body').append('div').attr('id','aaa');
+	const holder=select('body').append('div')
+	holder.append('div').attr('id','fsaaa');
 	let app
 	beforeAll(function (done) {
-		app=_App('#aaa');
+		app=_App('#fsaaa');
 		app.$router.push('/download');
-		app.$store.commit('setCurrToolName','Tool-Empty');
-		 // note: simulated data load is delayed by 500 ms
-		setTimeout(()=>done(),600);
-	});
-
-	it('should not be displayed', function (done) {
-		expect(select('#fileStatusDiv').node()).toEqual(null);
-		done();
-	});
-
-	it('should show a drop-zone for uploads', function (done) {
-		app.$router.push('/upload');
 		setTimeout(()=>{
-			expect(select('#aaa').selectAll('.dropzone').size()).toEqual(1);
-			done();
+			app.$store.commit('setCurrToolName','x1');
+			done()
 		},600);
 	});
 
+	it('should not be displayed', function (done) {
+		expect(holder.select('#fileStatusDiv').node()).toEqual(null);
+		done();
+	});
+
 	afterAll(function(done) {
-		select('#aaa').remove();
+		holder.remove();
 		done();
 	});
 });
 
 describe('FileStatus table for a project with pending downloads', function () {
-	const holder=select('body').insert('div','#aaa').attr('id','bbb');
+	const holder=select('body').append('div');
 	let app
 	
 	beforeAll(function (done) {
-		app=_App('#bbb');
+		holder.append('div').attr('id','fsbbb');
+		app=_App('#fsbbb');
 		app.$router.push('/download');
-		app.$store.commit('setCurrToolName','Tool-Loading');
-		 // note: simulated data load is delayed by 500 ms
-		setTimeout(()=>done(),600);
+		setTimeout(()=>{
+			app.$store.commit('setCurrToolName','x2');
+			done()
+		},600);
 	});
 
 	it('should be displayed', function (done) {
-		expect(select('#fileStatusDiv').size()).toEqual(1);
+		expect(holder.select('#fileStatusDiv').size()).toEqual(1);
 		done();
 	});
 
@@ -56,7 +52,8 @@ describe('FileStatus table for a project with pending downloads', function () {
 	});
 
 	it('should have 2 empty status cells', function (done) {
-		expect(select('#sjcda-file-table-body')
+		expect(
+			holder.select('#sjcda-file-table-body')
 			.selectAll('.cellStatus')
 			.filter(function(d){
 				return !this.innerHTML || this.innerHTML=='<!---->'
@@ -68,7 +65,8 @@ describe('FileStatus table for a project with pending downloads', function () {
 	});
 
 	it('should have 1 starting status cells', function (done) {
-		expect(select('#sjcda-file-table-body')
+		expect(
+			holder.select('#sjcda-file-table-body')
 			.selectAll('.cellStatus')
 			.filter(function(d){
 				return select(this).selectAll('div').size()==1 && 
@@ -81,7 +79,8 @@ describe('FileStatus table for a project with pending downloads', function () {
 	});
 
 	it('should have 4 in-progress status cells', function (done) {
-		expect(select('#sjcda-file-table-body')
+		expect(
+			holder.select('#sjcda-file-table-body')
 			.selectAll('.cellStatus .sjcda-progress-outline')
 			.size())
 		.toEqual(4);
@@ -90,7 +89,8 @@ describe('FileStatus table for a project with pending downloads', function () {
 	});
 
 	it('should have 2 completed status cells', function (done) {
-		expect(select('#sjcda-file-table-body')
+		expect(
+			holder.select('#sjcda-file-table-body')
 			.selectAll('.cellStatus .material-icons')
 			.filter(function(d){
 				return select(this).html()=='check_circle'
@@ -101,43 +101,41 @@ describe('FileStatus table for a project with pending downloads', function () {
 		done();
 	});
 
-	afterAll(function() {
-		select('#bbb').remove();
+	afterAll(function(done) {
+		holder.remove();
+		done();
 	});
 });
 
 describe('FileStatus table for a project with completed transfer', function () {
-	const holder=select('body').append('div').attr('id','ccc');
+	const holder=select('body').append('div')
+	holder.append('div').attr('id','fsccc');
 	let app
 	
 	beforeAll(function (done) {
-		app=_App('#ccc');
+		app=_App('#fsccc');
 		app.$router.push('/download');
-		app.$store.commit('setCurrToolName','Tool-Loading');
-		 // note: simulated data load is delayed by 500 ms
-		setTimeout(()=>done(),600);
-	});
-
-	it('should have 2 completed icons for downloads', function (done) {
-		expect(select('#sjcda-file-table-body')
-			.selectAll('.cellStatus .material-icons')
-			.filter(function(d){
-				return select(this).html()=='check_circle'
-			})
-			.size())
-		.toEqual(2);
-		
-		done();
+		setTimeout(()=>{
+			app.$store.commit('setCurrToolName','x3');
+			done()
+		},600);
 	});
 
 	it('should not be displayed for uploads', function (done) {
 		app.$router.push('/upload');
-		expect(select('#ccc').select('#fileStatusDiv').node()).toEqual(null);
+		expect(holder.select('#ccc').select('#fileStatusDiv').node()).toEqual(null);
 		done();
 	});
 
-	afterAll(function() {
-		select('#ccc').remove();
+	it('should not be displayed for downloads', function (done) {
+		app.$router.push('/download');
+		expect(holder.select('#ccc').select('#fileStatusDiv').node()).toEqual(null);
+		done();
+	});
+
+	afterAll(function(done) {
+		holder.remove();
+		done();
 	});
 });
 

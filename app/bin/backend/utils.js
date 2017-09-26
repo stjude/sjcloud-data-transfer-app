@@ -16,7 +16,7 @@ sjcloudHomeDirectory = path.join( os.homedir(), ".sjcloud" );
 dxToolkitDirectory = path.join( sjcloudHomeDirectory, "dx-toolkit" );
 dxToolkitEnvironmentFile = path.join( dxToolkitDirectory, "environment" );
 dnanexusCLIDirectory = "C:\\Program Files (x86)\\DNAnexus CLI";
-defaultDownloadDir =  path.join( os.homedir(), "Downloads" );
+defaultDownloadDir = path.join( os.homedir(), "Downloads" );
 
 /**
  * Creates the ~/.sjcloud directory, if it doesn't exist.
@@ -67,7 +67,7 @@ module.exports.getDXToolkitDir = function() {
 */
 module.exports.runCommand = function(cmd, callback) {
   const platform = os.platform();
-  
+
   let inner_callback = function(err, stdout, stderr) {
     if (err) {
       return callback(err, null);
@@ -85,19 +85,24 @@ module.exports.runCommand = function(cmd, callback) {
     const dxToolkitEnvFile = module.exports.dxToolkitEnvironmentFile;
     // fs.statSync() is only to check if "dx" commands can be sourced.
     // If it fails other commands can still be run.
-    let stats = fs.statSync(module.exports.dxToolkitEnvironmentFile);
-    if (stats) {
-      cmd = "source " + dxToolkitEnvFile + "; " + cmd;
-    }
+    try {
+      let stats = fs.statSync(module.exports.dxToolkitEnvironmentFile);
+      if (stats) {
+        cmd = "source " + dxToolkitEnvFile + "; " + cmd;
+      }
+    } catch (err) {}
+
     return exec(cmd, {shell: "/bin/bash", maxBuffer: 10000000}, inner_callback);
   } else if (platform == "win32") {
     const dnanexusPSscript = path.join( module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1" );
     // fs.statSync() is only to check if "dx" commands can be sourced.
     // If it fails other commands can still be run.
-    let stats = fs.statSync(dnanexusPSscript);
-    if (stats) {
-      cmd = ".'" + dnanexusPSscript + "'; " + cmd;
-    }
+    try {
+      let stats = fs.statSync(dnanexusPSscript);
+      if (stats) {
+        cmd = ".'" + dnanexusPSscript + "'; " + cmd;
+      }
+    } catch (err) {}
 
     cmd = "powershell.exe " + cmd;
     return exec(cmd, {maxBuffer: 10000000}, inner_callback);
@@ -114,21 +119,25 @@ module.exports.runCommandSync = function(cmd) {
   const platform = os.platform();
   if (platform == "darwin" || platform == "linux") {
     const dxToolkitEnvFile = module.exports.dxToolkitEnvironmentFile;
-    // fs.statSync() is only to check if "dx" commands can be sourced.
-    // If it fails other commands can still be run.
-    let stats = fs.statSync(module.exports.dxToolkitEnvironmentFile);
-    if (stats) {
-      cmd = "source " + dxToolkitEnvFile + "; " + cmd;
-    }
+    try {
+      // fs.statSync() is only to check if "dx" commands can be sourced.
+      // If it fails other commands can still be run.
+      let stats = fs.statSync(module.exports.dxToolkitEnvironmentFile);
+      if (stats) {
+        cmd = "source " + dxToolkitEnvFile + "; " + cmd;
+      }
+    } catch (err) {}
     return execSync(cmd, {shell: "/bin/bash", maxBuffer: 10000000});
   } else if (platform == "win32") {
     const dnanexusPSscript = path.join( module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1" );
     // fs.statSync() is only to check if "dx" commands can be sourced.
     // If it fails other commands can still be run.
-    let stats = fs.statSync(dnanexusPSscript);
-    if (stats) {
-      cmd = ".'" + dnanexusPSscript + "'; " + cmd;
-    }
+    try {
+      let stats = fs.statSync(dnanexusPSscript);
+      if (stats) {
+        cmd = ".'" + dnanexusPSscript + "'; " + cmd;
+      }
+    } catch (err) {}
 
     // Warning: the dnanexus-shell.ps1 script used to source environment variables
     // on Windows sends a DNAnexus banner to STDOUT. Banner will be first 3 lines
@@ -166,7 +175,7 @@ module.exports.dxLoggedIn = (callback) => {
 */
 module.exports.dxCheckProjectAccess = (callback) => {
   const platform = os.platform();
-  
+
   if (platform == "linux" || platform == "darwin") {
     this.runCommand("echo '0' | dx select --level UPLOAD", callback);
   } else if (platform == "win32") {
@@ -181,12 +190,12 @@ module.exports.dxCheckProjectAccess = (callback) => {
  * @param {string} dest Path for newly downloaded file
  * @param {Function} callback Callback function
 */
-module.exports.downloadFile = (url, dest, cb) => {
+module.exports.downloadFile = (url, dest, callback) => {
   let file = fs.createWriteStream(dest);
   let request = https.get(url, (response) => {
     response.pipe(file);
     file.on("finish", () => {
-      file.close(cb);
+      file.close(callback);
     });
   });
 };
@@ -350,6 +359,25 @@ module.exports.resetFileStatus = function(file) {
   file.finished = false;
   file.errored = false;
 };
+
+module.exports.saveToFile = function (filename,content) {
+  fs.writeFile( sjcloudHomeDirectory+'/'+filename, content, function(err) {
+    if(err) {
+      return console.log(err);
+    }
+  });
+}
+
+module.exports.readCachedFile = function (filename, callback, defaultContent=null) {
+  fs.readFile( sjcloudHomeDirectory+'/'+filename, function(err,data) {
+    if(err) {
+      console.log(err);
+      if (!defaultContent) return;
+    }
+    
+    callback(data ? data.toString() : defaultContent);
+  });
+}
 
 /** EXPORTS **/
 

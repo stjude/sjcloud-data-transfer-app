@@ -31,19 +31,19 @@ window.dx = {
 	listProjects(allProjects, callback) {
 		callback(null, [{
           project_name: 'Tool-Empty',
-          dx_location: 'test',
+          dx_location: 'x1',
           access_level: 5,
         },{
           project_name: 'Tool-Loading',
-          dx_location: 'test',
+          dx_location: 'x2',
           access_level: 5,
         },{
           project_name: 'Tool-Completed',
-          dx_location: 'test',
+          dx_location: 'x3',
           access_level: 5,
         },{
           project_name: 'Tool-Long-List',
-          dx_location: 'test',
+          dx_location: 'x4',
           access_level: 5,
         },])
 	},
@@ -81,7 +81,11 @@ window.oauth = {
 		return callback(null, "abcxyz");
 	}
 };
-window.state = {};
+window.state = {
+	getState() {
+			
+	}
+};
 window.ui = {};
 window.utils = {
 	openExternal(url) {
@@ -115,7 +119,21 @@ window.utils = {
 	  }
 
 	  return number+" "+units[u];
-	}
+	},
+    readCachedFile(filename,callback) {
+      callback('{}');
+    },
+    saveToFile() {
+      
+    }
 };
+window.queue={
+	addToolInfoTask(task,callback) {
+	  if (typeof callback=='function') callback(null,{});
+	},
+	removeAllTaskOfType(type) {
+
+	}
+}
 
 

@@ -21,10 +21,10 @@
 				<table style='margin-top:40px'>
 					<tbody>
 						<tr v-for='tool in tools'
-								v-bind:style='tool.name==currTool.name ? styles.activeTr : styles.inactiveTr' 
-								v-on:click='setCurrTool(tool.name)'>
+								v-bind:style='tool.dx_location==currTool.dx_location ? styles.activeTr : styles.inactiveTr' 
+								v-on:click='setCurrTool(tool.dx_location)'>
 							<td style='width:70%'>{{ tool.name }} <span v-show="tool.isSJCPTool" class="badge">TOOL</span></td>
-							<td v-bind:style='tool.name==currTool.name ? styles.activeTd : styles.inactiveTd'>
+							<td v-bind:style='tool.dx_location==currTool.dx_location ? styles.activeTd : styles.inactiveTd'>
 								{{tool.size && tool.size !== 0 && tool.size !== '' ? tool.size : 'Loading...'}}
 							</td>
 						</tr>
@@ -150,7 +150,11 @@ export default {
 	max-height: 478px;
 	margin-top: 20px;
 	padding-bottom: 20px;
-	overflow: scroll;
+	overflow: hidden;
+}
+
+.left-panel-table-container:hover {
+	overflow: auto;
 }
 
 .left-panel table {

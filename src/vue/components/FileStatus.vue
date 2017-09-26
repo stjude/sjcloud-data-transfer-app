@@ -21,33 +21,40 @@
 				</tr>
 			</thead>
 		</table>
-		<table style='width:570px; margin-top:28px' id='sjcda-file-table-body'>
-			<tbody>
-				<tr v-for='file in files'>
-					<td class='cellCheckBox' v-on:click.stop='toggleFileChecked(file)'>
-						<input type="checkbox" :checked='file.checked' :disabled='file.finished'/>
-					</td>
-					<td class='cellFileName' style='text-align:left;padding-left:10px' v-html='matchedStr(file.name)'></td>
-					<td class='cellFileSize' v-html='matchedStr(file.size)'></td>
-					<td class='cellStatus'>
-						<div v-if="file.finished" style='height:20px;overflow:hidden'>
-							<i style="color: #4F8A10; font-size:20px; line-height:20px" class="material-icons">check_circle</i>
-						</div>
-						<div v-else-if="file.errored" style='height:20px;overflow:hidden'>
-							<i style="color: #DD0000; font-size:20px; line-height:20px" class="material-icons">error</i>
-						</div>
-						<div v-else-if="file.started && file.status == 0">Starting...</div>
-						<div v-else-if="file.started" class='sjcda-progress-outline'>
-							<div class='sjcda-progress-filled' 
-								v-bind:style="progressStyle(file)"></div>
-						</div>
-						<div v-else-if="file.waiting">
-							Waiting...
-						</div>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+		<div id='sjcda-file-table-body-div' v-bind:style='tBodyDivStyle'>
+			<table id='sjcda-file-table-body'>
+				<tbody>
+					<tr v-for='file in files'>
+						<td class='cellCheckBox' v-on:click.stop='toggleFileChecked(file)'>
+							<input type="checkbox" :checked='file.checked' :disabled='file.finished'/>
+						</td>
+						<td class='cellFileName' style='text-align:left;padding-left:10px' v-html='matchedStr(file.name)'></td>
+						<td class='cellFileSize' v-html='matchedStr(file.size)'></td>
+						<td class='cellStatus'>
+							<div v-if="file.finished" style='height:20px;overflow:hidden'>
+								<i style="color: #4F8A10; font-size:20px; line-height:20px" class="material-icons">check_circle</i>
+							</div>
+							<div v-else-if="file.errored" style='height:20px;overflow:hidden'>
+								<i style="color: #DD0000; font-size:20px; line-height:20px" class="material-icons">error</i>
+							</div>
+							<div v-else-if="file.started && file.status == 0">Starting...</div>
+							<div v-else-if="file.started" class='sjcda-progress-outline'>
+								<div class='sjcda-progress-filled' 
+									v-bind:style="progressStyle(file)"></div>
+							</div>
+							<div v-else-if="file.waiting">
+								Waiting...
+							</div>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+		<div style='margin-top:5px; padding-left:40px' v-show='showSelectionTotals==1'>
+			<span v-if="numSelectedFiles > 0">
+				{{ numSelectedFiles }} of {{ files.length }} files selected ({{ sizeSelectedFiles }})
+			</span>
+		</div>
 		<div v-show="noFilesMatched"
 			style='width:100%; text-align:center; padding: 20px;'>
 			No matching files found for the search term.
@@ -68,6 +75,11 @@ export default {
 	components: {
 		SortArrows
 	},
+	props: {
+		showSelectionTotals: {
+			default: 0
+		}
+	},
 	data() {
 		return {
 			checkedAll: false,
@@ -84,6 +96,16 @@ export default {
 			return !this.$store.getters.noProjectsFound &&
 				this.$store.getters.searchTerm && 
 				!this.$store.getters.currFiles.length
+		},
+		numSelectedFiles() {
+			return this.$store.getters.checkedFiles.length
+		},
+		sizeSelectedFiles() {
+			return window.utils.readableFileSize(this.$store.getters.checkedFiles
+					.reduce((a,b)=>a + b.raw_size, 0))
+		},
+		tBodyDivStyle() {
+			return this.showSelectionTotals==1 ? {'max-height':'352px'} : {'max-height':'380px'}
 		}
 	},
 	methods: {
@@ -122,11 +144,26 @@ export default {
 <style scoped>
 #fileStatusDiv {
 	margin-top:18px;
-	height: 410px;
-	overflow: scroll;
+	height: 412px;
+	overflow: hidden;
 	font-family: 'Lato';
 	color: #222222;
 	/* border-bottom: 1px solid #ccc; */
+}
+
+#fileStatusDiv:hover {
+	overflow: auto;
+}
+
+#sjcda-file-table-body-div {
+	overflow: auto;
+	margin:28px 0 0 0; 
+	padding:0; 
+	overflow-y:auto;
+}
+
+#sjcda-file-table-body {
+	width: 570px;
 }
 
 table {
@@ -157,7 +194,7 @@ td {
 
 .cellFileName {
 	width: 340px;
-	overflow: scroll;
+	overflow: auto;
 }
 
 .cellFileSize {

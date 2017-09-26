@@ -5,13 +5,27 @@
 					 src="img/stjude-logo-child-white.png"
 					 @click='goHome'>
 		</div>
-		<span class="bold-font" @click='goHome'>ST. JUDE CLOUD</span>
-		<span class="lighter-font" @click='goHome'>PLATFORM</span>
+	    <div class="sjcda-title-container">
+	      <span class="title-font" @click='goHome'>St. Jude Cloud</span>
+	      <span class="title-font-thin" @click='goHome'>Platform</span>
+	    </div>
+	    <span id='logout-btn' 
+	    	class='btn btn-sm' 
+	    	style='float:right; margin: 6px 10px 0 0'
+	    	v-show='showLogoutBtn'
+	    	@click='logout'>
+	    	Logout
+	    </span>
 	</div>
 </template>
 
 <script>
 export default {
+	computed: {
+		showLogoutBtn() {
+			return this.$route.path=='/download' || this.$route.path=='/upload'
+		}
+	},
 	methods: {
 		goHome() {
 			if (this.$store.getters.environment === "dev") {
@@ -19,6 +33,11 @@ export default {
 			} else {
 				console.error("Tried to go home, but we are not in 'dev' mode!");
 			}
+		},
+		logout() {
+      window.dx.logout((err, result) => {
+        console.log('log-out the user!')
+      });
 		}
 	}
 }
@@ -26,15 +45,16 @@ export default {
 
 <style>
 .sjcda-top-bar {
-	background-color: #2A8BB6;
+	/* background-color: #2A8BB6; */
+	background-color: #1381B3;
 	border-width: 3px;
 	border-style: solid;
 	border-color: #1381B3;
 	color: #FFFFFF;
 	cursor: default;
 	display: inline-block; 
-	font-family: "Lato", "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 24px; 
+	font-family: "Open Sans", "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
+	font-size: 22px; 
 	height: 60px;
 	padding-top: 0.3rem; 
 	vertical-align: top; 
@@ -44,18 +64,36 @@ export default {
 
 .sjcda-top-bar__logo_container {
 	display: inline-block;
-	margin-left: 5px;
+	margin-left: 2px;
 }
 
 .sjcda-top-bar__logo {
-	height: 50px;
+  margin-top: 2px;
+  padding: 5px;
+  padding-right: 8px;
+	height: 47px;
+  border-right: 1px solid #7DBAD5;
 }
 
-.bold-font {
-	font-weight: bold;
+.sjcda-title-container {
+  display: inline;
+  margin-left: 15px;
+  margin-top: 7px;
 }
 
-.lighter-font {
-	font-weight: lighter;
+#logout-btn {
+	padding: 5px 10px;
+	font-size: 12px;
+	line-height: 1.5;
+	border-radius: 3px;
+}
+
+.title-font {
+	font-weight: 800;
+}
+
+.title-font-thin {
+	font-weight: 300;
+  color: #A1CDE1;
 }
 </style>

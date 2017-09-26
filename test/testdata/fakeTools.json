@@ -1,12 +1,14 @@
 [
   {
     "name": "Tool-Empty",
+    "dx_location": "x1",
     "size": "999 MB",
     "upload": [],
     "download": []
   },
   {
     "name": "Tool-Loading",
+    "dx_location": "x2",
     "size": "55.5 MB",
     "upload": [
       {
@@ -177,6 +179,7 @@
   },
   {
     "name": "Tool-Completed",
+    "dx_location": "x3",
     "size": "696 MB",
     "upload": [
       {
@@ -260,6 +263,7 @@
   },
   {
     "name": "Tool-Long-List",
+    "dx_location": "x4",
     "size": "800 MB",
     "upload": [
       {
@@ -660,6 +664,7 @@
   },
   {
     "name": "Warden Differential Expression",
+    "dx_location": "x5",
     "size": "99.9 GB",
     "isSJCPTool": true,
     "upload": [
@@ -744,6 +749,7 @@
   },
   {
     "name": "Tool-Completed-b",
+    "dx_location": "x6",
     "size": "88.8 GB",
     "upload": [
       {
@@ -827,6 +833,7 @@
   },
   {
     "name": "Tool-Completed-c",
+    "dx_location": "x7",
     "size": "999 MB",
     "upload": [
       {
@@ -910,6 +917,7 @@
   },
   {
     "name": "Tool-Completed-d",
+    "dx_location": "x8",
     "size": "55.5 MB",
     "upload": [
       {
@@ -993,6 +1001,7 @@
   },
   {
     "name": "Tool-Completed-e",
+    "dx_location": "x9",
     "size": "333 MB",
     "upload": [
       {
@@ -1076,6 +1085,7 @@
   },
   {
     "name": "Tool-Completed-f",
+    "dx_location": "x10",
     "size": "555 MB",
     "upload": [
       {
@@ -1158,7 +1168,8 @@
     ]
   },
   {
-    "name": "Tool-Completed-g",
+    "name": "Tool-Completed-g",    
+    "dx_location": "x11",
     "size": "444 MB",
     "upload": [
       {
