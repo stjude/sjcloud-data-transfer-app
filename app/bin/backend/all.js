@@ -1,4 +1,4 @@
-if (window.location.port != "3057" && !window.testdata) {
+if (window.location.port != "3057" && window.location.port != "9876"  && !window.testdata) {
   // electron app
   window.dx = require("./bin/backend/dx");
   window.queue = require("./bin/backend/queue");
@@ -12,7 +12,9 @@ if (window.location.port != "3057" && !window.testdata) {
   //
   // TO-DO: figure out a way to use this from the test directory as helper functions
   //
-  const testdata=window.testdata ? window.testdata : window.location.search.split("testdata=")[1];
+  const testdata=window.testdata ? window.testdata 
+    : window.location.search ? window.location.search.split("testdata=")[1]
+    : 'fakeTools';
 
   window.dx = {
       getToolsInformation(showAllProjects, showAllFiles, callback) {
@@ -47,7 +49,7 @@ if (window.location.port != "3057" && !window.testdata) {
             arr.forEach((elem,i)=>{
               let item = {
                 name: elem.name,
-                dx_location: elem.name+'---'+i,
+                dx_location: 'dx_location' in elem ? elem.dx_location : elem.name+'---'+i,
                 access_level: 5,
                 size: elem.size,
                 upload: elem.upload,
@@ -89,7 +91,7 @@ if (window.location.port != "3057" && !window.testdata) {
                     f.describe={
                       name: f.name,
                       size: f.raw_size,
-                      dx_location: f.name+'---'+i
+                      dx_location:  'dx_location' in f ? f.dx_location : f.name+'---'+i
                     };
                   });
                 });
@@ -151,10 +153,17 @@ if (window.location.port != "3057" && !window.testdata) {
       return number+" "+units[u];
     },
     readCachedFile(filename,callback) {
-      callback('{}');
+      callback('{"showAllFiles":true,"showAllProjects":true,"concurrentOperations":2}');
     },
     saveToFile() {
       
+    },
+    resetFileStatus(file) {
+      file.status = 0;
+      file.waiting = false;
+      file.started = false;
+      file.finished = false;
+      file.errored = false;
     }
   };
   window.queue={
@@ -162,6 +171,9 @@ if (window.location.port != "3057" && !window.testdata) {
       if (typeof callback=='function') callback(null,{});
     },
     removeAllTaskOfType(type) {
+
+    },
+    addDownloadTask(file) {
 
     }
   }
