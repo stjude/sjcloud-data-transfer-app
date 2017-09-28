@@ -77,6 +77,9 @@ if (window.location.port != "3057" && !window.testdata) {
     describeDXItem(dnanexusId, callback) {
 
     },
+    logout(callback) {
+      callback()
+    }
   };
 	window.oauth = {
 		getToken(internal, callback) {

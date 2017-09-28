@@ -36,7 +36,8 @@ export default {
 		},
 		logout() {
 	      window.dx.logout((err, result) => {
-	        console.log('log-out the user!');
+	      	this.$store.commit('setLoginState','waiting');
+	        this.$router.replace('/login');
 	      });
 		}
 	}
