@@ -56,6 +56,7 @@ if (window.location.port != "3057" && !window.testdata) {
         callback(null, []);
       } else {
         setTimeout(()=>{
+          // !!! Requires a symlink to test/testdata via app/testdata
           fetch("testdata/"+testdata+".json")
             .then((response)=>response.json())
             .then((arr)=>{

@@ -77,6 +77,7 @@ module.exports = function(env={}) {
 	    new BrowserSyncPlugin({
 	      host: "localhost",
 	      port: 3057,
+	      // requires symlink to test/tesdata via app/testdata
 	      startPath: '?testdata=fakeTools',
 	      server: {baseDir: ["app"]},
 	    }),

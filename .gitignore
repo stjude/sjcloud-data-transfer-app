@@ -5,3 +5,6 @@ app/bin/frontend/*
 **/.DS_Store
 
 package-lock.json
+
+# developer specific symlink to [project-path/]test/testdata 
+app/testdata
