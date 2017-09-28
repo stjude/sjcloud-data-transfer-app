@@ -1,4 +1,4 @@
-if (window.location.host != "localhost:3057" && !window.testdata) {
+if (window.location.port != "3057" && !window.testdata) {
   // electron app
   window.dx = require("./bin/backend/dx");
   window.queue = require("./bin/backend/queue");
