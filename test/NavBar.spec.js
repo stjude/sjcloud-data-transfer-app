@@ -1,5 +1,6 @@
 import {select, selectAll, event} from 'd3-selection';
 import './www-init.js';
+import '../app/bin/backend/all.js';
 import '../app/bin/frontend/app.bundle.css';
 import _App from '../app/src/frontend/vue/main.js';
 
@@ -8,6 +9,7 @@ describe('NavBar search', function () {
 	holder.append('div').attr('id','navbaraaa');
 	let app
 	beforeAll(function (done) {
+		window.testdata='fakeTools';
 		app=_App('#navbaraaa');
 		app.$router.push('/download');
 		// note: simulated data load is delayed by 500 ms

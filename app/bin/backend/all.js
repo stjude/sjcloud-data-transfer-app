@@ -1,4 +1,4 @@
-if (window.location.port != "3057" && window.location.port != "9876"  && !window.testdata) {
+if (0) { //(window.location.port != "3057" && window.location.port != "9876"  && !window.testdata) {
   // electron app
   window.dx = require("./bin/backend/dx");
   window.queue = require("./bin/backend/queue");
@@ -55,7 +55,7 @@ if (window.location.port != "3057" && window.location.port != "9876"  && !window
                 upload: elem.upload,
                 download: elem.download,
                 loadedAvailableDownloads: true,
-                isSJCPTool: false,
+                isSJCPTool: 'isSJCPTool' in elem ? elem.isSJCPTool : false,
                 SJCPToolURL: "",
               };
 

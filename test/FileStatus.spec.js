@@ -10,7 +10,7 @@ describe('FileStatus table for an empty project', function () {
 	let app
 	beforeAll(function (done) {
 		window.testdata='fakeTools';
-		app=_App('#fsaaa',{},'');
+		app=_App('#fsaaa',{"showAllFiles":true,"showAllProjects":true});
 		app.$router.push('/download');
 		setTimeout(()=>{
 			app.$store.commit('setCurrToolName','x1');
@@ -52,8 +52,10 @@ describe('FileStatus table for a project with pending downloads', function () {
 	});
 
 	it('should have 9 rows of listed files', function (done) {
-		expect(select('#sjcda-file-table-body').selectAll('tr').size()).toEqual(9);
-		done();
+		setTimeout(()=>{
+			expect(select('#sjcda-file-table-body').selectAll('tr').size()).toEqual(9);
+			done();
+		},500);
 	});
 
 	it('should have 2 empty status cells', function (done) {
@@ -118,6 +120,7 @@ describe('FileStatus table for a project with completed transfer', function () {
 	let app
 	
 	beforeAll(function (done) {
+		window.testdata='fakeTools';
 		app=_App('#fsccc');
 		app.$router.push('/download');
 		setTimeout(()=>{
