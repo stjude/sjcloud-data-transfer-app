@@ -9,100 +9,125 @@ if (window.location.port != "3057" && !window.testdata) {
 } else {
   // for regular browser based testing only
   // mostly for simplified testing of styles, work flow
-  window.dx = {
-    getToolsInformation(showAllProjects, showAllFiles, callback) {
-      if (!window.location.search) return [];
-      // to-do: write more elegantly
-      setTimeout(()=>{
-        fetch("testdata/"+testdata+".json")
-          .then((response)=>response.json())
-          .then(callback)
-          .catch((err)=>console.log(err));
-      }, 500);
-    },
-    install(updateProgress, failProgress, callback) {
-      updateProgress("30%", "Downloading...");
+  //
+  // TO-DO: figure out a way to use this from the test directory as helper functions
+  //
+  const testdata=window.testdata ? window.testdata : window.location.search.split("testdata=")[1];
 
-      setTimeout(()=>{
-        updateProgress("100%", "Success!");
-            return callback(null, true);
-      }, 1500);
-    },
-    login(token, callback) {
-      setTimeout(callback, 1500);
-    },
-    listProjects(allProjects, callback) {
-      callback(null, [{
-            project_name: "Tool-Empty",
-            dx_location: "x1",
-            access_level: 5,
-          }, {
-            project_name: "Tool-Loading",
-            dx_location: "x2",
-            access_level: 5,
-          }, {
-            project_name: "Tool-Completed",
-            dx_location: "x3",
-            access_level: 5,
-          }, {
-            project_name: "Tool-Long-List",
-            dx_location: "x4",
-            access_level: 5,
-          }]);
-    },
-    listDownloadableFiles(projectId, allFiles, callback) {
-      const testdata=window.testdata ? window.testdata : window.location.search.split("testdata=")[1];
-      if (!testdata) {
-        callback(null, []);
-      } else {
+  window.dx = {
+      getToolsInformation(showAllProjects, showAllFiles, callback) {
+        if (!window.location.search) return [];
+        // to-do: write more elegantly
         setTimeout(()=>{
-          // !!! Requires a symlink to test/testdata via app/testdata
           fetch("testdata/"+testdata+".json")
             .then((response)=>response.json())
-            .then((arr)=>{
-              arr.forEach((t)=>{
-                t.download.forEach((f)=>{
-                  f.describe={
-                    name: f.name,
-                    size: f.raw_size,
-                  };
-                });
-              });
-              callback(null, arr);
-            })
+            .then(callback)
             .catch((err)=>console.log(err));
         }, 500);
-      }
-    },
-    describeDXItem(dnanexusId, callback) {
+      },
+      install(updateProgress, failProgress, callback) {
+        updateProgress("30%", "Downloading...");
 
-    },
-    logout(callback) {
-      callback()
+        setTimeout(()=>{
+          updateProgress("100%", "Success!");
+              return callback(null, true);
+        }, 1500);
+      },
+      login(token, callback) {
+        setTimeout(callback, 1500);
+      },
+      listProjects(showAllProjects, callback) { 
+        if (!window.VueApp) return;
+
+        // !!! Requires a symlink to test/testdata via app/testdata
+        fetch("testdata/"+testdata+".json")
+          .then((response)=>response.json())
+          .then((arr)=>{
+            const tools=[]
+            arr.forEach((elem,i)=>{
+              let item = {
+                name: elem.name,
+                dx_location: elem.name+'---'+i,
+                access_level: 5,
+                size: elem.size,
+                upload: elem.upload,
+                download: elem.download,
+                loadedAvailableDownloads: true,
+                isSJCPTool: false,
+                SJCPToolURL: "",
+              };
+
+              item.download.forEach((f,i)=>{
+                f.describe={
+                  name: f.name,
+                  size: f.raw_size,
+                  dx_location: f.name+'---'+i
+                };
+              });
+
+              tools.push(item);
+              if (i===0) window.VueApp.$store.commit('setCurrToolName',item.dx_location);
+            });
+
+            window.VueApp.$store.commit('setTools',tools);
+          })
+          .catch((err)=>console.log(err));
+      },
+      listDownloadableFiles(projectId, allFiles, callback) {
+        if (!window.VueApp) return;
+
+        if (!testdata) {
+          callback(null, []);
+        } else {
+          setTimeout(()=>{
+            // !!! Requires a symlink to test/testdata via app/testdata
+            fetch("testdata/"+testdata+".json")
+              .then((response)=>response.json())
+              .then((arr)=>{
+                arr.forEach((t)=>{
+                  t.download.forEach((f,i)=>{
+                    f.describe={
+                      name: f.name,
+                      size: f.raw_size,
+                      dx_location: f.name+'---'+i
+                    };
+                  });
+                });
+                window.VueApp.$store.commit('addFiles',arr);
+              })
+              .catch((err)=>console.log(err));
+          }, 500);
+        }
+      },
+      describeDXItem(dnanexusId, callback) {
+
+      },
+      logout(callback) {
+        callback()
+      }
+  };
+  window.oauth = {
+    getToken(internal, callback) {
+      return callback(null, "abcxyz");
     }
   };
-	window.oauth = {
-		getToken(internal, callback) {
-			return callback(null, "abcxyz");
-		}
-	};
-	window.state = {
-		getState() {
-			
-		}
-	};
-	window.ui = {};
-	window.utils = {
-		openExternal(url) {
-			window.open(url,'_blank')
-		},
-		readableFileSize(bytes, roundNumbers=false) {
-		  if (isNaN(bytes)) {
-		    return "0 B";
-		  }
-		  if (bytes === 0) {
-		    return "0 GB";
-		  }
+  window.state = {
+    getState() {
+      
+    }
+  };
+  window.ui = {};
+  window.utils = {
+    openExternal(url) {
+      window.open(url,'_blank')
+    },
+    readableFileSize(bytes, roundNumbers=false) {
+      if (isNaN(bytes)) {
+        return "0 B";
+      }
+      if (bytes === 0) {
+        return "0 GB";
+      }
 
       let thresh = 1000;
       if (Math.abs(bytes) < thresh) {

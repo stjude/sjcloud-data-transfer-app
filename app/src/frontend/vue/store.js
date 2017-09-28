@@ -299,20 +299,8 @@ export default function getVuexStore(cachedState={}) {
           window.dx.listDownloadableFiles(
             tool.dx_location,
             state.showAllFiles,
+            // this is not called in browser testing mode
             (err, files) => {
-              /* TO-DO: there must be a better place for this test data handling */
-              if (window.location.port == "3057" || window.testdata) {
-                state.tools.splice(0, state.tools.length, ...files);
-                tool.loadedAvailableDownloads = true;
-                tool.download = state.tools.filter((t) => {
-                  t.raw_size = t.size;
-                  t.waiting = 0;
-                  t.started = false;
-                  return t.dx_location == toolName;
-                })[0].download;
-                return;
-              }
-
               let downloadableFiles = [];
 
               files.forEach((elem) => {
