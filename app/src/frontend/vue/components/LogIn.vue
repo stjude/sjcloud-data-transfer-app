@@ -36,12 +36,12 @@
 			</div>
 			<div v-show="loginState == 'completed'" class='theater-body'>
 				<div class="col-xs-12">
-					<step-outcome successMessage='Authenticated!' outcome='done'></step-outcome>
+					<step-outcome successMessage='Authenticated!' outcome='done' tooltipText='_empty_tip_'></step-outcome>
 				</div>
 			</div>
 			<div v-show="loginState == 'failed'" class='theater-body'>
 				<div class="col-xs-12">
-					<step-outcome failureMessage='Failed!' outcome='error'></step-outcome>
+					<step-outcome failureMessage='Failed!' outcome='error' tooltipText='_empty_tip_'></step-outcome>
 					<div style="margin-top: 20px">
 						<div @click="setLoginState('waiting')" class="btn btn-large btn-stjude" style="margin-top:20px">Retry</div>
 					</div>
