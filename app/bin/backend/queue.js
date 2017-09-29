@@ -59,7 +59,7 @@ function downloadTask(task, callback) {
   );
 
   window.VueApp.$store.commit("addOperationProcess", {
-    filename: task.name,
+    filename: task.remote_location,
     process,
   });
 };

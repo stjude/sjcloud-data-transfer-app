@@ -386,7 +386,7 @@ export default function getVuexStore(cachedState={}) {
         tool[state.currPath] = [];
       },
       cancelCheckedFiles(state) {
-        const tool = state.tools.filter((t) => t._dx_location === state.currToolName)[0];
+        const tool = state.tools.filter((t) => t.dx_location === state.currToolName)[0];
         if (!tool || !tool[state.currPath]) {
           console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
           return;
@@ -395,7 +395,7 @@ export default function getVuexStore(cachedState={}) {
         let files = tool[state.currPath].filter((t) => t.checked && t.started && !t.finished);
         files.forEach((elem) => {
           elem.cancelled = true;
-          let process = state.operationProcesses[elem.name];
+          let process = state.operationProcesses[elem.dx_location];
           window.utils.killProcess(process.pid);
         });
       },

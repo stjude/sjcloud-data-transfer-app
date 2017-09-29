@@ -132,7 +132,7 @@ export default {
 
 				let task = {
 					_rawFile: file,
-					name: file.dx_location,
+          name: file.name,
 					raw_size: file.raw_size,
 					local_location: downloadLocation,
 					remote_location: file.dx_location,
