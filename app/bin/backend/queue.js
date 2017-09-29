@@ -32,7 +32,7 @@ function downloadTask(task, callback) {
     },
     (err, result) => {
       window.VueApp.$store.commit("removeOperationProcess", {
-        filename: task.name,
+        filename: task.remote_location,
       });
 
       if (err) {

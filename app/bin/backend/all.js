@@ -1,4 +1,4 @@
-if (0) { //(window.location.port != "3057" && window.location.port != "9876"  && !window.testdata) {
+if (window.location.port != "3057" && window.location.port != "9876"  && !window.testdata) {
   // electron app
   window.dx = require("./bin/backend/dx");
   window.queue = require("./bin/backend/queue");
@@ -63,8 +63,15 @@ if (0) { //(window.location.port != "3057" && window.location.port != "9876"  &&
                 f.describe={
                   name: f.name,
                   size: f.raw_size,
-                  dx_location: f.name+'---'+i
                 };
+                f.status = 0;
+                f.checked = false;
+                f.waiting = false;
+                f.started = false;
+                f.finished = false;
+                f.cancelled = false;
+                f.dx_location=f.name+'---'+i;
+                f.aaaaa='me'
               });
 
               tools.push(item);
@@ -81,7 +88,7 @@ if (0) { //(window.location.port != "3057" && window.location.port != "9876"  &&
         if (!testdata) {
           callback(null, []);
         } else {
-          setTimeout(()=>{
+          /*setTimeout(()=>{
             // !!! Requires a symlink to test/testdata via app/testdata
             fetch("testdata/"+testdata+".json")
               .then((response)=>response.json())
@@ -90,15 +97,16 @@ if (0) { //(window.location.port != "3057" && window.location.port != "9876"  &&
                   t.download.forEach((f,i)=>{
                     f.describe={
                       name: f.name,
-                      size: f.raw_size,
-                      dx_location:  'dx_location' in f ? f.dx_location : f.name+'---'+i
+                      size: f.raw_size
                     };
+                    f.dx_location='dx_location' in f ? f.dx_location : f.name+'---'+i
                   });
+                   console.log(f.dx_location)
                 });
                 window.VueApp.$store.commit('addFiles',arr);
               })
               .catch((err)=>console.log(err));
-          }, 500);
+          }, 500);*/
         }
       },
       describeDXItem(dnanexusId, callback) {
@@ -173,8 +181,47 @@ if (0) { //(window.location.port != "3057" && window.location.port != "9876"  &&
     removeAllTaskOfType(type) {
 
     },
-    addDownloadTask(file) {
-
+    addDownloadTask(task) {
+      const file=task._rawFile;
+      if (file.started || file.finished) {
+        return;
+      }
+      numTaskAdded++;
+      fakeProgress(file);
+      window.VueApp.$store.commit("addOperationProcess", {
+        filename: file.dx_location
+      });
     }
+  }
+
+  let numTaskAdded=0;
+  let numTaskCompleted=0;
+  
+  function fakeProgress(file) {
+    file.started=false;
+    const i=setInterval(()=>{
+      if (file.status<100) {
+        file.status = currStatus(file.status);
+        file.started = true;
+      }
+      else {
+        file.waiting=false;
+        file.finished=true;
+        file.checked=true;
+        numTaskCompleted++;
+        clearInterval(i);
+        if (numTaskCompleted>numTaskAdded) {
+          console.log('More tasks completed than added: '+numTaskCompleted +' vs '+ numTaskAdded +'.')
+        }
+        window.VueApp.$store.commit("removeOperationProcess", {
+          filename: file.dx_location
+        });
+      }
+    }, 500);
+  }
+
+  function currStatus(status) {
+    const s=status + Math.ceil(Math.random()*(10-2)+2);
+    return s > 100 ? 100 : s;
   }
 }

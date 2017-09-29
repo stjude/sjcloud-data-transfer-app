@@ -368,7 +368,7 @@ export default function getVuexStore(cachedState={}) {
         });
       },
       removeCheckedFiles(state) {
-        const tool = state.tools.filter((t) => t.dx_locatin === state.currToolName)[0];
+        const tool = state.tools.filter((t) => t.dx_location === state.currToolName)[0];
         if (!tool || !tool[state.currPath]) {
           console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
           return;
