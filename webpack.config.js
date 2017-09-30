@@ -54,9 +54,9 @@ module.exports = function(env={}) {
 
   const frontend = {
 	  entry: {
-	    app: ["./src/vue/main.js"],
+	    app: ["./app/src/frontend/vue/main.js"],
 	    vendor: ["vue", "vue-router", "jquery", "tippy.js"],
-	    less: ["./src/css/app.less"],
+	    less: ["./app/src/frontend/css/app.less"],
 	  },
 	  output: {
 	    path: __dirname + "/app/bin/frontend",
@@ -77,6 +77,8 @@ module.exports = function(env={}) {
 	    new BrowserSyncPlugin({
 	      host: "localhost",
 	      port: 3057,
+	      // requires symlink to test/tesdata via app/testdata
+	      startPath: '?testdata=fakeTools',
 	      server: {baseDir: ["app"]},
 	    }),
 	    new WebpackNotifierPlugin(),

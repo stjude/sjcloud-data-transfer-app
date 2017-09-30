@@ -1,6 +1,6 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import Config from "../../config.json";
+import Config from "../../../../config.json";
 import globToRegExp from "glob-to-regexp";
 
 Vue.use(Vuex);
@@ -8,7 +8,7 @@ Vue.use(Vuex);
 /** Plugins **/
 const projectToolScopeWatcher = (store) => {
   store.subscribe((mutation, state) => {
-    // console.log(mutation);
+    console.log(mutation);
 
     if (mutation.type === "setShowAllFiles") {
       store.dispatch("refreshFiles");
@@ -19,6 +19,11 @@ const projectToolScopeWatcher = (store) => {
       window.queue.removeAllTaskOfType("toolInfo");
       store.dispatch("updateToolsFromRemote", true);
       cacheState(state);
+    }
+
+    if (mutation.type === "setURIProject") {
+      console.log("URI project set!");
+      store.commit("setCurrToolName", getters.uriProject, true);
     }
   });
 };
@@ -299,20 +304,8 @@ export default function getVuexStore(cachedState={}) {
           window.dx.listDownloadableFiles(
             tool.dx_location,
             state.showAllFiles,
+            // this is not called in browser testing mode
             (err, files) => {
-              /* TO-DO: there must be a better place for this test data handling */
-              if (window.location.host == "localhost:3057" || window.testdata) {
-                state.tools.splice(0, state.tools.length, ...files);
-                tool.loadedAvailableDownloads = true;
-                tool.download = state.tools.filter((t) => {
-                  t.raw_size = t.size;
-                  t.waiting = 0;
-                  t.started = false;
-                  return t.dx_location == toolName;
-                })[0].download;
-                return;
-              }
-
               let downloadableFiles = [];
 
               files.forEach((elem) => {
@@ -339,11 +332,12 @@ export default function getVuexStore(cachedState={}) {
               tool.loadedAvailableDownloads = true;
               tool.download = downloadableFiles;
 
-              if (removeURI) {
-                state.uriProject = "";
-              }
             }
           );
+        }
+
+        if (removeURI) {
+          state.uriProject = "";
         }
       },
       setCurrPath(state, path) {
@@ -380,7 +374,7 @@ export default function getVuexStore(cachedState={}) {
         });
       },
       removeCheckedFiles(state) {
-        const tool = state.tools.filter((t) => t.dx_locatin === state.currToolName)[0];
+        const tool = state.tools.filter((t) => t.dx_location === state.currToolName)[0];
         if (!tool || !tool[state.currPath]) {
           console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
           return;
@@ -398,17 +392,28 @@ export default function getVuexStore(cachedState={}) {
         tool[state.currPath] = [];
       },
       cancelCheckedFiles(state) {
-        const tool = state.tools.filter((t) => t._dx_location === state.currToolName)[0];
+        const tool = state.tools.filter((t) => t.dx_location === state.currToolName)[0];
         if (!tool || !tool[state.currPath]) {
           console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
           return;
         }
 
         let files = tool[state.currPath].filter((t) => t.checked && t.started && !t.finished);
-        files.forEach((elem) => {
+        files.forEach( (elem) => {
           elem.cancelled = true;
-          let process = state.operationProcesses[elem.name];
-          window.utils.killProcess(process.pid);
+          let process = null;
+          if (state.currPath === "upload") {
+            process = state.operationProcesses[elem.path];
+          } else if (state.currPath === "download") {
+            process = state.operationProcesses[elem.dx_location];
+          }
+          
+          if (process) {
+            console.log("Killing", state.currPath, "process:", process.pid);
+            window.utils.killProcess(process.pid);
+          } else {
+            console.log("Process does not exist!");
+          }
         });
       },
       setSearchTerm(state, term) {
@@ -516,12 +521,8 @@ export default function getVuexStore(cachedState={}) {
                   };
                 }
 
-                if (getters.uriProject) {
-                  commit("setCurrToolName", getters.uriProject, true);
-                } else {
-                  if (resetCurrToolName) {
-                    commit("setCurrToolName", tools[0].dx_location);
-                  }
+                if (resetCurrToolName) {
+                  commit("setCurrToolName", tools[0].dx_location);
                 }
 
                 tools.forEach((elem) => {

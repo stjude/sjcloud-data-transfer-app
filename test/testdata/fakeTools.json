@@ -413,7 +413,7 @@
         "finished": false
       },
       {
-        "name": "file_c1",
+        "name": "file_c1--duplicate",
         "raw_size": 999000000,
         "size": "999 MB",
         "status": 0,
@@ -421,7 +421,7 @@
         "finished": false
       },
       {
-        "name": "file_c2",
+        "name": "file_c1--duplicate",
         "raw_size": 999000,
         "size": "999 KB",
         "status": 0,

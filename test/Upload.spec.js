@@ -1,13 +1,15 @@
 import {select, selectAll, event} from 'd3-selection';
 import './www-init.js';
+import '../app/bin/backend/all.js';
 import '../app/bin/frontend/app.bundle.css';
-import _App from '../src/vue/main.js';
+import _App from '../app/src/frontend/vue/main.js';
 
 describe('Upload panel for an empty project', function () {
 	const holder=select('body').append('div')
 	holder.append('div').attr('id','uploadaaa');
 	let app
 	beforeAll(function (done) {
+		window.testdata='fakeTools';
 		app=_App('#uploadaaa');
 		app.$router.push('/upload');
 		setTimeout(()=>{
@@ -41,6 +43,7 @@ describe('Upload panel for a project with completed transfer', function () {
 	let app
 	
 	beforeAll(function (done) {
+		window.testdata='fakeTools';
 		app=_App('#uploadccc');
 		app.$router.push('/upload');
 		 // note: simulated data load is delayed by 500 ms
@@ -64,15 +67,17 @@ describe('Upload panel for a project with completed transfer', function () {
 	});
 
 	it('should display two buttons', function (done) {
-		expect(holder
-			.selectAll('button')
-			.selectAll('.material-icons')
-			.filter(function(d){
-				const html=select(this).html().trim();
-				return html=='cloud_upload' || html=='open_in_browser'
-			})
-			.size())
-		.toEqual(2);
+		setTimeout(()=>{
+			expect(holder
+				.selectAll('button')
+				.selectAll('.material-icons')
+				.filter(function(d){
+					const html=select(this).html().trim();
+					return html=='cloud_upload' || html=='open_in_browser'
+				})
+				.size())
+			.toEqual(2);
+		});
 		
 		done();
 	});

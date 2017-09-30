@@ -1,13 +1,15 @@
 import {select, selectAll, event} from 'd3-selection';
 import './www-init.js';
+import '../app/bin/backend/all.js';
 import '../app/bin/frontend/app.bundle.css';
-import _App from '../src/vue/main.js';
+import _App from '../app/src/frontend/vue/main.js';
 
 describe('Download panel for an empty project', function () {
 	const holder=select('body').append('div');
 	holder.append('div').attr('id','downloadaaa');
 	let app;
 	beforeAll(function (done) {
+		window.testdata='fakeTools';
 		app=_App('#downloadaaa');
 		app.$router.push('/download');
 		setTimeout(()=>{
@@ -41,6 +43,7 @@ describe('Download panel for a project with completed transfer', function () {
 	let app;
 	
 	beforeAll(function (done) {
+		window.testdata='fakeTools';
 		app=_App('#downloadccc');
 		app.$router.push('/download');
 		setTimeout(()=>{
@@ -50,18 +53,18 @@ describe('Download panel for a project with completed transfer', function () {
 	});
 
 	it('should have 2 completed icons for downloads', function (done) {
-		console.log(holder.selectAll('td .cellStatus .material-icons').size())
-
-		expect(
-			holder.select('#sjcda-file-table-body')
-			.selectAll('.cellStatus .material-icons')
-			.filter(function(d){
-				return select(this).html()=='check_circle'
-			})
-			.size())
-		.toEqual(2);
-		
-		done();
+		setTimeout(()=>{
+			expect(
+				holder.select('#sjcda-file-table-body')
+				.selectAll('.cellStatus .material-icons')
+				.filter(function(d){
+					return select(this).html()=='check_circle'
+				})
+				.size())
+			.toEqual(2);
+			
+			done();
+		});
 	});
 
 	afterAll(function(done) {

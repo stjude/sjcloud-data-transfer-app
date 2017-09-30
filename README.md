@@ -21,4 +21,9 @@ In all cases the front-end code needs to be compiled before the tool will run us
 Testing
 =======
 
-TODO(Edgar)
+Front-end tests
+- `ln -s $PWD/test/testdata $PWD/app/testdata`
+- `npm test`
+
+Backend tests
+- to-do

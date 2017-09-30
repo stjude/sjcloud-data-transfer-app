@@ -119,7 +119,8 @@ export default {
 			);
 		},
 		downloadFiles() {
-			const files = this.$store.getters.currTool.download.filter((f) => f.checked);
+			const files = this.$store.getters.currTool.download
+					.filter((f) => f.checked && f.status<=0 && !f.waiting && !f.started && !f.finished);
 			const downloadLocation = this.$store.getters.downloadLocation;
 			const concurrency = this.$store.getters.concurrentOperations;
 			console.log("Adding", files.length, "files to the task queue.");
@@ -131,7 +132,7 @@ export default {
 
 				let task = {
 					_rawFile: file,
-					name: file.name,
+          name: file.name,
 					raw_size: file.raw_size,
 					local_location: downloadLocation,
 					remote_location: file.dx_location,
