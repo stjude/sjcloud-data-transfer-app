@@ -36,6 +36,7 @@ if (platform == "win32") {
   }
   module.exports.setURIprojectCmd = cmd;
 }
+
 /**
  * Mac protocol handler
  *
@@ -50,9 +51,13 @@ app.on("open-url", (event, url) => {
       project_name = project_name.substring(0, project_name.length - 1); // remove trailing '/'
     }
     project_name = decodeURIComponent(project_name);
-    cmd = `window.VueApp.$store.commit('setURIProject', '${project_name}');`;
+    // cmd = `window.VueApp.$store.commit('setURIProject', '${project_name}');`;
+    cmd = `window.uriProject = ${project_name};`;
   } else {
-    cmd = "window.VueApp.$store.commit('setURIProject', '');";
+    cmd = `window.uriProject = ''`;
+    // cmd = "window.VueApp.$store.commit('setURIProject', '');";
   }
-  mainWindow.webContents.executeJavaScript(cmd);
+  
+  module.exports.setURIprojectCmd = cmd;
 });
+

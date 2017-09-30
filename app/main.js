@@ -35,7 +35,18 @@ winston.info(process.argv);
  * @param {*} mainWindow The window.
  */
 function bootstrapWindow(mainWindow) {
-  mainWindow.webContents.executeJavaScript(protocolhandler.setURIprojectCmd); // have to wait till mainWindow is created before setting default project found in protocol.js
+
+  console.log("Bootstrapping new window...");
+
+  setInterval(() => {
+    if (mainWindow !== null && !mainWindow.isDestroyed() && protocolhandler.setURIprojectCmd) {
+      console.log("URI project was set! Executing...");
+      mainWindow.webContents.executeJavaScript("window.setCurrPath = 'upload';");
+      mainWindow.webContents.executeJavaScript(protocolhandler.setURIprojectCmd); // have to wait till mainWindow is created before setting default project found in protocol.js
+      protocolhandler.setURIprojectCmd = null;
+    }
+  }, 500);
+
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
   if (config.ENVIRONMENT !== "dev") {
@@ -74,6 +85,16 @@ app.on("ready", () => {
 });
 
 app.on("activate", () => {
+  if (mainWindow === null || mainWindow.isDestroyed()) {
+    mainWindow = null;
+    ui.createWindow( (mw) => {
+      mainWindow = mw;
+      bootstrapWindow(mainWindow);
+    });
+  }
+});
+
+app.on("open-url", (event, url) => {
   if (mainWindow === null || mainWindow.isDestroyed()) {
     mainWindow = null;
     ui.createWindow( (mw) => {
