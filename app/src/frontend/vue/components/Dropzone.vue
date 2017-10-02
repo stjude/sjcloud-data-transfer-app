@@ -14,7 +14,7 @@
        @dragexit.prevent="dragging = false"
        @dragleave.prevent="dragging = false"
        :style="dragging ? draggingColorStyle : nondraggingColorStyle">
-      <i class="material-icons md-48" style="height: 60px;">cloud_upload</i>
+      <i class="material-icons md-48 cloud-upload-icon">cloud_upload</i>
       <span class="dropzone-container-text">CLICK OR DROP FILES HERE</span>
     </div>
   </div>
@@ -89,5 +89,9 @@ export default {
 
 .material-icons.md-48 {
   font-size: 48px;
+}
+
+.cloud-upload-icon {
+  height: 60px;
 }
 </style>
