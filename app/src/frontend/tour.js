@@ -12,7 +12,7 @@ const tour = new window.Tour({
 	steps: [{
 		element: '#tour-btn',
 		title: "Guided Tour",
-		content: "See the features of this application.",
+		content: "Welcome! See the features of this application.",
 		placement: 'bottom',
 		backdrop: false,
   		backdropContainer: 'body',
@@ -115,6 +115,7 @@ let tourInitialized=false;
 tour.__promptUser = (path)=>{
 	if (tourInitialized ) return;
 	if (path!=='/upload' && path!=='/download') return;
+	if (window.location.port=='9876') return;
 
 	setTimeout(()=>{
 		tourInitialized=true;
@@ -127,7 +128,7 @@ tour.__promptUser = (path)=>{
 	},300);
 }
 
-tour.__start = ()=>{ console.log(tour.__promptTimeout)
+tour.__start = ()=>{
 	if (tour.__promptTimeout) {
 		clearTimeout(tour.__promptTimeout);
 	};

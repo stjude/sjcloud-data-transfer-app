@@ -64,12 +64,12 @@ if (window.location.port != "3057" && window.location.port != "9876"  && !window
                   name: f.name,
                   size: f.raw_size,
                 };
-                f.status = 0;
-                f.checked = false;
-                f.waiting = false;
-                f.started = false;
-                f.finished = false;
-                f.cancelled = false;
+                f.status = 'status' in f ? f.status : 0;
+                f.checked = 'checked' in f ? f.checked : false;
+                f.waiting = 'waiting' in f ? f.waiting : false;
+                f.started = 'started' in f ? f.started : f.status ? true : false;
+                f.finished = 'finished' in f ? f.finished : f.status >= 100 ? true : false;
+                f.cancelled = 'cancelled' in f ? f.cancelled : false;
                 f.dx_location=f.name+'---'+i;
                 f.aaaaa='me'
               });

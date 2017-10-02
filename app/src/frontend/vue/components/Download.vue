@@ -94,14 +94,14 @@ export default {
 			)
 		},
 		filesLoading() {
-			return !this.$store.getters.noProjectsFound && !this.$store.getters.currTool.loadedAvailableDownloads;
+			return !this.$store.getters.noProjectsFound && (!this.$store.getters.currTool || !this.$store.getters.currTool.loadedAvailableDownloads);
 		}, 
 		noFilesVisible() {
 			return !this.$store.getters.noProjectsFound &&
 			(
 				!this.$store.getters.searchTerm &&
 				(!this.$store.getters.tools.length ||
-					(!this.$store.getters.currFiles.length && this.$store.getters.currTool.loadedAvailableDownloads)
+					(!this.$store.getters.currFiles.length && this.$store.getters.currTool && this.$store.getters.currTool.loadedAvailableDownloads)
 				)
 			)
 		}

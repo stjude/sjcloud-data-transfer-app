@@ -8,7 +8,9 @@ Vue.use(Vuex);
 /** Plugins **/
 const projectToolScopeWatcher = (store) => {
   store.subscribe((mutation, state) => {
-    console.log(mutation);
+    if (window.location.port!='9876') {
+      console.log(mutation);
+    }
 
     if (mutation.type === "setShowAllFiles") {
       store.dispatch("refreshFiles");
