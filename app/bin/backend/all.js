@@ -172,6 +172,9 @@ if (window.location.port != "3057" && window.location.port != "9876"  && !window
       file.started = false;
       file.finished = false;
       file.errored = false;
+    },
+    openDirectoryDialog() {
+      
     }
   };
   window.queue={

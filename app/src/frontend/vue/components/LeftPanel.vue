@@ -32,11 +32,13 @@
 				</table>
 			</div>
 		</div>
-		<div class="checkbox first-checkbox" style=''>
-			<label><input type="checkbox" :checked="showAllFiles" @click="updateShowAllFiles">Show all files</label>
-		</div>
-		<div class="checkbox second-checkbox" style='background-color:#fff'>
-			<label><input type="checkbox" :checked="showAllProjects" @click="updateShowAllProjects">Show non St. Jude Cloud projects</label>
+		<div id='left-panel-project-filters' style='position:absolute; top: 480px; background-color:#fff'>
+			<div class="checkbox first-checkbox">
+				<label><input type="checkbox" :checked="showAllFiles" @click="updateShowAllFiles">Show all files</label>
+			</div>
+			<div class="checkbox second-checkbox" style='background-color:#fff'>
+				<label><input type="checkbox" :checked="showAllProjects" @click="updateShowAllProjects">Show non St. Jude Cloud projects</label>
+			</div>
 		</div>
 	</div>
 </template>
@@ -143,6 +145,7 @@ export default {
 	height: 560px;
 	border: 3px solid #ececec;
 	padding: 0px;
+	background-color: #fff;
 }
 
 .left-panel-table-container {
@@ -151,6 +154,7 @@ export default {
 	margin-top: 20px;
 	padding-bottom: 20px;
 	overflow: hidden;
+	background-color: #fff;
 }
 
 .left-panel-table-container:hover {
@@ -189,20 +193,20 @@ th {
 }
 
 .first-checkbox {
-	position: absolute;
+	/*position: absolute;
+	top: 480px;*/
 	width: 290px;
 	font-size: 12pt;
-	top: 480px;
 	padding-top: 10px;
 	padding-left: 20px;
 	background-color:#fff;
 }
 
 .second-checkbox {
-	position: absolute;
+	/*position: absolute;
+	top: 530px;*/
 	width: 290px;
 	font-size: 12pt;
-	top: 530px;
 	padding-left: 20px;
 	background-color:#fff;
 }

@@ -156,6 +156,7 @@ export default {
 
 .right-panel-container {
 	font-family: 'Lato';
+	background-color: #fff;
 }
 
 #downloadTextInput {

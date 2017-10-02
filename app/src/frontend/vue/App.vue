@@ -6,6 +6,7 @@
 </template>
 
 <script>
+import jQueryGlobalizer from '../helpers/jQueryGlobalizer';
 import TopBar from './components/TopBar.vue';
 
 export default {

@@ -16,15 +16,36 @@
 	    	@click='logout'>
 	    	Logout
 	    </span>
+	     <span id='tour-btn' 
+	    	class='btn btn-sm' 
+	    	style='float:right; margin: 6px 10px 0 0'
+	    	v-show='showTourBtn'
+	    	@click.stop='tour'>
+	    	Tour
+	    </span>
 	</div>
 </template>
 
 <script>
+import tour from '../../tour.js';
+
+let tourInitialized=false;
+
 export default {
 	computed: {
 		showLogoutBtn() {
-			return this.$route.path=='/download' || this.$route.path=='/upload'
+			return this.$route.path=='/download' || this.$route.path=='/upload';
+		},
+		showTourBtn() {
+			return this.$route.path=='/download' || this.$route.path=='/upload';
 		}
+	},
+	mounted() {
+		/*if (this.$route.path!='/download' && this.$route.path!='/upload') return;
+		setTimeout(()=>{
+			this.$store.commit('setCurrPath','download');
+			setTimeout(tour.promptUser,500);
+		},500);*/
 	},
 	methods: {
 		goHome() {
@@ -39,6 +60,16 @@ export default {
 	      	this.$store.commit('setLoginState','waiting');
 	        this.$router.replace('/login');
 	      });
+		},
+		tour() {
+			if (!tourInitialized) {
+				tour.init();
+				tour.goTo(0);
+				tourInitialized=true;
+			} else {
+				tour.goTo(1);
+			}
+			tour.start(true);
 		}
 	}
 }

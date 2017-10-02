@@ -16,7 +16,9 @@ Install
 Development
 ===========
 
-In all cases the front-end code needs to be compiled before the tool will run using `npm run www` or `npm run www-no-watch` (for one time only). You can develop the front-end using just this command (the web browser should automatically open up to browsersync). Running the official desktop application with require running `npm start` in a seperate terminal window.
+In all cases the front-end code needs to be compiled before the tool will run using `npm run www` or `npm run www-no-watch` (for one time only). You can develop the front-end using just this command (the web browser should automatically open up to browsersync). Note that the testdata folder must be symlinked under the app/folder when developing and testing in a regular, non-electron Chrome browser.
+
+Running the official desktop application will require running `npm start` in a separate terminal window.
 
 Testing
 =======

@@ -20,15 +20,15 @@
     "test": "karma start karma.config.js"
   },
   "author": {
-	  "name": "Clay McLeod, Andrew Frantz, Edgar Sioson",
-	  "email": "clay.mcleod@stjude.org"
+    "name": "Clay McLeod, Andrew Frantz, Edgar Sioson",
+    "email": "clay.mcleod@stjude.org"
   },
   "build": {
     "appId": "cloud.stjude",
-	"productName": "SJCP Data Transfer",
+    "productName": "SJCP Data Transfer",
     "dmg": {},
     "linux": {
-	  "category": "Utility",
+      "category": "Utility",
       "target": [
         "AppImage",
         "deb"
@@ -42,6 +42,7 @@
   "dependencies": {
     "async": "^2.4.1",
     "bootstrap": "^3.3.7",
+    "bootstrap-tour": "^0.11.0",
     "expand-home-dir": "0.0.3",
     "express": "^4.15.4",
     "glob-to-regexp": "^0.3.0",
