@@ -38,7 +38,7 @@ if (window.location.port != "3057" && window.location.port != "9876"  && !window
       login(token, callback) {
         setTimeout(callback, 1500);
       },
-      listProjects(showAllProjects, callback) { 
+      listProjects(showAllProjects, callback) {
         if (!window.VueApp) return;
 
         // !!! Requires a symlink to test/testdata via app/testdata

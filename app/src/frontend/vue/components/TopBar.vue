@@ -29,8 +29,6 @@
 <script>
 import tour from '../../tour.js';
 
-let tourInitialized=false;
-
 export default {
 	computed: {
 		showLogoutBtn() {
@@ -39,13 +37,6 @@ export default {
 		showTourBtn() {
 			return this.$route.path=='/download' || this.$route.path=='/upload';
 		}
-	},
-	mounted() {
-		/*if (this.$route.path!='/download' && this.$route.path!='/upload') return;
-		setTimeout(()=>{
-			this.$store.commit('setCurrPath','download');
-			setTimeout(tour.promptUser,500);
-		},500);*/
 	},
 	methods: {
 		goHome() {
@@ -62,14 +53,7 @@ export default {
 	      });
 		},
 		tour() {
-			if (!tourInitialized) {
-				tour.init();
-				tour.goTo(0);
-				tourInitialized=true;
-			} else {
-				tour.goTo(1);
-			}
-			tour.start(true);
+			tour.__start();
 		}
 	}
 }

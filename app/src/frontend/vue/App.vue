@@ -8,6 +8,7 @@
 <script>
 import jQueryGlobalizer from '../helpers/jQueryGlobalizer';
 import TopBar from './components/TopBar.vue';
+import tour from '../tour.js';
 
 export default {
 	components: {
@@ -25,11 +26,12 @@ export default {
 		}
 	},
 	created() {
-		window.addEventListener('keydown', this.toggleToolPath)
-		this.$store.commit('setCurrPath', this.$route.path.slice(1))
+		window.addEventListener('keydown', this.toggleToolPath);
+		this.$store.commit('setCurrPath', this.$route.path.slice(1));
 	},
 	updated() {
-		this.$store.commit('setCurrPath', this.$route.path.slice(1))
+		this.$store.commit('setCurrPath', this.$route.path.slice(1));
+		tour.__promptUser(this.$route.path);
 	},
 	mounted() {
 		window.VueApp = this;
