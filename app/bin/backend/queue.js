@@ -132,7 +132,17 @@ function toolInfoTask(task, callback) {
         task._rawTool.isSJCPTool = true;
         task._rawTool.SJCPToolURL = describe.properties["sjcp-tool-url"];
       }
-      task._rawTool.size = window.utils.readableFileSize(describe.dataUsage * 1e9, true);
+
+      let dataUsage = 0;
+      if ("dataUsage" in describe) {
+        dataUsage += describe.dataUsage * 1e9;
+      }
+
+      if ("sponsoredDataUsage" in describe) {
+        dataUsage += describe.sponsoredDataUsage * 1e9;
+      }
+
+      task._rawTool.size = window.utils.readableFileSize(dataUsage, true);
       return callback(null, describe);
     });
 }
