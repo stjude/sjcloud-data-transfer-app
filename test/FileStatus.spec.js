@@ -6,10 +6,10 @@ import _App from '../app/src/frontend/vue/main.js';
 
 describe('FileStatus table for an empty project', function () {
 	const holder=select('body').append('div')
-	holder.append('div').attr('id','fsaaa');
 	let app
 	beforeAll(function (done) {
 		window.testdata='fakeTools';
+		holder.append('div').attr('id','fsaaa');
 		app=_App('#fsaaa',{"showAllFiles":true,"showAllProjects":true});
 		app.$router.push('/download');
 		setTimeout(()=>{
@@ -36,7 +36,7 @@ describe('FileStatus table for a project with pending downloads', function () {
 	beforeAll(function (done) {
 		window.testdata='fakeTools';
 		holder.append('div').attr('id','fsbbb');
-		app=_App('#fsbbb');
+		app=_App('#fsbbb',{"showAllFiles":true,"showAllProjects":true});
 		app.$router.push('/download');
 		setTimeout(()=>{
 			app.$store.commit('setCurrToolName','x2');
@@ -53,7 +53,7 @@ describe('FileStatus table for a project with pending downloads', function () {
 
 	it('should have 9 rows of listed files', function (done) {
 		setTimeout(()=>{
-			expect(select('#sjcda-file-table-body').selectAll('tr').size()).toEqual(9);
+			expect(holder.select('#sjcda-file-table-body').selectAll('tr').size()).toEqual(9);
 			done();
 		},500);
 	});
@@ -115,13 +115,13 @@ describe('FileStatus table for a project with pending downloads', function () {
 });
 
 describe('FileStatus table for a project with completed transfer', function () {
-	const holder=select('body').append('div')
-	holder.append('div').attr('id','fsccc');
+	const holder=select('body').append('div');
 	let app
 	
 	beforeAll(function (done) {
 		window.testdata='fakeTools';
-		app=_App('#fsccc');
+		holder.append('div').attr('id','fsccc');
+		app=_App('#fsccc',{"showAllFiles":true,"showAllProjects":true});
 		app.$router.push('/download');
 		setTimeout(()=>{
 			app.$store.commit('setCurrToolName','x3');
@@ -131,14 +131,18 @@ describe('FileStatus table for a project with completed transfer', function () {
 
 	it('should not be displayed for uploads', function (done) {
 		app.$router.push('/upload');
-		expect(holder.select('#ccc').select('#fileStatusDiv').node()).toEqual(null);
-		done();
+		setTimeout(()=>{
+			expect(holder.select('#fsccc #fileStatusDiv').size()).toEqual(0);
+			done();
+		},600);
 	});
 
 	it('should not be displayed for downloads', function (done) {
 		app.$router.push('/download');
-		expect(holder.select('#ccc').select('#fileStatusDiv').node()).toEqual(null);
-		done();
+		setTimeout(()=>{
+			expect(holder.select('#fsccc #fileStatusDiv').size()).toEqual(0);
+			done();
+		},600);
 	});
 
 	afterAll(function(done) {
