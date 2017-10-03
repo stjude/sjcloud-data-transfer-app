@@ -99,6 +99,7 @@ const defaultState={
   },
   currFileSortKey: "",
   currFileSortDirection: 0,
+  menuIsVisible: false
 };
 
 
@@ -251,6 +252,9 @@ export default function getVuexStore(cachedState={}) {
       modalVisibility(state, getters) {
         return (name) => state.modals[name];
       },
+      menuIsVisible(state) {
+        return state.menuIsVisible
+      }
     },
     mutations: {
       setURIProject(state, value) {
@@ -441,7 +445,9 @@ export default function getVuexStore(cachedState={}) {
       removeOperationProcess(state, info) {
         delete state.operationProcesses[info.filename];
       },
-
+      toggleMenu(state) {
+        state.menuIsVisible=!state.menuIsVisible
+      }
     },
     actions: {
       refreshFiles({commit, state}) {
