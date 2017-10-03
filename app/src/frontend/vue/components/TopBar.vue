@@ -16,7 +16,14 @@
 	    	@click='logout'>
 	    	Logout
 	    </span>
-	     <span id='tour-btn' 
+	    <span id='issues-btn' 
+	    	class='btn btn-sm' 
+	    	style='float:right; margin: 6px 10px 0 0'
+	    	title='File A Bug Report' tippy
+	    	@click.stop='fileAnIssue'>
+	    	Help
+	    </span>
+	    <span id='tour-btn' 
 	    	class='btn btn-sm' 
 	    	style='float:right; margin: 6px 10px 0 0'
 	    	v-show='showTourBtn'
@@ -59,10 +66,13 @@ export default {
 	      window.dx.logout((err, result) => {
 	      	this.$store.commit('setLoginState','waiting');
 	        this.$router.replace('/login');
-	      });
-    },
-    tour() {
+	    	});
+    	},
+    	tour() {
 			tour.__start();
+		},
+		fileAnIssue() {
+			window.utils.openExternal('https://github.com/stjude/sjcloud-data-transfer/issues');
 		}
 	}
 }
