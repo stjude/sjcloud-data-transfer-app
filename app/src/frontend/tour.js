@@ -98,9 +98,9 @@ const tour = new window.Tour({
   			window.VueApp.$router.replace("/upload");
   		},
   }, {
-    element: "#tour-btn",
-    title: "Questions?",
-    content: "If you have questions, please contact us at (...)",
+    element: "#issues-btn",
+    title: "File A Bug Report",
+    content: "If you encounter issues, please file a bug report.",
     backdrop: true,
   		backdropContainer: "body",
   		placement: "left",
