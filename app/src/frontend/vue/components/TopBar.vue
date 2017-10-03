@@ -30,6 +30,7 @@
 import tour from '../../tour.js';
 
 let tourInitialized=false;
+
 export default {
 	computed: {
 		showLogoutBtn() {
@@ -59,16 +60,9 @@ export default {
 	      	this.$store.commit('setLoginState','waiting');
 	        this.$router.replace('/login');
 	      });
-		},
-		tour() {
-			if (!tourInitialized) {
-				tour.init();
-				tour.goTo(0);
-				tourInitialized=true;
-			} else {
-				tour.goTo(1);
-			}
-			tour.start(true);
+    },
+    tour() {
+			tour.__start();
 		}
 	}
 }
