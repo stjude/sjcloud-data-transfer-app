@@ -1,13 +1,4 @@
 <template>
-	<!--
-	<div class=''
-		style='height:400px; width:90%; margin:20px; border:1px dashed #aaa'>
-		<p style="margin-top:100px">DRAG FILES HERE</p>
-		<p>or</p>
-		<p><button class='btn btn-xs'>Select files ...</button></p>
-	</div>
-	-->
-
 	<div class='dropzone-container'>
 		<dropzone ref="dz" id='sjcda-dz' url="https://httpbin.org/post" v-on:vdropzone-success="showSuccess">
 			<!-- Optional parameters if any! -->

@@ -14,19 +14,19 @@
 				<hr>
 			</div>
 			<div v-show="loginState == 'waiting' " class='theater-body'>
-				<div class="col-xs-6" style="margin-top: 35px">
+				<div class="col-xs-6 theater-body-img">
 					<img src="img/screen-login.png">
 				</div>
 				<div class="col-xs-6">
-					<div style="margin-top: 40px;">
+					<div class="theater-body-text">
 						Next, you'll need to log in to DNAnexus so that we can access your input and output files.
 					</div>
-					<div @click="external()" 
-						class="btn btn-large btn-stjude" 
-						style="margin-bottom: 10px; width:auto">
+					<div id="dnanexus-login-btn"
+            @click="external()" 
+						class="btn btn-large btn-stjude">
 						LOG IN WITH DNANEXUS
 					</div>
-					<div style="margin-top: -10px;">
+					<div id="stjude-login-div">
 						<a class="stjude-link" @click="internal()">I'm a St. Jude employee</a>
 					</div>
 				</div>
@@ -42,7 +42,7 @@
 			<div v-show="loginState == 'failed'" class='theater-body'>
 				<div class="col-xs-12">
 					<step-outcome failureMessage='Failed!' outcome='error' tooltipText='_empty_tip_'></step-outcome>
-					<div style="margin-top: 20px">
+					<div id="retry-btn">
 						<div @click="setLoginState('waiting')" class="btn btn-large btn-stjude" style="margin-top:20px">Retry</div>
 					</div>
 				</div>
@@ -50,7 +50,7 @@
 		</div>
 		<div v-show="loginState != 'failed'" class='col-xs-12 footer'>
 			<div class='progress'>
-				<div class='progress-bar' style='width: 100%'></div>
+				<div class='progress-bar progress-bar-div'></div>
 				<div class='progress-node progress-node-active'>1</div>
 				<div class='progress-node progress-node-active' style='margin-left: 142px'>2</div>
 				<div class='progress-node progress-node-nonactive' style='margin-left: 277px'>3</div>
@@ -273,5 +273,30 @@ export default {
 	position: absolute;
 	color: #158cba;
 	font-size: 16pt;
+}
+
+.theater-body-img {
+  margin-top: 35px;
+}
+
+.theater-body-text {
+  margin-top: 40px;
+}
+
+#dnanexus-login-btn {
+  margin-bottom: 10px;
+  width: auto;
+}
+
+#stjude-login-div {
+  margin-top: -10px;
+}
+
+#retry-btn {
+  margin-top: 20px;
+}
+
+.progress-bar-div {
+  width: 100%;
 }
 </style>

@@ -36,30 +36,24 @@
 				</div>
 			</div>
 
-			<div v-show='transferComplete && hasFiles' style='margin-top:100px; text-align:center'>
+			<div class="upload-complete-div" v-show='transferComplete && hasFiles'>
 				<!-- _empty_tip_ prevents tippy destroy error -->
 				<step-outcome 
 					successMessage='Upload complete!' 
 					outcome='done'
 					tooltipText="_empty_tip_"></step-outcome>
-				<div style="margin-top:30px">
-					<button class='btn btn-stjude'
-							style='margin-right:24px; font-size:22px;'
+				<div class="upload-complete-btn-div">
+					<button id="ready-to-run-btn" 
+                  class='btn btn-stjude'
 					        v-show="currTool && currTool.isSJCPTool"
 					        v-on:click="openExternal(currTool.SJCPToolURL)">
-						<i class='material-icons' 
-							style='vertical-align:bottom; font-size:28px'>
-							open_in_browser
-						</i>
+						<i class='material-icons open-in-browser-icon'>open_in_browser</i>
 						READY TO RUN
 					</button>
-					<button class='btn btn-stjude' 
-						style='font-size:22px;'
-						v-on:click='removeAllFiles'>
-						<i class='material-icons' 
-							style='vertical-align:bottom; font-size:28px'>
-							cloud_upload
-						</i>
+					<button id="upload-more-data-btn"
+                  class='btn btn-stjude' 
+                  v-on:click='removeAllFiles'>
+						<i class='material-icons cloud-upload-icon'>cloud_upload</i>
 						UPLOAD MORE DATA
 					</button>
 				</div>
@@ -169,5 +163,33 @@ export default {
 
 .bottom-bar-right button {
 	margin: 2px;
+}
+
+.upload-complete-div {
+  margin-top: 100px;
+  text-align: center;
+}
+
+.upload-complete-btn-div {
+  margin-top: 30px;
+}
+
+#ready-to-run-btn {
+  margin-right: 24px;
+  font-size: 22px;
+}
+
+.open-in-browser-icon {
+  vertical-align: bottom;
+  font-size: 28px;
+}
+
+#upload-more-data-btn {
+  font-size: 22px;
+}
+
+.cloud-upload-icon {
+  vertical-align: bottom;
+  font-size: 28px;
 }
 </style>

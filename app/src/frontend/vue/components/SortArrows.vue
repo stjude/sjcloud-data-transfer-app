@@ -1,9 +1,13 @@
 <template>
-	<div style='float:right; position:relative; height:20px; right:20px' @click.stop='toggleSortDirection'>
-		<div class='material-icons sjcda-sort-arrow' v-show='direction!=-1 || !isCurrSortKey' style='top:-5px;'>
+	<div class='sort-arrow-div' @click.stop='toggleSortDirection'>
+		<div id="sort-arrow-top"
+         class='material-icons sjcda-sort-arrow'
+         v-show='direction != -1 || !isCurrSortKey'>
 			arrow_drop_up
 		</div>
-		<div class='material-icons sjcda-sort-arrow' v-show='direction!=1 || !isCurrSortKey' style='top:1px; height:15px;'>
+		<div id="sort-arrow-bottom"
+         class='material-icons sjcda-sort-arrow'
+         v-show='direction != 1 || !isCurrSortKey'>
 			arrow_drop_down
 		</div>
 	</div>	
@@ -56,5 +60,21 @@ export default {
 	cursor:default;
 	position: absolute;
 	color:#aaa;
+}
+
+.sort-arrow-div {
+  float: right;
+  position: relative;
+  height: 20px;
+  right: 20px;
+}
+
+#sort-arrow-top {
+  top: -5px;
+}
+
+#sort-arrow-bottom {
+  top: 1px;
+  height: 15px;
 }
 </style>

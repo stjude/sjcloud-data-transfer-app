@@ -1,46 +1,45 @@
 <template>
-	<div id='fileStatusDiv' :style='rootDivStyle'>
-		<table id='sjcda-file-table-header'>
+	<div id='file-status-table-header-div' :style='rootDivStyle'>
+		<table id='file-status-table'>
 			<thead>
-				<tr style='color:#000; background-color:#eeeeee'>
-					<th class='cellCheckBox' v-on:click.stop='toggleCheckBoxes'>
+				<tr class="file-status-thead-tr"> 
+					<th class='file-status-cell-checkbox' v-on:click.stop='toggleCheckBoxes'>
 						<input type="checkbox" :checked='checkedAll' />
 					</th>
-					<th class='cellFileName' style='text-align:left; padding-left:10px; overflow:hidden'>
+					<th class='file-status-cell-filename'>
 						<span>FILENAME</span>
 						<sort-arrows sortkey='filename'></sort-arrows>
 					</th>
-					<th class='cellFileSize' style='overflow:hidden'>
+					<th class='file-status-cell-filesize'>
 						<span>SIZE</span>
 						<sort-arrows sortkey='size'></sort-arrows>
 					</th>
-					<th class='cellStatus' style='overflow:hidden'>
+					<th class='file-status-cell-status'>
 						<span>STATUS</span>
 						<sort-arrows sortkey='status'></sort-arrows>
 					</th>
 				</tr>
 			</thead>
 		</table>
-		<div id='sjcda-file-table-body-div' v-bind:style='tBodyDivStyle'>
-			<table id='sjcda-file-table-body'>
+		<div id='file-status-table-body-div' v-bind:style='tBodyDivStyle'>
+			<table id='file-status-table-body'>
 				<tbody>
 					<tr v-for='file in files'>
-						<td class='cellCheckBox' v-on:click.stop='toggleFileChecked(file)'>
+						<td class='file-status-cell-checkbox' v-on:click.stop='toggleFileChecked(file)'>
 							<input type="checkbox" :checked='file.checked' :disabled='file.finished'/>
 						</td>
-						<td class='cellFileName' style='text-align:left;padding-left:10px' v-html='matchedStr(file.name)'></td>
-						<td class='cellFileSize' v-html='matchedStr(file.size)'></td>
-						<td class='cellStatus'>
-							<div v-if="file.finished" style='height:20px;overflow:hidden'>
-								<i style="color: #4F8A10; font-size:20px; line-height:20px" class="material-icons">check_circle</i>
+						<td class='file-status-cell-filename' v-html='matchedStr(file.name)'></td>
+						<td class='file-status-cell-filesize' v-html='matchedStr(file.size)'></td>
+						<td class='file-status-cell-status'>
+							<div class="file-status-cell-status-finished" v-if="file.finished">
+								<i class="material-icons file-status-cell-status-finished-icon">check_circle</i>
 							</div>
-							<div v-else-if="file.errored" style='height:20px;overflow:hidden'>
-								<i style="color: #DD0000; font-size:20px; line-height:20px" class="material-icons">error</i>
+							<div class='file-status-cell-status-errored' v-else-if="file.errored">
+								<i class="material-icons file-status-cell-status-errored-icon">error</i>
 							</div>
 							<div v-else-if="file.started && file.status == 0">Starting...</div>
-							<div v-else-if="file.started" class='sjcda-progress-outline'>
-								<div class='sjcda-progress-filled' 
-									v-bind:style="progressStyle(file)"></div>
+							<div v-else-if="file.started" class=''>
+								<div class='file-status-cell-status-progress-bar' v-bind:style="progressStyle(file)"></div>
 							</div>
 							<div v-else-if="file.waiting">
 								Waiting...
@@ -50,13 +49,12 @@
 				</tbody>
 			</table>
 		</div>
-		<div style='margin-top:5px; padding-left:40px' v-show='showSelectionTotals==1'>
+		<div class="file-status-file-count" v-show='showSelectionTotals == 1'>
 			<span v-if="numSelectedFiles > 0">
 				{{ numSelectedFiles }} of {{ files.length }} files selected ({{ sizeSelectedFiles }})
 			</span>
 		</div>
-		<div v-show="noFilesMatched"
-			style='width:100%; text-align:center; padding: 20px;'>
+		<div class="file-status-no-files-found" v-show="noFilesMatched">
 			No matching files found for the search term.
 		</div>
 	</div>
@@ -67,9 +65,9 @@ import Vue from 'vue';
 import SortArrows from './SortArrows.vue';
 import globToRegExp from 'glob-to-regexp';
 
-let i="0"
-let prevTool={}
-let prevPath='upload'
+let i = "0";
+let prevTool = {};
+let prevPath = 'upload';
 
 export default {
 	components: {
@@ -142,7 +140,7 @@ export default {
 </script>
 
 <style scoped>
-#fileStatusDiv {
+#file-status-table-header-div {
 	margin-top:18px;
 	height: 412px;
 	overflow: hidden;
@@ -151,18 +149,18 @@ export default {
 	/* border-bottom: 1px solid #ccc; */
 }
 
-#fileStatusDiv:hover {
+#file-status-table-header-div:hover {
 	overflow: auto;
 }
 
-#sjcda-file-table-body-div {
+#file-status-table-body-div {
 	overflow: auto;
 	margin:28px 0 0 0; 
 	padding:0; 
 	overflow-y:auto;
 }
 
-#sjcda-file-table-body {
+#file-status-table-body {
 	width: 570px;
 }
 
@@ -188,32 +186,35 @@ td {
 	overflow: hidden;
 }
 
-.cellCheckBox {
+.file-status-cell-checkbox {
 	width: 25px;
 }
 
-.cellFileName {
+.file-status-cell-filename {
 	width: 340px;
 	overflow: auto;
+  text-align: left; 
+  padding-left: 10px;
 }
 
-.cellFileSize {
-	width:60px;
+.file-status-cell-filesize {
+	width: 60px;
+  overflow: hidden;
 }
 
-.cellStatus {
+.file-status-cell-status {
 	width: 80px;
 	overflow: hidden;
 }
 
-#sjcda-file-table-header {
+#file-status-table {
 	position:fixed; 
 	width:571px; 
 	border:1px solid #eeeeee; 
 	z-index:1
 }
 
-.sjcda-progress-outline {
+.file-status-cell-status-progress-started {
 	position:relative; 
 	height:20px; 
 	width:80%; 
@@ -222,7 +223,7 @@ td {
 	margin: 0 auto;
 }
 
-.sjcda-progress-filled {
+.file-status-cell-status-progress-bar {
 	position: relative;
 	height: 20px;
 	background-color: #4F8A10;
@@ -230,6 +231,49 @@ td {
 	top: -1px;
 	left: -1px;
 	border-bottom:1px solid #4F8A10
+}
+
+.file-status-thead-tr {
+  color:#000; background-color:#eeeeee;
+}
+
+.file-status-cell-status-finished {
+  height: 20px;
+  overflow: hidden;
+}
+
+.file-status-cell-status-finished {
+  color: #4F8A10;
+  font-size: 20px;
+  line-height: 20px
+}
+
+.file-status-cell-status-finished-icon {
+  color: #4F8A10;
+  font-size: 20px;
+  line-height: 20px;
+}
+
+.file-status-cell-status-errored {
+  height: 20px;
+  overflow: hidden;
+}
+
+.file-status-cell-status-errored-icon {
+  color: #DD0000;
+  font-size: 20px;
+  line-height: 20px;
+}
+
+.file-status-file-count-div {
+  margin-top: 5px;
+  padding-left: 40px;
+}
+
+.file-status-no-files-found {
+  width: 100%;
+  text-align: center;
+  padding: 20px;
 }
 
 /*.checkDiv, input[type='checkbox'] {

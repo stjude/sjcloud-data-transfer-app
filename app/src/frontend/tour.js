@@ -9,31 +9,26 @@ const tour = new window.Tour({
   	backdropContainer: 'body',
 	smartPlacement: true,
 	//debug: true,
-	steps: [{
+	steps: [/*{
 		element: '#tour-btn',
 		title: "Guided Tour",
-		content: "Welcome! See the features of this application.",
+		content: "See the features of this application.",
 		placement: 'bottom',
 		backdrop: false,
   		backdropContainer: 'body',
   		onShow(tour) {
   			if (!window.VueApp) return;
-  			if (tour.__promptTimeout) {
-				clearTimeout(tour.__promptTimeout);
-			};
-  			window.VueApp.$router.replace('/download');
+  			//window.VueApp.$store.commit('setCurrToolName','x2');
   		}
-	},{
+	},*/{
 		element: '.left-panel-table-container',
 		title: "Project List",
 		content: "Each tool and data request gets its own project.",
 		backdrop: true,
   		backdropContainer: 'body',
   		onShow(tour) {
-  			if (tour.__promptTimeout) {
-				clearTimeout(tour.__promptTimeout);
-			};
-			window.VueApp.$router.replace('/download');
+  			if (!window.VueApp) return;
+  			//window.VueApp.$store.commit('setCurrToolName','x2');
   		}
 	},{
 		element: "#left-panel-project-filters",
@@ -41,12 +36,6 @@ const tour = new window.Tour({
 		content: "These filters may be used to show or hide certain projects or files. By default, we focus on St. Jude Cloud projects.",
 		backdrop: true,
   		backdropContainer: 'body',
-  		onShow(tour) {
-  			if (tour.__promptTimeout) {
-				clearTimeout(tour.__promptTimeout);
-			};
-			window.VueApp.$router.replace('/download');
-  		}
 	},{
 		element: ".right-panel-container",
 		title: "Matching Project Files",
@@ -55,12 +44,6 @@ const tour = new window.Tour({
   		backdropContainer: 'body',
   		placement: 'left',
   		smartPlacement: true,
-  		onShow(tour) {
-  			if (tour.__promptTimeout) {
-				clearTimeout(tour.__promptTimeout);
-			};
-			window.VueApp.$router.replace('/download');
-  		}
 	},{
 		element: ".download-btn",
 		title: "Download Button",
@@ -71,6 +54,7 @@ const tour = new window.Tour({
   		smartPlacement: true,
   		onShow(tour) {
   			if (!window.VueApp) return;
+  			//window.VueApp.$store.commit('setCurrToolName','x1');
   			window.VueApp.$router.replace('/download');
   		}
 	},{			 //"#downloadTextInput"
@@ -83,6 +67,7 @@ const tour = new window.Tour({
   		smartPlacement: true,
   		onShow(tour) {
   			if (!window.VueApp) return;
+  			//window.VueApp.$store.commit('setCurrToolName','x1');
   			window.VueApp.$router.replace('/download');
   		}
 	},{
@@ -95,6 +80,7 @@ const tour = new window.Tour({
   		smartPlacement: true,
   		onShow(tour) {
   			if (!window.VueApp) return;
+  			//window.VueApp.$store.commit('setCurrToolName','x1');
   			window.VueApp.$router.replace('/upload');
   		}
 	},{
@@ -111,30 +97,13 @@ const tour = new window.Tour({
 	}
 });
 
-let tourInitialized=false;
-tour.__promptUser = (path)=>{
-	if (tourInitialized ) return;
-	if (path!=='/upload' && path!=='/download') return;
-	if (window.location.port=='9876') return;
-
-	setTimeout(()=>{
-		tourInitialized=true;
-		tour.init();
-		tour.goTo(0);
-		tour.start(true);
-		tour.__promptTimeout=setTimeout(()=>{
-			tour.end();	
-		},4000);
-	},300);
-}
-
-tour.__start = ()=>{
-	if (tour.__promptTimeout) {
-		clearTimeout(tour.__promptTimeout);
-	};
-	tourInitialized=true;
-	tour.setCurrentStep(1);
+let tourInitialized=false
+tour.promptUser = ()=>{
+	if (tourInitialized) return; console.log('tes')
+	tour.init();
+	tour.goTo(0);
 	tour.start(true);
+	tourInitialized=true;
 }
 
 export default tour;

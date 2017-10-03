@@ -2,16 +2,10 @@
 	<transition name="modal">
 		<div class="modal-mask" @click='hide'>
 		  <div class="modal-wrapper">
-		    <div class="modal-container" style='position:relative'>
-		      <div 
-		      	@click='hide'
-		      	style='position:absolute; top:20px; right:20px; cursor:default'>
-		      	<i class='material-icons'>close</i>
+		    <div class="modal-container modal-container-toolkit">
+		      <div class="close-div" @click='hide'>
+		      	<i class="material-icons">close</i>
 		      </div>
-		      <!--<div class="modal-header">
-		        <slot name="header">
-		        </slot>
-		      </div>-->
 
 		      <div class="modal-body">
 		        <slot name="body">
@@ -24,14 +18,6 @@
 		          </ul>
 		        </slot>
 		      </div>
-
-		      <!--<div class="modal-footer">
-		        <slot name="footer">
-		          <button class="btn btn-stjude" @click="">
-		            OK
-		          </button>
-		        </slot>
-		      </div>-->
 		    </div>
 		  </div>
 		</div>
@@ -119,5 +105,16 @@ export default {
 .modal-leave-active .modal-container {
 	-webkit-transform: scale(1.1);
 	transform: scale(1.1);
+}
+
+.modal-container-toolkit {
+  position: relative;
+}
+
+.close-div {
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  cursor: default;
 }
 </style>
