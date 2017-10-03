@@ -119,27 +119,30 @@ export default {
 			);
 		},
 		downloadFiles() {
-			const files = this.$store.getters.currTool.download
-					.filter((f) => f.checked && f.status<=0 && !f.waiting && !f.started && !f.finished);
-			const downloadLocation = this.$store.getters.downloadLocation;
-			const concurrency = this.$store.getters.concurrentOperations;
-			console.log("Adding", files.length, "files to the task queue.");
+      // Using setTimeout(..., 0) for async functionality.
+      setTimeout(() => {
+        const files = this.$store.getters.currTool.download
+            .filter((f) => f.checked && f.status<=0 && !f.waiting && !f.started && !f.finished);
+        const downloadLocation = this.$store.getters.downloadLocation;
+        const concurrency = this.$store.getters.concurrentOperations;
+        console.log("Adding", files.length, "files to the task queue.");
 
-			// Reset the status of all files.
-			files.forEach((file) => {
-				window.utils.resetFileStatus(file);
-				file.waiting = true;
+        // Reset the status of all files.
+        files.forEach((file) => {
+          window.utils.resetFileStatus(file);
+          file.waiting = true;
 
-				let task = {
-					_rawFile: file,
-          name: file.name,
-					raw_size: file.raw_size,
-					local_location: downloadLocation,
-					remote_location: file.dx_location,
-				};
+          let task = {
+            _rawFile: file,
+            name: file.name,
+            raw_size: file.raw_size,
+            local_location: downloadLocation,
+            remote_location: file.dx_location,
+          };
 
-				window.queue.addDownloadTask(task);
-			});
+          window.queue.addDownloadTask(task);
+        });
+      }, 0);
 		},
 		cancelFiles() {
 			this.$store.commit('cancelCheckedFiles');
