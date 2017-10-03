@@ -2,17 +2,20 @@
 	<div class='sjcda-container'>
 		<top-bar></top-bar>
 		<router-view keep-alive class='app-route-placement'></router-view>
+		<user-menu></user-menu>
 	</div>
 </template>
 
 <script>
 import jQueryGlobalizer from '../helpers/jQueryGlobalizer';
 import TopBar from './components/TopBar.vue';
+import UserMenu from './components/UserMenu.vue';
 import tour from '../tour.js';
 
 export default {
 	components: {
-		TopBar
+		TopBar,
+		UserMenu
 	},
 	data() {
 		return {}
@@ -31,7 +34,7 @@ export default {
 	},
 	updated() {
 		this.$store.commit('setCurrPath', this.$route.path.slice(1));
-		tour.__promptUser(this.$route.path);
+		//tour.__promptUser(this.$route.path);
 	},
 	mounted() {
 		window.VueApp = this;
