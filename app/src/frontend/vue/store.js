@@ -89,7 +89,7 @@ const defaultState={
   currToolName: "", // value is project/tool dx_location
   downloadLocation: window.utils.defaultDownloadDir,
   operationProcesses: {},
-  tools: [], // see ../tests/testdata/fakeTools.json for expected schema
+  tools: [], // see ../../tests/testdata/fakeTools.json for expected schema
   noProjectsFound: false,
   showAllFiles: false,
   showAllProjects: false,
