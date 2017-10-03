@@ -14,17 +14,14 @@
 				<hr>
 			</div>
 			<div v-show="installingDxToolkit == 'waiting' " class='theater-body'>
-				<div class="col-xs-6" style="margin-top: 35px">
+				<div class="col-xs-6 theater-body-img"> 
 					<img src="img/screen-download.png">
 				</div>
 				<div class="col-xs-6">
-					<div style="margin-top: 15px;">
+					<div class="theater-body-text">
 						The St. Jude Cloud desktop application requires the installation of third-party software. We'll take care of installing that for you. 
-						<div class='info-icon-wrapper-div' @click='showModal()'>
-							<i class='material-icons' 
-							style='color:#018dc4; cursor:pointer'>
-							info
-							</i>
+						<div class="info-icon-wrapper-div" @click="showModal()">
+							<i class="material-icons info-icon">info</i>
 						</div>
 					</div>
 					<div @click="downloadDxToolkit()" 
@@ -50,7 +47,7 @@
 		</div>
 		<div class='col-xs-12 footer'>
 			<div class='progress'>
-				<div class='progress-bar' style='width: 100%'></div>
+				<div class='progress-bar progress-bar-div'></div>
 				<div class='progress-node progress-node-active'>1</div>
 				<div class='progress-node progress-node-nonactive' style='margin-left: 142px'>2</div>
 				<div class='progress-node progress-node-nonactive' style='margin-left: 277px'>3</div>
@@ -235,5 +232,22 @@ export default {
 	overflow: hidden;
     margin: 0;
     height: 30px;
+}
+
+.theater-body-img {
+  margin-top: 35px;
+}
+
+.theater-body-text {
+  margin-top: 15px;
+}
+
+.info-icon {
+  color: #018dc4;
+  cursor: pointer;
+}
+
+.progress-bar-div {
+  width: 100%;
 }
 </style>

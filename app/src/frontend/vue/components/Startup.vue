@@ -1,7 +1,6 @@
 <template>
 	<div class='row'>
-    <spin-kit id="loading-indicator"
-              btmLabel='Loading...'></spin-kit>
+    <spin-kit id="loading-indicator" btmLabel='Loading...'></spin-kit>
 	</div>
 </template>
 

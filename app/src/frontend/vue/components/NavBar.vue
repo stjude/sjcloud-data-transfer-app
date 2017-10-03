@@ -1,5 +1,5 @@
 <template>
-	<div class="nav-bar" style='width:100%'>
+	<div class="nav-bar nav-bar-div">
 		<router-link to='/upload'>
 			<div class='nav-span' v-bind:style='uploadLinkStyle'>Upload</div>
 		</router-link>
@@ -11,12 +11,8 @@
 			<input id='sjcda-nav-search-bar'
 				type='text' value='' 
 				placeholder="SEARCH..."
-				style='width: 300px; font-size: 14px; padding: 2px'
 				@input='setSearchTerm($event)'>
-			<div class='material-icons'
-				style='position: absolute; top: 30px; right: 18px; background-color: #fff; color: #848484'>
-				search	
-			</div>
+			<div class='material-icons search-icon'>search</div>
 		</div>
 	</div>
 </template>
@@ -79,5 +75,24 @@ export default {
 	height: 33px;
 	font-size: 18px;
 	color:#000;
+}
+
+.nav-bar-div {
+  width: 100%;
+}
+
+
+#sjcda-nav-search-bar {
+  width: 300px;
+  font-size: 14px;
+  padding: 2px;
+}
+
+.search-icon {
+  position: absolute;
+  top: 30px;
+  right: 18px;
+  background-color: #fff;
+  color: #848484;
 }
 </style>
