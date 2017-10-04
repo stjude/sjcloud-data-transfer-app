@@ -37,21 +37,9 @@ const tour = new window.Tour({
     window.VueApp.$router.replace("/download");
 		},
   }, {
-    element: "#left-panel-project-filters",
-    title: "Files and Project Filter Buttons",
-    content: "These filters may be used to show or hide certain projects or files. By default, we focus on St. Jude Cloud projects.",
-    backdrop: true,
-		backdropContainer: "body",
-		onShow(tour) {
-			if (tour.__promptTimeout) {
-      clearTimeout(tour.__promptTimeout);
-    };
-    window.VueApp.$router.replace("/download");
-		},
-  }, {
     element: ".right-panel-container",
     title: "Matching Project Files",
-    content: "These files depend on the selected project and filters in the left panel.",
+    content: "These files depend on the selected project in the left panel and settings from the drop down menu.",
     backdrop: true,
 		backdropContainer: "body",
 		placement: "left",
@@ -111,13 +99,42 @@ const tour = new window.Tour({
       window.VueApp.$store.commit('toggleMenu');
       window.VueApp.$router.replace("/upload");
     }
+  }, {
+    element: "#sjcda-top-bar-menu",
+    title: "User Menu",
+    content: "You can set user preferences by selecting 'Settings' from the drop down menu.",
+    backdrop: true,
+    backdropContainer: "body",
+    placement: 'left',
+    onShow(tour) {
+      if (tour.__promptTimeout) {
+        clearTimeout(tour.__promptTimeout);
+      };
+      window.VueApp.$router.replace("/download");
+      //window.VueApp.$store.commit("toggleMenu");
+    },
+  }, {
+    element: "#left-panel-project-filters",
+    title: "Files and Project Filter Buttons",
+    content: "These filters may be used to show or hide certain projects or files. By default, we focus on St. Jude Cloud projects.",
+    backdrop: true,
+    backdropContainer: "body",
+    onShow(tour) {
+      if (tour.__promptTimeout) {
+        clearTimeout(tour.__promptTimeout);
+      };
+      window.VueApp.$router.replace("/download");
+      window.VueApp.$store.commit("closeMenu");
+      window.VueApp.$store.commit("toggleModal");
+    },
   }],
   afterGetState: function(key, value) {
     // console.log(key,value)
   },
   onEnd(tour) {
     if (!window.VueApp) return;
-    window.setTimeout(()=>window.VueApp.$store.commit('toggleMenu'), 200);
+    window.setTimeout(()=>window.VueApp.$store.commit('closeMenu'), 200);
+    window.setTimeout(()=>window.VueApp.$store.commit('closeModal'), 200);
   }
 });
 

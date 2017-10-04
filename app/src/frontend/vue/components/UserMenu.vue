@@ -4,22 +4,27 @@
 	    	class='menu-item'
 	    	v-show='showTourBtn'
 	    	@click.stop='tour'>
-	    	Tour
 	    	<span class='material-icons menu-icon' style='color: #1381B3;'>explore</span>
+	    	Tour
 	    </div>
 	    <div id='issues-btn'
 	    	class='menu-item'
-	    	title='File A Bug Report' tippy
 	    	@click.stop='fileAnIssue'>
-	    	Bug Report
 	    	<span class='material-icons menu-icon' style='color: #b71c1c;'>error_outline</span>
+	    	Issues
+	    </div>
+	    <div id='settings-btn'
+	    	class='menu-item'
+	    	@click.stop='openSettings'>
+	    	<span class='material-icons menu-icon'>settings</span>
+	    	Settings
 	    </div>
 	    <div id='logout-btn'
 	    	class='menu-item'
 	    	v-show='showLogoutBtn'
 	    	@click='logout'>
-	    	Logout
 	    	<span class='material-icons menu-icon'>exit_to_app</span>
+	    	Logout
 	    </div>
 	</div>
 </template>
@@ -42,19 +47,23 @@ export default {
 	},
 	methods: {
 		logout() {
-	      this.$store.commit('toggleMenu');
+	      this.$store.commit('closeMenu');
 	      window.dx.logout((err, result) => {
 	      	this.$store.commit('setLoginState','waiting');
 	        this.$router.replace('/login');
 	    	});
     	},
     	tour() {
-    		this.$store.commit('toggleMenu');
+    		this.$store.commit('closeMenu');
 			tour.__start();
 		},
 		fileAnIssue() {
+			this.$store.commit('closeMenu');
 			window.utils.openExternal('https://github.com/stjude/sjcloud-data-transfer/issues');
-			this.$store.commit('toggleMenu');
+		},
+		openSettings() {
+			this.$store.commit('closeMenu');
+			this.$store.commit('toggleModal');
 		}
 	}
 }

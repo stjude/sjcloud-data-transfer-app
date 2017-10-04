@@ -99,7 +99,8 @@ const defaultState={
   },
   currFileSortKey: "",
   currFileSortDirection: 0,
-  menuIsVisible: false
+  menuIsVisible: false,
+  modalIsVisible: false
 };
 
 
@@ -254,6 +255,9 @@ export default function getVuexStore(cachedState={}) {
       },
       menuIsVisible(state) {
         return state.menuIsVisible
+      },
+      modalIsVisible(state) {
+        return state.modalIsVisible
       }
     },
     mutations: {
@@ -445,8 +449,22 @@ export default function getVuexStore(cachedState={}) {
       removeOperationProcess(state, info) {
         delete state.operationProcesses[info.filename];
       },
+      setConcurrentOperations(state,num) {
+        if (!isNaN(num)) {
+          state.concurrentOperations=num;
+        }
+      },
       toggleMenu(state) {
-        state.menuIsVisible=!state.menuIsVisible
+        state.menuIsVisible=!state.menuIsVisible;
+      },
+      closeMenu(state) {
+        state.menuIsVisible=false;
+      },
+      toggleModal(state) {
+        state.modalIsVisible=!state.modalIsVisible;
+      },
+      closeModal(state) {
+        state.modalIsVisible=false;
       }
     },
     actions: {
