@@ -3,6 +3,7 @@
 		<top-bar></top-bar>
 		<router-view keep-alive class='app-route-placement'></router-view>
 		<user-menu></user-menu>
+		<settings-modal></settings-modal>
 	</div>
 </template>
 
@@ -10,12 +11,14 @@
 import jQueryGlobalizer from '../helpers/jQueryGlobalizer';
 import TopBar from './components/TopBar.vue';
 import UserMenu from './components/UserMenu.vue';
+import SettingsModal from './components/SettingsModal.vue';
 import tour from '../tour.js';
 
 export default {
 	components: {
 		TopBar,
-		UserMenu
+		UserMenu,
+		SettingsModal
 	},
 	data() {
 		return {}
@@ -130,6 +133,10 @@ body {
 .bottom-bar-right {
 	text-align: right;
 	float: right;
+}
+
+.popover {
+	border-radius: 0;
 }
 
 </style>
