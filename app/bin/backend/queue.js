@@ -143,7 +143,12 @@ function toolInfoTask(task, callback) {
         dataUsage += describe.dataUsage * 1e9;
       }
 
-      if (describe.sponsoredDataUsage) {
+      let dataUsage = 0;
+      if ("dataUsage" in describe) {
+        dataUsage += describe.dataUsage * 1e9;
+      }
+
+      if ("sponsoredDataUsage" in describe) {
         dataUsage += describe.sponsoredDataUsage * 1e9;
       }
 
