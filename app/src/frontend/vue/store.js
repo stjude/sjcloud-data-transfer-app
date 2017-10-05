@@ -538,8 +538,25 @@ export default function getVuexStore(cachedState={}) {
                 });
 
                 commit("setTools", tools);
-
                 let resetCurrToolName = true;
+                if (window.uriProject) {
+                  console.log("URI project detected:", window.uriProject);
+
+                  for (let i = 0; i < tools.length; i++) {
+                    let tool = tools[i];
+                    if (tool.dx_location === window.uriProject) {
+                      resetCurrToolName = false;
+                      commit("setCurrToolName", window.uriProject);
+                      window.uriProject = null;
+                      break;
+                    };
+                  }
+
+                  if (resetCurrToolName) {
+                    // TODO: error, project was not found.
+                  }
+                }
+
                 for (let i = 0; i < tools.length; i++) {
                   let tool = tools[i];
                   if (tool.dx_location === previousTool) {

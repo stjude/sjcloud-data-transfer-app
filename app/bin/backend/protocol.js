@@ -1,11 +1,39 @@
+
 /**
  * @fileOverview Handles the custom sjcloud:// URI protocol. The only systems this is supported on are Windows and Mac.
 */
+
 const os = require("os");
 const electron = require("electron");
 const app = electron.app;
 
+const logging = require("./logging");
 app.setAsDefaultProtocolClient("sjcloud");
+
+/**
+ * @param {string} uri uri passed into the program.
+ * @return {String} Command to be run in the remote javascript runtime.
+ */
+function handleURI(uri) {
+
+  if (uri && uri.search("sjcloud://") != -1) {
+    logging.info("Handling custom URI:", uri);
+    projectName = uri.replace("sjcloud://", "");
+
+    // remove ending slash.
+    if (projectName.slice(-1) === "/") {
+      projectName = projectName.substring(0, projectName.length - 1);
+    }
+
+    projectName = decodeURIComponent(projectName);
+    cmd = `window.uriProject = '${projectName}';`;
+  } else {
+    logging.warn("Unknown URI pattern!");
+    cmd = "";
+  }
+
+  return cmd;
+}
 
 /**
  *
@@ -15,49 +43,29 @@ app.setAsDefaultProtocolClient("sjcloud");
  * The first argument passed to the program is always the name of the program.
  * The URL which called the app is then passed as the next arguments.
  * URLs with spaces are passed as multiple arguments, so they must be concatenated.
+ *
+ * @return {String} Command to be run in the remote javascript runtime.
  **/
-const platform = os.platform();
-let cmd = "";
-
-if (platform == "win32") {
+module.exports.handleURIWindows = () => {
   args = process.argv.slice(1);
-  if (args[0] && args[0].search("sjcloud://") != -1) { // app called by sjcloud:// URI
-    project_name = args[0].replace("sjcloud://", "");
-    for (i = 1; i < args.length; i++) { // Concatenate project names with spaces
-      project_name = project_name + " " + args[i];
-    }
-    if (project_name.slice(-1) == "/") {
-      project_name = project_name.substring(0, project_name.length - 1); // remove trailing '/'
-    }
-    project_name = decodeURIComponent(project_name);
-    cmd = `window.VueApp.$store.commit('setURIProject', '${project_name}');`;
-  } else {
-    cmd = "window.VueApp.$store.commit('setURIProject', '');";
-  }
-  module.exports.setURIprojectCmd = cmd;
-}
+  return handleURI(args[0]);
+};
 
 /**
  * Mac protocol handler
- *
- * On Mac, the url which called the app is passed as a string through the
- * app.on("open-url") event.
- **/
-app.on("open-url", (event, url) => {
-  event.preventDefault();
-  if (url && url.search("sjcloud://") != -1) { // app called by sjcloud:// URI
-    project_name = url.replace("sjcloud://", "");
-    if (project_name.slice(-1) == "/") {
-      project_name = project_name.substring(0, project_name.length - 1); // remove trailing '/'
-    }
-    project_name = decodeURIComponent(project_name);
-    // cmd = `window.VueApp.$store.commit('setURIProject', '${project_name}');`;
-    cmd = `window.uriProject = ${project_name};`;
-  } else {
-    cmd = `window.uriProject = ''`;
-    // cmd = "window.VueApp.$store.commit('setURIProject', '');";
+ * 
+ * On Mac, the uri which called the app is passed as a string through the
+ * app.on("open-uri") event.
+ * 
+ * @param {Event} event the event object passed to the event handler.
+ * @param {String} uri the uri passed to the event handler.
+ * @return {String} Command to be run in the remote javascript runtime.
+ */
+module.exports.handleURIMac = (event, uri) => {
+  if (event) {
+    event.preventDefault();
   }
   
-  module.exports.setURIprojectCmd = cmd;
-});
+  return handleURI(uri);
+};
 
