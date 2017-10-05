@@ -12,8 +12,6 @@ const platform = os.platform();
 let width = 900; // TODO check if these are the right dimensions for Mac. I doubt they are -Andrew
 let height = 630;
 
-console.log("Setting window size for platform: '" + platform +"'");
-
 if (platform === "linux") {
   width = 900;
   height = 620;
