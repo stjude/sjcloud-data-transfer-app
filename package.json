@@ -1,5 +1,5 @@
 {
-  "name": "SJCloudUploader",
+  "name": "SJCPDataTransferApp",
   "version": "1.0.0a",
   "description": "The St. Jude Cloud desktop app, designed for getting data in the St. Jude Cloud easily and reliably.",
   "homepage": "https://github.com/claymcleod/sjcloud-data-transfer",
@@ -20,11 +20,11 @@
     "test": "karma start karma.config.js"
   },
   "author": {
-    "name": "Clay McLeod, Andrew Frantz, Edgar Sioson",
+    "name": "St. Jude Children's Research Hospital",
     "email": "clay.mcleod@stjude.org"
   },
   "build": {
-    "appId": "cloud.stjude",
+    "appId": "cloud.stjude.platform",
     "productName": "SJCP Data Transfer",
     "dmg": {},
     "linux": {
