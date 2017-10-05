@@ -8,6 +8,8 @@ const path = require("path");
 const electron = require("electron");
 const BrowserWindow = electron.BrowserWindow;
 
+const config = require("../../../config.json");
+
 const platform = os.platform();
 let width = 900; // TODO check if these are the right dimensions for Mac. I doubt they are -Andrew
 let height = 630;
@@ -50,7 +52,13 @@ module.exports.createWindow = (callback) => {
 };
 
 const internal_url = "https://cloud.stjude.org";
-const oauth_url = "https://platform.dnanexus.com/login?scope=%7B%22full%22%3A+true%7D&redirect_uri=https%3A%2F%2Flocalhost%3A4433%2Fauthcb&client_id=sjcloud-desktop-dev";
+
+let client_id = "sjcloud-desktop-dev";
+if (config.ENVIRONMENT === "prod") {
+  client_id = "sjcloud-data-transfer-app";
+}
+
+const oauth_url = `https://platform.dnanexus.com/login?scope=%7B%22full%22%3A+true%7D&redirect_uri=https%3A%2F%2Flocalhost%3A4433%2Fauthcb&client_id=${client_id}`;
 
 
 module.exports.createOauthWindow = (internal, callback) => {
