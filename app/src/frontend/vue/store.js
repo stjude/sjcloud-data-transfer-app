@@ -99,6 +99,8 @@ const defaultState={
   },
   currFileSortKey: "",
   currFileSortDirection: 0,
+  menuIsVisible: false,
+  modalIsVisible: false
 };
 
 
@@ -251,6 +253,12 @@ export default function getVuexStore(cachedState={}) {
       modalVisibility(state, getters) {
         return (name) => state.modals[name];
       },
+      menuIsVisible(state) {
+        return state.menuIsVisible
+      },
+      modalIsVisible(state) {
+        return state.modalIsVisible
+      }
     },
     mutations: {
       setURIProject(state, value) {
@@ -441,7 +449,23 @@ export default function getVuexStore(cachedState={}) {
       removeOperationProcess(state, info) {
         delete state.operationProcesses[info.filename];
       },
-
+      setConcurrentOperations(state,num) {
+        if (!isNaN(num)) {
+          state.concurrentOperations=num;
+        }
+      },
+      toggleMenu(state) {
+        state.menuIsVisible=!state.menuIsVisible;
+      },
+      closeMenu(state) {
+        state.menuIsVisible=false;
+      },
+      toggleModal(state) {
+        state.modalIsVisible=!state.modalIsVisible;
+      },
+      closeModal(state) {
+        state.modalIsVisible=false;
+      }
     },
     actions: {
       refreshFiles({commit, state}) {
@@ -502,6 +526,7 @@ export default function getVuexStore(cachedState={}) {
                     loadedAvailableDownloads: false,
                     isSJCPTool: false,
                     SJCPToolURL: "",
+                    isSJCPDataRequest: false,
                   };
 
                   /** TODO: see todo above **/
