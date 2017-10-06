@@ -24,7 +24,7 @@ describe('NavBar search', function () {
 		holder.select('#sjcda-nav-search-bar').property('value',searchTerm);
 		window.VueApp.$store.commit('setSearchTerm',searchTerm);
 		setTimeout(()=>{
-			expect(holder.selectAll('#fileStatusDiv table tr').size()).toEqual(7);
+			expect(holder.selectAll('#file-status-table-body tr').size()).toEqual(6);
 			done();
 		},50)
 	});

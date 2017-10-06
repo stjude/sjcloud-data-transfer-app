@@ -75,12 +75,13 @@ if (window.location.port != "3057" && window.location.port != "9876"  && !window
               });
 
               tools.push(item);
-              if (i===0 && !window.VueApp.$store.getters.currTool) {
-                window.VueApp.$store.commit('setCurrToolName',item.dx_location)
-              }
             });
 
             window.VueApp.$store.commit('setTools',tools);
+
+            if (!window.VueApp.$store.getters.currTool && tools[0]) {
+              window.VueApp.$store.commit('setCurrToolName',tools[0].dx_location)
+            }
           })
           .catch((err)=>console.log(err));
       },

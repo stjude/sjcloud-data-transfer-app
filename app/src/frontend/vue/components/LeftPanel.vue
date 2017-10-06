@@ -98,7 +98,7 @@ export default {
 			return this.$store.getters.noProjectsFound;
 		},
 		currTool() {
-			return this.$store.getters.currTool
+			return this.$store.getters.currTool ? this.$store.getters.currTool : {}
 		},
 		tools() {
 			return this.$store.getters.tools
