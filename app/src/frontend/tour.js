@@ -11,18 +11,19 @@ const tour = new window.Tour({
   delay: 100,
   // debug: true,
   steps: [{
-    element: "#tour-btn",
+    element: "#sjcda-top-bar-menu",
     title: "Guided Tour",
     content: "Welcome! See the features of this application.",
-    placement: "bottom",
+    placement: "left",
     backdrop: false,
 		backdropContainer: "body",
 		onShow(tour) {
 			if (!window.VueApp) return;
 			if (tour.__promptTimeout) {
-      clearTimeout(tour.__promptTimeout);
-    };
+        clearTimeout(tour.__promptTimeout);
+      };
 			window.VueApp.$router.replace("/download");
+      window.VueApp.$store.commit('toggleMenu')
 		},
   }, {
     element: ".left-panel-table-container",
@@ -139,10 +140,11 @@ const tour = new window.Tour({
 });
 
 let tourInitialized=false;
+
 tour.__promptUser = (path)=>{
   if (tourInitialized ) return;
   if (path!=="/upload" && path!=="/download") return;
-  if (window.location.port=="9876") return;
+  if (window.location.port=="9876") return;  console.log('test')
 
   setTimeout(()=>{
     tourInitialized=true;
@@ -151,16 +153,16 @@ tour.__promptUser = (path)=>{
     tour.start(true);
     tour.__promptTimeout=setTimeout(()=>{
       tour.end();
-    }, 4000);
-  }, 300);
+    }, 6000);
+  }, 500);
 };
 
-tour.__start = ()=>{
+tour.__start = (i=1)=>{
   if (tour.__promptTimeout) {
     clearTimeout(tour.__promptTimeout);
   };
   tourInitialized=true;
-  tour.setCurrentStep(1);
+  tour.setCurrentStep(i);
   tour.start(true);
 };
 

@@ -27,6 +27,10 @@ const projectToolScopeWatcher = (store) => {
       console.log("URI project set!");
       store.commit("setCurrToolName", getters.uriProject, true);
     }
+
+    if (mutation.type !== 'toggleMenu' && mutation.type !== 'closeMenu') {
+      state.menuIsVisible=false;
+    }
   });
 };
 
@@ -100,7 +104,8 @@ const defaultState={
   currFileSortKey: "",
   currFileSortDirection: 0,
   menuIsVisible: false,
-  modalIsVisible: false
+  modalIsVisible: false,
+  tourHint: false
 };
 
 
@@ -258,6 +263,9 @@ export default function getVuexStore(cachedState={}) {
       },
       modalIsVisible(state) {
         return state.modalIsVisible
+      },
+      tourHint(state) {
+        return state.tourHint
       }
     },
     mutations: {
@@ -465,6 +473,9 @@ export default function getVuexStore(cachedState={}) {
       },
       closeModal(state) {
         state.modalIsVisible=false;
+      },
+      setTourHint(state,bool) {
+        state.tourHint=bool
       }
     },
     actions: {

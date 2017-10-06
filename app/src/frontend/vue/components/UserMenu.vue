@@ -103,9 +103,6 @@ export default {
 }
 
 #logout-btn {
-	font-size: 12px;
-	line-height: 1.5;
-	border-radius: 3px;
 }
 
 #issues-btn {

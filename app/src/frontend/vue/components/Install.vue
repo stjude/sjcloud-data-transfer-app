@@ -93,6 +93,9 @@ export default {
 			return this.$store.getters.modalVisibility('toolkit')
 		}
 	},
+	mounted() {
+		this.$store.commit('setTourHint',true);
+	},
 	methods: {
 		setInstallingDxToolkit(installing) {
 			this.$store.commit('setInstallingDxToolkit', installing);
