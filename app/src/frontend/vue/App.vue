@@ -41,6 +41,7 @@ export default {
 	},
 	mounted() {
 		window.VueApp = this;
+		this.$store.dispatch('updateToolsFromRemote');
 	},
 	methods: {
 		toggleToolPath() {
