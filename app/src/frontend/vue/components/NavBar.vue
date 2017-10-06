@@ -34,7 +34,10 @@ export default {
 		return {}
 	},
 	mounted() {
-		document.querySelector('#sjcda-nav-search-bar').value=this.$store.getters.searchTerm
+		const d=document.querySelector('#sjcda-nav-search-bar');
+		if (d) {
+			d.value=this.$store.getters.searchTerm;
+		}
 	},
 	computed: {
 		uploadLinkStyle() {

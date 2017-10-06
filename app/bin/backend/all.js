@@ -14,7 +14,7 @@ if (window.location.port != "3057" && window.location.port != "9876"  && !window
   //
   const testdata=window.testdata ? window.testdata 
     : window.location.search ? window.location.search.split("testdata=")[1]
-    : 'fakeTools';
+    : 'fakeTools'; 
 
   window.dx = {
       getToolsInformation(showAllProjects, showAllFiles, callback) {
@@ -75,7 +75,9 @@ if (window.location.port != "3057" && window.location.port != "9876"  && !window
               });
 
               tools.push(item);
-              if (i===0) window.VueApp.$store.commit('setCurrToolName',item.dx_location);
+              if (i===0 && !window.VueApp.$store.getters.currTool) {
+                window.VueApp.$store.commit('setCurrToolName',item.dx_location)
+              }
             });
 
             window.VueApp.$store.commit('setTools',tools);
@@ -87,27 +89,7 @@ if (window.location.port != "3057" && window.location.port != "9876"  && !window
 
         if (!testdata) {
           callback(null, []);
-        } else {
-          /*setTimeout(()=>{
-            // !!! Requires a symlink to test/testdata via app/testdata
-            fetch("testdata/"+testdata+".json")
-              .then((response)=>response.json())
-              .then((arr)=>{
-                arr.forEach((t)=>{
-                  t.download.forEach((f,i)=>{
-                    f.describe={
-                      name: f.name,
-                      size: f.raw_size
-                    };
-                    f.dx_location='dx_location' in f ? f.dx_location : f.name+'---'+i
-                  });
-                   console.log(f.dx_location)
-                });
-                window.VueApp.$store.commit('addFiles',arr);
-              })
-              .catch((err)=>console.log(err));
-          }, 500);*/
-        }
+        } 
       },
       describeDXItem(dnanexusId, callback) {
 
