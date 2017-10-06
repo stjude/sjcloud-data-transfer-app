@@ -16,12 +16,12 @@ describe('LeftPanel for a user with projects', function () {
 		setTimeout(()=>{
 			app.$store.commit('setCurrToolName','x2');
 			done()
-		},1600);
+		},500);
 	});
 
 	it('should have the correct # of rows for tools', function (done) {
 		setTimeout(()=>{
-			expect(holder.select('#fileStatusDiv').selectAll('tr').size()).toEqual(10);
+			expect(holder.select('#file-status-div').selectAll('tr').size()).toEqual(10);
 			done();
 		},300);
 	});
