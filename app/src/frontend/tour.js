@@ -22,7 +22,6 @@ const tour = new window.Tour({
 			if (tour.__promptTimeout) {
         clearTimeout(tour.__promptTimeout);
       };
-			window.VueApp.$router.replace("/download");
       window.VueApp.$store.commit('toggleMenu')
 		},
   }, {
@@ -144,7 +143,7 @@ let tourInitialized=false;
 tour.__promptUser = (path)=>{
   if (tourInitialized ) return;
   if (path!=="/upload" && path!=="/download") return;
-  if (window.location.port=="9876") return;  console.log('test')
+  if (window.location.port=="9876") return;
 
   setTimeout(()=>{
     tourInitialized=true;
