@@ -15,6 +15,7 @@
 	    </div>
 	    <div id='settings-btn'
 	    	class='menu-item'
+        v-show='showSettingsBtn'
 	    	@click.stop='openSettings'>
 	    	<span class='material-icons menu-icon'>settings</span>
 	    	Settings
@@ -39,7 +40,10 @@ export default {
 			return this.$route.path=='/download' || this.$route.path=='/upload';
 		},
 		showTourBtn() {
-			return true //this.$route.path=='/download' || this.$route.path=='/upload';
+			return this.$route.path=='/download' || this.$route.path=='/upload';
+		},
+		showSettingsBtn() {
+			return this.$route.path=='/download' || this.$route.path=='/upload';
 		},
 		isVisible() {
 			return this.$store.getters.menuIsVisible;
