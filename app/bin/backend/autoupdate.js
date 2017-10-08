@@ -40,8 +40,3 @@ electron.autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) 
     }
   });
 });
-
-autoUpdater.on("error", (message) => {
-  console.error("There was a problem updating the application");
-  console.error(message);
-});
