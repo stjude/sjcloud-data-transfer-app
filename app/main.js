@@ -57,14 +57,14 @@ function bootstrapWindow(mainWindow) {
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
   if (config.ENVIRONMENT === "prod") {
-    logging.warn(" ***********");
-    logging.warn(" * WARNING *");
-    logging.warn(" ***********");
-    logging.warn("");
-    logging.warn(" Autoupdate is currently disabled until code signing is");
-    logging.warn(" implemented!");
-    logging.warn("");
-    // const autoupdater = require("./bin/backend/autoupdate");
+    // logging.warn(" ***********");
+    // logging.warn(" * WARNING *");
+    // logging.warn(" ***********");
+    // logging.warn("");
+    // logging.warn(" Autoupdate is currently disabled until code signing is");
+    // logging.warn(" implemented!");
+    // logging.warn("");
+    const autoupdater = require("./bin/backend/autoupdate");
   }
 
   if (!config.CHROMIUM_MENU) {
