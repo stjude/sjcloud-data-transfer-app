@@ -56,7 +56,7 @@ let startupOptions = {};
 function bootstrapWindow(mainWindow) {
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
-  if (config.ENVIRONMENT === "prod") {
+  if (config.ENVIRONMENT === "prod" && config.AUTOUPDATE_ENABLED === true) {
     // logging.warn(" ***********");
     // logging.warn(" * WARNING *");
     // logging.warn(" ***********");
