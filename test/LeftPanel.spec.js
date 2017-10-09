@@ -9,8 +9,11 @@ describe('LeftPanel for a user with projects', function () {
 	holder.append('div').attr('id','leftaaa');
 	let app;
 	beforeAll(function (done) {
-		window.testdata='fakeTools';
-		app=_App('#leftaaa',{"showAllFiles":true,"showAllProjects":true});
+		app=_App('#leftaaa',{
+			testdata:'fakeTools',
+			showAllFiles:true,
+			showAllProjects:true
+		});
 		app.$router.push('/download');
 		 // note: simulated data load is delayed by 500 ms
 		setTimeout(()=>{

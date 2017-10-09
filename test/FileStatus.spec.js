@@ -8,9 +8,12 @@ describe('FileStatus table for an empty project', function () {
 	const holder=select('body').append('div')
 	let app
 	beforeAll(function (done) {
-		window.testdata='fakeTools';
 		holder.append('div').attr('id','fsaaa');
-		app=_App('#fsaaa',{"showAllFiles":true,"showAllProjects":true});
+		app=_App('#fsaaa',{
+			testdata:'fakeTools',
+			showAllFiles:true,
+			showAllProjects:true
+		});
 		app.$router.push('/download');
 		setTimeout(()=>{
 			app.$store.commit('setCurrToolName','x1');
@@ -36,9 +39,12 @@ describe('FileStatus table for a project with pending downloads', function () {
 	let app
 	
 	beforeAll(function (done) {
-		window.testdata='fakeTools';
 		holder.append('div').attr('id','fsbbb');
-		app=_App('#fsbbb',{"showAllFiles":true,"showAllProjects":true});
+		app=_App('#fsbbb',{
+			testdata:'fakeTools',
+			showAllFiles:true,
+			showAllProjects:true
+		});
 		app.$router.push('/download');
 		setTimeout(()=>{
 			app.$store.commit('setCurrToolName','x2');
@@ -111,7 +117,7 @@ describe('FileStatus table for a project with pending downloads', function () {
 	});
 
 	afterAll(function(done) {
-		holder.remove();
+		//holder.remove();
 		done();
 	});
 });
@@ -121,9 +127,12 @@ describe('FileStatus table for a project with completed transfer', function () {
 	let app
 	
 	beforeAll(function (done) {
-		window.testdata='fakeTools';
 		holder.append('div').attr('id','fsccc');
-		app=_App('#fsccc',{"showAllFiles":true,"showAllProjects":true});
+		app=_App('#fsccc',{
+			testdata:'fakeTools',
+			showAllFiles:true,
+			showAllProjects:true
+		});
 		app.$router.push('/download');
 		setTimeout(()=>{
 			app.$store.commit('setCurrToolName','x3');

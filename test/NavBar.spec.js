@@ -9,8 +9,11 @@ describe('NavBar search', function () {
 	holder.append('div').attr('id','navbaraaa');
 	let app
 	beforeAll(function (done) {
-		window.testdata='fakeTools';
-		app=_App('#navbaraaa');
+		app=_App('#navbaraaa',{
+			testdata:'fakeTools',
+			showAllFiles:true,
+			showAllProjects:true
+		});
 		app.$router.push('/download');
 		// note: simulated data load is delayed by 500 ms
 		setTimeout(()=>{
