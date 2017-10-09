@@ -25,7 +25,7 @@ const projectToolScopeWatcher = (store) => {
 
     if (mutation.type === "setURIProject") {
       console.log("URI project set!");
-      store.commit("setCurrToolName", getters.uriProject, true);
+      store.commit("setCurrToolName", state.uriProject, true);
     }
 
     if (mutation.type !== 'toggleMenu' && mutation.type !== 'closeMenu') {
@@ -73,6 +73,22 @@ function sortFiles(state, files) {
   }
 }
 
+// a simple search string parser used in testing
+// to override state settings 
+function getParams() {
+  if (window.location.port != "3057" && window.location.port != "9876") {
+    return {};
+  }
+
+  const params={};
+  if (window.testdata) params.testdata=window.testdata;
+  window.location.search.substr(1).split("&").forEach(kv=>{
+    const [key,value]=kv.split("=");
+    params[key]=value;
+  });
+  return params;
+}
+
 
 /** Default Settings **/
 const defaultState={
@@ -105,7 +121,8 @@ const defaultState={
   currFileSortDirection: 0,
   menuIsVisible: false,
   modalIsVisible: false,
-  tourHint: false
+  tourHint: false,
+  testdata: ""
 };
 
 
@@ -115,7 +132,8 @@ export default function getVuexStore(cachedState={}) {
     state: Object.assign(
       {},
       defaultState,
-      cachedState
+      cachedState,
+      getParams()
     ),
     getters: {
       /** Global **/
@@ -156,7 +174,7 @@ export default function getVuexStore(cachedState={}) {
         return state.tools.filter((t) => t.dx_location === state.currToolName)[0];
       },
       toolByName(state) {
-        return (name) => { console.log(name)
+        return (name) => {
           if (!name) return null;
 
           let toolsWithName = state.tools.filter((t) => t.name === name);
@@ -266,6 +284,9 @@ export default function getVuexStore(cachedState={}) {
       },
       tourHint(state) {
         return state.tourHint
+      },
+      testdata(state) {
+        return state.testdata
       }
     },
     mutations: {
@@ -284,6 +305,10 @@ export default function getVuexStore(cachedState={}) {
       /** Login **/
       setLoginState(state, status) {
         state.loginState = status;
+        if (status=='waiting') {
+          state.currToolName='';
+          state.tools.splice(0,state.tools.length);
+        }
       },
       setToken(state, token) {
         state.token = token;
@@ -476,6 +501,9 @@ export default function getVuexStore(cachedState={}) {
       },
       setTourHint(state,bool) {
         state.tourHint=bool
+      },
+      setTestdata(state,str) {
+        state.testdata=str
       }
     },
     actions: {
