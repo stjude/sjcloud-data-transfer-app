@@ -9,8 +9,11 @@ describe('Download panel for an empty project', function () {
 	holder.append('div').attr('id','downloadaaa');
 	let app;
 	beforeAll(function (done) {
-		window.testdata='fakeTools';
-		app=_App('#downloadaaa');
+		app=_App('#downloadaaa',{
+			testdata:'fakeTools',
+			showAllFiles:true,
+			showAllProjects:true
+		});
 		app.$router.push('/download');
 		setTimeout(()=>{
 			app.$store.commit('setCurrToolName','x1');
@@ -43,8 +46,11 @@ describe('Download panel for a project with completed transfer', function () {
 	let app;
 	
 	beforeAll(function (done) {
-		window.testdata='fakeTools';
-		app=_App('#downloadccc');
+		app=_App('#downloadccc',{
+			testdata:'fakeTools',
+			showAllFiles:true,
+			showAllProjects:true
+		});
 		app.$router.push('/download');
 		setTimeout(()=>{
 			app.$store.commit('setCurrToolName','x3');

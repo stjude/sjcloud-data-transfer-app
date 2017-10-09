@@ -9,8 +9,11 @@ describe('Upload panel for an empty project', function () {
 	holder.append('div').attr('id','uploadaaa');
 	let app
 	beforeAll(function (done) {
-		window.testdata='fakeTools';
-		app=_App('#uploadaaa');
+		app=_App('#uploadaaa',{
+			testdata:'fakeTools',
+			showAllFiles:true,
+			showAllProjects:true
+		});
 		app.$router.push('/upload');
 		setTimeout(()=>{
 			app.$store.commit('setCurrToolName','x1');
@@ -43,8 +46,11 @@ describe('Upload panel for a project with completed transfer', function () {
 	let app
 	
 	beforeAll(function (done) {
-		window.testdata='fakeTools';
-		app=_App('#uploadccc');
+		app=_App('#uploadccc',{
+			testdata:'fakeTools',
+			showAllFiles:true,
+			showAllProjects:true
+		});
 		app.$router.push('/upload');
 		 // note: simulated data load is delayed by 500 ms
 		setTimeout(()=>{
