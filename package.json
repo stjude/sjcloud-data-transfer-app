@@ -8,36 +8,13 @@
     "start": "electron app/main.js",
     "www": "webpack --config=webpack.config.js --watch --progress --colors",
     "www-no-watch": "webpack --config=webpack.config.js --progress --colors",
-    "postinstall": "install-app-deps",
-    "pack": "build -m -l -w --dir",
-    "dist:mac": "build -m",
-    "dist:linux": "build -l",
-    "dist:win": "build -w",
-    "dist:all": "build -lwm --x64 --ia32",
-    "release:prerelease": "build -lwm --x64 --ia32 --prerelease -p",
-    "release:all": "build -lwm --x64 --ia32 -p",
-    "postdist:win": "build\\scripts\\change_manifest.bat",
+	"pack:mac": "./node_modules/.bin/electron-packager . 'SJCP Data Transfer' --app-version=$npm_package_version --out=dist --ignore='^/dist$' --platform=darwin --arch=x64 --icon=build/icon.icns --overwrite",
+	"pack:win": "./node_modules/.bin/electron-packager . 'SJCP Data Transfer' --app-version=$npm_package_version --out=dist --ignore='^/dist$' --platform=win32 --arch=ia32 --version-string.CompanyName='St. Jude Childrens Research Hospital' --version-string.LegalCopyright='Copyright (C) 2017 St. Jude Childrens Research Hospital' --version-string.FileDescription='SJCP Data Transfer' --version-string.OriginalFilename='SJCP-Data-Transfer.exe' --version-string.InternalName='SJCP Data Transfer' --version-string.ProductName='SJCP Data Transfer' --version-string.ProductVersion=$npm_package_version --asar=true --icon=build/logo.ico --overwrite",
     "test": "karma start karma.config.js"
   },
   "author": {
     "name": "St. Jude Children's Research Hospital",
     "email": "clay.mcleod@stjude.org"
-  },
-  "build": {
-    "appId": "cloud.stjude.platform",
-    "productName": "SJCP Data Transfer",
-    "dmg": {},
-    "linux": {
-      "category": "Utility",
-      "target": [
-        "AppImage",
-        "deb"
-      ]
-    },
-    "win": {
-      "target": "NSIS",
-      "icon": "build/icon.ico"
-    }
   },
   "dependencies": {
     "async": "^2.4.1",
@@ -70,7 +47,6 @@
     "css-loader": "^0.28.4",
     "d3-selection": "^1.1.0",
     "electron": "~1.6.2",
-    "electron-builder": "^19.8.0",
     "electron-packager": "latest",
     "eslint": "^4.0.0",
     "eslint-config-google": "^0.8.0",
