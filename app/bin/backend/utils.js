@@ -292,7 +292,7 @@ module.exports.readableFileSize = function(bytes, roundNumbers=false) {
 
   let thresh = 1000;
   if (Math.abs(bytes) < thresh) {
-    return bytes.toFixed(1) + " B";
+    return Math.round(bytes.toFixed(1)) + " B";
   }
 
   let units = ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
