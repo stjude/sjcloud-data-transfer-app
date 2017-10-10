@@ -1,9 +1,11 @@
 {
   "ENVIRONMENT": "prod",
-  "DEFAULT_CONCURRENT_OPERATIONS": 2,
+  "DEFAULT_CONCURRENT_OPERATIONS": 3,
   "TOOL_PROJECT_TAG": "sjcp-project-tool",
   "DATA_PROJECT_TAG": "sjcp-project-data",
   "DOWNLOADABLE_TAG": "sjcp-result-file",
+  "AUTOUPDATE_ENABLED": true,
+  "CHROMIUM_MENU": false,
   "DOWNLOAD_INFO": {
     "WINDOWS": {
       "URL": "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.225.0.exe",

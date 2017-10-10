@@ -16,7 +16,7 @@
 			<div class="alert-container" v-else-if="hasTools && noFilesVisible">
 				<step-outcome failureMessage='No files to download!'
 										  textStyle='font-size: 24pt; text-align: center;'
-											tooltipText="If you don't see all of the files you expect, try toggling 'Show all files'."
+											tooltipText="If you'd like to see all files, please toggle the 'Show all files' option in the settings."
 										  outcome='error'></step-outcome>
 			</div>
 

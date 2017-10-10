@@ -19,7 +19,7 @@
 						</tr>
 					</thead>
 				</table>
-				<table style='margin-top:40px'>
+				<table style='margin-top:40px' id='sjcda-left-panel-table-body'>
 					<tbody>
 						<tr v-for='tool in tools'
 								v-bind:style='tool.dx_location == currTool.dx_location ? styles.activeTr : styles.inactiveTr' 
@@ -85,10 +85,10 @@ export default {
 		}
 	},
 	created() { 
-		this.$store.dispatch('updateToolsFromRemote');
+		//this.$store.dispatch('updateToolsFromRemote');
 	},
 	updated() {
-		// this.$store.dispatch('updateCurrentToolFromURI');
+		this.$store.dispatch('updateCurrentToolFromURI');
 	},
 	computed: {
 		uriProject() {
@@ -98,7 +98,7 @@ export default {
 			return this.$store.getters.noProjectsFound;
 		},
 		currTool() {
-			return this.$store.getters.currTool
+			return this.$store.getters.currTool ? this.$store.getters.currTool : {}
 		},
 		tools() {
 			return this.$store.getters.tools

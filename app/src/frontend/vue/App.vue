@@ -37,10 +37,13 @@ export default {
 	},
 	updated() {
 		this.$store.commit('setCurrPath', this.$route.path.slice(1));
-		//tour.__promptUser(this.$route.path);
+		if (this.$store.getters.tourHint) {
+			tour.__promptUser(this.$route.path);
+		}
 	},
 	mounted() {
 		window.VueApp = this;
+		this.$store.dispatch('updateToolsFromRemote');
 	},
 	methods: {
 		toggleToolPath() {

@@ -15,6 +15,7 @@
 	    </div>
 	    <div id='settings-btn'
 	    	class='menu-item'
+        v-show='showSettingsBtn'
 	    	@click.stop='openSettings'>
 	    	<span class='material-icons menu-icon'>settings</span>
 	    	Settings
@@ -39,7 +40,10 @@ export default {
 			return this.$route.path=='/download' || this.$route.path=='/upload';
 		},
 		showTourBtn() {
-			return true //this.$route.path=='/download' || this.$route.path=='/upload';
+			return this.$route.path=='/download' || this.$route.path=='/upload';
+		},
+		showSettingsBtn() {
+			return this.$route.path=='/download' || this.$route.path=='/upload';
 		},
 		isVisible() {
 			return this.$store.getters.menuIsVisible;
@@ -59,7 +63,7 @@ export default {
 		},
 		fileAnIssue() {
 			this.$store.commit('closeMenu');
-			window.utils.openExternal('https://github.com/stjude/sjcloud-data-transfer/issues');
+			window.utils.openExternal('https://github.com/stjude/sjcloud-data-transfer-app/issues');
 		},
 		openSettings() {
 			this.$store.commit('closeMenu');
@@ -103,9 +107,6 @@ export default {
 }
 
 #logout-btn {
-	font-size: 12px;
-	line-height: 1.5;
-	border-radius: 3px;
 }
 
 #issues-btn {

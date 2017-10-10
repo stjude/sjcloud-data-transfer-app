@@ -25,6 +25,7 @@ Testing
 
 Front-end tests
 - `ln -s $PWD/test/testdata $PWD/app/testdata`
+- `npm run www # if it's not running already`
 - `npm test`
 
 Backend tests

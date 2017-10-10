@@ -9,8 +9,11 @@ describe('NavBar search', function () {
 	holder.append('div').attr('id','navbaraaa');
 	let app
 	beforeAll(function (done) {
-		window.testdata='fakeTools';
-		app=_App('#navbaraaa');
+		app=_App('#navbaraaa',{
+			testdata:'fakeTools',
+			showAllFiles:true,
+			showAllProjects:true
+		});
 		app.$router.push('/download');
 		// note: simulated data load is delayed by 500 ms
 		setTimeout(()=>{
@@ -24,7 +27,7 @@ describe('NavBar search', function () {
 		holder.select('#sjcda-nav-search-bar').property('value',searchTerm);
 		window.VueApp.$store.commit('setSearchTerm',searchTerm);
 		setTimeout(()=>{
-			expect(holder.selectAll('#fileStatusDiv table tr').size()).toEqual(7);
+			expect(holder.selectAll('#file-status-table-body tr').size()).toEqual(6);
 			done();
 		},50)
 	});

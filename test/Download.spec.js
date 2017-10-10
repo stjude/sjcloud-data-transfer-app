@@ -9,8 +9,11 @@ describe('Download panel for an empty project', function () {
 	holder.append('div').attr('id','downloadaaa');
 	let app;
 	beforeAll(function (done) {
-		window.testdata='fakeTools';
-		app=_App('#downloadaaa');
+		app=_App('#downloadaaa',{
+			testdata:'fakeTools',
+			showAllFiles:true,
+			showAllProjects:true
+		});
 		app.$router.push('/download');
 		setTimeout(()=>{
 			app.$store.commit('setCurrToolName','x1');
@@ -43,8 +46,11 @@ describe('Download panel for a project with completed transfer', function () {
 	let app;
 	
 	beforeAll(function (done) {
-		window.testdata='fakeTools';
-		app=_App('#downloadccc');
+		app=_App('#downloadccc',{
+			testdata:'fakeTools',
+			showAllFiles:true,
+			showAllProjects:true
+		});
 		app.$router.push('/download');
 		setTimeout(()=>{
 			app.$store.commit('setCurrToolName','x3');
@@ -55,8 +61,8 @@ describe('Download panel for a project with completed transfer', function () {
 	it('should have 2 completed icons for downloads', function (done) {
 		setTimeout(()=>{
 			expect(
-				holder.select('#sjcda-file-table-body')
-				.selectAll('.cellStatus .material-icons')
+				holder.select('#file-status-table-body')
+				.selectAll('.file-status-cell-status .material-icons')
 				.filter(function(d){
 					return select(this).html()=='check_circle'
 				})
