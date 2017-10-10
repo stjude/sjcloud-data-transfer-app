@@ -9,6 +9,7 @@ const https = require("https");
 const mkdirp = require("mkdirp");
 const crypto = require("crypto");
 const kill = require("tree-kill");
+const logging = require("./logging");
 const {exec, execSync} = require("child_process");
 const {remote, shell} = require("electron");
 
@@ -67,6 +68,7 @@ module.exports.getDXToolkitDir = function() {
 */
 module.exports.runCommand = function(cmd, callback) {
   const platform = os.platform();
+  // logging.info(`Running command: ${cmd}`);
 
   let inner_callback = function(err, stdout, stderr) {
     if (err) {
@@ -117,6 +119,8 @@ module.exports.runCommand = function(cmd, callback) {
 */
 module.exports.runCommandSync = function(cmd) {
   const platform = os.platform();
+  // logging.info(`Running command synchronously: ${cmd}`);
+
   if (platform == "darwin" || platform == "linux") {
     const dxToolkitEnvFile = module.exports.dxToolkitEnvironmentFile;
     try {

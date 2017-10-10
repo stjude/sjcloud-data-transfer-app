@@ -6,6 +6,7 @@ const fs = require("fs");
 const os = require("os");
 const path = require("path");
 const utils = require("./utils");
+const logging = require("./logging");
 const child_process = require("child_process"); // eslint-disable-line
 const expandHomeDir = require("expand-home-dir");
 
@@ -247,7 +248,7 @@ module.exports.uploadFile = (file, projectId, progressCb, finishedCb) => {
   let dxPath = projectId + ":/uploads/" + path.basename(file.path.trim());
 
   try {
-    utils.runCommandSync(`dx rm -a '${dxPath}'`);
+    utils.runCommandSync(`dx rm -a '${dxPath}' || true`);
   } catch (e) {
     // If this fails, not a big deal. Just means there is no file at
     // this path to begin with.
