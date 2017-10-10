@@ -1,106 +1,141 @@
+/**
+ * @file Main entrypoint for the SJCP Data Upload tool.
+ *       This file includes all functionality for bootstrapping
+ *       the application, handling events, and logging.
+ * 
+ * @author Clay McLeod
+ * @author Andrew Frantz
+ * @author Edgar Sioson
+ */
+
 const os = require("os");
-const url = require("url");
-const path = require("path");
-const winston = require("winston");
 const electron = require("electron");
 
 const app = electron.app;
 const menu = electron.Menu;
-const protocol = electron.protocol;
-
-const ui = require("./bin/backend/ui");
-const state = require("./bin/backend/state");
-const protocolhandler = require("./bin/backend/protocol");
+const platform = os.platform();
 
 const config = require("../config.json");
+const ui = require("./bin/backend/ui");
+// eslint-disable-next-line no-unused-vars
+const logging = require("./bin/backend/logging");
+const protocol = require("./bin/backend/protocol");
 
-if (config.ENVIRONMENT !== "dev") {
-  console.warn("I've commented the autoupdate out to make it run. You can uncomment it.");
-  console.warn("");
-  // const autoupdater = require("./bin/backend/autoupdate");
-}
+logging.info(" ###############################################");
+logging.info(" # Starting the SJCP Data Transfer Application #");
+logging.info(" ###############################################");
+logging.info("");
+logging.info(" [*] Environment: " + config.ENVIRONMENT);
+logging.info(" [*] Process arguments:");
+process.argv.forEach((elem, index) => {
+  logging.info("   " + index + ": " + elem);
+});
+logging.info("");
 
-if (os.platform() == "darwin" || os.platform == "linux") {
-  winston.add(winston.transports.File, {filename: path.join(process.env.HOME, ".sjcloud/log.txt")});
-}
-if (os.platform() == "win32") {
-  winston.add(winston.transports.File, {filename: path.join(process.env.HOMEPATH, ".sjcloud/log.txt")});
-}
+/**
+ * START PROGRAM.
+ * 
+ * Below, you will see two variables. It is crucial that you understand
+ * how these two variables work based on electron's application lifecycle.
+ * 
+ *   mainWindow: this is the window object that holds all of the content
+ *               for the application.
+ *   startupOptions: this variable catches all of the relevant information
+ *                   in the event based methods below for parsing by the 'ready' 
+ *                   event.
+ */
 
 let mainWindow;
-winston.info(process.argv);
+let startupOptions = {};
+
 
 /**
  * Performs commands to bootstrap the main window.
  * @param {*} mainWindow The window.
  */
 function bootstrapWindow(mainWindow) {
-
-  console.log("Bootstrapping new window...");
-
-  setInterval(() => {
-    if (mainWindow !== null && !mainWindow.isDestroyed() && protocolhandler.setURIprojectCmd) {
-      console.log("URI project was set! Executing...");
-      mainWindow.webContents.executeJavaScript("window.setCurrPath = 'upload';");
-      mainWindow.webContents.executeJavaScript(protocolhandler.setURIprojectCmd); // have to wait till mainWindow is created before setting default project found in protocol.js
-      protocolhandler.setURIprojectCmd = null;
-    }
-  }, 500);
-
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
-  if (config.ENVIRONMENT !== "dev") {
-    let template = [{
-      label: "SJCPUploader",
-      submenu: [
-        {label: "About SJCPUploader", selector: "orderFrontStandardAboutPanel:"},
-        {type: "separator"},
-        {label: "Quit", accelerator: "Command+Q", click: () => {
-          app.quit();
-        }},
-      ]}, {
-      label: "Edit",
-      submenu: [
-        {label: "Undo", accelerator: "CmdOrCtrl+Z", selector: "undo:"},
-        {label: "Redo", accelerator: "Shift+CmdOrCtrl+Z", selector: "redo:"},
-        {type: "separator"},
-        {label: "Cut", accelerator: "CmdOrCtrl+X", selector: "cut:"},
-        {label: "Copy", accelerator: "CmdOrCtrl+C", selector: "copy:"},
-        {label: "Paste", accelerator: "CmdOrCtrl+V", selector: "paste:"},
-        {label: "Select All", accelerator: "CmdOrCtrl+A", selector: "selectAll:"},
-      ]},
-    ];
+  if (config.ENVIRONMENT === "prod" && config.AUTOUPDATE_ENABLED === true) {
+    // logging.warn(" ***********");
+    // logging.warn(" * WARNING *");
+    // logging.warn(" ***********");
+    // logging.warn("");
+    // logging.warn(" Autoupdate is currently disabled until code signing is");
+    // logging.warn(" implemented!");
+    // logging.warn("");
+    const autoupdater = require("./bin/backend/autoupdate");
+  }
 
-    if (config.ENVIRONMENT === "prod") {
-      menu.setApplicationMenu(menu.buildFromTemplate(template));
-    }
+  if (!config.CHROMIUM_MENU) {
+    let template = require("./bin/backend/menu.js");
+    menu.setApplicationMenu(menu.buildFromTemplate(template));
+  }
+}
+
+/**
+ * 
+ */
+function ensureWindow(callback=undefined) {
+  // If the app isn't 'ready', we can't create a window.
+  if (!app.isReady()) {
+    return;
+  }
+
+  if (mainWindow === null ||
+      mainWindow === undefined ||
+      mainWindow.isDestroyed()) {
+    ui.createWindow( (mw) => {
+      mainWindow = mw;
+      bootstrapWindow(mainWindow);
+      if (callback !== undefined) {
+        return callback();
+      }
+    });
   }
 }
 
 app.on("ready", () => {
-  ui.createWindow( (mw) => {
-    mainWindow = mw;
-    bootstrapWindow(mainWindow);
+  ensureWindow(() => {
+    // Handle open-url event.
+    let uriCommand = "";
+
+    if (platform === "win32") {
+      uriCommand = protocol.handleURIWindows();
+    } else if (startupOptions.open_url_event_occurred) {
+      uriCommand = protocol.handleURIMac(
+        startupOptions.open_url_event,
+        startupOptions.open_url_url
+      );
+    }
+
+    if (uriCommand !== "") {
+      logging.info(`Running JS command: ${uriCommand}`);
+      mainWindow.webContents.executeJavaScript("window.setCurrPath = 'upload';");
+      mainWindow.webContents.executeJavaScript(uriCommand);
+    }
   });
 });
 
 app.on("activate", () => {
-  if (mainWindow === null || mainWindow.isDestroyed()) {
-    mainWindow = null;
-    ui.createWindow( (mw) => {
-      mainWindow = mw;
-      bootstrapWindow(mainWindow);
-    });
-  }
+  ensureWindow();
 });
 
 app.on("open-url", (event, url) => {
-  if (mainWindow === null || mainWindow.isDestroyed()) {
-    mainWindow = null;
-    ui.createWindow( (mw) => {
-      mainWindow = mw;
-      bootstrapWindow(mainWindow);
-    });
+  if (!app.isReady()) {
+    // this will execute if the application is not open.
+    startupOptions.open_url_event_occurred = true;
+    startupOptions.open_url_event = event;
+    startupOptions.open_url_url = url;
+  } else {
+    uriCommand = protocol.handleURIMac(event, url);
+
+    if (uriCommand !== "") {
+      logging.info(`Running JS command: ${uriCommand}`);
+      mainWindow.webContents.executeJavaScript("window.currPath = 'upload';");
+      mainWindow.webContents.executeJavaScript(uriCommand);
+      mainWindow.webContents.executeJavaScript("window.VueApp.$store.dispatch('updateToolsFromRemote', true);");
+    }
   }
 });
 

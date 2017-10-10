@@ -2,17 +2,23 @@
 	<div class='sjcda-container'>
 		<top-bar></top-bar>
 		<router-view keep-alive class='app-route-placement'></router-view>
+		<user-menu></user-menu>
+		<settings-modal></settings-modal>
 	</div>
 </template>
 
 <script>
 import jQueryGlobalizer from '../helpers/jQueryGlobalizer';
 import TopBar from './components/TopBar.vue';
+import UserMenu from './components/UserMenu.vue';
+import SettingsModal from './components/SettingsModal.vue';
 import tour from '../tour.js';
 
 export default {
 	components: {
-		TopBar
+		TopBar,
+		UserMenu,
+		SettingsModal
 	},
 	data() {
 		return {}
@@ -31,10 +37,13 @@ export default {
 	},
 	updated() {
 		this.$store.commit('setCurrPath', this.$route.path.slice(1));
-		tour.__promptUser(this.$route.path);
+		if (this.$store.getters.tourHint) {
+			tour.__promptUser(this.$route.path);
+		}
 	},
 	mounted() {
 		window.VueApp = this;
+		this.$store.dispatch('updateToolsFromRemote');
 	},
 	methods: {
 		toggleToolPath() {
@@ -127,6 +136,10 @@ body {
 .bottom-bar-right {
 	text-align: right;
 	float: right;
+}
+
+.popover {
+	border-radius: 0;
 }
 
 </style>

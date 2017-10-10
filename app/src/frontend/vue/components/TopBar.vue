@@ -9,51 +9,16 @@
 	      <span class="title-font" @click='goHome'>St. Jude Cloud</span>
 	      <span class="title-font-thin" @click='goHome'>Platform</span>
 	    </div>
-	    <span id='logout-btn' 
-	    	class='btn btn-sm' 
-	    	style='float:right; margin: 6px 10px 0 0'
-	    	v-show='showLogoutBtn'
-	    	@click='logout'>
-	    	Logout
-	    </span>
-	    <span id='issues-btn' 
-	    	class='btn btn-sm' 
-	    	style='float:right; margin: 6px 10px 0 0'
-	    	title='File A Bug Report' tippy
-	    	@click.stop='fileAnIssue'>
-	    	Help
-	    </span>
-	    <span id='tour-btn' 
-	    	class='btn btn-sm' 
-	    	style='float:right; margin: 6px 10px 0 0'
-	    	v-show='showTourBtn'
-	    	@click.stop='tour'>
-	    	Tour
-	    </span>
+	    <div class='material-icons' 
+	    	style='float:right; margin: 10px 10px 0 0'
+	    	@click.stop='toggleMenu'>
+	    	view_headline
+	    </div>
 	</div>
 </template>
 
 <script>
-import tour from '../../tour.js';
-
-let tourInitialized=false;
-
 export default {
-	computed: {
-		showLogoutBtn() {
-			return this.$route.path=='/download' || this.$route.path=='/upload';
-		},
-		showTourBtn() {
-			return this.$route.path=='/download' || this.$route.path=='/upload';
-		}
-	},
-	mounted() {
-		/*if (this.$route.path!='/download' && this.$route.path!='/upload') return;
-		setTimeout(()=>{
-			this.$store.commit('setCurrPath','download');
-			setTimeout(tour.promptUser,500);
-		},500);*/
-	},
 	methods: {
 		goHome() {
 			if (this.$store.getters.environment === "dev") {
@@ -62,17 +27,8 @@ export default {
 				console.error("Tried to go home, but we are not in 'dev' mode!");
 			}
 		},
-		logout() {
-	      window.dx.logout((err, result) => {
-	      	this.$store.commit('setLoginState','waiting');
-	        this.$router.replace('/login');
-	    	});
-    	},
-    	tour() {
-			tour.__start();
-		},
-		fileAnIssue() {
-			window.utils.openExternal('https://github.com/stjude/sjcloud-data-transfer/issues');
+		toggleMenu() {
+			this.$store.commit('toggleMenu');
 		}
 	}
 }
@@ -114,13 +70,6 @@ export default {
   display: inline;
   margin-left: 15px;
   margin-top: 7px;
-}
-
-#logout-btn {
-	padding: 5px 10px;
-	font-size: 12px;
-	line-height: 1.5;
-	border-radius: 3px;
 }
 
 .title-font {

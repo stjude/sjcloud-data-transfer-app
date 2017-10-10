@@ -1,11 +1,13 @@
 <template>
 	<div class="nav-bar nav-bar-div">
+    <span class="upload-download-btn-container">
 		<router-link to='/upload'>
 			<div class='nav-span' v-bind:style='uploadLinkStyle'>Upload</div>
 		</router-link>
 		<router-link to='/download'>
 			<div class='nav-span' v-bind:style='downloadLinkStyle'>Download</div>
 		</router-link>
+    </span>
 
 		<div v-show="searchVisible" style='float:right;'>
 			<input id='sjcda-nav-search-bar'
@@ -34,7 +36,10 @@ export default {
 		return {}
 	},
 	mounted() {
-		document.querySelector('#sjcda-nav-search-bar').value=this.$store.getters.searchTerm
+		const d=document.querySelector('#sjcda-nav-search-bar');
+		if (d) {
+			d.value=this.$store.getters.searchTerm;
+		}
 	},
 	computed: {
 		uploadLinkStyle() {

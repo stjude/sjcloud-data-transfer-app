@@ -25,7 +25,11 @@ const projectToolScopeWatcher = (store) => {
 
     if (mutation.type === "setURIProject") {
       console.log("URI project set!");
-      store.commit("setCurrToolName", getters.uriProject, true);
+      store.commit("setCurrToolName", state.uriProject, true);
+    }
+
+    if (mutation.type !== 'toggleMenu' && mutation.type !== 'closeMenu') {
+      state.menuIsVisible=false;
     }
   });
 };
@@ -69,6 +73,22 @@ function sortFiles(state, files) {
   }
 }
 
+// a simple search string parser used in testing
+// to override state settings 
+function getParams() {
+  if (window.location.port != "3057" && window.location.port != "9876") {
+    return {};
+  }
+
+  const params={};
+  if (window.testdata) params.testdata=window.testdata;
+  window.location.search.substr(1).split("&").forEach(kv=>{
+    const [key,value]=kv.split("=");
+    params[key]=value;
+  });
+  return params;
+}
+
 
 /** Default Settings **/
 const defaultState={
@@ -99,6 +119,10 @@ const defaultState={
   },
   currFileSortKey: "",
   currFileSortDirection: 0,
+  menuIsVisible: false,
+  modalIsVisible: false,
+  tourHint: false,
+  testdata: ""
 };
 
 
@@ -108,7 +132,8 @@ export default function getVuexStore(cachedState={}) {
     state: Object.assign(
       {},
       defaultState,
-      cachedState
+      cachedState,
+      getParams()
     ),
     getters: {
       /** Global **/
@@ -149,7 +174,7 @@ export default function getVuexStore(cachedState={}) {
         return state.tools.filter((t) => t.dx_location === state.currToolName)[0];
       },
       toolByName(state) {
-        return (name) => { console.log(name)
+        return (name) => {
           if (!name) return null;
 
           let toolsWithName = state.tools.filter((t) => t.name === name);
@@ -251,6 +276,18 @@ export default function getVuexStore(cachedState={}) {
       modalVisibility(state, getters) {
         return (name) => state.modals[name];
       },
+      menuIsVisible(state) {
+        return state.menuIsVisible
+      },
+      modalIsVisible(state) {
+        return state.modalIsVisible
+      },
+      tourHint(state) {
+        return state.tourHint
+      },
+      testdata(state) {
+        return state.testdata
+      }
     },
     mutations: {
       setURIProject(state, value) {
@@ -268,6 +305,10 @@ export default function getVuexStore(cachedState={}) {
       /** Login **/
       setLoginState(state, status) {
         state.loginState = status;
+        if (status=='waiting') {
+          state.currToolName='';
+          state.tools.splice(0,state.tools.length);
+        }
       },
       setToken(state, token) {
         state.token = token;
@@ -441,7 +482,29 @@ export default function getVuexStore(cachedState={}) {
       removeOperationProcess(state, info) {
         delete state.operationProcesses[info.filename];
       },
-
+      setConcurrentOperations(state,num) {
+        if (!isNaN(num)) {
+          state.concurrentOperations=num;
+        }
+      },
+      toggleMenu(state) {
+        state.menuIsVisible=!state.menuIsVisible;
+      },
+      closeMenu(state) {
+        state.menuIsVisible=false;
+      },
+      toggleModal(state) {
+        state.modalIsVisible=!state.modalIsVisible;
+      },
+      closeModal(state) {
+        state.modalIsVisible=false;
+      },
+      setTourHint(state,bool) {
+        state.tourHint=bool
+      },
+      setTestdata(state,str) {
+        state.testdata=str
+      }
     },
     actions: {
       refreshFiles({commit, state}) {
@@ -502,6 +565,7 @@ export default function getVuexStore(cachedState={}) {
                     loadedAvailableDownloads: false,
                     isSJCPTool: false,
                     SJCPToolURL: "",
+                    isSJCPDataRequest: false,
                   };
 
                   /** TODO: see todo above **/
@@ -513,8 +577,25 @@ export default function getVuexStore(cachedState={}) {
                 });
 
                 commit("setTools", tools);
-
                 let resetCurrToolName = true;
+                if (window.uriProject) {
+                  console.log("URI project detected:", window.uriProject);
+
+                  for (let i = 0; i < tools.length; i++) {
+                    let tool = tools[i];
+                    if (tool.dx_location === window.uriProject) {
+                      resetCurrToolName = false;
+                      commit("setCurrToolName", window.uriProject);
+                      window.uriProject = null;
+                      break;
+                    };
+                  }
+
+                  if (resetCurrToolName) {
+                    // TODO: error, project was not found.
+                  }
+                }
+
                 for (let i = 0; i < tools.length; i++) {
                   let tool = tools[i];
                   if (tool.dx_location === previousTool) {

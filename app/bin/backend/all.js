@@ -1,4 +1,4 @@
-if (window.location.port != "3057" && window.location.port != "9876"  && !window.testdata) {
+if (window.location.port != "3057" && window.location.port != "9876" && !window.testdata) {
   // electron app
   window.dx = require("./bin/backend/dx");
   window.queue = require("./bin/backend/queue");
@@ -12,16 +12,13 @@ if (window.location.port != "3057" && window.location.port != "9876"  && !window
   //
   // TO-DO: figure out a way to use this from the test directory as helper functions
   //
-  const testdata=window.testdata ? window.testdata 
-    : window.location.search ? window.location.search.split("testdata=")[1]
-    : 'fakeTools';
 
   window.dx = {
       getToolsInformation(showAllProjects, showAllFiles, callback) {
         if (!window.location.search) return [];
         // to-do: write more elegantly
         setTimeout(()=>{
-          fetch("testdata/"+testdata+".json")
+          fetch("testdata/"+window.VueApp.$store.getters.testdata+".json")
             .then((response)=>response.json())
             .then(callback)
             .catch((err)=>console.log(err));
@@ -42,7 +39,7 @@ if (window.location.port != "3057" && window.location.port != "9876"  && !window
         if (!window.VueApp) return;
 
         // !!! Requires a symlink to test/testdata via app/testdata
-        fetch("testdata/"+testdata+".json")
+        fetch("testdata/"+window.VueApp.$store.getters.testdata+".json")
           .then((response)=>response.json())
           .then((arr)=>{
             const tools=[]
@@ -75,39 +72,22 @@ if (window.location.port != "3057" && window.location.port != "9876"  && !window
               });
 
               tools.push(item);
-              if (i===0) window.VueApp.$store.commit('setCurrToolName',item.dx_location);
             });
 
             window.VueApp.$store.commit('setTools',tools);
+
+            if (!window.VueApp.$store.getters.currTool && tools[0]) {
+              window.VueApp.$store.commit('setCurrToolName',tools[0].dx_location)
+            }
           })
           .catch((err)=>console.log(err));
       },
       listDownloadableFiles(projectId, allFiles, callback) {
         if (!window.VueApp) return;
 
-        if (!testdata) {
+        if (!window.VueApp.$store.getters.testdata) {
           callback(null, []);
-        } else {
-          /*setTimeout(()=>{
-            // !!! Requires a symlink to test/testdata via app/testdata
-            fetch("testdata/"+testdata+".json")
-              .then((response)=>response.json())
-              .then((arr)=>{
-                arr.forEach((t)=>{
-                  t.download.forEach((f,i)=>{
-                    f.describe={
-                      name: f.name,
-                      size: f.raw_size
-                    };
-                    f.dx_location='dx_location' in f ? f.dx_location : f.name+'---'+i
-                  });
-                   console.log(f.dx_location)
-                });
-                window.VueApp.$store.commit('addFiles',arr);
-              })
-              .catch((err)=>console.log(err));
-          }, 500);*/
-        }
+        } 
       },
       describeDXItem(dnanexusId, callback) {
 

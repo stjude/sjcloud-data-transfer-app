@@ -8,6 +8,7 @@ import Config from "../../../../config.json";
 
 // configure Vue
 Vue.config.debug = true;
+Vue.config.devtools = false; // silence message about downloading dev tools
 Vue.use(VueRouter);
 Vue.use(vueTippy);
 

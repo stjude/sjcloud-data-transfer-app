@@ -9,19 +9,22 @@ describe('LeftPanel for a user with projects', function () {
 	holder.append('div').attr('id','leftaaa');
 	let app;
 	beforeAll(function (done) {
-		window.testdata='fakeTools';
-		app=_App('#leftaaa',{"showAllFiles":true,"showAllProjects":true});
+		app=_App('#leftaaa',{
+			testdata:'fakeTools',
+			showAllFiles:true,
+			showAllProjects:true
+		});
 		app.$router.push('/download');
 		 // note: simulated data load is delayed by 500 ms
 		setTimeout(()=>{
 			app.$store.commit('setCurrToolName','x2');
 			done()
-		},1600);
+		},500);
 	});
 
 	it('should have the correct # of rows for tools', function (done) {
 		setTimeout(()=>{
-			expect(holder.select('#fileStatusDiv').selectAll('tr').size()).toEqual(10);
+			expect(holder.select('#file-status-div').selectAll('tr').size()).toEqual(10);
 			done();
 		},300);
 	});
