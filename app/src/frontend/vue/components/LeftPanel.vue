@@ -14,7 +14,7 @@
 				<table id="sjcda-left-panel-table-header"> 
 					<thead>
 						<tr class="sjcda-left-panel-table-thead-tr">
-							<th class="sjcda-left-panel-table-thead-tr-th-key">{{ showAllProjects ? "PROJECT" : "TOOL"}}</th>
+							<th class="sjcda-left-panel-table-thead-tr-th-key">WORKSPACE</th>
 							<th class="sjcda-left-panel-table-thead-tr-th-value">SIZE</th>
 						</tr>
 					</thead>
