@@ -526,6 +526,7 @@ export default function getVuexStore(cachedState={}) {
                     loadedAvailableDownloads: false,
                     isSJCPTool: false,
                     SJCPToolURL: "",
+                    isSJCPDataRequest: false,
                   };
 
                   /** TODO: see todo above **/
