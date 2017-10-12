@@ -1,5 +1,5 @@
 <template>
-	<div id='file-status-table-header-div' :style='rootDivStyle'>
+	<div id='file-status-div' :style='rootDivStyle'>
 		<table id='file-status-table'>
 			<thead>
 				<tr class="file-status-thead-tr"> 
@@ -140,7 +140,7 @@ export default {
 </script>
 
 <style scoped>
-#file-status-table-header-div {
+#file-status-div {
 	margin-top:18px;
 	height: 412px;
 	overflow: hidden;
@@ -153,20 +153,23 @@ export default {
 	overflow: auto;
 }
 
-#file-status-table-header {
+#file-status-div {
+	position:fixed; 
+	width:571px;  
+	z-index:1;
+}
+
+#file-status-table {
 	position:fixed; 
 	width:571px; 
 	border:1px solid #eeeeee; 
-	z-index:1;
+	z-index:1
 }
+
 
 .file-status-thead-tr {
   color:#000; 
   background-color:#eeeeee;
-}
-
-#file-status-table-header-div:hover {
-	overflow: auto;
 }
 
 #file-status-table-body-div {

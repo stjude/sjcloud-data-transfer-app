@@ -7,7 +7,7 @@ electron.autoUpdater.setFeedURL(feed);
 
 setInterval(() => {
   electron.autoUpdater.checkForUpdates();
-}, 60000);
+}, 60 * 1000);
 
 electron.autoUpdater.on("error", (error) => {
   logging.error(error);
