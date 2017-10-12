@@ -155,10 +155,17 @@ export default {
 
 #file-status-div {
 	position:fixed; 
-	width:571px; 
-	border:1px solid #eeeeee; 
+	width:571px;  
 	z-index:1;
 }
+
+#file-status-table {
+	position:fixed; 
+	width:571px; 
+	border:1px solid #eeeeee; 
+	z-index:1
+}
+
 
 .file-status-thead-tr {
   color:#000; 
