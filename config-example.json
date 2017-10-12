@@ -15,9 +15,13 @@
       "URL": "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.236.2-osx.tar.gz",
       "SHA256SUM": "843f9b4a98436f7ab629b43ed3ff7c1d36b7dbd49b6bbbb1297275affc82fdc5"
     },
-    "LINUX": {
+    "UBUNTU_12": {
+      "URL": "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.236.2-ubuntu-12.04-amd64.tar.gz",
+      "SHA256SUM": "f8e72a75dab4394581fa70ac86bdf2f56ac674a6f9c908164ed769222032dd65"
+    },
+    "UBUNTU_14": {
       "URL": "https://wiki.dnanexus.com/images/files/dx-toolkit-v0.236.2-ubuntu-14.04-amd64.tar.gz",
       "SHA256SUM": "446046267fe9ce4433ed1e5ed6aa9935f0e313fd029477f97278dd5de0f798ec"
     }
-  } 
+  }
 }
