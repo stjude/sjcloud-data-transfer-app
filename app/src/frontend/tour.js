@@ -27,15 +27,15 @@ const tour = new window.Tour({
   }, {
     element: ".left-panel-table-container",
     title: "Step 1: Select workspace",
-    content: `Creating a data request or running a tool for the first time
-              will create a permanent 'workspace' area in the cloud.
-              
-              For a data request, all of your data will be placed 
-              in the workspace that is created.
-              
-              For tools, you will upload your data to the tool's workspace, run the tool
+    content: `<p>Creating a data request or running a tool for the first time
+              will create a permanent 'workspace' area in the cloud.</p>
+
+              <p>For a data request, all of your data will be placed 
+              in the workspace that is created.</p>
+
+              <p>For tools, you will upload your data to the tool's workspace, run the tool
               on that data in the cloud, then download the results 
-              from the tool's workspace.`,
+              from the tool's workspace.</p>`,
     backdrop: true,
     backdropContainer: "body",
     onShow(tour) {
@@ -48,7 +48,7 @@ const tour = new window.Tour({
     element: ".right-panel-container",
     title: "Step 2: Work with files",
     content: `Selecting a workspace in Step 1 will update the
-              what files is shown in the upload/download pane.`,
+              files shown in the upload/download pane.`,
     backdrop: true,
     backdropContainer: "body",
     placement: "left",
@@ -76,7 +76,7 @@ const tour = new window.Tour({
       window.VueApp.$router.replace("/upload");
     },
   }, {
-    element: ".right-panel-container",
+    element: "#upload-panel",
     title: "Step 3a: Upload files",
     content: `After selecting the 'Upload' tab, you can click
               or drag files over the highlighted area to send
@@ -90,7 +90,7 @@ const tour = new window.Tour({
       window.VueApp.$router.replace("/upload");
     },
   }, {
-    element: ".right-panel-container",
+    element: "#download-panel",
     title: "Step 3b: Download files",
     content: `After selecting the 'Download' tab, you can select 
               results files from tools or data included in your
@@ -129,6 +129,7 @@ const tour = new window.Tour({
     onShow(tour) {
       if (!window.VueApp) return;
       window.VueApp.$router.replace("/download");
+      window.VueApp.$store.commit("closeModal");
     },
   }, {
     element: "#sjcda-top-bar-menu",
@@ -136,26 +137,30 @@ const tour = new window.Tour({
     content: "If you encounter issues, please file a bug report.",
     backdrop: true,
   	backdropContainer: "body",
+    orphan: true,
   	placement: "left",
   	smartPlacement: true,
     onShow(tour) {
       if (!window.VueApp) return;
-      window.VueApp.$store.commit("toggleMenu");
-      window.VueApp.$router.replace("/upload");
+      //window.VueApp.$router.replace("/upload");
+      window.VueApp.$store.commit("closeModal");
+      window.VueApp.$store.commit("openMenu");
     },
   }, {
     element: "#sjcda-top-bar-menu",
-    title: "User Menu",
+    title: "User preferences",
     content: "You can set user preferences by selecting 'Settings' from the drop down menu.",
     backdrop: true,
     backdropContainer: "body",
+    orphan: true,
     placement: "left",
     onShow(tour) {
       if (tour.__promptTimeout) {
         clearTimeout(tour.__promptTimeout);
       };
-      window.VueApp.$router.replace("/download");
-      // window.VueApp.$store.commit("toggleMenu");
+      //window.VueApp.$router.replace("/download");
+      window.VueApp.$store.commit("closeModal");
+      window.VueApp.$store.commit("openMenu");
     },
   }, {
     element: "#left-panel-project-filters",

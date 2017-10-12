@@ -1,13 +1,13 @@
 <template>
 	<div class="nav-bar nav-bar-div">
-    <span class="upload-download-btn-container">
-		<router-link to='/upload'>
-			<div class='nav-span' v-bind:style='uploadLinkStyle'>Upload</div>
-		</router-link>
-		<router-link to='/download'>
-			<div class='nav-span' v-bind:style='downloadLinkStyle'>Download</div>
-		</router-link>
-    </span>
+	    <div class="upload-download-btn-container">
+			<router-link to='/upload'>
+				<div class='nav-span' v-bind:style='uploadLinkStyle'>Upload</div>
+			</router-link>
+			<router-link to='/download'>
+				<div class='nav-span' v-bind:style='downloadLinkStyle'>Download</div>
+			</router-link>
+	    </div>
 
 		<div v-show="searchVisible" style='float:right;'>
 			<input id='sjcda-nav-search-bar'
@@ -86,6 +86,10 @@ export default {
   width: 100%;
 }
 
+.upload-download-btn-container {
+	display: inline-block;
+	background-color: #fff;
+}
 
 #sjcda-nav-search-bar {
   width: 300px;

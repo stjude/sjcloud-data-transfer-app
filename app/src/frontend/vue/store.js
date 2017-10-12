@@ -28,7 +28,7 @@ const projectToolScopeWatcher = (store) => {
       store.commit("setCurrToolName", state.uriProject, true);
     }
 
-    if (mutation.type !== 'toggleMenu' && mutation.type !== 'closeMenu') {
+    if (mutation.type !== 'toggleMenu' && mutation.type !== 'closeMenu' && mutation.type !== 'openMenu') {
       state.menuIsVisible=false;
     }
   });
@@ -492,6 +492,9 @@ export default function getVuexStore(cachedState={}) {
       },
       closeMenu(state) {
         state.menuIsVisible=false;
+      },
+      openMenu(state) {
+        state.menuIsVisible=true;
       },
       toggleModal(state) {
         state.modalIsVisible=!state.modalIsVisible;

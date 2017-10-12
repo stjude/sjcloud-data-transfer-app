@@ -3,7 +3,7 @@
 		<div class='col-xs-4 left-panel-container'>
 			<left-panel></left-panel>
 		</div>
-		<div class='col-xs-8 right-panel-container'>
+		<div id='upload-panel' class='col-xs-8 right-panel-container'>
 			<div v-show='!transferComplete'>
 				<nav-bar></nav-bar>
 				<div class="alert-container" v-show="noProjectsFound">
