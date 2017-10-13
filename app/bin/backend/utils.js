@@ -143,9 +143,6 @@ module.exports.runCommandSync = function(cmd) {
       }
     } catch (err) {}
 
-    // Warning: the dnanexus-shell.ps1 script used to source environment variables
-    // on Windows sends a DNAnexus banner to STDOUT. Banner will be first 3 lines
-    // of STDOUT.
     cmd = "powershell.exe " + cmd;
     return execSync(cmd, {maxBuffer: 10000000});
   }

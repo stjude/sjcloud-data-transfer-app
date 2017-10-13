@@ -4,7 +4,7 @@
 			<left-panel></left-panel>
 		</div>
 		
-		<div class='col-xs-8 right-panel-container'>
+		<div id='download-panel' class='col-xs-8 right-panel-container'>
 			<nav-bar></nav-bar>
 			<div class="alert-container" v-show="noProjectsFound">
 				<img src="http://via.placeholder.com/175x175">

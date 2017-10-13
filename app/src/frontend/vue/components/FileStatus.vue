@@ -1,6 +1,6 @@
 <template>
 	<div id='file-status-div' :style='rootDivStyle'>
-		<table id='file-status-table-header'>
+		<table id='file-status-table'>
 			<thead>
 				<tr class="file-status-thead-tr"> 
 					<th class='file-status-cell-checkbox' v-on:click.stop='toggleCheckBoxes'>
@@ -153,12 +153,19 @@ export default {
 	overflow: auto;
 }
 
-#file-status-table-header {
+#file-status-div {
+	position:fixed; 
+	width:571px;  
+	z-index:1;
+}
+
+#file-status-table {
 	position:fixed; 
 	width:571px; 
 	border:1px solid #eeeeee; 
-	z-index:1;
+	z-index:1
 }
+
 
 .file-status-thead-tr {
   color:#000; 
@@ -219,6 +226,13 @@ td {
 	overflow: hidden;
 }
 
+#file-status-table {
+	position:fixed; 
+	width:571px; 
+	border:1px solid #eeeeee; 
+	z-index:1
+}
+
 .file-status-cell-status-progress-started {
 	position:relative; 
 	height:20px; 
@@ -236,6 +250,10 @@ td {
 	top: -1px;
 	left: -1px;
 	border-bottom:1px solid #4F8A10
+}
+
+.file-status-thead-tr {
+  color:#000; background-color:#eeeeee;
 }
 
 .file-status-cell-status-finished {

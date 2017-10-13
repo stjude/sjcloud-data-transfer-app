@@ -23,8 +23,10 @@ const config = require("../../../config.json");
 function getDxDownloadUrlFromPlatform(platform) {
   if (platform == "darwin") {
     return config.DOWNLOAD_INFO.MAC.URL;
-  } else if (platform == "linux") {
-    return config.DOWNLOAD_INFO.LINUX.URL;
+  } else if (platform == "ubuntu12") {
+    return config.DOWNLOAD_INFO.UBUNTU_12.URL;
+  } else if (platform == "ubuntu14") {
+    return config.DOWNLOAD_INFO.UBUNTU_14.URL;
   } else if (platform == "win32") {
     return config.DOWNLOAD_INFO.WINDOWS.URL;
   } else throw new Error("Invalid platform: " + platform);
@@ -41,11 +43,32 @@ function getDxDownloadUrlFromPlatform(platform) {
 function getSha256sumFromPlatform(platform) {
   if (platform == "darwin") {
     return config.DOWNLOAD_INFO.MAC.SHA256SUM;
-  } else if (platform == "linux") {
-    return config.DOWNLOAD_INFO.LINUX.SHA256SUM;
+  } else if (platform == "ubuntu12") {
+    return config.DOWNLOAD_INFO.UBUNTU_12.SHA256SUM;
+  } else if (platform == "ubuntu14") {
+    return config.DOWNLOAD_INFO.UBUNTU_14.SHA256SUM;
   } else if (platform == "win32") {
     return config.DOWNLOAD_INFO.WINDOWS.SHA256SUM;
   } else throw new Config("Invalid platform: " + platform);
+}
+
+function getLinuxVers(callback) {
+  utils.runCommand("lsb_release -ir", (err, stdout) => {
+    if (err) {
+      return callback("unrecognized");
+    } else {
+      [junk1, distro, junk2, releaseNum] = stdout.split(/[\n\t]/);
+      if (distro != "Ubuntu") {
+        return callback("unrecognized");
+      } else {
+        if (releaseNum.slice(0, 2) == "14") {
+          return callback("ubuntu14");
+        } else {
+          return callback("ubuntu12"); // defaults to the ubuntu12.04 dx-toolkit release
+        }
+      }
+    }
+  });
 }
 
 /**
@@ -58,9 +81,10 @@ function getSha256sumFromPlatform(platform) {
 module.exports.install = (updateProgress, failProgress, callback) => {
   const tmpdir = os.tmpdir();
   const platform = os.platform();
-  const downloadURL = getDxDownloadUrlFromPlatform(platform);
+  let downloadULR;
 
-  if (platform === "darwin" || platform === "linux") {
+  if (platform === "darwin") {
+    downloadURL = getDxDownloadUrlFromPlatform(platform);
     const dxFolderPath = utils.getDXToolkitDir();
     const dxTarDownloadPath = path.join(tmpdir, "dx-toolkit.tar.gz");
     updateProgress("30%", "Downloading...");
@@ -87,6 +111,39 @@ module.exports.install = (updateProgress, failProgress, callback) => {
           }
           updateProgress("100%", "Success!");
           return callback(null, true);
+        });
+      });
+    });
+  } else if (platform === "linux") {
+    getLinuxVers((linux_vers) => {
+      downloadURL = getDxDownloadUrlFromPlatform(linux_vers);
+      const dxFolderPath = utils.getDXToolkitDir();
+      const dxTarDownloadPath = path.join(tmpdir, "dx-toolkit.tar.gz");
+      updateProgress("30%", "Downloading...");
+      utils.downloadFile(downloadURL, dxTarDownloadPath, () => {
+        // TODO(clay): handle download failure.
+        updateProgress("60%", "Verifying...");
+        // NOTE: I unzip to the parent directory because the unzip creates a
+        // structure like dx-toolkit/dx-toolkit/...
+        utils.computeSHA256(dxTarDownloadPath, (err, shasum) => {
+          if (err) {
+            failProgress("Could not verify download!");
+            return callback(err, null);
+          }
+          if (getSha256sumFromPlatform(linux_vers) != shasum) {
+            failProgress("Could not verify download!");
+            return callback("SHA sum doesn't match!", null);
+          }
+          updateProgress("90%", "Extracting...");
+          const parentDir = path.dirname(dxFolderPath);
+          utils.untarTo(dxTarDownloadPath, parentDir, function(err, res) {
+            if (err) {
+              failProgress("Could not extract dx-toolkit!");
+              return callback(err, false);
+            }
+            updateProgress("100%", "Success!");
+            return callback(null, true);
+          });
         });
       });
     });
@@ -330,6 +387,5 @@ module.exports.downloadFile = function(downloadLocation, fileName, fileRawSize, 
       }
     });
   });
-
   return utils.runCommand(cmd, finishedCb);
 };
