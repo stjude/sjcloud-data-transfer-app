@@ -26,12 +26,12 @@ module.exports.getState = function(callback) {
     return callback(self.state.UNKNOWN);
   }
 
-  utils.initSJCloudHome(function(err, res) {
+  utils.initSJCloudHome( (err, res) => {
     if (err) {
       return callback(self.state.UNKNOWN);
     }
 
-    utils.dxToolkitOnPath( function(err, res) {
+    utils.dxToolkitOnPath( (err, res) => {
       if (err) {
         return callback(self.state.NEED_INSTALL);
       }

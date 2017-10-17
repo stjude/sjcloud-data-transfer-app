@@ -11,18 +11,14 @@ const BrowserWindow = electron.BrowserWindow;
 const config = require("../../../config.json");
 
 const platform = os.platform();
-let width = 900; // TODO check if these are the right dimensions for Mac. I doubt they are -Andrew
-let height = 630;
 
-if (platform === "linux") {
+let width = 900, height = 620;
+if (platform === "darwin" || platform === "linux") {
   width = 900;
   height = 620;
 } else if (platform === "win32") {
   width = 890;
   height = 630;
-} else if (platform === "darwin") {
-  width = 900;
-  height = 620;
 }
 
 module.exports.createWindow = (callback) => {
