@@ -191,5 +191,7 @@ export default {
 .cloud-upload-icon {
   vertical-align: bottom;
   font-size: 28px;
+  height: 30px;
+  margin-right: 2px;
 }
 </style>

@@ -249,7 +249,9 @@ td {
 	width: 0%;
 	top: -1px;
 	left: -1px;
-	border-bottom:1px solid #4F8A10
+	border: 1px solid #000000;
+  margin-left: 5px;
+  margin-right: 5px;
 }
 
 .file-status-thead-tr {
