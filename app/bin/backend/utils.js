@@ -27,11 +27,13 @@ defaultDownloadDir = path.join( os.homedir(), "Downloads" );
  * @param {callback} callback
  **/
 module.exports.initSJCloudHome = function(callback) {
-  fs.exists(sjcloudHomeDirectory, function(exists) {
-    if (!exists) {
-      mkdirp(sjcloudHomeDirectory, function(err) {
-        if (err) {
-          return callback(err, null);
+  fs.stat(sjcloudHomeDirectory, function(statErr, stats) {
+    if (statErr) {
+      return callback(statErr, null);
+    } else if (!stats) {
+      mkdirp(sjcloudHomeDirectory, function(mkdirErr) {
+        if (mkdirErr) {
+          return callback(mkdirErr, null);
         }
         return callback(null, true);
       });
