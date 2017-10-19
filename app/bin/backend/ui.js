@@ -3,7 +3,6 @@
 */
 
 const os = require("os");
-const url = require("url");
 const path = require("path");
 const electron = require("electron");
 const BrowserWindow = electron.BrowserWindow;
@@ -80,7 +79,7 @@ module.exports.createOauthWindow = (internal, callback) => {
     const match = /https:\/\/platform.dnanexus.com\/login\?code/g.exec(newUrl);
     if (match != null) {
       event.preventDefault();
-      var timer = setInterval(() => {
+      let timer = setInterval(() => {
         if (loginWindow.webContents.getURL() === "https://platform.dnanexus.com/") {
           clearInterval(timer);
           loginWindow.loadURL(oauth_url);

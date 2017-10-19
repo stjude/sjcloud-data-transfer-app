@@ -81,7 +81,7 @@ function getLinuxVers(callback) {
 module.exports.install = (updateProgress, failProgress, callback) => {
   const tmpdir = os.tmpdir();
   const platform = os.platform();
-  let downloadULR;
+  let downloadURL;
 
   if (platform === "darwin") {
     downloadURL = getDxDownloadUrlFromPlatform(platform);
@@ -115,8 +115,8 @@ module.exports.install = (updateProgress, failProgress, callback) => {
       });
     });
   } else if (platform === "linux") {
-    getLinuxVers((linux_vers) => {
-      downloadURL = getDxDownloadUrlFromPlatform(linux_vers);
+    getLinuxVers((linuxVers) => {
+      downloadURL = getDxDownloadUrlFromPlatform(linuxVers);
       const dxFolderPath = utils.getDXToolkitDir();
       const dxTarDownloadPath = path.join(tmpdir, "dx-toolkit.tar.gz");
       updateProgress("30%", "Downloading...");
@@ -130,7 +130,7 @@ module.exports.install = (updateProgress, failProgress, callback) => {
             failProgress("Could not verify download!");
             return callback(err, null);
           }
-          if (getSha256sumFromPlatform(linux_vers) != shasum) {
+          if (getSha256sumFromPlatform(linuxVers) != shasum) {
             failProgress("Could not verify download!");
             return callback("SHA sum doesn't match!", null);
           }
