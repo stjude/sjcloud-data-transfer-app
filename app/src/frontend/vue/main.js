@@ -22,13 +22,13 @@ const router = new VueRouter({
 
 // exporting as a function allows delayed start
 // for testing, etc.
-export default function _App(selector,cachedState={}) {
+export default function _App(selector, cachedState={}) {
   // boostrap the app
   const VueApp = new Vue({
     el: selector,
     render: (h)=>h(App),
     router,
-    store: store(cachedState)
+    store: store(cachedState),
   });
 
   VueApp.$router.replace("/");
@@ -37,7 +37,8 @@ export default function _App(selector,cachedState={}) {
     VueApp.$router.replace("home");
   } else {
     window.state.getState((state) => {
-      VueApp.$router.replace(state); 
+      console.log("State is:", state);
+      VueApp.$router.replace(state);
     });
   }
 
@@ -47,14 +48,14 @@ export default function _App(selector,cachedState={}) {
 // if this code was bundled and included in index.html,
 // where the expected container div is present, 
 // then start the app immediately
-if (document.querySelector('#sjcda-main-div')) {
-  window.utils.readCachedFile('state.json', function(content) {
+if (document.querySelector("#sjcda-main-div")) {
+  window.utils.readCachedFile("state.json", function(content) {
     const obj=JSON.parse(content);
     if (!obj) {
-      console.log('Error parsing the cached state file.');
-      _App("#sjcda-main-div"); 
+      console.log("Error parsing the cached state file.");
+      _App("#sjcda-main-div");
     } else {
-      _App("#sjcda-main-div",obj);
+      _App("#sjcda-main-div", obj);
     }
-  }, '{}');
+  }, "{}");
 }
