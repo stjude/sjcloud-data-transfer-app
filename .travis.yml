@@ -3,8 +3,10 @@ node_js:
   - "node"
 before_install:
   - cp config-example.json config.json
-  - npm install
+before_script:    
   - npm run www-no-watch
+addons:
+  chrome: stable
 cache:
   directories:
     - "node_modules"
