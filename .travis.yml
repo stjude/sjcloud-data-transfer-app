@@ -1,0 +1,9 @@
+language: node_js
+node_js:
+  - "node"
+before_install:
+  - npm install
+  - npm run www-no-watch
+cache:
+  directories:
+    - "node_modules"
