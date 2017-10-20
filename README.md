@@ -1,6 +1,11 @@
 St. Jude Cloud Destop Application
 ---------------------------------
 
+
+Master: [![Build Status](https://travis-ci.org/stjude/sjcloud-data-transfer-app.svg?branch=master)](https://travis-ci.org/stjude/sjcloud-data-transfer-app)
+Development: [![Build Status](https://travis-ci.org/stjude/sjcloud-data-transfer-app.svg?branch=development)](https://travis-ci.org/stjude/sjcloud-data-transfer-app)
+
+
 A desktop application for the St. Jude Cloud which makes interaction with the
 St. Jude Cloud easily accessible from a graphical user interface. There is
 functionality to install the
