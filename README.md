@@ -1,37 +1,102 @@
-St. Jude Cloud Destop Application
----------------------------------
+
+
+St. Jude Cloud Data Transfer Application
+========================================
 
 [![Build Status](https://travis-ci.org/stjude/sjcloud-data-transfer-app.svg?branch=master)](https://travis-ci.org/stjude/sjcloud-data-transfer-app) [![Maintainability](https://api.codeclimate.com/v1/badges/ce7eed7d778bf50ac81a/maintainability)](https://codeclimate.com/github/stjude/sjcloud-data-transfer-app/maintainability) 
 
-A desktop application for the St. Jude Cloud which makes interaction with the
-St. Jude Cloud easily accessible from a graphical user interface. There is
-functionality to install the
-[dx-toolkit](https://github.com/dnanexus/dx-toolkit), log-in to the St. Jude
-Cloud (internal and external), and upload/download from the platform.
+A desktop application written on top of the [Electron Framework](https://electron.atom.io/) facilitating easy uploading and downloading of genomic data to the  St. Jude Cloud. Functionality includes:
 
-Install
-=======
+* Automatically installing and configuring the [dx-toolkit](https://github.com/dnanexus/dx-toolkit).
+* Logging in using OAuth for both internal and external St. Jude users.
+* Reliably uploading and downloading genomic data files to/from the platform.
 
-- `git clone http://cmpb-devops.stjude.org/gitlab/claymcleod/sjcloud_desktop_app.git` to grab the source code.
-- `npm install` to install the dependencies.
+
+Building
+-------
+
+You can find the latest built version of the tools on the [releases page](https://github.com/stjude/sjcloud-data-transfer-app/releases). If you'd like to build the application yourself, you'll need the following prequisites:
+
+* NodeJS
+* Python 2.7.13+
+
+The process for installing the software in production mode:
+
+```bash
+# download repository
+git clone git@github.com:stjude/sjcloud-data-transfer-app.git --depth 1
+
+cd sjcloud-data-transfer-app
+
+# install dependencies
+npm install
+
+# copy the example configuration
+cp config-example.json config.json 
+
+# run the webpack compilation step for the frontend.
+npm run www-no-watch
+
+# start the application
+npm start
+```
 
 Development
-===========
+-----------
 
 [![Build Status](https://travis-ci.org/stjude/sjcloud-data-transfer-app.svg?branch=development)](https://travis-ci.org/stjude/sjcloud-data-transfer-app)
 
 
-In all cases the front-end code needs to be compiled before the tool will run using `npm run www` or `npm run www-no-watch` (for one time only). You can develop the front-end using just this command (the web browser should automatically open up to browsersync). Note that the testdata folder must be symlinked under the app/folder when developing and testing in a regular, non-electron Chrome browser.
+Running the tool in development mode requires a few changes to the config:
 
-Running the official desktop application will require running `npm start` in a separate terminal window.
+```bash
+# edit the config.json file
+vim config.json
+```
+
+We recommend that you change the following keys in the config
+ file.
+
+```javascript
+{
+    "ENVIRONMENT": "dev",
+    ...
+    "AUTOUPDATE_ENABLED": false,
+    "CHROMIUM_MENU": true,
+    ...
+}
+```
+
+After making these changes, you are ready to go! We recommend that you use the following command in the background to continuously recompile the front-end code as you make changes:
+
+```bash
+# continuously recompile webpack code
+npm run www
+```
+
+If you are only working with the front-end code, you can develop in the web browser, which should automatically open up (BrowserSync)[https://www.browsersync.io/]. 
+
+**Note: the testdata folder must be symlinked under the app/folder when developing and testing in a regular, non-electron Chrome browser.**
 
 Testing
 =======
 
-Front-end tests
-- `ln -s $PWD/test/testdata $PWD/app/testdata`
-- `npm run www # if it's not running already`
-- `npm test`
+You can run the front-end tests by running the following commnands:
 
-Backend tests
-- to-do
+
+```bash
+# Link the testdata to the expected location
+ln -s $PWD/test/testdata $PWD/app/testdata
+
+# run the webpack compiler
+npm run www-no-watch 
+# or npm run www in another tab.
+
+# run the testing suite
+npm test
+```
+
+Issues
+------
+
+If you have any issues, please file a bug report at the [issues page](https://github.com/stjude/sjcloud-data-transfer-app/issues).
