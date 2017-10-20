@@ -10,7 +10,7 @@
     "www": "webpack --config=webpack.config.js --watch --progress --colors",
     "www-no-watch": "webpack --config=webpack.config.js --progress --colors",
     "pack:mac": "./node_modules/.bin/electron-packager . 'SJCP Data Transfer' --electron-version=1.6.15 --app-version=$npm_package_version --out=dist --ignore='^/dist$' --platform=darwin --arch=x64 --icon=build/icon.icns --overwrite",
-    "pack:dmg": "./node_modules/.bin/appdmg dmg.json 'dist/SJCP Data Transfer.dmg'",
+    "pack:dmg": "./node_modules/.bin/appdmg ./build/dmg.json 'dist/SJCP Data Transfer.dmg'",
     "pack:win": "./node_modules/.bin/electron-packager . 'SJCP Data Transfer' --electron-version=1.6.15 --app-version=%npm_package_version% --out=dist --ignore='^/dist$' --platform=win32 --arch=ia32 --version-string.CompanyName='St. Jude Childrens Research Hospital' --app-copyright=\"Copyright (C) 2017 St. Jude Childrens Research Hospital\" --version-string.FileDescription='SJCP Data Transfer' --version-string.OriginalFilename='SJCP-Data-Transfer.exe' --version-string.InternalName='SJCP Data Transfer' --version-string.ProductName='SJCP Data Transfer' --version-string.ProductVersion=%npm_package_version% --asar --icon=build/logo.ico --overwrite",
     "pack:linux": "./node_modules/.bin/electron-builder -l deb rpm",
     "postpack": "bash ./build/scripts/finalize.sh 'SJCP Data Transfer'",

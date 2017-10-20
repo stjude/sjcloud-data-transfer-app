@@ -1,0 +1,10 @@
+{
+  "title": "SJCPDataTransfer",
+  "icon": "icon.icns",
+  "background": "background.png",
+  "contents": [
+    { "x": 130, "y": 220, "type": "file", "path": "../dist/SJCP Data Transfer.app" },
+    { "x": 410, "y": 220, "type": "link", "path": "/Applications" }
+  ]
+}
+
