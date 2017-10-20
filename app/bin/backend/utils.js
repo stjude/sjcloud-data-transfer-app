@@ -26,12 +26,12 @@ defaultDownloadDir = path.join( os.homedir(), "Downloads" );
  * 
  * @param {callback} callback
  **/
-module.exports.initSJCloudHome = function(callback) {
-  fs.exists(sjcloudHomeDirectory, function(exists) {
-    if (!exists) {
-      mkdirp(sjcloudHomeDirectory, function(err) {
-        if (err) {
-          return callback(err, null);
+module.exports.initSJCloudHome = (callback) => {
+  fs.stat(sjcloudHomeDirectory, function(statErr, stats) {
+    if (statErr || !stats) {
+      mkdirp(sjcloudHomeDirectory, function(mkdirErr) {
+        if (mkdirErr) {
+          return callback(mkdirErr, null);
         }
         return callback(null, true);
       });
@@ -70,7 +70,7 @@ module.exports.runCommand = function(cmd, callback) {
   const platform = os.platform();
   // logging.info(`Running command: ${cmd}`);
 
-  let inner_callback = function(err, stdout, stderr) {
+  let innerCallback = function(err, stdout, stderr) {
     if (err) {
       return callback(err, null);
     }
@@ -94,7 +94,7 @@ module.exports.runCommand = function(cmd, callback) {
       }
     } catch (err) {}
 
-    return exec(cmd, {shell: "/bin/bash", maxBuffer: 10000000}, inner_callback);
+    return exec(cmd, {shell: "/bin/bash", maxBuffer: 10000000}, innerCallback);
   } else if (platform == "win32") {
     const dnanexusPSscript = path.join( module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1" );
     // fs.statSync() is only to check if "dx" commands can be sourced.
@@ -107,7 +107,7 @@ module.exports.runCommand = function(cmd, callback) {
     } catch (err) {}
 
     cmd = "powershell.exe " + cmd;
-    return exec(cmd, {maxBuffer: 10000000}, inner_callback);
+    return exec(cmd, {maxBuffer: 10000000}, innerCallback);
   }
 };
 
@@ -343,17 +343,17 @@ module.exports.fileInfoFromPath = function(filepath, checked) {
  * @param {integer} max maximum number
  * @return {integer} random integer.
  */
-module.exports.randomInt = function(min, max) {
+module.exports.randomInt = (min, max) => {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min;
 };
 
-module.exports.killProcess = function(pid) {
+module.exports.killProcess = (pid) => {
   return kill(pid);
 };
 
-module.exports.resetFileStatus = function(file) {
+module.exports.resetFileStatus = (file) => {
   file.status = 0;
   file.waiting = false;
   file.started = false;
@@ -361,24 +361,24 @@ module.exports.resetFileStatus = function(file) {
   file.errored = false;
 };
 
-module.exports.saveToFile = function (filename,content) {
-  fs.writeFile( sjcloudHomeDirectory+'/'+filename, content, function(err) {
-    if(err) {
+module.exports.saveToFile = (filename, content) => {
+  fs.writeFile( sjcloudHomeDirectory+"/"+filename, content, (err) => {
+    if (err) {
       return console.log(err);
     }
   });
-}
+};
 
-module.exports.readCachedFile = function (filename, callback, defaultContent=null) {
-  fs.readFile( sjcloudHomeDirectory+'/'+filename, function(err,data) {
-    if(err) {
+module.exports.readCachedFile = (filename, callback, defaultContent=null) => {
+  fs.readFile( sjcloudHomeDirectory+"/"+filename, (err, data) => {
+    if (err) {
       console.log(err);
       if (!defaultContent) return;
     }
     
     callback(data ? data.toString() : defaultContent);
   });
-}
+};
 
 /** EXPORTS **/
 

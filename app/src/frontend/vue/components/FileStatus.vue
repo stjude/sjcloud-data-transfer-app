@@ -6,7 +6,7 @@
 					<th class='file-status-cell-checkbox' v-on:click.stop='toggleCheckBoxes'>
 						<input type="checkbox" :checked='checkedAll' />
 					</th>
-					<th class='file-status-cell-filename'>
+					<th class='file-status-cell-filename' style='overflow: hidden'>
 						<span>FILENAME</span>
 						<sort-arrows sortkey='filename'></sort-arrows>
 					</th>

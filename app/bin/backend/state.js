@@ -23,15 +23,17 @@ module.exports.getState = function(callback) {
   const platform = os.platform();
 
   if (platform != "darwin" && platform != "linux" && platform != "win32") {
+    console.error("Could not determine platform: ", platform);
     return callback(self.state.UNKNOWN);
   }
 
-  utils.initSJCloudHome(function(err, res) {
+  utils.initSJCloudHome( (err, res) => {
     if (err) {
+      console.error("Error occurred:", err);
       return callback(self.state.UNKNOWN);
     }
 
-    utils.dxToolkitOnPath( function(err, res) {
+    utils.dxToolkitOnPath( (err, res) => {
       if (err) {
         return callback(self.state.NEED_INSTALL);
       }
@@ -43,6 +45,7 @@ module.exports.getState = function(callback) {
 
         utils.dxCheckProjectAccess( (err, res) => {
           if (err) {
+            console.error("Error occurred:", err);
             return callback(self.state.UNKNOWN);
           }
 

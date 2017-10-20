@@ -42,3 +42,4 @@ electron.autoUpdater.on("update-downloaded", (event, releaseNotes, releaseName) 
     }
   });
 });
+

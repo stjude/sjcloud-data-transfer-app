@@ -14,87 +14,87 @@ if (window.location.port != "3057" && window.location.port != "9876" && !window.
   //
 
   window.dx = {
-      getToolsInformation(showAllProjects, showAllFiles, callback) {
-        if (!window.location.search) return [];
-        // to-do: write more elegantly
-        setTimeout(()=>{
-          fetch("testdata/"+window.VueApp.$store.getters.testdata+".json")
-            .then((response)=>response.json())
-            .then(callback)
-            .catch((err)=>console.log(err));
-        }, 500);
-      },
-      install(updateProgress, failProgress, callback) {
-        updateProgress("30%", "Downloading...");
-
-        setTimeout(()=>{
-          updateProgress("100%", "Success!");
-              return callback(null, true);
-        }, 1500);
-      },
-      login(token, callback) {
-        setTimeout(callback, 1500);
-      },
-      listProjects(showAllProjects, callback) {
-        if (!window.VueApp) return;
-
-        // !!! Requires a symlink to test/testdata via app/testdata
+    getToolsInformation(showAllProjects, showAllFiles, callback) {
+      if (!window.location.search) return [];
+      // to-do: write more elegantly
+      setTimeout(()=>{
         fetch("testdata/"+window.VueApp.$store.getters.testdata+".json")
           .then((response)=>response.json())
-          .then((arr)=>{
-            const tools=[]
-            arr.forEach((elem,i)=>{
-              let item = {
-                name: elem.name,
-                dx_location: 'dx_location' in elem ? elem.dx_location : elem.name+'---'+i,
-                access_level: 5,
-                size: elem.size,
-                upload: elem.upload,
-                download: elem.download,
-                loadedAvailableDownloads: true,
-                isSJCPTool: 'isSJCPTool' in elem ? elem.isSJCPTool : false,
-                SJCPToolURL: "",
+          .then(callback)
+          .catch((err)=>console.log(err));
+      }, 500);
+    },
+    install(updateProgress, failProgress, callback) {
+      updateProgress("30%", "Downloading...");
+
+      setTimeout(()=>{
+        updateProgress("100%", "Success!");
+        return callback(null, true);
+      }, 1500);
+    },
+    login(token, callback) {
+      setTimeout(callback, 1500);
+    },
+    listProjects(showAllProjects, callback) {
+      if (!window.VueApp) return;
+
+      // !!! Requires a symlink to test/testdata via app/testdata
+      fetch("testdata/"+window.VueApp.$store.getters.testdata+".json")
+        .then( (response) => response.json())
+        .then( (arr) => {
+          const tools = [];
+          arr.forEach( (elem, i) =>{
+            let item = {
+              name: elem.name,
+              dx_location: "dx_location" in elem ? elem.dx_location : elem.name+"---"+i,
+              access_level: 5,
+              size: elem.size,
+              upload: elem.upload,
+              download: elem.download,
+              loadedAvailableDownloads: true,
+              isSJCPTool: "isSJCPTool" in elem ? elem.isSJCPTool : false,
+              SJCPToolURL: "",
+            };
+
+            item.download.forEach( (f, i) => {
+              f.describe={
+                name: f.name,
+                size: f.raw_size,
               };
-
-              item.download.forEach((f,i)=>{
-                f.describe={
-                  name: f.name,
-                  size: f.raw_size,
-                };
-                f.status = 'status' in f ? f.status : 0;
-                f.checked = 'checked' in f ? f.checked : false;
-                f.waiting = 'waiting' in f ? f.waiting : false;
-                f.started = 'started' in f ? f.started : f.status ? true : false;
-                f.finished = 'finished' in f ? f.finished : f.status >= 100 ? true : false;
-                f.cancelled = 'cancelled' in f ? f.cancelled : false;
-                f.dx_location=f.name+'---'+i;
-                f.aaaaa='me'
-              });
-
-              tools.push(item);
+              f.status = "status" in f ? f.status : 0;
+              f.checked = "checked" in f ? f.checked : false;
+              f.waiting = "waiting" in f ? f.waiting : false;
+              f.started = "started" in f ? f.started : f.status ? true : false;
+              f.finished = "finished" in f ? f.finished : f.status >= 100 ? true : false;
+              f.cancelled = "cancelled" in f ? f.cancelled : false;
+              f.dx_location = f.name+"---"+i;
+              f.aaaaa = "me";
             });
 
-            window.VueApp.$store.commit('setTools',tools);
+            tools.push(item);
+          });
 
-            if (!window.VueApp.$store.getters.currTool && tools[0]) {
-              window.VueApp.$store.commit('setCurrToolName',tools[0].dx_location)
-            }
-          })
-          .catch((err)=>console.log(err));
-      },
-      listDownloadableFiles(projectId, allFiles, callback) {
-        if (!window.VueApp) return;
+          window.VueApp.$store.commit("setTools", tools);
 
-        if (!window.VueApp.$store.getters.testdata) {
-          callback(null, []);
-        } 
-      },
-      describeDXItem(dnanexusId, callback) {
+          if (!window.VueApp.$store.getters.currTool && tools[0]) {
+            window.VueApp.$store.commit("setCurrToolName", tools[0].dx_location);
+          }
+        })
+        .catch( (err) => console.log(err) );
+    },
+    listDownloadableFiles(projectId, allFiles, callback) {
+      if (!window.VueApp) return;
 
-      },
-      logout(callback) {
-        callback()
+      if (!window.VueApp.$store.getters.testdata) {
+        callback(null, []);
       }
+    },
+    describeDXItem(dnanexusId, callback) {
+
+    },
+    logout(callback) {
+      callback();
+    }
   };
   window.oauth = {
     getToken(internal, callback) {
@@ -109,7 +109,7 @@ if (window.location.port != "3057" && window.location.port != "9876" && !window.
   window.ui = {};
   window.utils = {
     openExternal(url) {
-      window.open(url,'_blank')
+      window.open(url, "_blank");
     },
     readableFileSize(bytes, roundNumbers=false) {
       if (isNaN(bytes)) {
@@ -140,8 +140,8 @@ if (window.location.port != "3057" && window.location.port != "9876" && !window.
 
       return number+" "+units[u];
     },
-    readCachedFile(filename,callback) {
-      callback('{"showAllFiles":true,"showAllProjects":true,"concurrentOperations":2}');
+    readCachedFile(filename, callback) {
+      callback("{'showAllFiles':true,'showAllProjects':true,'concurrentOperations':2}");
     },
     saveToFile() {
       
@@ -158,8 +158,8 @@ if (window.location.port != "3057" && window.location.port != "9876" && !window.
     }
   };
   window.queue={
-    addToolInfoTask(task,callback) {
-      if (typeof callback=='function') callback(null,{});
+    addToolInfoTask(task, callback) {
+      if (typeof callback == "function") callback(null, {});
     },
     removeAllTaskOfType(type) {
 
@@ -175,27 +175,26 @@ if (window.location.port != "3057" && window.location.port != "9876" && !window.
         filename: file.dx_location
       });
     }
-  }
+  };
 
   let numTaskAdded=0;
   let numTaskCompleted=0;
-  
+
   function fakeProgress(file) {
     file.started=false;
     const i=setInterval(()=>{
       if (file.status<100) {
         file.status = currStatus(file.status);
         file.started = true;
-      }
-      else {
+      } else {
         file.waiting=false;
         file.finished=true;
         file.checked=true;
         numTaskCompleted++;
         clearInterval(i);
         if (numTaskCompleted>numTaskAdded) {
-          console.log('More tasks completed than added: '+numTaskCompleted +' vs '+ numTaskAdded +'.')
-        }
+          console.log("More tasks completed than added: "+numTaskCompleted +" vs "+ numTaskAdded +".");
+        };
         window.VueApp.$store.commit("removeOperationProcess", {
           filename: file.dx_location
         });
@@ -204,7 +203,7 @@ if (window.location.port != "3057" && window.location.port != "9876" && !window.
   }
 
   function currStatus(status) {
-    const s=status + Math.ceil(Math.random()*(10-2)+2);
+    const s = status + Math.ceil(Math.random()*(10-2)+2);
     return s > 100 ? 100 : s;
   }
 }
