@@ -15,7 +15,7 @@ for file in $(find dist/ -name "$PRODUCT_NAME.app" -o -name "$PRODUCT_NAME.exe")
 done
 
 # (2) Delete any folders not called "FINAL"
-for dir in $(find dist/ -type d -not -name "FINAL" -maxdepth 1 -mindepth 1); do
+for dir in $(find dist/ -maxdepth 1 -mindepth 1 -type d -not -name "FINAL" ); do
   rm -r $dir
 done
 

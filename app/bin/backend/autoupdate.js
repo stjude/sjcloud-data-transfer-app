@@ -1,6 +1,7 @@
 const electron = require("electron");
+const logging = require("./logging");
 
-const server = "https://warm-fortress-45813.herokuapp.com/";
+const server = "https://warm-fortress-45813.herokuapp.com";
 const feed = `${server}/update/${process.platform}/${electron.app.getVersion()}`;
 
 electron.autoUpdater.setFeedURL(feed);
