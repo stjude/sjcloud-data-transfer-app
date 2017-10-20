@@ -8,9 +8,9 @@ Vue.use(Vuex);
 /** Plugins **/
 const projectToolScopeWatcher = (store) => {
   store.subscribe((mutation, state) => {
-    if (window.location.port!='9876') {
-      console.log(mutation);
-    }
+    // if (window.location.port!='9876') {
+    //   console.log(mutation);
+    // }
 
     if (mutation.type === "setShowAllFiles") {
       store.dispatch("refreshFiles");
@@ -24,7 +24,6 @@ const projectToolScopeWatcher = (store) => {
     }
 
     if (mutation.type === "setURIProject") {
-      console.log("URI project set!");
       store.commit("setCurrToolName", state.uriProject, true);
     }
 
@@ -392,7 +391,7 @@ export default function getVuexStore(cachedState={}) {
       addFile(state, file, checked) {
         const tool = state.tools.filter((t) => t.dx_location === state.currToolName)[0];
         if (!tool || !tool[state.currPath]) {
-          console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
+          console.error(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
           return;
         }
 
@@ -401,7 +400,7 @@ export default function getVuexStore(cachedState={}) {
       addFiles(state, files) {
         const tool = state.tools.filter((t) => t.dx_location === state.currToolName)[0];
         if (!tool || !tool[state.currPath]) {
-          console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
+          console.error(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
           return;
         }
 
@@ -419,7 +418,7 @@ export default function getVuexStore(cachedState={}) {
       removeCheckedFiles(state) {
         const tool = state.tools.filter((t) => t.dx_location === state.currToolName)[0];
         if (!tool || !tool[state.currPath]) {
-          console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
+          console.error(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
           return;
         }
 
@@ -428,7 +427,7 @@ export default function getVuexStore(cachedState={}) {
       removeAllFiles(state) {
         const tool = state.tools.filter((t) => t.dx_location === state.currToolName)[0];
         if (!tool || !tool[state.currPath]) {
-          console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
+          console.error(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
           return;
         }
 
@@ -437,7 +436,7 @@ export default function getVuexStore(cachedState={}) {
       cancelCheckedFiles(state) {
         const tool = state.tools.filter((t) => t.dx_location === state.currToolName)[0];
         if (!tool || !tool[state.currPath]) {
-          console.log(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
+          console.error(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
           return;
         }
 
@@ -452,10 +451,9 @@ export default function getVuexStore(cachedState={}) {
           }
           
           if (process) {
-            console.log("Killing", state.currPath, "process:", process.pid);
             window.utils.killProcess(process.pid);
           } else {
-            console.log("Process does not exist!");
+            console.error("Process does not exist!");
           }
         });
       },
@@ -520,7 +518,6 @@ export default function getVuexStore(cachedState={}) {
         commit("setCurrToolName", state.currToolName);
       },
       updateCurrentToolFromURI({commit, state, getters}) {
-        console.log("Updating current tool from URI.");
         let projectToPick = getters.uriProject;
         if (!projectToPick) return false;
 
@@ -531,7 +528,6 @@ export default function getVuexStore(cachedState={}) {
           return false;
         }
 
-        console.log(`Selecting project: ${projectToPick}`);
         commit("setCurrToolName", projectToPick);
         window.utils.setURIProject(undefined);
         return true;
@@ -582,7 +578,6 @@ export default function getVuexStore(cachedState={}) {
                 commit("setTools", tools);
                 let resetCurrToolName = true;
                 if (window.uriProject) {
-                  console.log("URI project detected:", window.uriProject);
 
                   for (let i = 0; i < tools.length; i++) {
                     let tool = tools[i];

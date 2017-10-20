@@ -16,8 +16,8 @@ if (platform === "darwin" || platform === "linux") {
   width = 900;
   height = 620;
 } else if (platform === "win32") {
-  width = 890;
-  height = 630;
+  width = 900;
+  height = 620;
 }
 
 module.exports.createWindow = (callback) => {

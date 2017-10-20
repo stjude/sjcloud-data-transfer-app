@@ -114,6 +114,8 @@ export default {
 			
 				window.dx.login(token, (err, result) => {
 					if (err) {
+						// TODO(clay): alert login error.
+						console.error(err);
 						this.$store.commit('setLoginState', 'failed');
 					} else {
 						this.$store.commit('setLoginState', 'completed');

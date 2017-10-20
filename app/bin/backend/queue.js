@@ -128,17 +128,22 @@ function toolInfoTask(task, callback) {
   window.dx.describeDXItem(
     task._rawTool.dx_location,
     (err, describe) => {
+      if (err || !describe) {
+        console.error(err);
+        return callback(err, describe);
+      }
+
       if (debug) console.log(describe);
 
-      if (describe.properties && describe.properties["sjcp-tool-url"]) {
+      if (describe && describe.properties && describe.properties["sjcp-tool-url"]) {
         task._rawTool.isSJCPTool = true;
         task._rawTool.SJCPToolURL = describe.properties["sjcp-tool-url"];
-      } else if (describe.tags && describe.tags.includes("sjcp-project-data")) {
+      } else if (describe && describe.tags && describe.tags.includes("sjcp-project-data")) {
         task._rawTool.isSJCPDataRequest = true;
       }
 
       let dataUsage = 0;
-      if ("dataUsage" in describe) {
+      if (describe && "dataUsage" in describe) {
         dataUsage += describe.dataUsage * 1e9;
       }
 

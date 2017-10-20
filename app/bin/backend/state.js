@@ -35,6 +35,7 @@ module.exports.getState = function(callback) {
 
     utils.dxToolkitOnPath( (err, res) => {
       if (err) {
+        console.error(err);
         return callback(self.state.NEED_INSTALL);
       }
 
@@ -45,7 +46,7 @@ module.exports.getState = function(callback) {
 
         utils.dxCheckProjectAccess( (err, res) => {
           if (err) {
-            console.error("Error occurred:", err);
+            console.error(err);
             return callback(self.state.UNKNOWN);
           }
 

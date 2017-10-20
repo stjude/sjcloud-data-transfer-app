@@ -10,7 +10,8 @@ const mkdirp = require("mkdirp");
 const crypto = require("crypto");
 const kill = require("tree-kill");
 const logging = require("./logging");
-const {exec, execSync} = require("child_process");
+const powershell = require("node-powershell");
+const {exec, spawn, execSync, spawnSync} = require("child_process");
 const {remote, shell} = require("electron");
 
 sjcloudHomeDirectory = path.join( os.homedir(), ".sjcloud" );
@@ -74,7 +75,7 @@ module.exports.runCommand = function(cmd, callback) {
     if (err) {
       return callback(err, null);
     }
-    if (stderr.length > 0) {
+    if (stderr && stderr.length > 0) {
       return callback(stderr, null);
     }
     if (platform == "win32" && stdout.startsWith("DNAnexus CLI initialized")) { // removes banner printed by dnanexus-shell.ps1 script
@@ -96,18 +97,46 @@ module.exports.runCommand = function(cmd, callback) {
 
     return exec(cmd, {shell: "/bin/bash", maxBuffer: 10000000}, innerCallback);
   } else if (platform == "win32") {
-    const dnanexusPSscript = path.join( module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1" );
+    const dnanexusPSscript = path.resolve(path.join( module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1" ));
+    let args = ['-NoLogo', '-InputFormat', 'Text', '-NonInteractive', '-NoProfile', '-Command'];
     // fs.statSync() is only to check if "dx" commands can be sourced.
     // If it fails other commands can still be run.
     try {
       let stats = fs.statSync(dnanexusPSscript);
       if (stats) {
-        cmd = ".'" + dnanexusPSscript + "'; " + cmd;
+        cmd = `.'${dnanexusPSscript}'; ${cmd}`;
       }
     } catch (err) {}
 
-    cmd = "powershell.exe " + cmd;
-    return exec(cmd, {maxBuffer: 10000000}, innerCallback);
+    args = [...args, `${cmd}`];
+
+    let stdout = "";
+    let stderr = "";
+
+    p = spawn("powershell.exe", args, {
+      stdio: 'pipe',
+      maxBuffer: 10000000
+    });
+
+    p.stdout.on('data', function(data) {
+      stdout += data.toString();
+    });
+
+    p.stderr.on('data', function(data){
+      stderr += data.toString();
+    })
+
+    p.on('error', function (err){
+      innerCallback(err, stdout, stderr);
+    });
+
+    p.on('close', function(code) {
+      innerCallback(null, stdout, stderr);
+    });
+
+    return p;
+    
+    //return exec(cmd, {maxBuffer: 10000000}, innerCallback);
   }
 };
 
@@ -123,10 +152,11 @@ module.exports.runCommandSync = function(cmd) {
 
   if (platform == "darwin" || platform == "linux") {
     const dxToolkitEnvFile = module.exports.dxToolkitEnvironmentFile;
+    
     try {
       // fs.statSync() is only to check if "dx" commands can be sourced.
       // If it fails other commands can still be run.
-      let stats = fs.statSync(module.exports.dxToolkitEnvironmentFile);
+      let stats = fs.statSync(dxToolkitEnvFile);
       if (stats) {
         cmd = "source " + dxToolkitEnvFile + "; " + cmd;
       }
@@ -134,17 +164,23 @@ module.exports.runCommandSync = function(cmd) {
     return execSync(cmd, {shell: "/bin/bash", maxBuffer: 10000000});
   } else if (platform == "win32") {
     const dnanexusPSscript = path.join( module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1" );
+    let args = ['-NoProfile', '-NoLogo', '-NonInteractive', '-InputFormat', 'Text', '-Command'];
+
     // fs.statSync() is only to check if "dx" commands can be sourced.
     // If it fails other commands can still be run.
     try {
       let stats = fs.statSync(dnanexusPSscript);
       if (stats) {
-        cmd = ".'" + dnanexusPSscript + "'; " + cmd;
-      }
+        cmd = `.'${dnanexusPSscript}'; ${cmd}`;
+      } 
     } catch (err) {}
-
-    cmd = "powershell.exe " + cmd;
-    return execSync(cmd, {maxBuffer: 10000000});
+    args = [...args, `${cmd}`]
+    return spawnSync("powershell.exe", args, {
+                       stdio: 'pipe',
+                       maxBuffer: 10000000
+                     });
+    // cmd = `powershell.exe ${cmd}`;
+    // return execSync(cmd, {maxBuffer: });
   }
 };
 
@@ -364,7 +400,7 @@ module.exports.resetFileStatus = (file) => {
 module.exports.saveToFile = (filename, content) => {
   fs.writeFile( sjcloudHomeDirectory+"/"+filename, content, (err) => {
     if (err) {
-      return console.log(err);
+      return console.error(err);
     }
   });
 };
@@ -372,7 +408,6 @@ module.exports.saveToFile = (filename, content) => {
 module.exports.readCachedFile = (filename, callback, defaultContent=null) => {
   fs.readFile( sjcloudHomeDirectory+"/"+filename, (err, data) => {
     if (err) {
-      console.log(err);
       if (!defaultContent) return;
     }
     

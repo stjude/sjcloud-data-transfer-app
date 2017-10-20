@@ -37,7 +37,6 @@ export default function _App(selector, cachedState={}) {
     VueApp.$router.replace("home");
   } else {
     window.state.getState((state) => {
-      console.log("State is:", state);
       VueApp.$router.replace(state);
     });
   }

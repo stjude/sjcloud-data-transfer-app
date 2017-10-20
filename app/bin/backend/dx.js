@@ -148,11 +148,12 @@ module.exports.install = (updateProgress, failProgress, callback) => {
       });
     });
   } else if (platform == "win32") {
+    downloadURL = getDxDownloadUrlFromPlatform(platform);
     const dxExePath = path.join(utils.getDXToolkitDir(), "dx-toolkit.exe");
-    updateProgress("30%", "Downloading dx-toolkit...");
+    updateProgress("30%", "Downloading...");
     utils.downloadFile(downloadURL, dxExePath, () => {
       // TODO(clay): handle download error.
-      updateProgress("60%", "Verifying dx-toolkit...");
+      updateProgress("60%", "Verifying...");
       utils.computeSHA256(dxExePath, (err, shasum) => {
         if (err) {
           failProgress("Could not verify download!");
@@ -162,10 +163,13 @@ module.exports.install = (updateProgress, failProgress, callback) => {
           failProgress("Could not verify download!");
           return callback("SHA sum doesn't match!", null);
         }
-        updateProgress("90%", "Installing dx-toolkit...");
-        child_process.execSync(dxExePath);
-        updateProgress("100%", "Success!");
-        return callback(null, true);
+        
+        updateProgress("90%", "Installing...");
+        setTimeout(() => {
+          child_process.execSync(dxExePath);
+          updateProgress("100%", "Success!");
+          return callback(null, true);
+        }, 500);
       });
     });
   }

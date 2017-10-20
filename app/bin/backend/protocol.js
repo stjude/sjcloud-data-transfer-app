@@ -28,7 +28,6 @@ function handleURI(uri) {
     projectName = decodeURIComponent(projectName);
     cmd = `window.uriProject = '${projectName}';`;
   } else {
-    logging.warn("Unknown URI pattern!");
     cmd = "";
   }
 
