@@ -10,7 +10,6 @@ const mkdirp = require("mkdirp");
 const crypto = require("crypto");
 const kill = require("tree-kill");
 const logging = require("./logging");
-const powershell = require("node-powershell");
 const {exec, spawn, execSync, spawnSync} = require("child_process");
 const {remote, shell} = require("electron");
 
