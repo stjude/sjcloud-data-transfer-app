@@ -141,7 +141,11 @@ if (window.location.port != "3057" && window.location.port != "9876" && !window.
       return number+" "+units[u];
     },
     readCachedFile(filename, callback) {
-      callback("{'showAllFiles':true,'showAllProjects':true,'concurrentOperations':2}");
+      callback(JSON.stringify({
+        showAllFiles:true,
+        showAllProjects:true,
+        concurrentOperations:2
+      });
     },
     saveToFile() {
       
