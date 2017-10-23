@@ -8,4 +8,3 @@ package-lock.json
 config.json
 
 # developer specific symlink to [project-path/]test/testdata 
-app/testdata

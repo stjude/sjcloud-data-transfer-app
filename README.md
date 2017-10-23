@@ -44,9 +44,6 @@ npm start
 Development
 -----------
 
-[![Build Status](https://travis-ci.org/stjude/sjcloud-data-transfer-app.svg?branch=development)](https://travis-ci.org/stjude/sjcloud-data-transfer-app)
-
-
 Running the tool in development mode requires a few changes to the config:
 
 ```bash
@@ -76,7 +73,6 @@ npm run www
 
 If you are only working with the front-end code, you can develop in the web browser, which should automatically open up (BrowserSync)[https://www.browsersync.io/]. 
 
-**Note: the testdata folder must be symlinked under the app/folder when developing and testing in a regular, non-electron Chrome browser.**
 
 Testing
 =======
@@ -85,9 +81,6 @@ You can run the front-end tests by running the following commnands:
 
 
 ```bash
-# Link the testdata to the expected location
-ln -s $PWD/test/testdata $PWD/app/testdata
-
 # run the webpack compiler
 npm run www-no-watch 
 # or npm run www in another tab.
@@ -98,5 +91,10 @@ npm test
 
 Issues
 ------
+=======
+Front-end tests
+- `npm run www # if it's not running already`
+- `npm test`
+>>>>>>> Move testdata to under app to fix #13
 
 If you have any issues, please file a bug report at the [issues page](https://github.com/stjude/sjcloud-data-transfer-app/issues).
