@@ -19,6 +19,7 @@ You can find the latest built version of the tools on the [releases page](https:
 
 * NodeJS
 * Python 2.7.13+
+* OpenSSL
 
 The process for installing the software in production mode:
 
