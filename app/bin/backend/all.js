@@ -145,7 +145,7 @@ if (window.location.port != "3057" && window.location.port != "9876" && !window.
         showAllFiles:true,
         showAllProjects:true,
         concurrentOperations:2
-      });
+      }));
     },
     saveToFile() {
       
