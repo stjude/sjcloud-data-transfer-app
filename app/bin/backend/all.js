@@ -38,7 +38,6 @@ if (window.location.port != "3057" && window.location.port != "9876" && !window.
     listProjects(showAllProjects, callback) {
       if (!window.VueApp) return;
 
-      // !!! Requires a symlink to test/testdata via app/testdata
       fetch("testdata/"+window.VueApp.$store.getters.testdata+".json")
         .then( (response) => response.json())
         .then( (arr) => {
