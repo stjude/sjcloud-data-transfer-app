@@ -186,7 +186,10 @@ if (window.location.port != "3057" && window.location.port != "9876" && !window.
   function fakeProgress(file) {
     file.started=false;
     const i=setInterval(()=>{
-      if (file.status<100) {
+      if (!file.waiting) {
+        file.waiting=true;
+      }
+      else if (file.status<100) {
         file.status = currStatus(file.status);
         file.started = true;
       } else {

@@ -37,13 +37,15 @@
 							<div class='file-status-cell-status-errored' v-else-if="file.errored">
 								<i class="material-icons file-status-cell-status-errored-icon">error</i>
 							</div>
-							<div v-else-if="file.started && file.status == 0">Starting...</div>
-							<div v-else-if="file.started" class=''>
-								<div class='file-status-cell-status-progress-bar' v-bind:style="progressStyle(file)"></div>
+							<!--<div v-else-if="file.started && file.status == 0">Starting...</div>-->
+							<div v-else-if="!file.finished && (file.started || file.waiting)" class='' style='width:80px; height:20px;'>
+								<div class='' v-show='!file.started'>Waiting ...</div>
+								<div class='file-status-cell-status-progress-text' v-show='file.started'>{{ file.timeRemaining }}</div>
+								<div class='file-status-cell-status-progress-bar' v-show='file.started' v-bind:style="progressStyle(file)"></div>
 							</div>
-							<div v-else-if="file.waiting">
+							<!--<div v-else-if="file.waiting">
 								Waiting...
-							</div>
+							</div>-->
 						</td>
 					</tr>
 				</tbody>
@@ -88,6 +90,17 @@ export default {
 	},
 	computed: {
 		files() {
+			this.$store.getters.currFiles.forEach((file)=>{
+				if (!file.started && !file.waiting) {
+					file.timeRemaining='Waiting...'
+				}
+				else if (file.waiting && !file.started) {
+					file.timeRemaining='Waiting...'
+				}
+				else if (!file.finished && file.started && file.status==0) {
+					file.timeRemaining='Started'
+				}
+			});
 			return this.$store.getters.currFiles
 		},
 		noFilesMatched() {
@@ -131,12 +144,29 @@ export default {
       });
 		},
 		progressStyle(file) {
+			if (file.started) {
+				if (!file.finished && !('startTime' in file)) {
+					file.startTime=+new Date();
+					file.timeRemaining="Started";
+				}
+				else {
+					const dt=(+new Date()-file.startTime);
+					const rate= file.status==0 || dt==0 ? 0.01 : file.status/dt;
+					const msRemaining=(100-file.status)/rate;
+					file.timeRemaining=new Date(msRemaining).toISOString().substr(11, 8)
+				}
+			}
+			else if (!file.finished) {
+				file.timeRemaining='Waiting...'
+			}
+
 			return {
 				width:file.status+'%'
 			}
 		}
 	}
 }
+
 </script>
 
 <style scoped>
@@ -244,7 +274,7 @@ td {
 
 .file-status-cell-status-progress-bar {
 	position: relative;
-	height: 20px;
+	height: 5px;
 	background-color: #4F8A10;
 	width: 0%;
 	top: -1px;
@@ -252,6 +282,12 @@ td {
 	border: 1px solid #000000;
   margin-left: 5px;
   margin-right: 5px;
+}
+
+.file-status-cell-status-progress-text {
+	position: relative;
+	text-align: center;
+	font-size: 12px;
 }
 
 .file-status-thead-tr {
