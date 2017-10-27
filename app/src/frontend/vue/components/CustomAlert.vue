@@ -42,6 +42,7 @@ export default {
 	position: absolute;
 	top: 5px;
 	left: 40%;
+	margin-right: 5px;
 	z-index: 9999;
 }
 
