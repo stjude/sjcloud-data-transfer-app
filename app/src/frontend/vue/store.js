@@ -121,7 +121,9 @@ const defaultState={
   menuIsVisible: false,
   modalIsVisible: false,
   tourHint: false,
-  testdata: ""
+  testdata: "",
+  alertType: '',
+  alertMessage: ''
 };
 
 
@@ -286,9 +288,24 @@ export default function getVuexStore(cachedState={}) {
       },
       testdata(state) {
         return state.testdata
+      },
+      alertMessage(state) {
+        return state.alertMessage
+      },
+      alertType(state) {
+        return state.alertType
       }
     },
     mutations: {
+      // generic mutation setter
+      // useful for simple value redeclarations and 
+      // when no logic is used in the mutation
+      byKey(state, obj) {
+        for(const key in obj) {
+          state[key]=obj[key];
+        }
+      },
+
       setURIProject(state, value) {
         state.uriProject = value;
       },

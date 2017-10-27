@@ -4,6 +4,7 @@
 		<router-view keep-alive class='app-route-placement'></router-view>
 		<user-menu></user-menu>
 		<settings-modal></settings-modal>
+		<custom-alert></custom-alert>
 	</div>
 </template>
 
@@ -13,12 +14,14 @@ import TopBar from './components/TopBar.vue';
 import UserMenu from './components/UserMenu.vue';
 import SettingsModal from './components/SettingsModal.vue';
 import tour from '../tour.js';
+import CustomAlert from './components/CustomAlert.vue';
 
 export default {
 	components: {
 		TopBar,
 		UserMenu,
-		SettingsModal
+		SettingsModal,
+		CustomAlert
 	},
 	data() {
 		return {}
@@ -142,4 +145,12 @@ body {
 	border-radius: 0;
 }
 
+.vue-alert {
+	position:absolute; 
+	top: 5px;
+	left: 40%; 
+	text-align: center;
+	z-index: 999999;
+	opacity: 1;
+}
 </style>

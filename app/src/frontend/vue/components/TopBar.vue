@@ -3,11 +3,11 @@
 		<div class='sjcda-top-bar__logo_container'>
 			<img class="sjcda-top-bar__logo"
 					 src="img/stjude-logo-child-white.png"
-					 @click='goHome'>
+					 @click.stop='goHome'>
 		</div>
 	    <div class="sjcda-title-container">
-	      <span class="title-font" @click='goHome'>St. Jude Cloud</span>
-	      <span class="title-font-thin" @click='goHome'>Platform</span>
+	      <span class="title-font" @click.stop='goHome'>St. Jude Cloud</span>
+	      <span class="title-font-thin" @click.stop='goHome'>Platform</span>
 	    </div>
 	    <div class='material-icons' 
 	    	style='float:right; margin: 10px 10px 0 0'
