@@ -74,13 +74,15 @@ if (window.location.port != "3057" && window.location.port != "9876" && !window.
                 const msRemaining=(100-f.status)/rate;
                 f.timeRemaining=new Date(msRemaining).toISOString().substr(11, 8)
               }
-              f.aaaaa = "me";
             });
 
             tools.push(item);
           });
 
           window.VueApp.$store.commit("setTools", tools);
+          if (!tools.length) {
+              window.VueApp.$store.commit("setNoProjectsFound", true);
+          }
 
           if (!window.VueApp.$store.getters.currTool && tools[0]) {
             window.VueApp.$store.commit("setCurrToolName", tools[0].dx_location);

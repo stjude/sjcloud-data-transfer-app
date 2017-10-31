@@ -188,13 +188,17 @@ const tour = new window.Tour({
 });
 
 let tourInitialized=false;
+let waitingForTools=false;
 
 tour.__promptUser = (path)=>{
   if (tourInitialized ) return;
   if (path!=="/upload" && path!=="/download") return;
   if (window.location.port=="9876") return;
+  
+  waitingForTools = setInterval(()=>{
+    if (!window.VueApp.$store.getters.tools.length) return;
+    clearInterval(waitingForTools);
 
-  setTimeout(()=>{
     tourInitialized=true;
     tour.init();
     tour.goTo(0);
@@ -202,13 +206,14 @@ tour.__promptUser = (path)=>{
     tour.__promptTimeout=setTimeout(()=>{
       tour.end();
     }, 6000);
-  }, 500);
+  }, 300);
 };
 
 tour.__start = (i=1)=>{
   if (tour.__promptTimeout) {
     clearTimeout(tour.__promptTimeout);
   };
+
   tourInitialized=true;
   tour.setCurrentStep(i);
   tour.start(true);
