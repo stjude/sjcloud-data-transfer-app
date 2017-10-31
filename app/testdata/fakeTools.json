@@ -109,6 +109,7 @@
         "size": "999 MB",
         "status": 0,
         "checked": false,
+        "waiting": true,
         "started": false,
         "finished": false
       },

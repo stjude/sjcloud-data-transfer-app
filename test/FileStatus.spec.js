@@ -66,7 +66,7 @@ describe('FileStatus table for a project with pending downloads', function () {
 		},500);
 	});
 
-	it('should have 2 empty status cells', function (done) {
+	it('should have 1 empty status cells', function (done) {
 		expect(
 			holder.select('#file-status-table-body')
 			.selectAll('.file-status-cell-status')
@@ -74,7 +74,7 @@ describe('FileStatus table for a project with pending downloads', function () {
 				return !this.innerHTML || this.innerHTML=='<!---->'
 			})
 			.size())
-		.toEqual(2);
+		.toEqual(1);
 		
 		done();
 	});
@@ -82,10 +82,9 @@ describe('FileStatus table for a project with pending downloads', function () {
 	it('should have 1 starting status cells', function (done) {
 		expect(
 			holder.select('#file-status-table-body')
-			.selectAll('.file-status-cell-status')
+			.selectAll('.file-status-cell-status-progress-text')
 			.filter(function(d){
-				return select(this).selectAll('div').size()==1 && 
-					select(this).selectAll('div').html()=='Starting...'
+				return select(this).html()=='Starting...'
 			})
 			.size())
 		.toEqual(1);
@@ -93,12 +92,12 @@ describe('FileStatus table for a project with pending downloads', function () {
 		done();
 	});
 
-	it('should have 4 in-progress status cells', function (done) {
+	it('should have 6 in-progress status cells', function (done) {
 		expect(
 			holder.select('#file-status-table-body')
 			.selectAll('.file-status-cell-status-progress-bar')
 			.size())
-		.toEqual(4);
+		.toEqual(6);
 		
 		done();
 	});

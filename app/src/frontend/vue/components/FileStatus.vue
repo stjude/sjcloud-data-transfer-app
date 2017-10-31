@@ -147,7 +147,7 @@ export default {
 			if (file.started) {
 				if (!file.finished && !('startTime' in file)) {
 					file.startTime=+new Date();
-					file.timeRemaining="Started";
+					file.timeRemaining="Starting...";
 				}
 				else {
 					const dt=(+new Date()-file.startTime);

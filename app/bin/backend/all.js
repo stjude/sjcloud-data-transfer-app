@@ -67,6 +67,13 @@ if (window.location.port != "3057" && window.location.port != "9876" && !window.
               f.finished = "finished" in f ? f.finished : f.status >= 100 ? true : false;
               f.cancelled = "cancelled" in f ? f.cancelled : false;
               f.dx_location = f.name+"---"+i;
+              if (f.started && f.status>0) {
+                const dt=5000;
+                f.startTime = +new Date() - dt;
+                const rate= f.status==0 || dt==0 ? 0.01 : f.status/dt;
+                const msRemaining=(100-f.status)/rate;
+                f.timeRemaining=new Date(msRemaining).toISOString().substr(11, 8)
+              }
               f.aaaaa = "me";
             });
 
@@ -186,13 +193,15 @@ if (window.location.port != "3057" && window.location.port != "9876" && !window.
   function fakeProgress(file) {
     file.started=false;
     const i=setInterval(()=>{
-      if (!file.waiting) {
-        file.waiting=true;
-      }
-      else if (file.status<100) {
+      if (file.status<100) {
         file.status = currStatus(file.status);
         file.started = true;
-      } else {
+      } 
+      else if (!file.waiting) {
+        file.waiting=true;
+        file.timeRemaining='Waiting...'
+      }
+      else {
         file.waiting=false;
         file.finished=true;
         file.checked=true;
