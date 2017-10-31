@@ -195,8 +195,13 @@ tour.__promptUser = (path)=>{
   if (path!=="/upload" && path!=="/download") return;
   if (window.location.port=="9876") return;
   
+  let numTries=0
   waitingForTools = setInterval(()=>{
-    if (!window.VueApp.$store.getters.tools.length) return;
+    if (!window.VueApp.$store.getters.tools.length) {
+      numTries+=1;
+      if (numTries>10) clearInterval(waitingForTools);
+      return;
+    }
     clearInterval(waitingForTools);
 
     tourInitialized=true;

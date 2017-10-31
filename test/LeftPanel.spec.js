@@ -36,7 +36,7 @@ describe('LeftPanel for a user with no projects', function () {
 });
 
 
-/*describe('LeftPanel for a user with projects', function () {
+describe('LeftPanel for a user with projects', function () {
 	const holder=select('body').append('div');
 	holder.append('div').attr('id','leftaaa');
 	let app;
@@ -75,4 +75,4 @@ describe('LeftPanel for a user with no projects', function () {
 		holder.remove();
 		done();
 	});
-});*/
+});
