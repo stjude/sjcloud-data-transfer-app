@@ -1,7 +1,7 @@
 <template>
 	<div class='left-panel'>
-		<div v-if="!hasTools && noProjectsFound">
-			No projects found! Please create one!
+		<div v-if="!hasTools && noProjectsFound" class='no-projects-div'>
+			<p>No projects found! Please create one!</p>
 		</div>
 		<div v-else-if="!hasTools && !noProjectsFound">
 			<spin-kit btmLabel='Loading...' 
@@ -128,6 +128,11 @@ export default {
 </script>
 
 <style scoped>
+.no-projects-div {
+	margin: 20px;
+	text-align: center;
+}
+
 .left-panel {
 	height: 560px;
 	border-right: 3px solid #ececec;

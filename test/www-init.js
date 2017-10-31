@@ -4,4 +4,3 @@ select('body').append('link')
 .attr('rel', 'stylesheet')
 .attr('href', 'https://fonts.googleapis.com/icon?family=Material+Icons');
 
-window.testdata='fakeTools';
