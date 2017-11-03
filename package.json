@@ -1,6 +1,6 @@
 {
   "name": "SJCPDataTransferApp",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "The St. Jude Cloud desktop app, designed for getting data in the St. Jude Cloud easily and reliably.",
   "homepage": "https://github.com/stjude/sjcloud-data-transfer",
   "main": "app/main.js",
