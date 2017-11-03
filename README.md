@@ -18,8 +18,13 @@ Building
 You can find the latest built version of the tools on the [releases page](https://github.com/stjude/sjcloud-data-transfer-app/releases). If you'd like to build the application yourself, you'll need the following prequisites:
 
 * NodeJS
+    - [Install](https://nodejs.org/en/download/)
 * Python 2.7.x
+    - [Install](https://www.python.org/downloads/release/python-2714/)
 * OpenSSL
+    - [Windows](https://wiki.openssl.org/index.php/Binaries)
+    - Mac: `brew install openssl`
+    - [Other](https://wiki.openssl.org/index.php/Compilation_and_Installation)
 
 The process for installing the software in production mode:
 
