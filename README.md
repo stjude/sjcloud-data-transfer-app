@@ -11,20 +11,23 @@ A desktop application written on top of the [Electron Framework](https://electro
 * Logging in using OAuth for both internal and external St. Jude users.
 * Reliably uploading and downloading genomic data files to/from the platform.
 
+You'll need the following prerequsites installed. We are working on adding support for installing and configuring these automatically.
 
-Building
--------
-
-You can find the latest built version of the tools on the [releases page](https://github.com/stjude/sjcloud-data-transfer-app/releases). If you'd like to build the application yourself, you'll need the following prequisites:
-
-* NodeJS
-    - [Install](https://nodejs.org/en/download/)
-* Python 2.7.x
+* Python 2.7.13+
     - [Install](https://www.python.org/downloads/release/python-2714/)
 * OpenSSL
     - [Windows](https://wiki.openssl.org/index.php/Binaries)
     - Mac: `brew install openssl`
     - [Other](https://wiki.openssl.org/index.php/Compilation_and_Installation)
+
+Building
+-------
+
+You can find the latest built version of the tools on the [releases page](https://github.com/stjude/sjcloud-data-transfer-app/releases). If you'd like to build yourself, you'll also need the following prerequisites installed:
+
+
+* NodeJS
+    - [Install](https://nodejs.org/en/download/)
 
 The process for installing the software in production mode:
 
