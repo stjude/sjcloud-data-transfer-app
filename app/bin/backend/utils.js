@@ -68,13 +68,15 @@ module.exports.getDXToolkitDir = function() {
 */
 module.exports.runCommand = function(cmd, callback) {
   const platform = os.platform();
-  // logging.info(`Running command: ${cmd}`);
 
   let innerCallback = function(err, stdout, stderr) {
     if (err) {
+      console.error(`ERROR: ${err}`);
       return callback(err, null);
     }
+
     if (stderr && stderr.length > 0) {
+      console.error(`ERROR: ${stderr}`);
       return callback(stderr, null);
     }
     if (platform == "win32" && stdout.startsWith("DNAnexus CLI initialized")) { // removes banner printed by dnanexus-shell.ps1 script
@@ -92,8 +94,12 @@ module.exports.runCommand = function(cmd, callback) {
       if (stats) {
         cmd = "source " + dxToolkitEnvFile + "; " + cmd;
       }
-    } catch (err) {}
+    } catch (err) {
+      logging.error(`ERROR: ${err}`);
+    }
 
+    cmd = `/usr/bin/env bash -c "${cmd}"`;
+    logging.info(`Running command: ${cmd}`);
     return exec(cmd, {shell: "/bin/bash", maxBuffer: 10000000}, innerCallback);
   } else if (platform == "win32") {
     const dnanexusPSscript = path.resolve(path.join( module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1" ));

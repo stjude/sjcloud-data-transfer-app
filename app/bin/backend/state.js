@@ -28,6 +28,8 @@ module.exports.getState = function(callback) {
   }
 
   utils.initSJCloudHome( (err, res) => {
+    logging.info(`ERR: ${err}, RES: ${res}`);
+
     if (err) {
       console.error("Error occurred:", err);
       return callback(self.state.UNKNOWN);
