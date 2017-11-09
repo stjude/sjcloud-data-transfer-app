@@ -38,16 +38,16 @@ git clone git@github.com:stjude/sjcloud-data-transfer-app.git --depth 1
 cd sjcloud-data-transfer-app
 
 # install dependencies
-npm install
+yarn install
 
 # copy the example configuration
 cp config-example.json config.json 
 
 # run the webpack compilation step for the frontend.
-npm run www-no-watch
+yarn run www-no-watch
 
 # start the application
-npm start
+yarn start
 ```
 
 Development
@@ -77,7 +77,7 @@ After making these changes, you are ready to go! We recommend that you use the f
 
 ```bash
 # continuously recompile webpack code
-npm run www
+yarn run www
 ```
 
 If you are only working with the front-end code, you can develop in the web browser, which should automatically open up (BrowserSync)[https://www.browsersync.io/]. 
@@ -91,19 +91,19 @@ You can run the front-end tests by running the following commnands:
 
 ```bash
 # run the webpack compiler
-npm run www-no-watch 
-# or npm run www in another tab.
+yarn run www-no-watch 
+# or yarn run www in another tab.
 
 # run the testing suite
-npm test
+yarn test
 ```
 
 Issues
 ------
 =======
 Front-end tests
-- `npm run www # if it's not running already`
-- `npm test`
+- `yarn run www # if it's not running already`
+- `yarn test`
 >>>>>>> Move testdata to under app to fix #13
 
 If you have any issues, please file a bug report at the [issues page](https://github.com/stjude/sjcloud-data-transfer-app/issues).

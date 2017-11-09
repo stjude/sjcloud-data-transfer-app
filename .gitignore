@@ -1,6 +1,5 @@
 node_modules/
 dist/*
-yarn.lock
 app/bin/frontend/*
 **/.DS_Store
 

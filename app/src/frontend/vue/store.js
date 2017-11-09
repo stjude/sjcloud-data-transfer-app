@@ -27,8 +27,8 @@ const projectToolScopeWatcher = (store) => {
       store.commit("setCurrToolName", state.uriProject, true);
     }
 
-    if (mutation.type !== 'toggleMenu' && mutation.type !== 'closeMenu' && mutation.type !== 'openMenu') {
-      state.menuIsVisible=false;
+    if (mutation.type !== "toggleMenu" && mutation.type !== "closeMenu" && mutation.type !== "openMenu") {
+      state.menuIsVisible = false;
     }
   });
 };
@@ -36,28 +36,28 @@ const projectToolScopeWatcher = (store) => {
 
 /** Helpers **/
 function cacheState(state) {
-  window.utils.saveToFile('state.json', JSON.stringify({
+  window.utils.saveToFile("state.json", JSON.stringify({
     showAllFiles: state.showAllFiles,
     showAllProjects: state.showAllProjects,
-    concurrentOperations: state.concurrentOperations
+    concurrentOperations: state.concurrentOperations,
   }));
 }
 
 function sortFiles(state, files) {
-  if (!state.currFileSortKey || state.currFileSortDirection===0) return;
-  const i=state.currFileSortDirection;
-  const j=-i;
+  if (!state.currFileSortKey || state.currFileSortDirection === 0) return;
+  const i = state.currFileSortDirection;
+  const j = -i;
 
-  if (state.currFileSortKey=="filename") {
-    files.sort((a, b)=>{
+  if (state.currFileSortKey == "filename") {
+    files.sort((a, b) => {
       return a.name < b.name ? i : j;
     });
-  } else if (state.currFileSortKey=="size") {
-    files.sort((a, b)=>{
+  } else if (state.currFileSortKey == "size") {
+    files.sort((a, b) => {
       return a.raw_size < b.raw_size ? j : i;
     });
-  } else if (state.currFileSortKey=="status") {
-    files.sort((a, b)=>{
+  } else if (state.currFileSortKey == "status") {
+    files.sort((a, b) => {
       if (a.finished && b.finished) return 0;
       else if (a.finished) return i;
       else if (b.finished) return j;
@@ -67,30 +67,30 @@ function sortFiles(state, files) {
       else if (b.started) return j;
       else return 0;
     });
-  } else if (state.currFileSortKey=="checked") {
-    files.sort((a, b)=>a.checked==b.checked ? 0 : a.checked ? i : j);
+  } else if (state.currFileSortKey == "checked") {
+    files.sort((a, b) => a.checked == b.checked ? 0 : a.checked ? i : j);
   }
 }
 
 // a simple search string parser used in testing
-// to override state settings 
+// to override state settings
 function getParams() {
   if (window.location.port != "3057" && window.location.port != "9876") {
     return {};
   }
 
-  const params={};
-  if (window.testdata) params.testdata=window.testdata;
-  window.location.search.substr(1).split("&").forEach(kv=>{
-    const [key,value]=kv.split("=");
-    params[key]=value;
+  const params = {};
+  if (window.testdata) params.testdata = window.testdata;
+  window.location.search.substr(1).split("&").forEach((kv) => {
+    const [key, value] = kv.split("=");
+    params[key] = value;
   });
   return params;
 }
 
 
 /** Default Settings **/
-const defaultState={
+const defaultState = {
   environment: Config.ENVIRONMENT,
   concurrentOperations: Config.DEFAULT_CONCURRENT_OPERATIONS,
   uriProject: "",
@@ -122,16 +122,15 @@ const defaultState={
   modalIsVisible: false,
   tourHint: false,
   testdata: "",
-  alertType: '',
-  alertMessage: ''
+  alertType: "",
+  alertMessage: "",
 };
 
 
 /** Store generator **/
-export default function getVuexStore(cachedState={}) {
+export default function getVuexStore(cachedState = {}) {
   return new Vuex.Store({
-    state: Object.assign(
-      {},
+    state: Object.assign({},
       defaultState,
       cachedState,
       getParams()
@@ -209,9 +208,11 @@ export default function getVuexStore(cachedState={}) {
         if (state.currPath != "download" || !state.searchTerm) {
           return files;
         } else {
-          const rgx=globToRegExp(state.searchTerm, {flags: "gim"});
+          const rgx = globToRegExp(state.searchTerm, {
+            flags: "gim",
+          });
           return files.filter((f) => {
-            return rgx.test(f.name) || rgx.test(""+f.size);
+            return rgx.test(f.name) || rgx.test("" + f.size);
           });
         }
       },
@@ -220,8 +221,8 @@ export default function getVuexStore(cachedState={}) {
       },
       checkedFiles(state, getters) {
         const tool = getters.currTool;
-        return !tool || !Array.isArray(tool[state.currPath]) ? []
-          : tool[state.currPath].filter((f) => f.checked);
+        return !tool || !Array.isArray(tool[state.currPath]) ? [] :
+          tool[state.currPath].filter((f) => f.checked);
       },
       uriProject(state, getters) {
         return state.uriProject;
@@ -234,9 +235,9 @@ export default function getVuexStore(cachedState={}) {
 
         for (let i = 0; i < checkedFiles.length; i++) {
           if (checkedFiles[i].status == 0 &&
-              !checkedFiles[i].waiting &&
-              !checkedFiles[i].started &&
-              !checkedFiles[i].finished) {
+            !checkedFiles[i].waiting &&
+            !checkedFiles[i].started &&
+            !checkedFiles[i].finished) {
             return true;
           }
         }
@@ -266,7 +267,8 @@ export default function getVuexStore(cachedState={}) {
         for (let i = 0; i < currFiles.length; i++) {
           if (
             (currFiles[i].waiting || currFiles[i].started) // either waiting or started
-            && !currFiles[i].finished // and not finished
+            &&
+            !currFiles[i].finished // and not finished
           ) {
             return false;
           }
@@ -278,31 +280,31 @@ export default function getVuexStore(cachedState={}) {
         return (name) => state.modals[name];
       },
       menuIsVisible(state) {
-        return state.menuIsVisible
+        return state.menuIsVisible;
       },
       modalIsVisible(state) {
-        return state.modalIsVisible
+        return state.modalIsVisible;
       },
       tourHint(state) {
-        return state.tourHint
+        return state.tourHint;
       },
       testdata(state) {
-        return state.testdata
+        return state.testdata;
       },
       alertMessage(state) {
-        return state.alertMessage
+        return state.alertMessage;
       },
       alertType(state) {
-        return state.alertType
-      }
+        return state.alertType;
+      },
     },
     mutations: {
       // generic mutation setter
-      // useful for simple value redeclarations and 
+      // useful for simple value redeclarations and
       // when no logic is used in the mutation
       byKey(state, obj) {
-        for(const key in obj) {
-          state[key]=obj[key];
+        for (const key in obj) {
+          state[key] = obj[key];
         }
       },
 
@@ -321,9 +323,9 @@ export default function getVuexStore(cachedState={}) {
       /** Login **/
       setLoginState(state, status) {
         state.loginState = status;
-        if (status=='waiting') {
-          state.currToolName='';
-          state.tools.splice(0,state.tools.length);
+        if (status == "waiting") {
+          state.currToolName = "";
+          state.tools.splice(0, state.tools.length);
         }
       },
       setToken(state, token) {
@@ -343,7 +345,7 @@ export default function getVuexStore(cachedState={}) {
       setTools(state, tools) {
         state.tools.splice(0, state.tools.length, ...tools);
       },
-      setCurrToolName(state, toolName, removeURI=false) {
+      setCurrToolName(state, toolName, removeURI = false) {
         state.searchTerm = "";
         state.currToolName = toolName;
         let tools = state.tools.filter((t) => t.dx_location === toolName);
@@ -390,7 +392,6 @@ export default function getVuexStore(cachedState={}) {
 
               tool.loadedAvailableDownloads = true;
               tool.download = downloadableFiles;
-
             }
           );
         }
@@ -458,7 +459,7 @@ export default function getVuexStore(cachedState={}) {
         }
 
         let files = tool[state.currPath].filter((t) => t.checked && t.started && !t.finished);
-        files.forEach( (elem) => {
+        files.forEach((elem) => {
           elem.cancelled = true;
           let process = null;
           if (state.currPath === "upload") {
@@ -466,7 +467,7 @@ export default function getVuexStore(cachedState={}) {
           } else if (state.currPath === "download") {
             process = state.operationProcesses[elem.dx_location];
           }
-          
+
           if (process) {
             window.utils.killProcess(process.pid);
           } else {
@@ -497,35 +498,38 @@ export default function getVuexStore(cachedState={}) {
       removeOperationProcess(state, info) {
         delete state.operationProcesses[info.filename];
       },
-      setConcurrentOperations(state,num) {
+      setConcurrentOperations(state, num) {
         if (!isNaN(num)) {
-          state.concurrentOperations=num;
+          state.concurrentOperations = num;
         }
       },
       toggleMenu(state) {
-        state.menuIsVisible=!state.menuIsVisible;
+        state.menuIsVisible = !state.menuIsVisible;
       },
       closeMenu(state) {
-        state.menuIsVisible=false;
+        state.menuIsVisible = false;
       },
       openMenu(state) {
-        state.menuIsVisible=true;
+        state.menuIsVisible = true;
       },
       toggleModal(state) {
-        state.modalIsVisible=!state.modalIsVisible;
+        state.modalIsVisible = !state.modalIsVisible;
       },
       closeModal(state) {
-        state.modalIsVisible=false;
+        state.modalIsVisible = false;
       },
-      setTourHint(state,bool) {
-        state.tourHint=bool
+      setTourHint(state, bool) {
+        state.tourHint = bool;
       },
-      setTestdata(state,str) {
-        state.testdata=str
-      }
+      setTestdata(state, str) {
+        state.testdata = str;
+      },
     },
     actions: {
-      refreshFiles({commit, state}) {
+      refreshFiles({
+        commit,
+        state,
+      }) {
         state.tools.forEach((tool) => {
           tool.upload = [];
           tool.download = [];
@@ -534,7 +538,11 @@ export default function getVuexStore(cachedState={}) {
         // reset curr tool name to refresh downloads.
         commit("setCurrToolName", state.currToolName);
       },
-      updateCurrentToolFromURI({commit, state, getters}) {
+      updateCurrentToolFromURI({
+        commit,
+        state,
+        getters,
+      }) {
         let projectToPick = getters.uriProject;
         if (!projectToPick) return false;
 
@@ -549,7 +557,12 @@ export default function getVuexStore(cachedState={}) {
         window.utils.setURIProject(undefined);
         return true;
       },
-      updateToolsFromRemote({commit, state, getters, dispatch}, force=false) {
+      updateToolsFromRemote({
+        commit,
+        state,
+        getters,
+        dispatch,
+      }, force = false) {
         let previousTool = state.currToolName;
 
         commit("setNoProjectsFound", false);
@@ -595,7 +608,6 @@ export default function getVuexStore(cachedState={}) {
                 commit("setTools", tools);
                 let resetCurrToolName = true;
                 if (window.uriProject) {
-
                   for (let i = 0; i < tools.length; i++) {
                     let tool = tools[i];
                     if (tool.dx_location === window.uriProject) {
