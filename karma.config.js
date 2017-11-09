@@ -29,7 +29,7 @@ module.exports = function(config) {
 
     // use the webpack config
     webpack: wc,
-    singleRun: false,
+    singleRun: true,
     client: {
       captureConsole: true,
       mocha: {
