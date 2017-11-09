@@ -1,0 +1,8 @@
+{
+	"recommendations": [
+		"dbaeumer.vscode-eslint",
+		"HookyQR.beautify",
+		"octref.vetur",
+		"eg2.tslint"
+	]
+}
