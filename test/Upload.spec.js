@@ -7,11 +7,11 @@ import "../app/bin/backend/all.js";
 import "../app/bin/frontend/app.bundle.css";
 import _App from "../app/src/frontend/vue/main.js";
 
-describe("Upload panel for an empty project", function () {
+describe("Upload panel for an empty project", function() {
   const holder = select("body").append("div");
   holder.append("div").attr("id", "uploadaaa");
   let app;
-  beforeAll(function (done) {
+  beforeAll(function(done) {
     app = _App("#uploadaaa", {
       testdata: "fakeTools",
       showAllFiles: true,
@@ -24,12 +24,12 @@ describe("Upload panel for an empty project", function () {
     }, 600);
   });
 
-  it("should not display spinkit", function (done) {
+  it("should not display spinkit", function(done) {
     expect(selectAll(".sk-circle").size()).toEqual(0);
     done();
   });
 
-  it("should show a drop-zone for uploads", function (done) {
+  it("should show a drop-zone for uploads", function(done) {
     app.$router.push("/upload");
     setTimeout(() => {
       expect(holder.selectAll(".dropzone").size()).toEqual(1);
@@ -37,18 +37,18 @@ describe("Upload panel for an empty project", function () {
     }, 600);
   });
 
-  afterAll(function (done) {
+  afterAll(function(done) {
     holder.remove();
     done();
   });
 });
 
-describe("Upload panel for a project with completed transfer", function () {
+describe("Upload panel for a project with completed transfer", function() {
   const holder = select("body").append("div");
   holder.append("div").attr("id", "uploadccc");
   let app;
 
-  beforeAll(function (done) {
+  beforeAll(function(done) {
     app = _App("#uploadccc", {
       testdata: "fakeTools",
       showAllFiles: true,
@@ -62,36 +62,36 @@ describe("Upload panel for a project with completed transfer", function () {
     }, 600);
   });
 
-  it("should display a completion message", function (done) {
+  it("should display a completion message", function(done) {
     expect(holder
-        .selectAll(".sjcda-step-outcome-root-div")
-        .selectAll(".material-icons")
-        .filter(function (d) {
-          return select(this).html().trim() == "done";
-        })
-        .size())
+      .selectAll(".sjcda-step-outcome-root-div")
+      .selectAll(".material-icons")
+      .filter(function(d) {
+        return select(this).html().trim() == "done";
+      })
+      .size())
       .toEqual(1);
 
     done();
   });
 
-  it("should display two buttons", function (done) {
+  it("should display two buttons", function(done) {
     setTimeout(() => {
       expect(holder
-          .selectAll("button")
-          .selectAll(".material-icons")
-          .filter(function (d) {
-            const html = select(this).html().trim();
-            return html == "cloud_upload" || html == "open_in_browser";
-          })
-          .size())
+        .selectAll("button")
+        .selectAll(".material-icons")
+        .filter(function(d) {
+          const html = select(this).html().trim();
+          return html == "cloud_upload" || html == "open_in_browser";
+        })
+        .size())
         .toEqual(2);
     });
 
     done();
   });
 
-  afterAll(function () {
+  afterAll(function() {
     holder.remove();
   });
 });

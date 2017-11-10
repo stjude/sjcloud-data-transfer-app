@@ -6,12 +6,12 @@ import "../app/bin/backend/all.js";
 import "../app/bin/frontend/app.bundle.css";
 import _App from "../app/src/frontend/vue/main.js";
 
-describe("User Menu's logout button", function () {
+describe("User Menu's logout button", function() {
   const holder = select("body").append("div");
   holder.append("div").attr("id", "usermenuaaa");
   let app;
 
-  beforeAll(function (done) {
+  beforeAll(function(done) {
     app = _App("#usermenuaaa", {
       testdata: "fakeTools",
       showAllFiles: true,
@@ -25,7 +25,7 @@ describe("User Menu's logout button", function () {
     }, 500);
   });
 
-  it("should trigger the emptying and replacement of the state.tools array when clicked", function (done) {
+  it("should trigger the emptying and replacement of the state.tools array when clicked", function(done) {
     const numRowsBeforeLogut = holder.selectAll("#sjcda-left-panel-table-body tr").size();
     holder.select("#logout-btn").node().click();
     app.$store.commit("setURIProject", "");
@@ -42,7 +42,7 @@ describe("User Menu's logout button", function () {
     }, 500);
   });
 
-  afterAll(function (done) {
+  afterAll(function(done) {
     holder.remove();
     done();
   });
