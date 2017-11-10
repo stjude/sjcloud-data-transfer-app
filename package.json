@@ -21,7 +21,7 @@
     "pack:win": "./node_modules/.bin/electron-packager . 'SJCP Data Transfer' --electron-version=1.6.15 --app-version=%npm_package_version% --out=dist --ignore='^/dist$' --platform=win32 --arch=ia32 --version-string.CompanyName='St. Jude Childrens Research Hospital' --app-copyright=\"Copyright (C) 2017 St. Jude Childrens Research Hospital\" --version-string.FileDescription='SJCP Data Transfer' --version-string.OriginalFilename='SJCP-Data-Transfer.exe' --version-string.InternalName='SJCP Data Transfer' --version-string.ProductName='SJCP Data Transfer' --version-string.ProductVersion=%npm_package_version% --asar --icon=build/logo.ico --overwrite",
     "postpack:mac": "bash ./build/scripts/finalize.sh 'SJCP Data Transfer'",
     "postpack:win": "npm run postpack:mac",
-    "test": "karma start karma.config.js"
+    "test": "webpack --config=webpack.config.js --progress --colors && karma start karma.config.js"
   },
   "author": "St. Jude Children's Research Hospital <clay.mcleod@stjude.org>",
   "build": {
