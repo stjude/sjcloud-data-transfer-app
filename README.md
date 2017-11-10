@@ -85,24 +85,20 @@ If you are only working with the front-end code, you can develop in the web brow
 Testing
 =======
 
-You can run the front-end tests by running the following commnands:
-
+Currently, you must start the test server in the background before running tests. 
 
 ```bash
-# run the webpack compiler
-yarn run www-no-watch 
-# or yarn run www in another tab.
+# if it's not running already
+yarn run www 
+```
 
-# run the testing suite
+After this, you can start the tests by running
+
+```bash
 yarn test
 ```
 
 Issues
 ------
-=======
-Front-end tests
-- `yarn run www # if it's not running already`
-- `yarn test`
->>>>>>> Move testdata to under app to fix #13
 
 If you have any issues, please file a bug report at the [issues page](https://github.com/stjude/sjcloud-data-transfer-app/issues).
