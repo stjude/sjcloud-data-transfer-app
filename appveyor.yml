@@ -17,5 +17,4 @@ test_script:
   - node --version
   - yarn --version
   - cp config-example.json config.json
-  - yarn run www-no-watch
   - yarn test

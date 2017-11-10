@@ -4,11 +4,6 @@ module.exports = function(config) {
   const wc = webpackConfig();
 
   wc.plugins = [];
-  wc.output = {
-    path: __dirname + "/app/bin/frontend",
-    filename: "sjcda.bundle.js",
-    publicPath: "",
-  };
 
   config.set({
     browsers: ["Chrome"],
@@ -17,28 +12,28 @@ module.exports = function(config) {
       "./test/*.spec.js",
       // serve assets, script, data file used in testing
       {
-        pattern: 'app/testdata/*',
+        pattern: "app/testdata/*",
         served: true,
         included: false,
-        watched: false
+        watched: false,
       },
       {
-        pattern: 'app/img/*',
+        pattern: "app/img/*",
         served: true,
         included: false,
-        watched: false
+        watched: false,
       },
       {
-        pattern: 'app/bin/frontend/*',
+        pattern: "app/bin/frontend/*",
         served: true,
         included: false,
-        watched: false
-      }
+        watched: false,
+      },
     ],
 
-    // the proxy path-keys below are used in the application 
+    // the proxy path-keys below are used in the application
     // in the intial page load and for data requests,
-    // and must be mapped to the corresponding 
+    // and must be mapped to the corresponding
     // karma-served files listed in the "files" properties
     proxies: {
       "/testdata/": "/base/app/testdata/",
