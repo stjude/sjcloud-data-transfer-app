@@ -33,6 +33,10 @@ module.exports = function(env = {}) {
           },
         }],
       }, {
+        test: /\.tsx?$/,
+        use: "ts-loader",
+        exclude: /node_modules/,
+      }, {
         test: /\.woff(2)?(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         loader: "url-loader?limit=10000&mimetype=application/font-woff",
       }, {
@@ -48,7 +52,7 @@ module.exports = function(env = {}) {
     },
     resolve: {
       modules: ["node_modules"],
-      extensions: [".js", ".vue", ".json"],
+      extensions: [".ts", ".tsx", ".js", ".vue", ".json"],
       alias: {
         vue: "vue/dist/vue.js",
       },
