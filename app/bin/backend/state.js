@@ -4,17 +4,26 @@
 
 const os = require("os");
 const utils = require("./utils");
+const logging = require("./logging");
 
 module.exports.state = {
-  NEED_INSTALL: {path: "install"},
-  NEED_LOGIN: {path: "login"},
-  UPLOAD: {path: "upload"},
-  UNKNOWN: {path: "unknown"},
+  NEED_INSTALL: {
+    path: "install",
+  },
+  NEED_LOGIN: {
+    path: "login",
+  },
+  UPLOAD: {
+    path: "upload",
+  },
+  UNKNOWN: {
+    path: "unknown",
+  },
 };
 
 /**
  * Determines what route to use on startup.
- * 
+ *
  * @param {callback} callback Callback function
  * @return {string} html file to be loaded
  */
@@ -27,7 +36,7 @@ module.exports.getState = function(callback) {
     return callback(self.state.UNKNOWN);
   }
 
-  utils.initSJCloudHome( (err, res) => {
+  utils.initSJCloudHome((err, res) => {
     logging.info(`ERR: ${err}, RES: ${res}`);
 
     if (err) {
@@ -35,18 +44,18 @@ module.exports.getState = function(callback) {
       return callback(self.state.UNKNOWN);
     }
 
-    utils.dxToolkitOnPath( (err, res) => {
+    utils.dxToolkitOnPath((err, res) => {
       if (err) {
         console.error(err);
         return callback(self.state.NEED_INSTALL);
       }
 
-      utils.dxLoggedIn( (err, res) => {
+      utils.dxLoggedIn((err, res) => {
         if (err) {
           return callback(self.state.NEED_LOGIN);
         }
 
-        utils.dxCheckProjectAccess( (err, res) => {
+        utils.dxCheckProjectAccess((err, res) => {
           if (err) {
             console.error(err);
             return callback(self.state.UNKNOWN);

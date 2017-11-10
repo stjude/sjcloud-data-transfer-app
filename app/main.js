@@ -2,30 +2,39 @@
  * @file Main entrypoint for the SJCP Data Upload tool.
  *       This file includes all functionality for bootstrapping
  *       the application, handling events, and logging.
- * 
+ *
  * @author Clay McLeod
  * @author Andrew Frantz
  * @author Edgar Sioson
  */
+
+
+/* eslint-disable no-unused-vars */
 
 const os = require("os");
 const electron = require("electron");
 
 const app = electron.app;
 const menu = electron.Menu;
-const platform = os.platform();
 
 const config = require("../config.json");
 const ui = require("./bin/backend/ui");
-// eslint-disable-next-line no-unused-vars
 const logging = require("./bin/backend/logging");
 const protocol = require("./bin/backend/protocol");
+
+const platform = os.platform();
+const nodeEnvironment = process.env.NODE_ENV || "production";
+
+if (nodeEnvironment !== "production" && nodeEnvironment !== "development") {
+  logging.error("NODE_ENV must be 'production' or 'development'!");
+  process.exit();
+}
 
 logging.info(" ###############################################");
 logging.info(" # Starting the SJCP Data Transfer Application #");
 logging.info(" ###############################################");
 logging.info("");
-logging.info(" [*] Environment: " + config.ENVIRONMENT);
+logging.info(" [*] Environment: " + nodeEnvironment);
 logging.info(" [*] Process arguments:");
 process.argv.forEach((elem, index) => {
   logging.info("   " + index + ": " + elem);
@@ -34,14 +43,14 @@ logging.info("");
 
 /**
  * START PROGRAM.
- * 
+ *
  * Below, you will see two variables. It is crucial that you understand
  * how these two variables work based on electron's application lifecycle.
- * 
+ *
  *   mainWindow: this is the window object that holds all of the content
  *               for the application.
  *   startupOptions: this variable catches all of the relevant information
- *                   in the event based methods below for parsing by the 'ready' 
+ *                   in the event based methods below for parsing by the 'ready'
  *                   event.
  */
 
@@ -56,7 +65,7 @@ let startupOptions = {};
 function bootstrapWindow(mainWindow) {
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
-  if (config.ENVIRONMENT === "prod" && config.AUTOUPDATE_ENABLED === true) {
+  if (nodeEnvironment === "production" && config.AUTOUPDATE_ENABLED === true) {
     logging.warn(" ***********");
     logging.warn(" * WARNING *");
     logging.warn(" ***********");
@@ -73,18 +82,18 @@ function bootstrapWindow(mainWindow) {
 }
 
 /**
- * 
+ *
  */
-function ensureWindow(callback=undefined) {
+function ensureWindow(callback = undefined) {
   // If the app isn't 'ready', we can't create a window.
   if (!app.isReady()) {
     return;
   }
 
   if (mainWindow === null ||
-      mainWindow === undefined ||
-      mainWindow.isDestroyed()) {
-    ui.createWindow( (mw) => {
+    mainWindow === undefined ||
+    mainWindow.isDestroyed()) {
+    ui.createWindow((mw) => {
       mainWindow = mw;
       bootstrapWindow(mainWindow);
       if (callback !== undefined) {

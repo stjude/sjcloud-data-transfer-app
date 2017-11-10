@@ -91,7 +91,7 @@ function getParams() {
 
 /** Default Settings **/
 const defaultState = {
-  environment: Config.ENVIRONMENT,
+  environment: process.env.NODE_ENV || "development",
   concurrentOperations: Config.DEFAULT_CONCURRENT_OPERATIONS,
   uriProject: "",
 

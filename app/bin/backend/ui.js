@@ -1,17 +1,18 @@
 /**
  * @fileOverview Controls the UI
-*/
+ */
 
 const os = require("os");
 const path = require("path");
 const electron = require("electron");
 const BrowserWindow = electron.BrowserWindow;
 
-const config = require("../../../config.json");
-
 const platform = os.platform();
+const nodeEnvironment = process.env.NODE_ENV || "development";
 
-let width = 900, height = 620;
+let width = 900;
+let height = 620;
+
 if (platform === "darwin" || platform === "linux") {
   width = 900;
   height = 620;
@@ -49,7 +50,7 @@ module.exports.createWindow = (callback) => {
 const internal_url = "https://cloud.stjude.org";
 
 let client_id = "sjcloud-desktop-dev";
-if (config.ENVIRONMENT === "prod") {
+if (nodeEnvironment === "production") {
   client_id = "sjcloud-data-transfer-app";
 }
 
@@ -72,7 +73,7 @@ module.exports.createOauthWindow = (internal, callback) => {
     // If the browser isn't trying to go to cloud.stjude.org
     // OR if it's actually going to the Oauth page.
     //
-    // Really, this just accomplishes a redirect straight to the 
+    // Really, this just accomplishes a redirect straight to the
     // oauth page rather than landing on platform.dnanexus.com after
     // login.
 

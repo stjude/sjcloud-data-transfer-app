@@ -41,7 +41,12 @@ cd sjcloud-data-transfer-app
 yarn install
 
 # copy the example configuration
+# edit as necessary
 cp config-example.json config.json 
+
+# NODE_ENV takes on values of 'production' or 'development'.
+# Unspecified defaults to production.
+export NODE_ENV=production
 
 # run the webpack compilation step for the frontend.
 yarn run www-no-watch

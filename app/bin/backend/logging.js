@@ -1,9 +1,9 @@
 const os = require("os");
 const path = require("path");
 const winston = require("winston");
-const config = require("../../../config.json");
 
 const platform = os.platform();
+const nodeEnvironment = process.env.NODE_ENV || "development";
 
 let loggingFile = "";
 
@@ -14,7 +14,7 @@ if (platform === "darwin" || platform === "linux") {
 }
 
 let logLevel = "debug";
-if (config.ENVIRONMENT === "prod") {
+if (nodeEnvironment === "production") {
   logLevel = "info";
 }
 

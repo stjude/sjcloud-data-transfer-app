@@ -4,13 +4,13 @@ import routes from "./routes.js";
 import App from "./App.vue";
 import store from "./store";
 import vueTippy from "vue-tippy";
-import Config from "../../../../config.json";
 
 // configure Vue
 Vue.config.debug = true;
 Vue.config.devtools = false; // silence message about downloading dev tools
 Vue.use(VueRouter);
 Vue.use(vueTippy);
+console.log("Node Environment: " + process.env.NODE_ENV);
 
 // create router
 const router = new VueRouter({
@@ -22,18 +22,18 @@ const router = new VueRouter({
 
 // exporting as a function allows delayed start
 // for testing, etc.
-export default function _App(selector, cachedState={}) {
+export default function _App(selector, cachedState = {}) {
   // boostrap the app
   const VueApp = new Vue({
     el: selector,
-    render: (h)=>h(App),
+    render: (h) => h(App),
     router,
     store: store(cachedState),
   });
 
   VueApp.$router.replace("/");
 
-  if (Config.ENVIRONMENT === "dev") {
+  if (process.env.NODE_ENV === "development") {
     VueApp.$router.replace("home");
   } else {
     window.state.getState((state) => {
@@ -45,11 +45,11 @@ export default function _App(selector, cachedState={}) {
 }
 
 // if this code was bundled and included in index.html,
-// where the expected container div is present, 
+// where the expected container div is present,
 // then start the app immediately
 if (document.querySelector("#sjcda-main-div")) {
   window.utils.readCachedFile("state.json", function(content) {
-    const obj=JSON.parse(content);
+    const obj = JSON.parse(content);
     if (!obj) {
       console.log("Error parsing the cached state file.");
       _App("#sjcda-main-div");
