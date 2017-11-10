@@ -90,15 +90,6 @@ If you are only working with the front-end code, you can develop in the web brow
 Testing
 =======
 
-Currently, you must start the test server in the background before running tests. 
-
-```bash
-# if it's not running already
-yarn run www 
-```
-
-After this, you can start the tests by running
-
 ```bash
 yarn test
 ```
