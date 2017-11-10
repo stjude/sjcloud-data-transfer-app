@@ -9,7 +9,8 @@ module.exports = function(config) {
     browsers: ["Chrome"],
     frameworks: ["jasmine"],
     files: [
-      "./test/*.spec.js",
+      "./app/bin/frontend/app.bundle.css",
+      "./test/test.index.js",
       // serve assets, script, data file used in testing
       {
         pattern: "app/testdata/*",
@@ -43,9 +44,9 @@ module.exports = function(config) {
 
     // we will pass the entry file to webpack for bundling.
     preprocessors: {
-      "./test/*.spec.js": ["webpack"],
+      "./test/*.js": ["webpack"],
       "*.js": ["webpack"],
-      "*": ["webpack"],
+      "*": ["webpack"]
     },
 
     // use the webpack config

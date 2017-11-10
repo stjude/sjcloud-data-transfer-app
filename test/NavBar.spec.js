@@ -1,10 +1,8 @@
 import {
   select,
 } from "d3-selection";
-import "./www-init.js";
-import "../app/bin/backend/all.js";
-import "../app/bin/frontend/app.bundle.css";
-import _App from "../app/src/frontend/vue/main.js";
+
+const _App = window._App;
 
 describe("NavBar search", function() {
   const holder = select("body").append("div");
