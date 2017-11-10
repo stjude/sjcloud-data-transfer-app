@@ -22,8 +22,8 @@ module.exports = function(config) {
       "*": ["webpack"],
     },
     proxies: {
-      "/testdata/": "http://localhost:3057/testdata/",
-      "/img/": "http://localhost:3057/img/",
+      "/testdata/": "http://localhost:3057/app/testdata/",
+      "/img/": "http://localhost:3057/app/img/",
       "/bin/frontend/": "http://localhost:3057/app/bin/frontend/",
     },
 
