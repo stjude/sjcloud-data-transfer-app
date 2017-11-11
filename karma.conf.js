@@ -1,7 +1,7 @@
-let webpackConfig = require("./webpack.config.js");
+let webpackConfig = require("./config/webpack.conf.js");
 
 module.exports = function(config) {
-  const wc = webpackConfig();
+  const wc = webpackConfig;
 
   wc.plugins = [];
 
@@ -13,19 +13,19 @@ module.exports = function(config) {
       "./test/test.index.js",
       // serve assets, script, data file used in testing
       {
-        pattern: "app/testdata/*",
+        pattern: "./app/testdata/*",
         served: true,
         included: false,
         watched: false,
       },
       {
-        pattern: "app/img/*",
+        pattern: "./app/img/*",
         served: true,
         included: false,
         watched: false,
       },
       {
-        pattern: "app/bin/frontend/*",
+        pattern: "./app/bin/frontend/*",
         served: true,
         included: false,
         watched: false,

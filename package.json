@@ -47,6 +47,10 @@
     "expand-home-dir": "0.0.3",
     "express": "^4.15.4",
     "glob-to-regexp": "^0.3.0",
+    "gulp": "^3.9.1",
+    "gulp-typescript": "^3.2.3",
+    "gulp-watch": "^4.3.11",
+    "gulp-webpack": "^1.5.0",
     "jquery": "^3.2.1",
     "mkdirp": "^0.5.1",
     "pem": "^1.9.7",
@@ -55,6 +59,8 @@
     "todc-bootstrap": "^3.3.7-3.3.13",
     "tree-kill": "^1.1.0",
     "vue-tippy": "^0.2.8",
+    "webpack": "^3.8.1",
+    "webpack-target-electron-renderer": "^0.4.0",
     "winston": "^2.3.1"
   },
   "devDependencies": {
@@ -77,6 +83,7 @@
     "eslint-config-google": "^0.8.0",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.2",
+    "gulp-util": "^3.0.8",
     "jasmine": "^2.8.0",
     "karma": "^1.7.1",
     "karma-chrome-launcher": "^2.2.0",
@@ -95,7 +102,6 @@
     "vue-template-compiler": "^2.4.2",
     "vue2-dropzone": "^2.3.5",
     "vuex": "^2.3.1",
-    "webpack": "^3.5.3",
     "webpack-notifier": "^1.5.0"
   }
 }

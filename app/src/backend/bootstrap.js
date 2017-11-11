@@ -24,7 +24,7 @@ if (window.location.port != "3057" && window.location.port != "9876" && !window.
           .catch((err) => console.log(err));
       }, 500);
     },
-    install(updateProgress, failProgress, callback) {
+    install(updateProgress, callback) {
       updateProgress("30%", "Downloading...");
 
       setTimeout(() => {

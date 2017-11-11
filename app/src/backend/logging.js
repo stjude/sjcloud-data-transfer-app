@@ -3,7 +3,7 @@ const path = require("path");
 const winston = require("winston");
 
 const platform = os.platform();
-const nodeEnvironment = process.env.NODE_ENV || "development";
+const nodeEnvironment = process.env.NODE_ENV || "production";
 
 let loggingFile = "";
 

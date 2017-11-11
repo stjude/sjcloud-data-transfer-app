@@ -8,7 +8,6 @@
  * @author Edgar Sioson
  */
 
-
 /* eslint-disable no-unused-vars */
 
 const os = require("os");
@@ -18,9 +17,9 @@ const app = electron.app;
 const menu = electron.Menu;
 
 const config = require("../config.json");
-const ui = require("./bin/backend/ui");
-const logging = require("./bin/backend/logging");
-const protocol = require("./bin/backend/protocol");
+const ui = require("./src/backend/ui");
+const logging = require("./src/backend/logging");
+const protocol = require("./src/backend/protocol");
 
 const platform = os.platform();
 const nodeEnvironment = process.env.NODE_ENV || "production";
@@ -72,17 +71,19 @@ function bootstrapWindow(mainWindow) {
     logging.warn("");
     logging.warn(" Loading autoupdater. Code must be signed for this to work!");
     logging.warn("");
-    const autoupdater = require("./bin/backend/autoupdate");
+    const autoupdater = require("./src/backend/autoupdate");
   }
 
   if (!config.CHROMIUM_MENU) {
-    let template = require("./bin/backend/menu.js");
+    let template = require("./src/backend/menu.js");
     menu.setApplicationMenu(menu.buildFromTemplate(template));
   }
 }
 
 /**
+ * Ensure that a main window exists.
  *
+ * @param {function} callback
  */
 function ensureWindow(callback = undefined) {
   // If the app isn't 'ready', we can't create a window.

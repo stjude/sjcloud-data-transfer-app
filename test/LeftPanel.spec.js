@@ -27,7 +27,7 @@ describe("LeftPanel for a user with no projects", function() {
   but fails when tested with other spec files
   !!!
   */
-  /*it("should display the no projects found div.", function(done) {
+  /* it("should display the no projects found div.", function(done) {
     setTimeout(() => {
       expect(holder.selectAll(".no-projects-div").size()).toEqual(1);
       done();

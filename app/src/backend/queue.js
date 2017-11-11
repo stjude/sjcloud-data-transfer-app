@@ -13,20 +13,20 @@ let PRIORITY = {
 
 /**
  * Handles processing for download tasks.
- * 
+ *
  * @param {object} task Task to run. Required keys should be evident
- *                      from the code below. 
+ *                      from the code below.
  * @param {callback} callback Takes (err, result) as parameters.
  */
 function downloadTask(task, callback) {
   if (debug) console.log("Starting download task:", task);
 
   task._rawFile.started = true;
-  let process = window.dx.downloadFile(
-    task.local_location,
+  let process = window.dx.downloadDxFile(
+    task.remote_location,
     task.name,
     task.raw_size,
-    task.remote_location,
+    task.local_location,
     (progress) => {
       task._rawFile.status = progress;
     },
@@ -67,9 +67,9 @@ function downloadTask(task, callback) {
 
 /**
  * Handles processing for upload tasks.
- * 
+ *
  * @param {object} task Task to run. Required keys should be evident
- *                      from the code below. 
+ *                      from the code below.
  * @param {callback} callback Takes (err, result) as parameters.
  */
 function uploadTask(task, callback) {
@@ -117,9 +117,9 @@ function uploadTask(task, callback) {
 
 /**
  * Handles processing for tool information tasks.
- * 
+ *
  * @param {object} task Task to run. Required keys should be evident
- *                      from the code below. 
+ *                      from the code below.
  * @param {callback} callback Takes (err, result) as parameters.
  */
 function toolInfoTask(task, callback) {
@@ -179,7 +179,7 @@ workQueue.drain = function() {
 /**
  * Add a general task to the queue, prioritize it based on
  * what type of task it is.
- * 
+ *
  * @param {object} task The task to be added to the queue.
  */
 function add(task) {
@@ -198,7 +198,7 @@ function add(task) {
 
 /**
  * Adds an upload task to the queue.
- * 
+ *
  * @param {Object} task Upload task to add to the queue.
  */
 function addUploadTask(task) {
@@ -209,7 +209,7 @@ function addUploadTask(task) {
 
 /**
  * Adds a download task to the queue.
- * 
+ *
  * @param {Object} task Download task to add to the queue.
  */
 function addDownloadTask(task) {
@@ -219,7 +219,7 @@ function addDownloadTask(task) {
 
 /**
  * Adds an tool info task to the queue.
- * 
+ *
  * @param {Object} task Tool info task to add to the queue.
  */
 function addToolInfoTask(task) {
@@ -229,7 +229,7 @@ function addToolInfoTask(task) {
 
 /**
  * Remove certain types of tasks from the queue.
- * 
+ *
  * @param {string} type Type of tasks to remove
  */
 function removeAllTaskOfType(type) {

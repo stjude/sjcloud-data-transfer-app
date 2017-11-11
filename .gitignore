@@ -1,6 +1,7 @@
 node_modules/
 dist/*
-app/bin/frontend/*
+app/bin/*
+!app/bin/.gitkeep
 **/.DS_Store
 
 package-lock.json

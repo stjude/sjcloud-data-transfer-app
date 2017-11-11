@@ -64,177 +64,177 @@
 </template>
 
 <script>
-import StepOutcome from './StepOutcome.vue'
-import SpinKit from './SpinKit.vue'
-import ToolkitModal from './ToolkitModal.vue'
+import StepOutcome from "./StepOutcome.vue";
+import SpinKit from "./SpinKit.vue";
+import ToolkitModal from "./ToolkitModal.vue";
 
 export default {
-	components: {
-		StepOutcome,
-		SpinKit,
-		ToolkitModal
-	},
-	data() {
-		return {
-			openModal: false
-		}
-	},
-	computed: {
-		installingDxToolkit() {
-			return this.$store.getters.installingDxToolkit;
-		},
-		environment() {
-			return this.$store.getters.environment;
-		},
-		downloadStatus() {
-			return this.$store.getters.downloadStatus;
-		},
-		toolkitModalVisibility() {
-			return this.$store.getters.modalVisibility('toolkit')
-		}
-	},
-	mounted() {
-		this.$store.commit('setTourHint',true);
-	},
-	methods: {
-		setInstallingDxToolkit(installing) {
-			this.$store.commit('setInstallingDxToolkit', installing);
-		},
-		setDownloadStatus(status) {
-			this.$store.commit('setDownloadStatus', status);
-		},
-		downloadDxToolkit() {
-			this.$store.commit('setInstallingDxToolkit', "installing");
-			var that = this;
+  components: {
+    StepOutcome,
+    SpinKit,
+    ToolkitModal
+  },
+  data() {
+    return {
+      openModal: false
+    };
+  },
+  computed: {
+    installingDxToolkit() {
+      return this.$store.getters.installingDxToolkit;
+    },
+    environment() {
+      return this.$store.getters.environment;
+    },
+    downloadStatus() {
+      return this.$store.getters.downloadStatus;
+    },
+    toolkitModalVisibility() {
+      return this.$store.getters.modalVisibility("toolkit");
+    }
+  },
+  mounted() {
+    this.$store.commit("setTourHint", true);
+  },
+  methods: {
+    setInstallingDxToolkit(installing) {
+      this.$store.commit("setInstallingDxToolkit", installing);
+    },
+    setDownloadStatus(status) {
+      this.$store.commit("setDownloadStatus", status);
+    },
+    downloadDxToolkit() {
+      this.$store.commit("setInstallingDxToolkit", "installing");
+      var that = this;
 
-			window.dx.install(function (percent, text) {
-				that.setDownloadStatus(text);
-			}, 
-			function (text) {
-				that.setDownloadStatus(text);
-			},
-			function (err, result) {
-				if (err) {
-					that.$store.commit('setInstallingDxToolkit', "failed");
-				} else {
-					that.$store.commit('setInstallingDxToolkit', "completed");
-					setTimeout(function (){
-						that.$router.push('login');
-					}, 2500);
-				}
+      window.dx.installDxToolkit(
+        function([percent, text]) {
+          that.setDownloadStatus(text);
+        },
+        function(err, result) {
+          if (err) {
+            that.setDownloadStatus(text);
+            that.$store.commit("setInstallingDxToolkit", "failed");
+          } else {
+            that.$store.commit("setInstallingDxToolkit", "completed");
+            setTimeout(function() {
+              that.$router.push("login");
+            }, 2500);
+          }
 
-				return result;
-			});
-		},
-		showModal() {
-			this.$store.commit('showModal','toolkit')
-		}
-	}
-}
+          return result;
+        }
+      );
+    },
+    showModal() {
+      this.$store.commit("showModal", "toolkit");
+    }
+  }
+};
 </script>
 
 <style scoped>
 .row {
-	margin: 0px;
+  margin: 0px;
 }
 
 .dev-box {
-	position: absolute;
-	left: 750px;
-	top: 20px;
-	z-index: 1;
+  position: absolute;
+  left: 750px;
+  top: 20px;
+  z-index: 1;
 }
 
 .main {
-	margin-bottom: 50px;
+  margin-bottom: 50px;
 }
 
 .theater-heading {
-	margin: 0px 45px 0px 45px;
+  margin: 0px 45px 0px 45px;
 }
 
 .theater-heading > h1 {
-	margin-top: 35px;
-	font-style: 'Open Sans', 'Helvetica Neue';
-	font-size: 36px;
-	color: #000000;
+  margin-top: 35px;
+  font-style: "Open Sans", "Helvetica Neue";
+  font-size: 36px;
+  color: #000000;
 }
 
 .theater-heading > hr {
-	margin: 10px 0px 10px 0px;
-	float: center;
-	border-top: 2px solid #dedede;
-	width: 780px;
+  margin: 10px 0px 10px 0px;
+  float: center;
+  border-top: 2px solid #dedede;
+  width: 780px;
 }
 
 .theater-body {
-	margin: 35px 40px 0px 45px;
-	text-align: center;
-	font-style: 'Open Sans', 'Helvetica Neue';
-	font-size: 24px;
-	height: 300px;
+  margin: 35px 40px 0px 45px;
+  text-align: center;
+  font-style: "Open Sans", "Helvetica Neue";
+  font-size: 24px;
+  height: 300px;
 }
 
 .theater-body .btn {
-	margin: 35px 0px 50px 0px;
-	width: 145px;
-	font-size: 24px;
+  margin: 35px 0px 50px 0px;
+  width: 145px;
+  font-size: 24px;
 }
 
 .footer {
-	position: absolute;
-	top: 545px;
-	left: -10px;
+  position: absolute;
+  top: 545px;
+  left: -10px;
 }
 
 .footer .progress {
-	width: 300px;
-	height: 4pt;
-	float: center;
-	margin: 0 auto;
-	margin-bottom: 25px;
+  width: 300px;
+  height: 4pt;
+  float: center;
+  margin: 0 auto;
+  margin-bottom: 25px;
 }
 
 .footer .progress-bar {
-	background-color: #158cba;
+  background-color: #158cba;
 }
 
 .footer .progress-node {
-	position: absolute;
-	margin-top: -20px;
-	z-index: 1;
-	height: 45px;
-	width: 45px;
-	border: 3px solid #1381b3;
-	border-radius: 25px;
-	line-height: 40px;
-	font-size: 26px;
-	text-align: center;
+  position: absolute;
+  margin-top: -20px;
+  z-index: 1;
+  height: 45px;
+  width: 45px;
+  border: 3px solid #1381b3;
+  border-radius: 25px;
+  line-height: 40px;
+  font-size: 26px;
+  text-align: center;
 }
 
-.footer .progress-node-active{
-	color: #FFFFFF;
-	background-color: #158cba;
+.footer .progress-node-active {
+  color: #ffffff;
+  background-color: #158cba;
 }
 
-.footer .progress-node-nonactive{
-	color: #158cba;
-	background-color: #FFFFFF;
+.footer .progress-node-nonactive {
+  color: #158cba;
+  background-color: #ffffff;
 }
 
-.footer .progress-text span{
-	position: absolute;
-	color: #158cba;
-	font-size: 16pt;
+.footer .progress-text span {
+  position: absolute;
+  color: #158cba;
+  font-size: 16pt;
 }
 
 .info-icon-wrapper-div {
-	display: inline-block;
-	vertical-align:top;
-	padding: 3px 0 0 0; 
-	overflow: hidden;
-    margin: 0;
-    height: 30px;
+  display: inline-block;
+  vertical-align: top;
+  padding: 3px 0 0 0;
+  overflow: hidden;
+  margin: 0;
+  height: 30px;
 }
 
 .theater-body-img {

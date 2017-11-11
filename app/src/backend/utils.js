@@ -10,26 +10,26 @@ const mkdirp = require("mkdirp");
 const crypto = require("crypto");
 const kill = require("tree-kill");
 const logging = require("./logging");
-const {exec, spawn, execSync, spawnSync} = require("child_process");
-const {remote, shell} = require("electron");
+const { exec, spawn, execSync, spawnSync } = require("child_process");
+const { remote, shell } = require("electron");
 
-sjcloudHomeDirectory = path.join( os.homedir(), ".sjcloud" );
-dxToolkitDirectory = path.join( sjcloudHomeDirectory, "dx-toolkit" );
-dxToolkitEnvironmentFile = path.join( dxToolkitDirectory, "environment" );
+sjcloudHomeDirectory = path.join(os.homedir(), ".sjcloud");
+dxToolkitDirectory = path.join(sjcloudHomeDirectory, "dx-toolkit");
+dxToolkitEnvironmentFile = path.join(dxToolkitDirectory, "environment");
 dnanexusCLIDirectory = "C:\\Program Files (x86)\\DNAnexus CLI";
-defaultDownloadDir = path.join( os.homedir(), "Downloads" );
+defaultDownloadDir = path.join(os.homedir(), "Downloads");
 
 /**
  * Creates the ~/.sjcloud directory, if it doesn't exist.
  * Callback takes args (error, created_dir) to determine
  * whether this is the user's first time to run the app.
- * 
+ *
  * @param {callback} callback
  **/
 module.exports.initSJCloudHome = (callback) => {
-  fs.stat(sjcloudHomeDirectory, function(statErr, stats) {
+  fs.stat(sjcloudHomeDirectory, function (statErr, stats) {
     if (statErr || !stats) {
-      mkdirp(sjcloudHomeDirectory, function(mkdirErr) {
+      mkdirp(sjcloudHomeDirectory, function (mkdirErr) {
         if (mkdirErr) {
           return callback(mkdirErr, null);
         }
@@ -44,12 +44,12 @@ module.exports.initSJCloudHome = (callback) => {
 /**
  * Find or create the "dx-toolkit" directory in the ".sjcloud"
  * directory and return its path.
- * 
+ *
  * @return {string} Path of "dx-toolkit" directory
 */
-module.exports.getDXToolkitDir = function() {
+module.exports.getDXToolkitDir = function () {
   if (!fs.existsSync(module.exports.dxToolkitDirectory)) {
-    mkdirp(module.exports.dxToolkitDirectory, function(err) {
+    mkdirp(module.exports.dxToolkitDirectory, function (err) {
       if (err) {
         return null;
       }
@@ -61,15 +61,15 @@ module.exports.getDXToolkitDir = function() {
 
 /**
  * Runs commands on the system command line.
- * 
+ *
  * @param {string} cmd Text to be entered at the command line
  * @param {callback} callback
  * @return {child_process.ChildProcess}
 */
-module.exports.runCommand = function(cmd, callback) {
+module.exports.runCommand = function (cmd, callback) {
   const platform = os.platform();
 
-  let innerCallback = function(err, stdout, stderr) {
+  let innerCallback = function (err, stdout, stderr) {
     if (err) {
       console.error(`ERROR: ${err}`);
       return callback(err, null);
@@ -100,10 +100,10 @@ module.exports.runCommand = function(cmd, callback) {
 
     cmd = `/usr/bin/env bash -c "${cmd}"`;
     logging.info(`Running command: ${cmd}`);
-    return exec(cmd, {shell: "/bin/bash", maxBuffer: 10000000}, innerCallback);
+    return exec(cmd, { shell: "/bin/bash", maxBuffer: 10000000 }, innerCallback);
   } else if (platform == "win32") {
-    const dnanexusPSscript = path.resolve(path.join( module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1" ));
-    let args = ['-NoLogo', '-InputFormat', 'Text', '-NonInteractive', '-NoProfile', '-Command'];
+    const dnanexusPSscript = path.resolve(path.join(module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1"));
+    let args = ["-NoLogo", "-InputFormat", "Text", "-NonInteractive", "-NoProfile", "-Command"];
     // fs.statSync() is only to check if "dx" commands can be sourced.
     // If it fails other commands can still be run.
     try {
@@ -111,7 +111,7 @@ module.exports.runCommand = function(cmd, callback) {
       if (stats) {
         cmd = `.'${dnanexusPSscript}'; ${cmd}`;
       }
-    } catch (err) {}
+    } catch (err) { }
 
     args = [...args, `${cmd}`];
 
@@ -119,45 +119,45 @@ module.exports.runCommand = function(cmd, callback) {
     let stderr = "";
 
     p = spawn("powershell.exe", args, {
-      stdio: 'pipe',
-      maxBuffer: 10000000
+      stdio: "pipe",
+      maxBuffer: 10000000,
     });
 
-    p.stdout.on('data', function(data) {
+    p.stdout.on("data", function (data) {
       stdout += data.toString();
     });
 
-    p.stderr.on('data', function(data){
+    p.stderr.on("data", function (data) {
       stderr += data.toString();
-    })
+    });
 
-    p.on('error', function (err){
+    p.on("error", function (err) {
       innerCallback(err, stdout, stderr);
     });
 
-    p.on('close', function(code) {
+    p.on("close", function (code) {
       innerCallback(null, stdout, stderr);
     });
 
     return p;
-    
-    //return exec(cmd, {maxBuffer: 10000000}, innerCallback);
+
+    // return exec(cmd, {maxBuffer: 10000000}, innerCallback);
   }
 };
 
 /**
  * Runs commands on the system command line synchronously.
- * 
+ *
  * @param {string} cmd Text to be entered at the command line
  * @return {child_process.ChildProcess}
 */
-module.exports.runCommandSync = function(cmd) {
+module.exports.runCommandSync = function (cmd) {
   const platform = os.platform();
   // logging.info(`Running command synchronously: ${cmd}`);
 
   if (platform == "darwin" || platform == "linux") {
     const dxToolkitEnvFile = module.exports.dxToolkitEnvironmentFile;
-    
+
     try {
       // fs.statSync() is only to check if "dx" commands can be sourced.
       // If it fails other commands can still be run.
@@ -165,11 +165,11 @@ module.exports.runCommandSync = function(cmd) {
       if (stats) {
         cmd = "source " + dxToolkitEnvFile + "; " + cmd;
       }
-    } catch (err) {}
-    return execSync(cmd, {shell: "/bin/bash", maxBuffer: 10000000});
+    } catch (err) { }
+    return execSync(cmd, { shell: "/bin/bash", maxBuffer: 10000000 });
   } else if (platform == "win32") {
-    const dnanexusPSscript = path.join( module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1" );
-    let args = ['-NoProfile', '-NoLogo', '-NonInteractive', '-InputFormat', 'Text', '-Command'];
+    const dnanexusPSscript = path.join(module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1");
+    let args = ["-NoProfile", "-NoLogo", "-NonInteractive", "-InputFormat", "Text", "-Command"];
 
     // fs.statSync() is only to check if "dx" commands can be sourced.
     // If it fails other commands can still be run.
@@ -177,13 +177,13 @@ module.exports.runCommandSync = function(cmd) {
       let stats = fs.statSync(dnanexusPSscript);
       if (stats) {
         cmd = `.'${dnanexusPSscript}'; ${cmd}`;
-      } 
-    } catch (err) {}
-    args = [...args, `${cmd}`]
+      }
+    } catch (err) { }
+    args = [...args, `${cmd}`];
     return spawnSync("powershell.exe", args, {
-                       stdio: 'pipe',
-                       maxBuffer: 10000000
-                     });
+      stdio: "pipe",
+      maxBuffer: 10000000,
+    });
     // cmd = `powershell.exe ${cmd}`;
     // return execSync(cmd, {maxBuffer: });
   }
@@ -191,10 +191,10 @@ module.exports.runCommandSync = function(cmd) {
 
 /**
  * Determines if dx-toolkit is correctly installed on the system.
- * 
+ *
  * @param {callback} callback
 */
-module.exports.dxToolkitOnPath = function(callback) {
+module.exports.dxToolkitOnPath = function (callback) {
   const platform = os.platform();
   if (platform == "linux" || platform == "darwin") {
     this.runCommand("which dx", callback);
@@ -244,7 +244,7 @@ module.exports.downloadFile = (url, dest, callback) => {
 
 /**
  * Untars a file to a new location.
- * 
+ *
  * @param {string} file Path to tarballed file
  * @param {string} parentDir Path to the directory the tarballs contents should be dumped in
  * @param {callback} callback
@@ -255,7 +255,7 @@ module.exports.untarTo = (file, parentDir, callback) => {
 
 /**
  * Computes the SHA256 sum of a given file.
- * 
+ *
  * @param {string} filepath Path to file being checksummed
  * @param {Function} callback Callback function
  **/
@@ -273,28 +273,28 @@ module.exports.computeSHA256 = (filepath, callback) => {
 
 /**
  * Opens a URL in the default browser.
- * 
+ *
  * @param {string} url URL to open
  */
-module.exports.openExternal = function(url) {
+module.exports.openExternal = function (url) {
   shell.openExternal(url);
 };
 
 /**
  * Open a file dialog that can be used to select a directory.
- * 
+ *
  * @param {callback} callback
- * @param {string} defaultPath 
+ * @param {string} defaultPath
  * @return {callback}
  */
-module.exports.openDirectoryDialog = function(callback, defaultPath = undefined) {
+module.exports.openDirectoryDialog = function (callback, defaultPath = undefined) {
   let options = {
     buttonLabel: "Select",
     properties: ["openDirectory", "createDirectory"],
   };
 
   if (defaultPath !== undefined) {
-    options = Object.assign( options, {defaultPath} );
+    options = Object.assign(options, { defaultPath });
   }
 
   return callback(remote.dialog.showOpenDialog(options));
@@ -302,11 +302,11 @@ module.exports.openDirectoryDialog = function(callback, defaultPath = undefined)
 
 /**
  * Open a file dialog that can be used to select a file.
- * 
+ *
  * @param {callback} callback
  * @return {callback}
  */
-module.exports.openFileDialog = function(callback) {
+module.exports.openFileDialog = function (callback) {
   return callback(remote.dialog.showOpenDialog({
     properties: ["openFile", "multiSelections"],
   }));
@@ -319,12 +319,12 @@ module.exports.openFileDialog = function(callback) {
  * Returns a readable size from a raw byte count.
  * Base function derived from stack overflow.
  * Credit: https://stackoverflow.com/a/14919494
- * 
+ *
  * @param {integer} bytes number of bytes
  * @param {boolean} roundNumbers round the output numbers
  * @return {string} Human-readable size.
  **/
-module.exports.readableFileSize = function(bytes, roundNumbers=false) {
+module.exports.readableFileSize = function (bytes, roundNumbers = false) {
   if (isNaN(bytes)) {
     return "0 B";
   }
@@ -351,17 +351,17 @@ module.exports.readableFileSize = function(bytes, roundNumbers=false) {
     number = Math.round(number);
   }
 
-  return number+" "+units[u];
+  return number + " " + units[u];
 };
 
 /**
  * Return the basename and size of a file from the path.
- * 
+ *
  * @param {string} filepath Path where the file resides.
  * @param {boolean} checked Whether the entry should start out checked.
  * @return {object} object containing name and size properties.
  */
-module.exports.fileInfoFromPath = function(filepath, checked) {
+module.exports.fileInfoFromPath = function (filepath, checked) {
   name = path.basename(filepath);
   size = fs.statSync(filepath).size;
   return {
@@ -379,7 +379,7 @@ module.exports.fileInfoFromPath = function(filepath, checked) {
 
 /**
  * Generate a random number between min and max.
- * 
+ *
  * @param {integer} min minimum number
  * @param {integer} max maximum number
  * @return {integer} random integer.
@@ -403,21 +403,45 @@ module.exports.resetFileStatus = (file) => {
 };
 
 module.exports.saveToFile = (filename, content) => {
-  fs.writeFile( sjcloudHomeDirectory+"/"+filename, content, (err) => {
+  fs.writeFile(sjcloudHomeDirectory + "/" + filename, content, (err) => {
     if (err) {
       return console.error(err);
     }
   });
 };
 
-module.exports.readCachedFile = (filename, callback, defaultContent=null) => {
-  fs.readFile( sjcloudHomeDirectory+"/"+filename, (err, data) => {
+module.exports.readCachedFile = (filename, callback, defaultContent = null) => {
+  fs.readFile(sjcloudHomeDirectory + "/" + filename, (err, data) => {
     if (err) {
       if (!defaultContent) return;
     }
-    
+
     callback(data ? data.toString() : defaultContent);
   });
+};
+
+module.exports.getUbuntuVersionOrNull = () => {
+  try {
+    const stdout = utils.runCommandSync("lsb_release -ir");
+    [_, distro, _, releaseNum] = stdout.split(/[\n\t]/);
+
+    if (distro !== "Ubuntu") {
+      return null;
+    }
+
+    return releaseNum.slice(0, 2) === "12" ? "ubuntu12" : "ubuntu14";
+  } catch (e) {
+    return null;
+  }
+};
+
+module.exports.getTabLiteral = () => {
+  const platform = os.platform();
+  if (platform === "darwin" || platform === "linux") {
+    return "$'\t'";
+  } else if (platform === "win32") {
+    return "`t";
+  } else throw new Error("Unrecognized platform: ${platform}.");
 };
 
 /** EXPORTS **/

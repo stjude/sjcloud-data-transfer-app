@@ -1,8 +1,15 @@
 import {
   select,
 } from "d3-selection";
+<<<<<<< HEAD
 
 const _App = window._App;
+=======
+import "./www-init.js";
+import "../app/bin/backend/bootstrap.js";
+import "../app/bin/frontend/app.bundle.css";
+import _App from "../app/src/frontend/vue/main.js";
+>>>>>>> typescript
 
 describe("User Menu's logout button", function() {
   const holder = select("body").append("div");
