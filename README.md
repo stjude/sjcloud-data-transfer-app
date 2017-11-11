@@ -48,8 +48,8 @@ cp config-example.json config.json
 # Unspecified defaults to production.
 export NODE_ENV=production
 
-# run the webpack compilation step for the frontend.
-yarn run www-no-watch
+# compile the frontend/backend code.
+gulp develop-once
 
 # start the application
 yarn start
@@ -79,11 +79,11 @@ We recommend that you change the following keys in the config
 }
 ```
 
-After making these changes, you are ready to go! We recommend that you use the following command in the background to continuously recompile the front-end code as you make changes:
+After making these changes, you are ready to go! We recommend that you use the following command in the background to continuously recompile the code as you make changes:
 
 ```bash
-# continuously recompile webpack code
-yarn run www
+# continuously recompile frontend/backend code
+gulp develop
 ```
 
 If you are only working with the front-end code, you can develop in the web browser, which should automatically open up (BrowserSync)[https://www.browsersync.io/]. 
@@ -92,8 +92,10 @@ If you are only working with the front-end code, you can develop in the web brow
 Testing
 =======
 
+End-to-end testing is as simple as running the following command.
+
 ```bash
-yarn test
+gulp test
 ```
 
 Issues

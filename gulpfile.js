@@ -62,6 +62,8 @@ gulp.task("watch", () => {
   gulp.watch(sources.backend, ["compile-backend"]);
 });
 
+gulp.task("develop-once", ["compile-frontend", "compile-backend"]);
+
 gulp.task("develop",
   ["watch", "compile-frontend", "compile-backend"],
   () => {
@@ -86,7 +88,8 @@ gulp.task("test", ["test-frontend"]);
 gulp.task("default", () => {
   gutil.log("Commands you might be interested in:");
   gutil.log("");
-  gutil.log("  gulp develop : Run a autocompiling server for both frontend and backend.");
-  gutil.log("  gulp test    : Run all testing functionality for the project.");
+  gutil.log("  gulp develop-once : Compile front-end and backend code once.");
+  gutil.log("  gulp develop      : Run a autocompiling server for both frontend and backend.");
+  gutil.log("  gulp test         : Run all testing functionality for the project.");
   gutil.log("");
 });
