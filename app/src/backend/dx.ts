@@ -147,10 +147,10 @@ export function downloadDxFile(
   if (platform === "darwin" || platform === "linux") {
     utils.runCommandSync(`touch '${outputPath}'`);
   } else if (platform === "win32") {
-    utils.runCommandSync(`New - Item '${outputPath}' - type file - force`);
+    utils.runCommandSync(`New-Item '${outputPath}' -type file -force`);
   } else throw new Error(`Unknown platform: ${platform}.`);
 
-  const cmd = `dx download - f ${remoteFileId} -o '${outputPath}'`;
+  const cmd = `dx download -f ${remoteFileId} -o '${outputPath}'`;
   fs.watchFile(outputPath, { interval: 1000 }, () => {
     fs.stat(outputPath, (err: any, stats: any) => {
       if (stats !== undefined) {
@@ -383,7 +383,7 @@ export function installDxToolkit(
         updateProgress(["90%", "Extracting..."]);
         utils.untarTo(dxToolkitDownloadPath, parentDir, function (err: any, res: any) {
           if (err) {
-            return callback(true, `Could not extract dx - toolkit!\n\n${err}.`);
+            return callback(true, `Could not extract dx-toolkit!\n\n${err}.`);
           }
 
           updateProgress(["100%", "Success!"]);
