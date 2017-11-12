@@ -5,7 +5,7 @@ const express = require("express");
 const $ = require("jquery");
 
 
-module.exports.parseCode = function(url, callback) {
+module.exports.parseCode = function (url, callback) {
   let raw_code = /code=([^&]*)/.exec(url) || null;
   let code = (raw_code && raw_code.length > 1) ? raw_code[1] : null;
   let error = /\?error=(.+)$/.exec(url);
@@ -13,12 +13,12 @@ module.exports.parseCode = function(url, callback) {
   return callback(error, code);
 };
 
-module.exports.waitForCode = function(internal, cb) {
-  ui.createOauthWindow(internal, function(window) {
+module.exports.waitForCode = function (internal, cb) {
+  ui.createOauthWindow(internal, function (window) {
     pem.createCertificate({
       days: 1,
       selfSigned: true,
-    }, function(err, keys) {
+    }, function (err, keys) {
       let app = express();
 
       let server = https.createServer({
@@ -31,7 +31,7 @@ module.exports.waitForCode = function(internal, cb) {
         window = null;
       });
 
-      app.get("/authcb", function(req, res) {
+      app.get("/authcb", function (req, res) {
         if (window) {
           window.close();
           // Do not set window to null here. Weird errors ensue.
@@ -46,8 +46,8 @@ module.exports.waitForCode = function(internal, cb) {
   });
 };
 
-module.exports.getToken = function(internal, callback) {
-  module.exports.waitForCode(internal, function(err, code) {
+module.exports.getToken = function (internal, callback) {
+  module.exports.waitForCode(internal, function (err, code) {
     if (err) return callback(err, null);
     $.post("https://auth.dnanexus.com/oauth2/token", {
       grant_type: "authorization_code",

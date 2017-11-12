@@ -1,7 +1,6 @@
-
 /**
  * @fileOverview Handles the custom sjcloud:// URI protocol. The only systems this is supported on are Windows and Mac.
-*/
+ */
 
 const os = require("os");
 const electron = require("electron");
@@ -64,7 +63,6 @@ module.exports.handleURIMac = (event, uri) => {
   if (event) {
     event.preventDefault();
   }
-  
+
   return handleURI(uri);
 };
-

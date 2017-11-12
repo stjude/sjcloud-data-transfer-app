@@ -1,6 +1,6 @@
 /**
-  * @fileOverview Utility functions.
-  **/
+ * @fileOverview Utility functions.
+ **/
 
 const os = require("os");
 const fs = require("fs");
@@ -10,8 +10,16 @@ const mkdirp = require("mkdirp");
 const crypto = require("crypto");
 const kill = require("tree-kill");
 const logging = require("./logging");
-const { exec, spawn, execSync, spawnSync } = require("child_process");
-const { remote, shell } = require("electron");
+const {
+  exec,
+  spawn,
+  execSync,
+  spawnSync,
+} = require("child_process");
+const {
+  remote,
+  shell,
+} = require("electron");
 
 sjcloudHomeDirectory = path.join(os.homedir(), ".sjcloud");
 dxToolkitDirectory = path.join(sjcloudHomeDirectory, "dx-toolkit");
@@ -27,9 +35,9 @@ defaultDownloadDir = path.join(os.homedir(), "Downloads");
  * @param {callback} callback
  **/
 module.exports.initSJCloudHome = (callback) => {
-  fs.stat(sjcloudHomeDirectory, function (statErr, stats) {
+  fs.stat(sjcloudHomeDirectory, function(statErr, stats) {
     if (statErr || !stats) {
-      mkdirp(sjcloudHomeDirectory, function (mkdirErr) {
+      mkdirp(sjcloudHomeDirectory, function(mkdirErr) {
         if (mkdirErr) {
           return callback(mkdirErr, null);
         }
@@ -46,10 +54,10 @@ module.exports.initSJCloudHome = (callback) => {
  * directory and return its path.
  *
  * @return {string} Path of "dx-toolkit" directory
-*/
-module.exports.getDXToolkitDir = function () {
+ */
+module.exports.getDXToolkitDir = function() {
   if (!fs.existsSync(module.exports.dxToolkitDirectory)) {
-    mkdirp(module.exports.dxToolkitDirectory, function (err) {
+    mkdirp(module.exports.dxToolkitDirectory, function(err) {
       if (err) {
         return null;
       }
@@ -65,11 +73,11 @@ module.exports.getDXToolkitDir = function () {
  * @param {string} cmd Text to be entered at the command line
  * @param {callback} callback
  * @return {child_process.ChildProcess}
-*/
-module.exports.runCommand = function (cmd, callback) {
+ */
+module.exports.runCommand = function(cmd, callback) {
   const platform = os.platform();
 
-  let innerCallback = function (err, stdout, stderr) {
+  let innerCallback = function(err, stdout, stderr) {
     if (err) {
       console.error(`ERROR: ${err}`);
       return callback(err, null);
@@ -100,7 +108,10 @@ module.exports.runCommand = function (cmd, callback) {
 
     cmd = `/usr/bin/env bash -c "${cmd}"`;
     logging.info(`Running command: ${cmd}`);
-    return exec(cmd, { shell: "/bin/bash", maxBuffer: 10000000 }, innerCallback);
+    return exec(cmd, {
+      shell: "/bin/bash",
+      maxBuffer: 10000000,
+    }, innerCallback);
   } else if (platform == "win32") {
     const dnanexusPSscript = path.resolve(path.join(module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1"));
     let args = ["-NoLogo", "-InputFormat", "Text", "-NonInteractive", "-NoProfile", "-Command"];
@@ -111,7 +122,7 @@ module.exports.runCommand = function (cmd, callback) {
       if (stats) {
         cmd = `.'${dnanexusPSscript}'; ${cmd}`;
       }
-    } catch (err) { }
+    } catch (err) {}
 
     args = [...args, `${cmd}`];
 
@@ -123,19 +134,19 @@ module.exports.runCommand = function (cmd, callback) {
       maxBuffer: 10000000,
     });
 
-    p.stdout.on("data", function (data) {
+    p.stdout.on("data", function(data) {
       stdout += data.toString();
     });
 
-    p.stderr.on("data", function (data) {
+    p.stderr.on("data", function(data) {
       stderr += data.toString();
     });
 
-    p.on("error", function (err) {
+    p.on("error", function(err) {
       innerCallback(err, stdout, stderr);
     });
 
-    p.on("close", function (code) {
+    p.on("close", function(code) {
       innerCallback(null, stdout, stderr);
     });
 
@@ -150,8 +161,8 @@ module.exports.runCommand = function (cmd, callback) {
  *
  * @param {string} cmd Text to be entered at the command line
  * @return {child_process.ChildProcess}
-*/
-module.exports.runCommandSync = function (cmd) {
+ */
+module.exports.runCommandSync = function(cmd) {
   const platform = os.platform();
   // logging.info(`Running command synchronously: ${cmd}`);
 
@@ -165,8 +176,11 @@ module.exports.runCommandSync = function (cmd) {
       if (stats) {
         cmd = "source " + dxToolkitEnvFile + "; " + cmd;
       }
-    } catch (err) { }
-    return execSync(cmd, { shell: "/bin/bash", maxBuffer: 10000000 });
+    } catch (err) {}
+    return execSync(cmd, {
+      shell: "/bin/bash",
+      maxBuffer: 10000000,
+    });
   } else if (platform == "win32") {
     const dnanexusPSscript = path.join(module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1");
     let args = ["-NoProfile", "-NoLogo", "-NonInteractive", "-InputFormat", "Text", "-Command"];
@@ -178,7 +192,7 @@ module.exports.runCommandSync = function (cmd) {
       if (stats) {
         cmd = `.'${dnanexusPSscript}'; ${cmd}`;
       }
-    } catch (err) { }
+    } catch (err) {}
     args = [...args, `${cmd}`];
     return spawnSync("powershell.exe", args, {
       stdio: "pipe",
@@ -193,8 +207,8 @@ module.exports.runCommandSync = function (cmd) {
  * Determines if dx-toolkit is correctly installed on the system.
  *
  * @param {callback} callback
-*/
-module.exports.dxToolkitOnPath = function (callback) {
+ */
+module.exports.dxToolkitOnPath = function(callback) {
   const platform = os.platform();
   if (platform == "linux" || platform == "darwin") {
     this.runCommand("which dx", callback);
@@ -206,7 +220,7 @@ module.exports.dxToolkitOnPath = function (callback) {
 /**
  * Determines if the user is logged into DNAnexus
  * @param {callback} callback
-*/
+ */
 module.exports.dxLoggedIn = (callback) => {
   this.runCommand("dx whoami", callback);
 };
@@ -214,7 +228,7 @@ module.exports.dxLoggedIn = (callback) => {
 /**
  * Checks if there's at least one project the user can upload data to.
  * @param {callback} callback
-*/
+ */
 module.exports.dxCheckProjectAccess = (callback) => {
   const platform = os.platform();
 
@@ -231,7 +245,7 @@ module.exports.dxCheckProjectAccess = (callback) => {
  * @param {string} url URL of download
  * @param {string} dest Path for newly downloaded file
  * @param {Function} callback Callback function
-*/
+ */
 module.exports.downloadFile = (url, dest, callback) => {
   let file = fs.createWriteStream(dest);
   let request = https.get(url, (response) => {
@@ -276,7 +290,7 @@ module.exports.computeSHA256 = (filepath, callback) => {
  *
  * @param {string} url URL to open
  */
-module.exports.openExternal = function (url) {
+module.exports.openExternal = function(url) {
   shell.openExternal(url);
 };
 
@@ -287,14 +301,16 @@ module.exports.openExternal = function (url) {
  * @param {string} defaultPath
  * @return {callback}
  */
-module.exports.openDirectoryDialog = function (callback, defaultPath = undefined) {
+module.exports.openDirectoryDialog = function(callback, defaultPath = undefined) {
   let options = {
     buttonLabel: "Select",
     properties: ["openDirectory", "createDirectory"],
   };
 
   if (defaultPath !== undefined) {
-    options = Object.assign(options, { defaultPath });
+    options = Object.assign(options, {
+      defaultPath,
+    });
   }
 
   return callback(remote.dialog.showOpenDialog(options));
@@ -306,7 +322,7 @@ module.exports.openDirectoryDialog = function (callback, defaultPath = undefined
  * @param {callback} callback
  * @return {callback}
  */
-module.exports.openFileDialog = function (callback) {
+module.exports.openFileDialog = function(callback) {
   return callback(remote.dialog.showOpenDialog({
     properties: ["openFile", "multiSelections"],
   }));
@@ -324,7 +340,7 @@ module.exports.openFileDialog = function (callback) {
  * @param {boolean} roundNumbers round the output numbers
  * @return {string} Human-readable size.
  **/
-module.exports.readableFileSize = function (bytes, roundNumbers = false) {
+module.exports.readableFileSize = function(bytes, roundNumbers = false) {
   if (isNaN(bytes)) {
     return "0 B";
   }
@@ -361,7 +377,7 @@ module.exports.readableFileSize = function (bytes, roundNumbers = false) {
  * @param {boolean} checked Whether the entry should start out checked.
  * @return {object} object containing name and size properties.
  */
-module.exports.fileInfoFromPath = function (filepath, checked) {
+module.exports.fileInfoFromPath = function(filepath, checked) {
   name = path.basename(filepath);
   size = fs.statSync(filepath).size;
   return {
