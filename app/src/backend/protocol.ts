@@ -1,22 +1,20 @@
 /**
- * @fileOverview Handles the custom sjcloud:// URI protocol. The only systems this is supported on are Windows and Mac.
+ * @file Handles the custom sjcloud:// URI protocol. The only systems this is
+ * supported on are Windows and Mac.
  */
 
-const os = require("os");
-const electron = require("electron");
-const app = electron.app;
-
-const {logging} = require("./logging");
+const app = require("electron").app;
+const { logging } = require("./logging");
 app.setAsDefaultProtocolClient("sjcloud");
 
 /**
- * @param {string} uri uri passed into the program.
- * @return {String} Command to be run in the remote javascript runtime.
+ * @param uri uri passed into the program.
+ * @returns Command to be run in the remote javascript runtime.
  */
-function handleURI(uri) {
+export function handleURI(uri: String): String {
   if (uri && uri.search("sjcloud://") != -1) {
     logging.info("Handling custom URI:", uri);
-    projectName = uri.replace("sjcloud://", "");
+    let projectName = uri.replace("sjcloud://", "");
 
     // remove ending slash.
     if (projectName.slice(-1) === "/") {
@@ -24,12 +22,10 @@ function handleURI(uri) {
     }
 
     projectName = decodeURIComponent(projectName);
-    cmd = `window.uriProject = '${projectName}';`;
-  } else {
-    cmd = "";
+    return `window.uriProject = '${projectName}';`;
   }
 
-  return cmd;
+  return null;
 }
 
 /**
@@ -41,10 +37,10 @@ function handleURI(uri) {
  * The URL which called the app is then passed as the next arguments.
  * URLs with spaces are passed as multiple arguments, so they must be concatenated.
  *
- * @return {String} Command to be run in the remote javascript runtime.
+ * @returns Command to be run in the remote javascript runtime.
  **/
-module.exports.handleURIWindows = () => {
-  args = process.argv.slice(1);
+export function handleURIWindows(): String {
+  let args = process.argv.slice(1);
   return handleURI(args[0]);
 };
 
@@ -54,11 +50,11 @@ module.exports.handleURIWindows = () => {
  * On Mac, the uri which called the app is passed as a string through the
  * app.on("open-uri") event.
  *
- * @param {Event} event the event object passed to the event handler.
- * @param {String} uri the uri passed to the event handler.
- * @return {String} Command to be run in the remote javascript runtime.
+ * @param event the event object passed to the event handler.
+ * @param uri the uri passed to the event handler.
+ * @return Command to be run in the remote javascript runtime.
  */
-module.exports.handleURIMac = (event, uri) => {
+export function handleURIMac(event: Event, uri: String): String {
   if (event) {
     event.preventDefault();
   }

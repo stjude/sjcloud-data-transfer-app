@@ -126,7 +126,7 @@ app.on("ready", () => {
       );
     }
 
-    if (uriCommand !== "") {
+    if (uriCommand) {
       logging.info(`Running JS command: ${uriCommand}`);
       mainWindow.webContents.executeJavaScript("window.setCurrPath = 'upload';");
       mainWindow.webContents.executeJavaScript(uriCommand);

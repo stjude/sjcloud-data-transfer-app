@@ -1,6 +1,10 @@
-const electron = require("electron");
+/**
+ * @file Menu configuration for the Electron application.
+ *
+ */
 
-const app = electron.app;
+
+const app = require("electron").app;
 
 export let menuConfig = [
   {
