@@ -17,9 +17,12 @@ const app = electron.app;
 const menu = electron.Menu;
 
 const config = require("../config.json");
-const ui = require("./src/backend/ui");
-const logging = require("./src/backend/logging");
-const protocol = require("./src/backend/protocol");
+const ui = require("./bin/backend/ui");
+const protocol = require("./bin/backend/protocol");
+const {
+  logging,
+  logLevel,
+} = require("./bin/backend/logging");
 
 const platform = os.platform();
 const nodeEnvironment = process.env.NODE_ENV || "production";
@@ -29,11 +32,13 @@ if (nodeEnvironment !== "production" && nodeEnvironment !== "development") {
   process.exit();
 }
 
+logging.info("");
 logging.info(" ###############################################");
 logging.info(" # Starting the SJCP Data Transfer Application #");
 logging.info(" ###############################################");
 logging.info("");
 logging.info(" [*] Environment: " + nodeEnvironment);
+logging.info(" [*] Log Level: " + logLevel);
 logging.info(" [*] Process arguments:");
 process.argv.forEach((elem, index) => {
   logging.info("   " + index + ": " + elem);

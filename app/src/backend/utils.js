@@ -9,7 +9,7 @@ const https = require("https");
 const mkdirp = require("mkdirp");
 const crypto = require("crypto");
 const kill = require("tree-kill");
-const logging = require("./logging");
+const {logging} = require("./logging");
 const {
   exec,
   spawn,
@@ -122,7 +122,7 @@ module.exports.runCommand = function(cmd, callback) {
       if (stats) {
         cmd = `.'${dnanexusPSscript}'; ${cmd}`;
       }
-    } catch (err) {}
+    } catch (err) { }
 
     args = [...args, `${cmd}`];
 
@@ -176,7 +176,7 @@ module.exports.runCommandSync = function(cmd) {
       if (stats) {
         cmd = "source " + dxToolkitEnvFile + "; " + cmd;
       }
-    } catch (err) {}
+    } catch (err) { }
     return execSync(cmd, {
       shell: "/bin/bash",
       maxBuffer: 10000000,
@@ -192,7 +192,7 @@ module.exports.runCommandSync = function(cmd) {
       if (stats) {
         cmd = `.'${dnanexusPSscript}'; ${cmd}`;
       }
-    } catch (err) {}
+    } catch (err) { }
     args = [...args, `${cmd}`];
     return spawnSync("powershell.exe", args, {
       stdio: "pipe",

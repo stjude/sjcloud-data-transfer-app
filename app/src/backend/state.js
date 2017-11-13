@@ -4,7 +4,7 @@
 
 const os = require("os");
 const utils = require("./utils");
-const logging = require("./logging");
+const {logging} = require("./logging");
 
 module.exports.state = {
   NEED_INSTALL: {
@@ -27,7 +27,7 @@ module.exports.state = {
  * @param {callback} callback Callback function
  * @return {string} html file to be loaded
  */
-module.exports.getState = function (callback) {
+module.exports.getState = function(callback) {
   self = this;
   const platform = os.platform();
 

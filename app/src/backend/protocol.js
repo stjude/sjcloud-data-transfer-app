@@ -6,7 +6,7 @@ const os = require("os");
 const electron = require("electron");
 const app = electron.app;
 
-const logging = require("./logging");
+const {logging} = require("./logging");
 app.setAsDefaultProtocolClient("sjcloud");
 
 /**
@@ -14,7 +14,6 @@ app.setAsDefaultProtocolClient("sjcloud");
  * @return {String} Command to be run in the remote javascript runtime.
  */
 function handleURI(uri) {
-
   if (uri && uri.search("sjcloud://") != -1) {
     logging.info("Handling custom URI:", uri);
     projectName = uri.replace("sjcloud://", "");
@@ -51,10 +50,10 @@ module.exports.handleURIWindows = () => {
 
 /**
  * Mac protocol handler
- * 
+ *
  * On Mac, the uri which called the app is passed as a string through the
  * app.on("open-uri") event.
- * 
+ *
  * @param {Event} event the event object passed to the event handler.
  * @param {String} uri the uri passed to the event handler.
  * @return {String} Command to be run in the remote javascript runtime.

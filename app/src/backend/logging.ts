@@ -5,18 +5,18 @@ const winston = require("winston");
 const platform = os.platform();
 const nodeEnvironment = process.env.NODE_ENV || "production";
 
-let loggingFile = "";
+let loggingFile = path.join(
+  platform === "win32" ? process.env.HOMEPATH : process.env.HOME,
+  ".sjcloud/log.txt"
+);
 
-if (platform === "darwin" || platform === "linux") {
-  loggingFile = path.join(process.env.HOME, ".sjcloud/log.txt");
-} else if (platform === "win32") {
-  loggingFile = path.join(process.env.HOMEPATH, ".sjcloud/log.txt");
-}
+let logLevel = "";
 
-let logLevel = "debug";
-if (nodeEnvironment === "production") {
+if (process.env.LOG_LEVEL) {
+  logLevel = process.env.LOG_LEVEL;
+} else if (nodeEnvironment === "production") {
   logLevel = "info";
-}
+} else logLevel = "debug";
 
 if (loggingFile !== "") {
   winston.add(winston.transports.File, {
@@ -26,4 +26,9 @@ if (loggingFile !== "") {
   });
 }
 
-module.exports = winston;
+let logging = winston;
+
+export {
+  logging,
+  logLevel
+}
