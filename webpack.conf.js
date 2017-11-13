@@ -53,7 +53,7 @@ module.exports = {
     less: ["./app/src/frontend/css/app.less"],
   },
   output: {
-    path: path.join(__dirname, "../app/bin/frontend"),
+    path: path.join(__dirname, "app/bin/frontend"),
     filename: "[name].bundle.js",
     publicPath: "",
     jsonpFunction: "sjcdappJsonp",
