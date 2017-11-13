@@ -95,7 +95,6 @@ function bootstrapWindow(mainWindow) {
  */
 function ensureWindow(callback = undefined) {
   // If the app isn't 'ready', we can't create a window.
-  console.log("EnsureWindow");
   if (!app.isReady()) {
     return;
   }

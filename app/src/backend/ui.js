@@ -68,7 +68,7 @@ module.exports.createOauthWindow = (internal, callback) => {
     },
   });
 
-  loginWindow.webContents.on("did-get-redirect-request", function (event, oldUrl, newUrl) {
+  loginWindow.webContents.on("did-get-redirect-request", function(event, oldUrl, newUrl) {
     // Redirect the browser to the oauth login
     // If the browser isn't trying to go to cloud.stjude.org
     // OR if it's actually going to the Oauth page.
