@@ -4,10 +4,11 @@ const karma = require("karma");
 const gutil = require("gulp-util");
 const webpack = require("webpack");
 const gts = require("gulp-typescript");
+const jasmine = require("gulp-jasmine");
 const karmaParseConfig = require("karma/lib/config").parseConfig;
 
-const webpackConfig = require("./config/webpack.conf.js");
-const tsProject = gts.createProject("./config/tsconfig.json");
+const webpackConfig = require("./webpack.conf.js");
+const tsProject = gts.createProject("./tsconfig.json");
 
 let sources = {
   frontend: ["app/src/frontend/**/*"],
@@ -75,7 +76,8 @@ gulp.task("develop",
 /**
  * Testing
  */
-gulp.task("test-frontend",
+gulp.task(
+  "test-frontend",
   (done) => {
     runKarma({
       singleRun: true,
@@ -83,7 +85,15 @@ gulp.task("test-frontend",
   }
 );
 
-gulp.task("test", ["test-frontend"]);
+gulp.task(
+  "test-backend",
+  ["compile-backend"],
+  () => {
+    return gulp.src("app/bin/backend/spec/*spec.js")
+      .pipe(jasmine());
+  });
+
+gulp.task("test", ["test-frontend", "test-backend"]);
 
 gulp.task("default", () => {
   gutil.log("Commands you might be interested in:");

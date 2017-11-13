@@ -1,4 +1,4 @@
-let webpackConfig = require("./config/webpack.conf.js");
+let webpackConfig = require("./webpack.conf.js");
 
 module.exports = function(config) {
   const wc = webpackConfig;
@@ -46,7 +46,7 @@ module.exports = function(config) {
     preprocessors: {
       "./test/*.js": ["webpack"],
       "*.js": ["webpack"],
-      "*": ["webpack"]
+      "*": ["webpack"],
     },
 
     // use the webpack config

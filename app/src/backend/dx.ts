@@ -60,20 +60,32 @@ function dxToolkitDownloadInfo(platform: string): dxDownloadInfo {
  *
  * @param token Authentication token
  * @param callback
+ * @param dryrun Return the command that would have been run as a string.
+* @returns ChildProcess or string depending on the value of 'dryrun'.
 */
-export function login(token: string, callback: SuccessCallback): void {
+export function login(
+  token: string,
+  callback: SuccessCallback,
+  dryrun: boolean = false
+): any {
+  if (!token) { return callback(new Error("Token cannot be null/empty!"), null); }
   const cmd = `dx login --token ${token} --noprojects`;
-  utils.runCommand(cmd, callback);
+  return dryrun ? cmd : utils.runCommand(cmd, callback);
 };
 
 /**
  * Logout of DNAnexus via the dx command line utility.
  *
  * @param callback
+ * @param dryrun Return the command that would have been run as a string. 
+ * @returns ChildProcess or string depending on the value of 'dryrun'.
 */
-export function logout(callback: SuccessCallback): void {
+export function logout(
+  callback: SuccessCallback,
+  dryrun: boolean = false
+): void {
   const cmd = "dx logout";
-  utils.runCommand(cmd, callback);
+  return dryrun ? cmd : utils.runCommand(cmd, callback);
 };
 
 /**
@@ -81,19 +93,22 @@ export function logout(callback: SuccessCallback): void {
  *
  * @param dnanexusId The DNAnexus object identifier (ex: file-XXXXXX).
  * @param callback
+ * @param dryrun Return the command that would have been run as a string. 
+ * @returns ChildProcess or string depending on the value of 'dryrun'.
  **/
 export function describeDXItem(
   dnanexusId: string,
-  callback: SuccessCallback
+  callback: SuccessCallback,
+  dryrun: boolean = false
 ): void {
+  if (!dnanexusId) {
+    const error = new Error("Dx-identifier cannot be null/empty!");
+    return callback(error, null);
+  }
+
   let cmd = `dx describe ${dnanexusId} --json`;
-
-  utils.runCommand(cmd, (err: any, stdout: any) => {
-    if (!stdout) {
-      callback(err, stdout);
-      return;
-    }
-
+  return dryrun ? cmd : utils.runCommand(cmd, (err: any, stdout: any) => {
+    if (!stdout) { callback(err, stdout); return; }
     callback(err, JSON.parse(stdout));
   });
 };
@@ -104,19 +119,27 @@ export function describeDXItem(
  * @param projectId The DNAnexus project identifier (ex: project-XXXX).
  * @param allFiles List all files or just St. Jude Cloud associated ones.
  * @param callback
+ * @param dryrun Return the command that would have been run as a string. 
+ * @returns ChildProcess or string depending on the value of 'dryrun'.
  **/
 export function listDownloadableFiles(
   projectId: string,
   allFiles: boolean,
-  callback: SuccessCallback
+  callback: SuccessCallback,
+  dryrun: boolean = false
 ): void {
+  if (!projectId) {
+    const error = new Error("Dx-project cannot be null/empty!");
+    return callback(error, null);
+  }
+
   let cmd = `dx find data --path ${projectId}:/ --json --state closed --class file`;
 
   if (!allFiles) {
     cmd += ` --tag ${config.DOWNLOADABLE_TAG}`;
   }
 
-  utils.runCommand(cmd, (err: any, stdout: any) => {
+  return dryrun ? cmd : utils.runCommand(cmd, (err: any, stdout: any) => {
     callback(err, JSON.parse(stdout));
   });
 };
@@ -290,10 +313,13 @@ function parseDxProjects(
  * @param allProjects should we limit to St. Jude Cloud
  *                    projects or list all projects?
  * @param callback
+ * @param dryrun Return a list of commands that would be run as string.
+ * @returns List of projects or list of strings based on 'dryrun'.
 */
 export function listProjects(
   allProjects: boolean,
-  callback: SuccessCallback
+  callback: SuccessCallback,
+  dryrun: boolean = false
 ): void {
   // Setting tagsToCheck = [''] will run one command that does not filter any
   // tags. This is equivalent to checking all projects, not just SJCloud ones.
@@ -314,7 +340,11 @@ export function listProjects(
       let iterCmd = `dx find projects --level UPLOAD --delim ${tabliteral}`;
       if (tag !== '') iterCmd += ` --tag ${tag}`;
 
-      utils.runCommand(`${iterCmd}`, (err: any, stdout: string) => {
+      if (dryrun) {
+        return iteratorCallback(null, iterCmd);
+      }
+
+      utils.runCommand(iterCmd, (err: any, stdout: string) => {
         if (err) { return iteratorCallback(err, []); }
 
         return iteratorCallback(null, parseDxProjects(stdout));

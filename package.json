@@ -64,6 +64,7 @@
     "winston": "^2.3.1"
   },
   "devDependencies": {
+    "@types/jasmine": "^2.6.3",
     "babel-core": "^6.25.0",
     "babel-loader": "^7.1.1",
     "babel-plugin-syntax-dynamic-import": "^6.18.0",
@@ -83,8 +84,11 @@
     "eslint-config-google": "^0.8.0",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.2",
+    "gulp-jasmine": "^2.4.2",
     "gulp-util": "^3.0.8",
     "jasmine": "^2.8.0",
+    "jasmine-core": "*",
+    "jasmine-ts": "^0.2.1",
     "karma": "^1.7.1",
     "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "^1.1.0",
