@@ -76,12 +76,15 @@ function bootstrapWindow(mainWindow) {
     logging.warn("");
     logging.warn(" Loading autoupdater. Code must be signed for this to work!");
     logging.warn("");
-    const autoupdater = require("./src/backend/autoupdate");
+    const autoupdater = require("./bin/backend/autoupdate");
   }
 
   if (!config.CHROMIUM_MENU) {
-    let template = require("./src/backend/menu.js");
-    menu.setApplicationMenu(menu.buildFromTemplate(template));
+    logging.debug("Production menu enabled (chromium menu disabled).");
+    const {menuConfig} = require("./bin/backend/menu.js");
+    menu.setApplicationMenu(menu.buildFromTemplate(menuConfig));
+  } else {
+    logging.debug("Chromium menu enabled (production menu disabled).");
   }
 }
 
@@ -92,6 +95,7 @@ function bootstrapWindow(mainWindow) {
  */
 function ensureWindow(callback = undefined) {
   // If the app isn't 'ready', we can't create a window.
+  console.log("EnsureWindow");
   if (!app.isReady()) {
     return;
   }
