@@ -12,6 +12,7 @@
     "**/node_modules": true,
     "**/app/bin/": true,
     "**/app/src/frontend/css/bootstrap/": true,
+    "**/dist/": true,
   },
   "files.exclude": {
     "**/.git": true,
