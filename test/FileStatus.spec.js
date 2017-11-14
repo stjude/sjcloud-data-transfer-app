@@ -84,7 +84,7 @@ describe("FileStatus table for a project with pending downloads", function() {
       holder.select("#file-status-table-body")
         .selectAll(".file-status-cell-status-progress-text")
         .filter(function(d) {
-          return select(this).html() == "Starting...";
+          return select(this).html() == "Started";
         })
         .size())
       .toEqual(1);
