@@ -63,8 +63,28 @@ Development
 Running the tool in development mode requires a few changes to the config:
 
 ```bash
+# download repository
+git clone git@github.com:stjude/sjcloud-data-transfer-app.git
+
+cd sjcloud-data-transfer-app
+
+# install dependencies
+yarn install
+
+# copy the example configuration
+cp config-example.json config.json 
+
 # edit the config.json file
 vim config.json
+
+# NODE_ENV takes on values of 'production' or 'development'.
+export NODE_ENV=development
+
+# compile the frontend/backend code.
+gulp develop-once
+
+# start the application
+yarn start 
 ```
 
 We recommend that you change the following keys in the config
@@ -79,7 +99,7 @@ We recommend that you change the following keys in the config
 }
 ```
 
-After making these changes, you are ready to go! We recommend that you use the following command in the background to continuously recompile the code as you make changes:
+After making these changes, you are good to go! We recommend that in practice, you use the following command in a separate tab to recompile the code as you make changes:
 
 ```bash
 # continuously recompile frontend/backend code
