@@ -9,7 +9,9 @@ const https = require("https");
 const mkdirp = require("mkdirp");
 const crypto = require("crypto");
 const kill = require("tree-kill");
-const {logging} = require("./logging");
+const {
+  logging,
+} = require("./logging");
 const {
   exec,
   spawn,
@@ -122,7 +124,7 @@ module.exports.runCommand = function(cmd, callback) {
       if (stats) {
         cmd = `.'${dnanexusPSscript}'; ${cmd}`;
       }
-    } catch (err) { }
+    } catch (err) {}
 
     args = [...args, `${cmd}`];
 
@@ -176,7 +178,7 @@ module.exports.runCommandSync = function(cmd) {
       if (stats) {
         cmd = "source " + dxToolkitEnvFile + "; " + cmd;
       }
-    } catch (err) { }
+    } catch (err) {}
     return execSync(cmd, {
       shell: "/bin/bash",
       maxBuffer: 10000000,
@@ -192,7 +194,7 @@ module.exports.runCommandSync = function(cmd) {
       if (stats) {
         cmd = `.'${dnanexusPSscript}'; ${cmd}`;
       }
-    } catch (err) { }
+    } catch (err) {}
     args = [...args, `${cmd}`];
     return spawnSync("powershell.exe", args, {
       stdio: "pipe",
@@ -200,6 +202,27 @@ module.exports.runCommandSync = function(cmd) {
     });
     // cmd = `powershell.exe ${cmd}`;
     // return execSync(cmd, {maxBuffer: });
+  }
+};
+
+/**
+ * Determines if OpenSSL is correctly installed on the system.
+ *
+ * @param {callback} callback
+ */
+module.exports.openSSLOnPath = function(callback) {
+  const platform = os.platform();
+  let innerCallback = function(err, res) {
+    if (err) {
+      return callback(false);
+    } else {
+      return callback(true);
+    }
+  };
+  if (platform == "linux" || platform == "darwin") {
+    this.runCommand("which openssl", innerCallback);
+  } else if (platform == "win32") {
+    this.runCommand("get-command openssl", innerCallback);
   }
 };
 

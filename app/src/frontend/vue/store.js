@@ -96,6 +96,7 @@ const defaultState = {
   uriProject: "",
 
   /** Install **/
+  openSSLOnPath: true,
   downloadStatus: "Downloading...",
   installingDxToolkit: "waiting",
 
@@ -145,6 +146,9 @@ export default function getVuexStore(cachedState = {}) {
       },
 
       /** Install **/
+      openSSLOnPath(state) {
+        return state.openSSLOnPath;
+      },
       installingDxToolkit(state, getters) {
         return state.installingDxToolkit;
       },
@@ -313,6 +317,9 @@ export default function getVuexStore(cachedState = {}) {
       },
 
       /** Install **/
+      setOpenSSLOnPath(state, onPath) {
+        state.openSSLOnPath = onPath;
+      },
       setInstallingDxToolkit(state, installing) {
         state.installingDxToolkit = installing;
       },

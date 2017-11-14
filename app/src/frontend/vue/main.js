@@ -38,6 +38,17 @@ export default function _App(selector, cachedState = {}) {
   } else {
     window.state.getState((state) => {
       VueApp.$router.replace(state);
+      if (state.path === "install") {
+        window.utils.openSSLOnPath((onPath) => {
+          VueApp.$store.commit("setOpenSSLOnPath", onPath);
+          if (onPath === false) {
+            VueApp.$store.commit("byKey", {
+              alertType: "warning",
+              alertMessage: "You don't have OpenSSL installed on your system, which is needed to run this program. You can download it here https://wiki.openssl.org/index.php/Binaries",
+            });
+          }
+        });
+      }
     });
   }
 
