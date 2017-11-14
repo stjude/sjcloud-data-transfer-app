@@ -6,6 +6,7 @@ export default {
   state: {
     /** Install **/
     openSSLOnPath: true,
+    pythonOnPath: true,
     downloadStatus: "Downloading...",
     installingDxToolkit: "waiting",
 
@@ -17,6 +18,9 @@ export default {
     /** Install **/
     openSSLOnPath(state) {
       return state.openSSLOnPath;
+    },
+    pythonOnPath(state) {
+      return state.pythonOnPath;
     },
     installingDxToolkit(state, getters) {
       return state.installingDxToolkit;
@@ -37,6 +41,9 @@ export default {
     /** Install **/
     setOpenSSLOnPath(state, onPath) {
       state.openSSLOnPath = onPath;
+    },
+    setPythonOnPath(state, onPath) {
+      state.pythonOnPath = onPath;
     },
     setInstallingDxToolkit(state, installing) {
       state.installingDxToolkit = installing;

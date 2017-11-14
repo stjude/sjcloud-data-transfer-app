@@ -233,8 +233,8 @@ module.exports.openSSLOnPath = function(callback) {
  */
 module.exports.pythonOnPath = function(callback) {
   let innerCallback = function(err, res) {
-    // python versions before 3.4 print --version to stderr
-    if (err.search("2.7.") === -1 || parseInt(err.slice(-2)) < 13) {
+    // python versions before 3.4 print --version to stderr. Command never has stdout
+    if (err.search("2.7.") === -1 || parseInt(err.slice(err.lastIndexOf(".") + 1)) < 13) {
       return callback(false);
     } else {
       return callback(true);

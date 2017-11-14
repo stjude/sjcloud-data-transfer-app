@@ -39,14 +39,32 @@ export default function _App(selector, cachedState = {}) {
     window.state.getState((state) => {
       VueApp.$router.replace(state);
       if (state.path === "install") {
+        let needAlert = false;
+        let alertMessage = "";
         window.utils.openSSLOnPath((onPath) => {
           VueApp.$store.commit("setOpenSSLOnPath", onPath);
           if (onPath === false) {
-            VueApp.$store.commit("byKey", {
-              alertType: "warning",
-              alertMessage: "You don't have OpenSSL installed on your system, which is needed to run this program. You can download it here https://wiki.openssl.org/index.php/Binaries",
-            });
+            needAlert = true;
+            alertMessage += "You don't have OpenSSL installed on your system, which is needed to run this program.<br>";
+            alertMessage += "You can download it here: https://wiki.openssl.org/index.php/Binaries";
           }
+          window.utils.pythonOnPath((onPath) => {
+            VueApp.$store.commit("setPythonOnPath", onPath);
+            if (onPath === false) {
+              needAlert = true;
+              if (alertMessage !== "") {
+                alertMessage += "<br><br>";
+              }
+              alertMessage += "You need to have python version 2.7.13+ installed on your path.<br>";
+              alertMessage += "You can download it here: https://www.python.org/downloads/release/python-2714/";
+            }
+            if (needAlert === true) {
+              VueApp.$store.commit("byKey", {
+                alertType: "warning",
+                alertMessage: alertMessage,
+              });
+            }
+          });
         });
       }
     });
