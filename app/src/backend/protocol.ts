@@ -11,7 +11,7 @@ app.setAsDefaultProtocolClient("sjcloud");
  * @param uri uri passed into the program.
  * @returns Command to be run in the remote javascript runtime.
  */
-function handleURI(uri: String): String {
+function handleURI(uri: string): string {
   if (uri && uri.search("sjcloud://") != -1) {
     logging.info("Handling custom URI:", uri);
     let projectName = uri.replace("sjcloud://", "");
@@ -39,7 +39,7 @@ function handleURI(uri: String): String {
  *
  * @returns Command to be run in the remote javascript runtime.
  **/
-export function handleURIWindows(): String {
+export function handleURIWindows(): string {
   let args = process.argv.slice(1);
   return handleURI(args[0]);
 };
@@ -54,7 +54,7 @@ export function handleURIWindows(): String {
  * @param uri the uri passed to the event handler.
  * @return Command to be run in the remote javascript runtime.
  */
-export function handleURIMac(event: Event, uri: String): String {
+export function handleURIMac(event: Event, uri: string): string {
   if (event) {
     event.preventDefault();
   }
