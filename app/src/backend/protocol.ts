@@ -11,7 +11,7 @@ app.setAsDefaultProtocolClient("sjcloud");
  * @param uri uri passed into the program.
  * @returns Command to be run in the remote javascript runtime.
  */
-export function handleURI(uri: String): String {
+function handleURI(uri: String): String {
   if (uri && uri.search("sjcloud://") != -1) {
     logging.info("Handling custom URI:", uri);
     let projectName = uri.replace("sjcloud://", "");
