@@ -86,7 +86,7 @@ After making these changes, you are ready to go! We recommend that you use the f
 gulp develop
 ```
 
-If you are only working with the front-end code, you can develop in the web browser, which should automatically open up (BrowserSync)[https://www.browsersync.io/]. 
+If you are only working with the front-end code, you can develop in the web browser, which should automatically open up [BrowserSync](https://www.browsersync.io/). 
 
 
 Testing
