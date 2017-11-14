@@ -116,7 +116,7 @@ if (window.location.port != "3057" && window.location.port != "9876" && !window.
   };
   window.ui = {};
   window.utils = {
-    openSSLOnPathL() {
+    openSSLOnPath() {
 
     },
     openExternal(url) {
