@@ -227,6 +227,23 @@ module.exports.openSSLOnPath = function(callback) {
 };
 
 /**
+ * Determines if python 2.7.13+ is correctly installed on the system.
+ *
+ * @param {callback} callback
+ */
+module.exports.pythonOnPath = function(callback) {
+  let innerCallback = function(err, res) {
+    // python versions before 3.4 print --version to stderr
+    if (err.search("2.7.") === -1 || parseInt(err.slice(-2)) < 13) {
+      return callback(false);
+    } else {
+      return callback(true);
+    }
+  };
+  this.runCommand("python --version", innerCallback);
+};
+
+/**
  * Determines if dx-toolkit is correctly installed on the system.
  *
  * @param {callback} callback
