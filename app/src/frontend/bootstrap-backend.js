@@ -1,5 +1,9 @@
-if (window.location.port != "3057" && window.location.port != "9876" && !window.testdata) {
-  // electron app
+if (window.location.port != "3057" && window.location.port != "9876" &&
+  !window.testdata) {
+  /**
+   * This code block is executed if we are running as an Electron application.
+   */
+
   window.dx = require("./bin/backend/dx");
   window.queue = require("./bin/backend/queue");
   window.oauth = require("./bin/backend/oauth");
@@ -7,11 +11,10 @@ if (window.location.port != "3057" && window.location.port != "9876" && !window.
   window.ui = require("./bin/backend/ui");
   window.utils = require("./bin/backend/utils");
 } else {
-  // for regular browser based testing only
-  // mostly for simplified testing of styles, work flow
-  //
-  // TO-DO: figure out a way to use this from the test directory as helper functions
-  //
+  /**
+   * This block of code is run if we are in the browser.
+   * @todo Figure out a way to use this from the test directory as helper functions
+   */
 
   window.dx = {
     getToolsInformation(showAllProjects, showAllFiles, callback) {
@@ -198,6 +201,10 @@ if (window.location.port != "3057" && window.location.port != "9876" && !window.
   let numTaskAdded = 0;
   let numTaskCompleted = 0;
 
+  /**
+   * Fake progress for file upload/download.
+   * @param {*} file
+   */
   function fakeProgress(file) {
     file.started = false;
     const i = setInterval(() => {
@@ -223,6 +230,11 @@ if (window.location.port != "3057" && window.location.port != "9876" && !window.
     }, 500);
   }
 
+  /**
+   *
+   * @param {*} status
+   * @return {number}
+   */
   function currStatus(status) {
     const s = status + Math.ceil(Math.random() * (10 - 2) + 2);
     return s > 100 ? 100 : s;
