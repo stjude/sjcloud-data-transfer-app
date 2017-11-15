@@ -3,6 +3,7 @@ const gulp = require("gulp");
 const karma = require("karma");
 const gutil = require("gulp-util");
 const webpack = require("webpack");
+const jsdoc = require("gulp-jsdoc3");
 const gts = require("gulp-typescript");
 const jasmine = require("gulp-jasmine");
 const karmaParseConfig = require("karma/lib/config").parseConfig;
@@ -94,6 +95,13 @@ gulp.task(
   });
 
 gulp.task("test", ["test-frontend", "test-backend"]);
+
+gulp.task("docs", ["compile-backend"], (callback) => {
+  gulp.src(
+    ["README.md", "app/bin/backend/**/*.js"],
+    {read: false}
+  ).pipe(jsdoc({"opts": {"destination": "./docs"}}, callback));
+});
 
 gulp.task("default", () => {
   gutil.log("Commands you might be interested in:");
