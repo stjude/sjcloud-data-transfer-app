@@ -77,27 +77,31 @@ export function createOauthWindow(
     webPreferences: { nodeIntegration: false },
   });
 
-  loginWindow.webContents.on("did-get-redirect-request", function (event, oldUrl, newUrl) {
+  loginWindow.webContents.on(
+    "did-get-redirect-request",
+    function (
+      event: any,
+      oldUrl: any,
+      newUrl: any
+    ) {
+      const match = /https:\/\/platform.dnanexus.com\/login\?code/g.exec(newUrl);
+      if (match != null) {
+        event.preventDefault();
 
+        /**
+          * Every 0.5 seconds, check to see if the window is redirecting to the main
+          * DNAnexus platform page. When it does, pull up the OAuth screen and clear 
+          * the interval.
+          */
 
-    const match = /https:\/\/platform.dnanexus.com\/login\?code/g.exec(newUrl);
-    if (match != null) {
-      event.preventDefault();
-
-      /**
-        * Every 0.5 seconds, check to see if the window is redirecting to the main
-        * DNAnexus platform page. When it does, pull up the OAuth screen and clear 
-        * the interval.
-        */
-
-      let timer = setInterval(() => {
-        if (loginWindow.webContents.getURL() === "https://platform.dnanexus.com/") {
-          clearInterval(timer);
-          loginWindow.loadURL(oauth_url);
-        }
-      }, 500);
-    }
-  });
+        let timer = setInterval(() => {
+          if (loginWindow.webContents.getURL() === "https://platform.dnanexus.com/") {
+            clearInterval(timer);
+            loginWindow.loadURL(oauth_url);
+          }
+        }, 500);
+      }
+    });
 
   const url = showInternalURL ? internal_url : oauth_url;
   loginWindow.loadURL(url);

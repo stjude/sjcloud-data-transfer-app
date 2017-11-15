@@ -1,11 +1,11 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import Config from "../../../../config.json";
-import storeStart from './storeStart';
-import storeModals from './storeModals';
-import storeProjects from './storeProjects';
-import storeFiles from './storeFiles';
-import storeOperations from './storeOperations';
+import storeStart from "./storeStart";
+import storeModals from "./storeModals";
+import storeProjects from "./storeProjects";
+import storeFiles from "./storeFiles";
+import storeOperations from "./storeOperations";
 
 Vue.use(Vuex);
 
@@ -36,13 +36,12 @@ const projectToolScopeWatcher = (store) => {
 
 /** Helpers **/
 function cacheState(state) {
-  window.utils.saveToFile("state.json", JSON.stringify({
+  window.utils.saveToSJCloudFile("state.json", JSON.stringify({
     showAllFiles: state.showAllFiles,
     showAllProjects: state.showAllProjects,
     concurrentOperations: state.concurrentOperations,
   }));
 }
-
 
 
 // a simple search string parser used in testing
@@ -99,17 +98,17 @@ const storeGlobal = {
     setDownloadLocation(state, location) {
       state.downloadLocation = location;
     },
-    
+
     setTestdata(state, str) {
       state.testdata = str;
     },
-  }
-}
+  },
+};
 
 /** Store generator **/
 export default function getVuexStore(cachedState = {}) {
   /*
-    To-Do: use Vuex.modules instead of Object.assign   
+    To-Do: use Vuex.modules instead of Object.assign
   */
   return new Vuex.Store({
     state: Object.assign(

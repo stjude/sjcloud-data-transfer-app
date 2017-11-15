@@ -77,7 +77,7 @@ export default function _App(selector, cachedState = {}) {
 // where the expected container div is present,
 // then start the app immediately
 if (document.querySelector("#sjcda-main-div")) {
-  window.utils.readCachedFile("state.json", function(content) {
+  window.utils.readSJCloudFile("state.json", function(content) {
     const obj = JSON.parse(content);
     if (!obj) {
       console.log("Error parsing the cached state file.");
