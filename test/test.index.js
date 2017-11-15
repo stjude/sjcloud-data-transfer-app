@@ -1,4 +1,4 @@
-import "../app/bin/frontend/bootstrap-backend.js";
+import "../app/src/frontend/bootstrap-backend.js";
 import _App from "../app/src/frontend/vue/main.js";
 import {
   select,
