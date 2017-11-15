@@ -3,8 +3,12 @@
  **/
 
 import { ChildProcess } from "child_process";
-import { SuccessCallback, CommandCallback, ResultCallback } from "./types";
-import { ErrorCallback } from "typescript";
+import {
+  SuccessCallback,
+  CommandCallback,
+  ResultCallback,
+  ErrorCallback
+} from "./types";
 
 const os = require("os");
 const fs = require("fs");
