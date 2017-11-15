@@ -77,6 +77,7 @@ function bootstrapWindow(mainWindow) {
     logging.warn(" Loading autoupdater. Code must be signed for this to work!");
     logging.warn("");
     const autoupdater = require("./bin/backend/autoupdate");
+    autoupdater.startUpdateClient();
   }
 
   if (!config.CHROMIUM_MENU) {
