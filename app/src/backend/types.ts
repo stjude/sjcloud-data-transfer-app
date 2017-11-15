@@ -4,7 +4,7 @@
  *    - results: any = null on failure, object on success.
  */
 
-export type SuccessCallback = (error: object, result: object) => void;
+export type SuccessCallback = (error: any, result: any) => void;
 
 /**
  * Callback used when we are reporting the progress of some
