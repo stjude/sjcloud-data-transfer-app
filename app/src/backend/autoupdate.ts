@@ -29,7 +29,7 @@ export function startUpdateClient() {
     electron.autoUpdater.checkForUpdates();
   }, 15 * 60 * 1000);
 
-  electron.autoUpdater.on("error", (error) => {
+  electron.autoUpdater.on("error", (error: any) => {
     logging.error(error);
   });
 
@@ -47,7 +47,7 @@ export function startUpdateClient() {
 
   electron.autoUpdater.on(
     "update-downloaded",
-    (event, releaseNotes, releaseName) => {
+    (event: any, releaseNotes: any, releaseName: any) => {
       logging.info("Update downloaded.");
       const dialogOpts = {
         type: "info",
@@ -58,7 +58,7 @@ export function startUpdateClient() {
           "to apply the updates.",
       };
 
-      electron.dialog.showMessageBox(dialogOpts, (response) => {
+      electron.dialog.showMessageBox(dialogOpts, (response: any) => {
         if (response === 0) {
           electron.autoUpdater.quitAndInstall();
         } else {
