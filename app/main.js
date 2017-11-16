@@ -72,17 +72,17 @@ let startupOptions = {};
 function bootstrapWindow(mainWindow) {
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
-  if (nodeEnvironment === "production" && config.AUTOUPDATE_ENABLED === true) {
-    const autoupdater = require("./bin/backend/autoupdate");
-    autoupdater.startUpdateClient();
-  }
-
   if (!config.CHROMIUM_MENU) {
     logging.debug("Production menu enabled (chromium menu disabled).");
     const {menuConfig} = require("./bin/backend/menu.js");
     menu.setApplicationMenu(menu.buildFromTemplate(menuConfig));
   } else {
     logging.debug("Chromium menu enabled (production menu disabled).");
+  }
+
+  if (nodeEnvironment === "production" && config.AUTOUPDATE_ENABLED === true) {
+    const autoupdater = require("./bin/backend/autoupdate");
+    autoupdater.startUpdateClient();
   }
 }
 
