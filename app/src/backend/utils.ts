@@ -259,7 +259,7 @@ export function openSSLOnPath(callback: ResultCallback) {
     runCommand("which openssl", innerCallback);
   } else if (platform === "win32") {
     runCommand("get-command openssl", innerCallback);
-  } throw new Error(`Invalid platform: ${platform}.`);
+  } else throw new Error(`Invalid platform: ${platform}.`);
 };
 
 
