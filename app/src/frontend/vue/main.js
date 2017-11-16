@@ -38,7 +38,7 @@ export default function _App(selector, cachedState = {}) {
   } else {
     window.state.getState((state) => {
       VueApp.$router.replace('install');
-      if (1 || state.path === "install") {
+      if (state.path === "install") {
         checkDependencies(VueApp);
       }
     });
@@ -51,7 +51,7 @@ function getAlertHandler(numExpectedCalls=0) {
   let numCalls=0;
 
   return (message=null)=>{
-    numCalls++; console.log(numCalls)
+    numCalls++;
     if (message) {
       messages.push(message);
     }
@@ -64,7 +64,7 @@ function getAlertHandler(numExpectedCalls=0) {
   }
 }
 
-function checkDependencies(VueApp) { console.log('test')
+function checkDependencies(VueApp) {
   const alertHandler = getAlertHandler(2);
   window.utils.openSSLOnPath((onPath) => {
     VueApp.$store.commit("setOpenSSLOnPath", onPath);
