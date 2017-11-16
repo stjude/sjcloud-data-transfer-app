@@ -65,216 +65,217 @@
 </template>
 
 <script>
-import StepOutcome from './StepOutcome.vue'
-import SpinKit from './SpinKit.vue'
+import StepOutcome from "./StepOutcome.vue";
+import SpinKit from "./SpinKit.vue";
 
 export default {
-	components: {
-		StepOutcome,
-		SpinKit
-	},
-	data: () => {
-		return {
-			validating: "Validating..."
-		}
-	},
-	computed: {
-		loginState() {
-			return this.$store.getters.loginState;
-		},
-		environment() {
-			return this.$store.getters.environment;
-		},
-		token: {
-			get () {
-			  return this.$store.getters.token;
-			},
-			set (value) {
-			  this.$store.commit('setToken', value)
-			}
-		  }
-	},
-	methods: {
-		setLoginState(state) {
-			this.$store.commit('setLoginState', state);
-		},
-		setToken(token) {
-			this.$store.commit('setToken', token);
-		},
-		internal() {
-			window.oauth.getToken(true, (err, token) => {
-				this.$store.commit('setToken', token);
-				this.$store.commit('setLoginState', 'validating');
+  components: {
+    StepOutcome,
+    SpinKit
+  },
+  data: () => {
+    return {
+      validating: "Validating..."
+    };
+  },
+  computed: {
+    loginState() {
+      return this.$store.getters.loginState;
+    },
+    environment() {
+      return this.$store.getters.environment;
+    },
+    token: {
+      get() {
+        return this.$store.getters.token;
+      },
+      set(value) {
+        this.$store.commit("setToken", value);
+      }
+    }
+  },
+  methods: {
+    setLoginState(state) {
+      this.$store.commit("setLoginState", state);
+    },
+    setToken(token) {
+      this.$store.commit("setToken", token);
+    },
+    internal() {
+      window.oauth.getToken(true, (err, token) => {
+        this.$store.commit("setToken", token);
+        this.$store.commit("setLoginState", "validating");
 
-				if (err) {
-					console.error("Error retrieving token:". token);
-					this.$store.commit('setLoginState', 'failed');
-					return;
-				}
-			
-				window.dx.login(token, (err, result) => {
-					if (err) {
-						// TODO(clay): alert login error.
-						console.error(err);
-						this.$store.commit('setLoginState', 'failed');
-					} else {
-						this.$store.commit('setLoginState', 'completed');
-						setTimeout(() => {
-							this.$router.push('upload');
-						}, 2500);
-					}
-				});
-			});
-		},
-		external(openURL=true) {
-			window.oauth.getToken(false, (err, token) => {
-				this.$store.commit('setToken', token);
-				this.$store.commit('setLoginState', 'validating');
-			
-				const that = this;
+        if (err) {
+          console.error("Error retrieving token:".token);
+          this.$store.commit("setLoginState", "failed");
+          return;
+        }
 
-				window.dx.login(token, function (err, result) {
-					if (err) {
-						that.$store.commit('setLoginState', 'failed');
-					} else {
-						that.$store.commit('setLoginState', 'completed');
-						setTimeout(function (){
-							that.$router.push('upload');
-						}, 2500);
-					}
-				});
-			});
-		},
-	}
-}
+        window.dx.login(token, (err, result) => {
+          if (err) {
+            // TODO(clay): alert login error.
+            console.error(err);
+            this.$store.commit("setLoginState", "failed");
+          } else {
+            this.$store.commit("setLoginState", "completed");
+            setTimeout(() => {
+              this.$router.push("upload");
+            }, 2500);
+          }
+        });
+      });
+    },
+    external(openURL = true) {
+      window.oauth.getToken(false, (err, token) => {
+        this.$store.commit("setToken", token);
+        this.$store.commit("setLoginState", "validating");
+
+        const that = this;
+
+        window.dx.login(token, function(err, result) {
+          if (err) {
+            that.$store.commit("setLoginState", "failed");
+          } else {
+            that.$store.commit("setLoginState", "completed");
+            setTimeout(function() {
+              that.$router.push("upload");
+            }, 2500);
+          }
+        });
+      });
+    }
+  }
+};
 </script>
 
 <style scoped>
 .row {
-	margin: 0px;
+  margin: 0px;
 }
 
 .dev-box {
-	position: absolute;
-	left: 675px;
-	top: 20px;
-	z-index: 1;
+  position: absolute;
+  left: 675px;
+  top: 20px;
+  z-index: 1;
 }
 
 .main {
-	margin-bottom: 50px;
+  margin-bottom: 50px;
 }
 
 .stjude-link {
-	color: #931638;
-	font-weight: bold;
-	font-size: 14px;
-	/* text-decoration: underline; */
+  cursor: pointer;
+  color: #931638;
+  font-weight: bold;
+  font-size: 14px;
+  /* text-decoration: underline; */
 }
 
 .theater-heading {
-	margin: 0px 45px 0px 45px;
+  margin: 0px 45px 0px 45px;
 }
 
 .theater-heading > h1 {
-	margin-top: 35px;
-	font-style: 'Open Sans', 'Helvetica Neue';
-	font-size: 36px;
-	color: #000000;
+  margin-top: 35px;
+  font-style: "Open Sans", "Helvetica Neue";
+  font-size: 36px;
+  color: #000000;
 }
 
 .theater-heading > hr {
-	margin: 10px 0px 10px 0px;
-	float: center;
-	border-top: 2px solid #dedede;
-	width: 780px;
+  margin: 10px 0px 10px 0px;
+  float: center;
+  border-top: 2px solid #dedede;
+  width: 780px;
 }
 
 .theater-body {
-	margin: 35px 45px 0px 45px;
-	text-align: center;
-	font-style: 'Open Sans', 'Helvetica Neue';
-	font-size: 24px;
-	height: 310px;
+  margin: 35px 45px 0px 45px;
+  text-align: center;
+  font-style: "Open Sans", "Helvetica Neue";
+  font-size: 24px;
+  height: 310px;
 }
 
 .theater-body .btn {
-	margin: 35px 0px 50px 0px;
-	width: 145px;
-	font-size: 24px;
+  margin: 35px 0px 50px 0px;
+  width: 145px;
+  font-size: 24px;
 }
 
 .login-option {
-	height: 310px;
+  height: 310px;
 }
 
 .login-option .login-option-content {
-	height: 310px;
-	width: 300px;
-	margin: 0px auto;
-	border: 3px solid #dedede;
-	border-radius: 15px;
+  height: 310px;
+  width: 300px;
+  margin: 0px auto;
+  border: 3px solid #dedede;
+  border-radius: 15px;
 }
 
 .login-option .login-option-content .login-option-title {
-	position: absolute;
-	font-size: 18px;
-	width: 80px;
-	margin-top: -14px;
-	margin-left: 16px;
-	background: #FFFFFF;
-	z-index: 1;
+  position: absolute;
+  font-size: 18px;
+  width: 80px;
+  margin-top: -14px;
+  margin-left: 16px;
+  background: #ffffff;
+  z-index: 1;
 }
 
 .login-option .login-option-content .login-option-body {
-	margin-top: 30px;
+  margin-top: 30px;
 }
 
 .footer {
-	position: absolute;
-	top: 545px;
-	left: -10px;
+  position: absolute;
+  top: 545px;
+  left: -10px;
 }
 
 .footer .progress {
-	width: 300px;
-	height: 4pt;
-	float: center;
-	margin: 0 auto;
-	margin-bottom: 25px;
+  width: 300px;
+  height: 4pt;
+  float: center;
+  margin: 0 auto;
+  margin-bottom: 25px;
 }
 
 .footer .progress-bar {
-	background-color: #158cba;
+  background-color: #158cba;
 }
 
 .footer .progress-node {
-	position: absolute;
-	margin-top: -20px;
-	z-index: 1;
-	height: 45px;
-	width: 45px;
-	border: 3px solid #1381b3;
-	border-radius: 25px;
-	line-height: 40px;
-	font-size: 26px;
-	text-align: center;
+  position: absolute;
+  margin-top: -20px;
+  z-index: 1;
+  height: 45px;
+  width: 45px;
+  border: 3px solid #1381b3;
+  border-radius: 25px;
+  line-height: 40px;
+  font-size: 26px;
+  text-align: center;
 }
 
-.footer .progress-node-active{
-	color: #FFFFFF;
-	background-color: #158cba;
+.footer .progress-node-active {
+  color: #ffffff;
+  background-color: #158cba;
 }
 
-.footer .progress-node-nonactive{
-	color: #158cba;
-	background-color: #FFFFFF;
+.footer .progress-node-nonactive {
+  color: #158cba;
+  background-color: #ffffff;
 }
 
-.footer .progress-text span{
-	position: absolute;
-	color: #158cba;
-	font-size: 16pt;
+.footer .progress-text span {
+  position: absolute;
+  color: #158cba;
+  font-size: 16pt;
 }
 
 .theater-body-img {
