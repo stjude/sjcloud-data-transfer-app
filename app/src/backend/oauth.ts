@@ -8,6 +8,7 @@ const pem = require("pem");
 const $ = require("jquery");
 const https = require("https");
 const express = require("express");
+const ipcRenderer = require("electron").ipcRenderer;
 
 
 /**
@@ -24,35 +25,32 @@ function waitForCode(showInternalURL: boolean, callback: any) {
       return callback(new Error("Could not create window!"), null);
     }
 
-    pem.createCertificate({
-      days: 1,
-      selfSigned: true,
-    }, function (err: any, keys: any) {
-      let app = express();
+    const certs: any = ipcRenderer.sendSync("sync/generate-selfsigned");
+    let app = express();
 
-      let server = https.createServer({
-        key: keys.serviceKey,
-        cert: keys.certificate,
-      }, app);
+    let server = https.createServer({
+      key: certs.private,
+      cert: certs.cert,
+    }, app);
 
-      window.on("close", () => {
-        server.close();
-        window = null;
-      });
-
-      app.get("/authcb", function (req: any, res: any) {
-        // NOTE: Do not set window to null inside the next code block.
-        // Here be dragons and mystical code errors that will cause you hours of
-        // debugging pain.
-        if (window) { window.close(); }
-
-        return callback(null, req.query.code);
-      });
-
-      server.listen(4433);
-      console.log("Running OAuth listener on port 4433.");
+    window.on("close", () => {
+      server.close();
+      window = null;
     });
+
+    app.get("/authcb", function (req: any, res: any) {
+      // NOTE: Do not set window to null inside the next code block.
+      // Here be dragons and mystical code errors that will cause you hours of
+      // debugging pain.
+      if (window) { window.close(); }
+
+      return callback(null, req.query.code);
+    });
+
+    server.listen(4433);
+    console.log("Running OAuth listener on port 4433.");
   });
+  // });
 };
 
 /**

@@ -37,7 +37,7 @@ export default function _App(selector, cachedState = {}) {
     VueApp.$router.replace("home");
   } else {
     window.state.getState((state) => {
-      VueApp.$router.replace('install');
+      VueApp.$router.replace(state.path);
       if (state.path === "install") {
         checkDependencies(VueApp);
       }
@@ -46,22 +46,22 @@ export default function _App(selector, cachedState = {}) {
   return VueApp;
 }
 
-function getAlertHandler(numExpectedCalls=0) {
-  const messages=[];
-  let numCalls=0;
+function getAlertHandler(numExpectedCalls = 0) {
+  const messages = [];
+  let numCalls = 0;
 
-  return (message=null)=>{
+  return (message = null) => {
     numCalls++;
     if (message) {
       messages.push(message);
     }
-    if (numCalls==numExpectedCalls && messages.length) {
+    if (numCalls == numExpectedCalls && messages.length) {
       VueApp.$store.commit("byKey", {
         alertType: "warning",
-        alertMessage: messages.join('<br><br>')
+        alertMessage: messages.join("<br><br>"),
       });
     }
-  }
+  };
 }
 
 function checkDependencies(VueApp) {
@@ -73,7 +73,7 @@ function checkDependencies(VueApp) {
         "You don't have OpenSSL installed on your system, which is needed to run this program. "
         + "You can download it here: <span class='alert-link' @click.stop='clickHandler($event)'>"
         + "https://wiki.openssl.org/index.php/Binaries</span>"
-      );        
+      );
     } else {
       alertHandler();
     }
@@ -88,7 +88,7 @@ function checkDependencies(VueApp) {
       );
     } else {
       alertHandler();
-    }          
+    }
   });
 }
 

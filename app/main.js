@@ -18,11 +18,11 @@ const menu = electron.Menu;
 
 const config = require("../config.json");
 const ui = require("./bin/backend/ui");
-const protocol = require("./bin/backend/protocol");
 const {
   logging,
   logLevel,
 } = require("./bin/backend/logging");
+const utils = require("./bin/backend/utils");
 
 const platform = os.platform();
 const nodeEnvironment = process.env.NODE_ENV || "production";
@@ -44,6 +44,9 @@ process.argv.forEach((elem, index) => {
   logging.info("   " + index + ": " + elem);
 });
 logging.info("");
+logging.info(" == Bootstrapping Environment ==");
+const ipc = require("./bin/backend/ipc");
+const protocol = require("./bin/backend/protocol");
 
 /**
  * START PROGRAM.
@@ -82,6 +85,8 @@ function bootstrapWindow(mainWindow) {
     logging.debug("Chromium menu enabled (production menu disabled).");
   }
 }
+
+logging.info("");
 
 /**
  * Ensure that a main window exists.

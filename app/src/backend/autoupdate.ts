@@ -11,16 +11,16 @@ export const feed = `${server}/update/${platform}/${electron.app.getVersion()}`;
  * Start the update client pulling from the update server.
  */
 export function startUpdateClient() {
+  logging.info("   - Starting autoupdate server...");
+  logging.info(`     Server: ${server}`);
+  logging.info(`     Feed:   ${feed}`);
+  logging.info("");
   logging.warn(" ***********");
   logging.warn(" * WARNING *");
   logging.warn(" ***********");
   logging.warn("");
   logging.warn(" Loading autoupdater. Code must be signed for this to work!");
   logging.warn("");
-  logging.info(" Starting update server:");
-  logging.info(`  - Server: ${server}`);
-  logging.info(`  - Feed:   ${feed}`);
-  logging.info("");
 
   electron.autoUpdater.setFeedURL(feed);
   electron.autoUpdater.checkForUpdates();

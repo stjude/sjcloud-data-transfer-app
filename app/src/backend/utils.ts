@@ -604,3 +604,9 @@ export function getTabLiteral() {
     return "`t";
   } else throw new Error("Unrecognized platform: ${platform}.");
 };
+
+
+export function selfSigned(callback: SuccessCallback) {
+  const selfsigned = require("selfsigned");
+  return selfsigned.generate({}, { days: 1 }, callback);
+}
