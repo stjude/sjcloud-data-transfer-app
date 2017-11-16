@@ -25,8 +25,8 @@ const config = require("../../../config.json");
  **********************************************************/
 
 interface dxDownloadInfo {
-  url: string;
-  hash: string;
+  URL: string;
+  SHA256SUM: string;
 }
 
 /**
@@ -374,8 +374,8 @@ export function installDxToolkit(
   if (!platform) throw new Error(`Unrecognized platform: ${platform}.`);
 
   const downloadInfo = dxToolkitDownloadInfo(platform);
-  const downloadURL: string = downloadInfo.url;
-  const expectedDownloadHash: string = downloadInfo.hash;
+  const downloadURL: string = downloadInfo.URL;
+  const expectedDownloadHash: string = downloadInfo.SHA256SUM;
 
   const tmpdir = os.tmpdir();
   let dxToolkitDownloadPath = path.join(tmpdir, "dx-toolkit.tar.gz");
