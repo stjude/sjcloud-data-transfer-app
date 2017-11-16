@@ -54,6 +54,7 @@
     "jquery": "^3.2.1",
     "mkdirp": "^0.5.1",
     "pem": "^1.9.7",
+    "selfsigned": "^1.10.1",
     "spinkit": "^1.2.5",
     "tippy.js": "^1.2.0",
     "todc-bootstrap": "^3.3.7-3.3.13",
