@@ -18,11 +18,11 @@ const menu = electron.Menu;
 
 const config = require("../config.json");
 const ui = require("./bin/backend/ui");
-const protocol = require("./bin/backend/protocol");
 const {
   logging,
   logLevel,
 } = require("./bin/backend/logging");
+const utils = require("./bin/backend/utils");
 
 const platform = os.platform();
 const nodeEnvironment = process.env.NODE_ENV || "production";
@@ -44,6 +44,9 @@ process.argv.forEach((elem, index) => {
   logging.info("   " + index + ": " + elem);
 });
 logging.info("");
+logging.info(" == Bootstrapping Environment ==");
+const ipc = require("./bin/backend/ipc");
+const protocol = require("./bin/backend/protocol");
 
 /**
  * START PROGRAM.
@@ -69,16 +72,6 @@ let startupOptions = {};
 function bootstrapWindow(mainWindow) {
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
-  if (nodeEnvironment === "production" && config.AUTOUPDATE_ENABLED === true) {
-    logging.warn(" ***********");
-    logging.warn(" * WARNING *");
-    logging.warn(" ***********");
-    logging.warn("");
-    logging.warn(" Loading autoupdater. Code must be signed for this to work!");
-    logging.warn("");
-    const autoupdater = require("./bin/backend/autoupdate");
-  }
-
   if (!config.CHROMIUM_MENU) {
     logging.debug("Production menu enabled (chromium menu disabled).");
     const {menuConfig} = require("./bin/backend/menu.js");
@@ -86,7 +79,14 @@ function bootstrapWindow(mainWindow) {
   } else {
     logging.debug("Chromium menu enabled (production menu disabled).");
   }
+
+  if (nodeEnvironment === "production" && config.AUTOUPDATE_ENABLED === true) {
+    const autoupdater = require("./bin/backend/autoupdate");
+    autoupdater.startUpdateClient();
+  }
 }
+
+logging.info("");
 
 /**
  * Ensure that a main window exists.

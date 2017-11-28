@@ -4,7 +4,7 @@
 
 import {
   SuccessCallback,
-  UpdateCallback,
+  ResultCallback,
   SJDTAFile,
   SJDTAProject,
 } from "./types";
@@ -78,12 +78,12 @@ export function login(
  *
  * @param callback
  * @param dryrun Return the command that would have been run as a string. 
- * @returns ChildProcess or string depending on the value of 'dryrun'.
+ * @returns {any} ChildProcess or string depending on the value of 'dryrun'.
 */
 export function logout(
   callback: SuccessCallback,
   dryrun: boolean = false
-): void {
+): any {
   const cmd = "dx logout";
   return dryrun ? cmd : utils.runCommand(cmd, callback);
 };
@@ -94,13 +94,13 @@ export function logout(
  * @param dnanexusId The DNAnexus object identifier (ex: file-XXXXXX).
  * @param callback
  * @param dryrun Return the command that would have been run as a string. 
- * @returns ChildProcess or string depending on the value of 'dryrun'.
+ * @returns {any} ChildProcess or string depending on the value of 'dryrun'.
  **/
 export function describeDXItem(
   dnanexusId: string,
   callback: SuccessCallback,
   dryrun: boolean = false
-): void {
+): any {
   if (!dnanexusId) {
     const error = new Error("Dx-identifier cannot be null/empty!");
     return callback(error, null);
@@ -120,21 +120,20 @@ export function describeDXItem(
  * @param allFiles List all files or just St. Jude Cloud associated ones.
  * @param callback
  * @param dryrun Return the command that would have been run as a string. 
- * @returns ChildProcess or string depending on the value of 'dryrun'.
+ * @returns {any} ChildProcess or string depending on the value of 'dryrun'.
  **/
 export function listDownloadableFiles(
   projectId: string,
   allFiles: boolean,
   callback: SuccessCallback,
   dryrun: boolean = false
-): void {
+): any {
   if (!projectId) {
     const error = new Error("Dx-project cannot be null/empty!");
     return callback(error, null);
   }
 
   let cmd = `dx find data --path ${projectId}:/ --json --state closed --class file`;
-
   if (!allFiles) {
     cmd += ` --tag ${config.DOWNLOADABLE_TAG}`;
   }
@@ -161,7 +160,7 @@ export function downloadDxFile(
   fileName: string,
   fileRawSize: number,
   downloadLocation: string,
-  updateCb: UpdateCallback,
+  updateCb: ResultCallback,
   finishedCb: SuccessCallback
 ): child_process.ChildProcess {
   const platform = os.platform();
@@ -196,7 +195,7 @@ export function downloadDxFile(
 function watchRemoteFile(
   file: SJDTAFile,
   dxRemotePath: string,
-  progressCb: UpdateCallback
+  progressCb: ResultCallback
 ) {
   return setInterval(() => {
     if (file.sizeCheckingLock) { return; }
@@ -238,7 +237,7 @@ function watchRemoteFile(
 export function uploadFile(
   file: SJDTAFile,
   projectId: string,
-  progressCb: UpdateCallback,
+  progressCb: ResultCallback,
   finishedCb: SuccessCallback,
   remoteFolder: string = "/uploads",
 ): child_process.ChildProcess {
@@ -366,7 +365,7 @@ export function listProjects(
  * @param callback Callback function.
 */
 export function installDxToolkit(
-  updateProgress: UpdateCallback,
+  updateProgress: ResultCallback,
   callback: SuccessCallback
 ) {
   let platform: string = os.platform().toString();

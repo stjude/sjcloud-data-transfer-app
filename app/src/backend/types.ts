@@ -1,4 +1,19 @@
 /**
+ * Callback used when we are reporting the result of some
+ * task that cannot error. 
+ * 
+ *    - result: any = result of the task.
+ */
+export type ResultCallback = (result: any) => void;
+
+/**
+ * Callback used when we are reporting only an error.
+ * 
+ *    - error: any = null or an error if one occurred.
+ */
+export type ErrorCallback = (error: any) => void;
+
+/**
  * Generic callback function where the arguments are:
  *    - error: any   = Error object on failure, null on success.
  *    - results: any = null on failure, object on success.
@@ -7,14 +22,15 @@
 export type SuccessCallback = (error: any, result: any) => void;
 
 /**
- * Callback used when we are reporting the progress of some
- * task. This callback is generally accompanied by a 
- * SuccessCallback in the parameters to indicate that the
- * task has finished with a particular result.
+ * Callback that is the common interface used by NodeJS command
+ * functions (exec, spawn, etc).
  * 
- *    - progress: any = updated value of the task.
+ *    - error: any     = Error object on failure, null on success.
+ *    - stdout: string = STDOUT of the process
+ *    - stderr: string = STDERR of the process
  */
-export type UpdateCallback = (progress: any) => void;
+
+export type CommandCallback = (error: any, stdout: string, stderr: string) => void;
 
 /**
  * Type that we use to represent files in the Vuex store.

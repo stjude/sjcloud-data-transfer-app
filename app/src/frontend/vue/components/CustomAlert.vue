@@ -1,19 +1,19 @@
 <template>
 	<div class='alert-main-div' v-show="alertType!=''">
 		<div v-show="alertType=='info'" class='alert alert-info'>
-			<span v-html='alertMessage'>{{ alertMessage }}</span>
+			<span v-html='alertMessage' @click.stop='clickHandler'>{{ alertMessage }}</span>
 			<div class='material-icons closer' @click.stop='close'>close</div>
 		</div>
 		<div v-show="alertType=='success'" class='alert alert-success'>
-			<span v-html='alertMessage'>{{ alertMessage }}</span>
+			<span v-html='alertMessage' @click.stop='clickHandler'>{{ alertMessage }}</span>
 			<div class='material-icons closer' @click.stop='close'>close</div>
 		</div>
 		<div v-show="alertType=='warning'" class='alert alert-warning'>
-			<span v-html='alertMessage'>{{ alertMessage }}</span>
+			<span v-html='alertMessage' @click.stop='clickHandler'>{{ alertMessage }}</span>
 			<div class='material-icons closer' @click.stop='close'>close</div>
 		</div>
 		<div v-show="alertType=='danger'" class='alert alert-danger'>
-			<span v-html='alertMessage'>{{ alertMessage }}</span>
+			<span v-html='alertMessage' @click.stop='clickHandler'>{{ alertMessage }}</span>
 			<div class='material-icons closer' @click.stop='close'>close</div>
 		</div>
 	</div>
@@ -32,6 +32,10 @@ export default {
   methods: {
     close() {
       this.$store.commit("byKey", { alertType: "" });
+    },
+    clickHandler(event) {
+      if (event.target.className!='alert-link') return;
+      window.utils.openExternal(event.target.innerHTML);
     }
   }
 };

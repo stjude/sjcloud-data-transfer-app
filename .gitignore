@@ -1,6 +1,7 @@
 node_modules/
 dist/*
 app/bin/*
+docs/*
 !app/bin/.gitkeep
 **/.DS_Store
 

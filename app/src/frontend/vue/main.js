@@ -37,47 +37,66 @@ export default function _App(selector, cachedState = {}) {
     VueApp.$router.replace("home");
   } else {
     window.state.getState((state) => {
-      VueApp.$router.replace(state);
+      VueApp.$router.replace(state.path);
       if (state.path === "install") {
-        let needAlert = false;
-        let alertMessage = "";
-        window.utils.openSSLOnPath((onPath) => {
-          VueApp.$store.commit("setOpenSSLOnPath", onPath);
-          if (onPath === false) {
-            needAlert = true;
-            alertMessage += "You don't have OpenSSL installed on your system, which is needed to run this program.<br>";
-            alertMessage += "You can download it here: https://wiki.openssl.org/index.php/Binaries";
-          }
-          window.utils.pythonOnPath((onPath) => {
-            VueApp.$store.commit("setPythonOnPath", onPath);
-            if (onPath === false) {
-              needAlert = true;
-              if (alertMessage !== "") {
-                alertMessage += "<br><br>";
-              }
-              alertMessage += "You need to have python version 2.7.13+ installed on your path.<br>";
-              alertMessage += "You can download it here: https://www.python.org/downloads/release/python-2714/";
-            }
-            if (needAlert === true) {
-              VueApp.$store.commit("byKey", {
-                alertType: "warning",
-                alertMessage: alertMessage,
-              });
-            }
-          });
-        });
+        checkDependencies(VueApp);
       }
     });
   }
-
   return VueApp;
+}
+
+function getAlertHandler(numExpectedCalls = 0) {
+  const messages = [];
+  let numCalls = 0;
+
+  return (message = null) => {
+    numCalls++;
+    if (message) {
+      messages.push(message);
+    }
+    if (numCalls == numExpectedCalls && messages.length) {
+      VueApp.$store.commit("byKey", {
+        alertType: "warning",
+        alertMessage: messages.join("<br><br>"),
+      });
+    }
+  };
+}
+
+function checkDependencies(VueApp) {
+  const alertHandler = getAlertHandler(2);
+  window.utils.openSSLOnPath((onPath) => {
+    VueApp.$store.commit("setOpenSSLOnPath", onPath);
+    if (onPath === false) {
+      alertHandler(
+        "You don't have OpenSSL installed on your system, which is needed to run this program. "
+        + "You can download it here: <span class='alert-link' @click.stop='clickHandler($event)'>"
+        + "https://wiki.openssl.org/index.php/Binaries</span>"
+      );
+    } else {
+      alertHandler();
+    }
+  });
+  window.utils.pythonOnPath((onPath) => {
+    VueApp.$store.commit("setPythonOnPath", onPath);
+    if (onPath === false) {
+      alertHandler(
+        "You need to have python version 2.7.13+ installed on your path. "
+        + "You can download it here: <span class='alert-link' @click.stop='clickHandler($event)'>"
+        + "https://www.python.org/downloads/release/python-2714/</span>"
+      );
+    } else {
+      alertHandler();
+    }
+  });
 }
 
 // if this code was bundled and included in index.html,
 // where the expected container div is present,
 // then start the app immediately
 if (document.querySelector("#sjcda-main-div")) {
-  window.utils.readCachedFile("state.json", function(content) {
+  window.utils.readSJCloudFile("state.json", function(content) {
     const obj = JSON.parse(content);
     if (!obj) {
       console.log("Error parsing the cached state file.");

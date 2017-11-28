@@ -1,6 +1,6 @@
 {
   "name": "SJCPDataTransferApp",
-  "version": "1.0.2",
+  "version": "1.0.4",
   "description": "The St. Jude Cloud desktop app, designed for getting data in the St. Jude Cloud easily and reliably.",
   "homepage": "https://github.com/stjude/sjcloud-data-transfer",
   "main": "app/main.js",
@@ -54,6 +54,7 @@
     "jquery": "^3.2.1",
     "mkdirp": "^0.5.1",
     "pem": "^1.9.7",
+    "selfsigned": "^1.10.1",
     "spinkit": "^1.2.5",
     "tippy.js": "^1.2.0",
     "todc-bootstrap": "^3.3.7-3.3.13",
@@ -85,6 +86,7 @@
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.2",
     "gulp-jasmine": "^2.4.2",
+    "gulp-jsdoc3": "^1.0.1",
     "gulp-util": "^3.0.8",
     "jasmine": "^2.8.0",
     "jasmine-core": "*",

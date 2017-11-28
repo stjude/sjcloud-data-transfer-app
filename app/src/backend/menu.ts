@@ -5,6 +5,9 @@
 
 
 const app = require("electron").app;
+import { logging } from "./logging";
+
+logging.info("   - Setting application menu...");
 
 export let menuConfig = [
   {
