@@ -78,7 +78,7 @@
     "browser-sync-webpack-plugin": "^1.2.0",
     "css-loader": "^0.28.4",
     "d3-selection": "^1.1.0",
-    "electron": "~1.6.2",
+    "electron": "~1.7.9",
     "electron-builder": "^19.37.1",
     "electron-packager": "^9.1.0",
     "eslint": "^4.0.0",

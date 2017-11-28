@@ -53,12 +53,12 @@ export function getState(callback: (state: object) => void) {
         return callback(states.NEED_INSTALL);
       }
 
-      utils.dxLoggedIn((err: object, res: object) => {
+      dx.loggedIn((err: object, res: object) => {
         if (err) {
           return callback(states.NEED_LOGIN);
         }
 
-        utils.dxCheckProjectAccess((err: object, res: object) => {
+        dx.checkProjectAccess((err: object, res: object) => {
           if (err) {
             console.error(err);
             return callback(states.UNKNOWN);

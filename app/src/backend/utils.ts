@@ -31,14 +31,15 @@ export const sjcloudHomeDirectory = path.join(os.homedir(), ".sjcloud");
 export const dxToolkitDirectory = path.join(sjcloudHomeDirectory, "dx-toolkit");
 export const dxToolkitEnvironmentFile = path.join(dxToolkitDirectory, "environment");
 export const dnanexusCLIDirectory = "C:\\Program Files (x86)\\DNAnexus CLI";
+export const pythonBin = path.join(sjcloudHomeDirectory, "Python", "Versions", "2.7", "bin");
 export const defaultDownloadDir = path.join(os.homedir(), "Downloads");
 export const dnanexusPSscript = path.resolve(path.join(module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1"));
 
 
 /*******************************************************************************
- * Creates the ~/.sjcloud directory, if it doesn't exist.
- * Callback takes args (error, created_dir) to determine
- * whether this is the user's first time to run the app.
+ * Creates the ~/.sjcloud directory if it doesn't already exist.
+ * Callback takes args (error, created_dir) to determine whether this is the 
+ * user's first time to run the app.
  *
  * @param {SuccessCallback} callback
  ******************************************************************************/
@@ -92,7 +93,12 @@ function runCommandUnix(
 
   try {
     let stats = fs.statSync(dxToolkitEnvironmentFile);
-    if (stats) { cmd = `source ${dxToolkitEnvironmentFile}; ${cmd};` }
+    if (stats) { cmd = `source ${dxToolkitEnvironmentFile}; ${cmd}` }
+  } catch (err) { /* ignore */ }
+
+  try {
+    let stats = fs.statSync(pythonBin);
+    if (stats) { cmd = "PATH=" + pythonBin + ":$PATH; " + cmd }
   } catch (err) { /* ignore */ }
 
   cmd = `/usr/bin/env bash -c "${cmd}"`;
@@ -147,11 +153,13 @@ function runCommandWindows(
  *
  * @param {string} cmd Text to be entered at the command line
  * @param {SuccessCallback} callback
+ * @param {boolean} [raiseOnStderr=true] Raise an error if we see anything on stderr. 
  * @return {string}
  ******************************************************************************/
 export function runCommand(
   cmd: string,
-  callback: SuccessCallback
+  callback: SuccessCallback,
+  raiseOnStderr: boolean = true
 ): ChildProcess {
   const innerCallback = function (err: any, stdout: string, stderr: string) {
     if (err) {
@@ -159,7 +167,7 @@ export function runCommand(
       return callback(err, null);
     }
 
-    if (stderr && stderr.length > 0) {
+    if (raiseOnStderr && stderr && stderr.length > 0) {
       logging.error(stderr);
       return callback(stderr, null);
     }
@@ -298,31 +306,6 @@ export function dxToolkitOnPath(callback: SuccessCallback): void {
     runCommand("get-command dx", callback);
   }
 };
-
-
-/*******************************************************************************
- * Runs a command to determine if we are logged in to DNAnexus.
- * 
- * @param {SuccessCallback} callback
- ******************************************************************************/
-export function dxLoggedIn(callback: SuccessCallback): void {
-  runCommand("dx whoami", callback);
-};
-
-
-/*******************************************************************************
- * Checks if there's at least one project the user can upload data to.
- * 
- * @param {SuccessCallback} callback
- ******************************************************************************/
-export function dxCheckProjectAccess(callback: SuccessCallback): void {
-  if (platform === "linux" || platform === "darwin") {
-    runCommand("echo '0' | dx select --level UPLOAD", callback);
-  } else if (platform === "win32") {
-    runCommand("\"echo 0 | dx select --level UPLOAD\"", callback);
-  }
-};
-
 
 /*******************************************************************************
  * Downloads a normal file. Downloading of a DXFile is in dx.js

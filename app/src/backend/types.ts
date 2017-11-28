@@ -70,3 +70,8 @@ export interface SJDTAProject {
   dx_location: string,
   access_level: string,
 }
+
+export interface DXDownloadInfo {
+  URL: string;
+  SHA256SUM: string;
+}

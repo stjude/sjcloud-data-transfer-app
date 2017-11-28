@@ -5,6 +5,7 @@ if (window.location.port != "3057" && window.location.port != "9876" &&
    */
 
   window.dx = require("./bin/backend/dx");
+  window.dependency = require("./bin/backend/dependency");
   window.queue = require("./bin/backend/queue");
   window.oauth = require("./bin/backend/oauth");
   window.state = require("./bin/backend/state");

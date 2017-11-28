@@ -7,6 +7,7 @@ import {
   ResultCallback,
   SJDTAFile,
   SJDTAProject,
+  DXDownloadInfo
 } from "./types";
 
 import * as fs from "fs";
@@ -19,15 +20,11 @@ import * as child_process from "child_process";
 const async = require("async");
 const expandHomeDir = require("expand-home-dir");
 const config = require("../../../config.json");
+const platform = os.platform();
 
 /**********************************************************
  *                 Utility Functionality                  *
  **********************************************************/
-
-interface dxDownloadInfo {
-  URL: string;
-  SHA256SUM: string;
-}
 
 /**
  * Returns the URL and hash of the precompiled dx-toolkit 
@@ -40,7 +37,7 @@ interface dxDownloadInfo {
  * @param platform Name of the operating system.
  * @returns URL and hash of the download
  */
-function dxToolkitDownloadInfo(platform: string): dxDownloadInfo {
+function dxToolkitDownloadInfo(platform: string): DXDownloadInfo {
   switch (platform) {
     case "darwin": return config.DOWNLOAD_INFO.MAC;
     case "ubuntu12": return config.DOWNLOAD_INFO.UBUNTU_12;
@@ -54,6 +51,21 @@ function dxToolkitDownloadInfo(platform: string): dxDownloadInfo {
  *                DX-Toolkit Functionality                *
  **********************************************************/
 
+/*******************************************************************************
+* Runs a command to determine if we are logged in to DNAnexus.
+* 
+* @param {SuccessCallback} callback
+* @param dryrun Return the command that would have been run as a string.
+* @returns ChildProcess or string depending on the value of 'dryrun'.
+******************************************************************************/
+export function loggedIn(
+  callback: SuccessCallback,
+  dryrun: boolean = false
+): any {
+  const cmd = "dx whoami";
+  return dryrun ? cmd : utils.runCommand(cmd, callback);
+};
+
 /**
  * Login to DNAnexus using an authentication token
  * via the dx command line utility.
@@ -61,8 +73,8 @@ function dxToolkitDownloadInfo(platform: string): dxDownloadInfo {
  * @param token Authentication token
  * @param callback
  * @param dryrun Return the command that would have been run as a string.
-* @returns ChildProcess or string depending on the value of 'dryrun'.
-*/
+ * @returns ChildProcess or string depending on the value of 'dryrun'.
+ */
 export function login(
   token: string,
   callback: SuccessCallback,
@@ -112,6 +124,21 @@ export function describeDXItem(
     callback(err, JSON.parse(stdout));
   });
 };
+
+
+/*******************************************************************************
+ * Checks if there's at least one project the user can upload data to.
+ * 
+ * @param {SuccessCallback} callback
+ ******************************************************************************/
+export function checkProjectAccess(callback: SuccessCallback): void {
+  if (platform === "linux" || platform === "darwin") {
+    utils.runCommand("echo '0' | dx select --level UPLOAD", callback);
+  } else if (platform === "win32") {
+    utils.runCommand("\"echo 0 | dx select --level UPLOAD\"", callback);
+  }
+};
+
 
 /**
  * List all of the files available for download in a DNAnexus project.
@@ -345,7 +372,6 @@ export function listProjects(
 
       utils.runCommand(iterCmd, (err: any, stdout: string) => {
         if (err) { return iteratorCallback(err, []); }
-
         return iteratorCallback(null, parseDxProjects(stdout));
       });
     },
