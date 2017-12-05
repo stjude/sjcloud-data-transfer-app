@@ -25,8 +25,10 @@ if (!platform) throw new Error(`Unrecognized platform. Must be Windows, Mac, or 
  */
 export function getDownloadInfo(packagename: string): DXDownloadInfo {
   let platformUpper = platform.toUpperCase();
-  let archUpper = platform.toUpperCase();
+  let archUpper = arch.toUpperCase();
   packagename = packagename.toUpperCase();
+
+  logging.debug(`Platform: ${platformUpper}, Arch: ${archUpper}`);
 
   if (!('DOWNLOAD_INFO' in config)
     || !(packagename in config['DOWNLOAD_INFO'])
@@ -35,7 +37,7 @@ export function getDownloadInfo(packagename: string): DXDownloadInfo {
   }
 
   let dlInfo = config['DOWNLOAD_INFO'][packagename][platformUpper];
-  if (('IA32' in dlInfo) || ('X64' in dlInfo)) {
+  if (('WIN32' in dlInfo) || ('IA32' in dlInfo) || ('X64' in dlInfo)) {
     if (!(arch in dlInfo)) return null;
     dlInfo = dlInfo[arch];
   }
@@ -65,6 +67,14 @@ export function installAnaconda(
   const basename = path.basename(downloadURL);
 
   let destination = path.join(tmpdir, basename);
+
+  logging.debug("");
+  logging.debug("###########################");
+  logging.debug("# Installing Dependencies #");
+  logging.debug("###########################");
+  logging.debug("");
+
+
   progressCb(1, "Downloading...");
   downloadFile(downloadURL, destination, (error: any) => {
     if (error) return finishedCb(error, null);

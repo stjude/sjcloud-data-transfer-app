@@ -85,10 +85,10 @@ function checkDependencies(VueApp) {
     VueApp.$store.commit("setPythonOnPath", onPath);
     if (onPath === false) {
       alertHandler(
-        "Something has gone wrong during your installation process."
-        + "Please contact us at <span class='alert-link' "
-        + "@click.stop='clickHandler($event)'>https://stjude.cloud/contact"
-        + "</span>"
+        "Something has gone wrong during your installation process." +
+        "Please contact us at <span class='alert-link' " +
+        "@click.stop='clickHandler($event)'>https://stjude.cloud/contact" +
+        "</span>"
       );
     } else {
       alertHandler();

@@ -138,7 +138,7 @@ function runCommandWindows(
   cmd = windowsBootstrapCommand(cmd);
   const args = [
     "-NoLogo", "-InputFormat", "Text", "-NonInteractive", "-NoProfile",
-    "-Command", `${cmd} `
+    "-Command", `${cmd} `, `; exit $LASTEXITCODE;`
   ];
 
   let p = spawn("powershell.exe", args, { stdio: "pipe", maxBuffer: 10000000 });
@@ -182,6 +182,11 @@ export function runCommand(
     // removes banner printed by dnanexus-shell.ps1 script
     if (platform === "win32" && stdout.startsWith("DNAnexus CLI initialized")) {
       stdout = stdout.split("\n").slice(4).join("\n");
+    }
+
+    if (stdout.trim() === "False") {
+      /** Powershell sometimes just returns False */
+      return callback(new Error("STDOUT was False"), null);
     }
 
     return callback(null, stdout);
@@ -277,11 +282,11 @@ export function pythonOnPath(callback: ResultCallback): void {
  * @param {SuccessCallback} callback
  ******************************************************************************/
 export function dxToolkitInstalled(callback: SuccessCallback): void {
+  const dxLocation = path.join(anacondaSJCloudBin, "dx");
   if (platform === "linux" || platform === "darwin") {
-    const dxLocation = path.join(anacondaSJCloudBin, "dx");
     runCommand(`[ -f ${dxLocation} ]`, callback);
   } else if (platform === "win32") {
-    runCommand("get-command dx", callback);
+    runCommand(`[System.IO.File]::Exists("${dxLocation}")`, callback);
   }
 };
 

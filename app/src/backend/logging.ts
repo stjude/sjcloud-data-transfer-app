@@ -1,6 +1,7 @@
 const os = require("os");
 const path = require("path");
 const winston = require("winston");
+const moment = require("moment");
 
 const platform = os.platform();
 const nodeEnvironment = process.env.NODE_ENV || "production";
@@ -18,15 +19,28 @@ if (process.env.LOG_LEVEL) {
   logLevel = "info";
 } else logLevel = "debug";
 
+let logging = new (winston.Logger)({
+  level: logLevel,
+  handleExceptions: false,
+  transports: [
+    new (winston.transports.Console)({
+      timestamp() {
+        return moment().format('YYYY-MM-DD HH:mm:ss.SSSS');
+      },
+      formatter(params: any) {
+        return `[${params.timestamp()}] [${params.level.padEnd(6)}] *** ${params.message}`;
+      },
+    }),
+  ],
+});
+
 if (loggingFile !== "") {
-  winston.add(winston.transports.File, {
+  logging.add(winston.transports.File, {
     filename: loggingFile,
     level: logLevel,
     json: false,
   });
 }
-
-let logging = winston;
 
 export {
   logging,

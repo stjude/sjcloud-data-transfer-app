@@ -74,7 +74,9 @@ function bootstrapWindow(mainWindow) {
 
   if (!config.CHROMIUM_MENU) {
     logging.debug("Production menu enabled (chromium menu disabled).");
-    const {menuConfig} = require("./bin/backend/menu.js");
+    const {
+      menuConfig,
+    } = require("./bin/backend/menu.js");
     menu.setApplicationMenu(menu.buildFromTemplate(menuConfig));
   } else {
     logging.debug("Chromium menu enabled (production menu disabled).");
