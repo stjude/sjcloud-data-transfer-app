@@ -20,8 +20,14 @@ const router = new VueRouter({
   routes: routes(),
 });
 
-// exporting as a function allows delayed start
-// for testing, etc.
+/**
+ * exporting as a function allows delayed start
+ * for testing, etc.
+ *
+ * @param {*} selector
+ * @param {*} cachedState
+ * @return {*}
+ */
 export default function _App(selector, cachedState = {}) {
   // boostrap the app
   const VueApp = new Vue({
@@ -38,7 +44,7 @@ export default function _App(selector, cachedState = {}) {
   } else {
     window.state.getState((state) => {
       VueApp.$router.replace(state.path);
-      if (state.path === "install") {
+      if (state.path === "login") {
         checkDependencies(VueApp);
       }
     });
@@ -46,6 +52,11 @@ export default function _App(selector, cachedState = {}) {
   return VueApp;
 }
 
+/**
+ *
+ * @param {*} numExpectedCalls
+ * @return {*}
+ */
 function getAlertHandler(numExpectedCalls = 0) {
   const messages = [];
   let numCalls = 0;
@@ -64,27 +75,20 @@ function getAlertHandler(numExpectedCalls = 0) {
   };
 }
 
+/**
+ *
+ * @param {*} VueApp
+ */
 function checkDependencies(VueApp) {
   const alertHandler = getAlertHandler(2);
-  window.utils.openSSLOnPath((onPath) => {
-    VueApp.$store.commit("setOpenSSLOnPath", onPath);
-    if (onPath === false) {
-      alertHandler(
-        "You don't have OpenSSL installed on your system, which is needed to run this program. "
-        + "You can download it here: <span class='alert-link' @click.stop='clickHandler($event)'>"
-        + "https://wiki.openssl.org/index.php/Binaries</span>"
-      );
-    } else {
-      alertHandler();
-    }
-  });
   window.utils.pythonOnPath((onPath) => {
     VueApp.$store.commit("setPythonOnPath", onPath);
     if (onPath === false) {
       alertHandler(
-        "You need to have python version 2.7.13+ installed on your path. "
-        + "You can download it here: <span class='alert-link' @click.stop='clickHandler($event)'>"
-        + "https://www.python.org/downloads/release/python-2714/</span>"
+        "Something has gone wrong during your installation process."
+        + "Please contact us at <span class='alert-link' "
+        + "@click.stop='clickHandler($event)'>https://stjude.cloud/contact"
+        + "</span>"
       );
     } else {
       alertHandler();

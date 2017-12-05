@@ -45,8 +45,7 @@ export function getState(callback: (state: object) => void) {
       console.error(err);
       return callback(states.UNKNOWN);
     }
-
-    utils.dxToolkitOnPath((err: object, res: object) => {
+    utils.dxToolkitInstalled((err: object, res: object) => {
 
       if (err) {
         console.error(err);

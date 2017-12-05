@@ -22,30 +22,6 @@ const expandHomeDir = require("expand-home-dir");
 const config = require("../../../config.json");
 const platform = os.platform();
 
-/**********************************************************
- *                 Utility Functionality                  *
- **********************************************************/
-
-/**
- * Returns the URL and hash of the precompiled dx-toolkit 
- * for the platform passed in. The only platforms supported
- * are Mac, Windows, and Ubuntu flavored Linux. 
- * 
- * Unknown platform case handled in state.js.
- *
- * @see state.js
- * @param platform Name of the operating system.
- * @returns URL and hash of the download
- */
-function dxToolkitDownloadInfo(platform: string): DXDownloadInfo {
-  switch (platform) {
-    case "darwin": return config.DOWNLOAD_INFO.MAC;
-    case "ubuntu12": return config.DOWNLOAD_INFO.UBUNTU_12;
-    case "ubuntu14": return config.DOWNLOAD_INFO.UBUNTU_14;
-    case "win32": return config.DOWNLOAD_INFO.WINDOWS;
-    default: throw new Error("Unrecognized platform: " + platform);
-  }
-}
 
 /**********************************************************
  *                DX-Toolkit Functionality                *
@@ -382,69 +358,4 @@ export function listProjects(
       return callback(null, [].concat.apply([], results));
     }
   )
-};
-
-/**
- * Installs the dx-toolkit via the command line utility.
- *
- * @param updateProgress Function that updates on-screen progress bar.
- * @param callback Callback function.
-*/
-export function installDxToolkit(
-  updateProgress: ResultCallback,
-  callback: SuccessCallback
-) {
-  let platform: string = os.platform().toString();
-  if (platform === "linux") { platform = utils.getUbuntuVersionOrNull(); }
-  if (!platform) throw new Error(`Unrecognized platform: ${platform}.`);
-
-  const downloadInfo = dxToolkitDownloadInfo(platform);
-  const downloadURL: string = downloadInfo.URL;
-  const expectedDownloadHash: string = downloadInfo.SHA256SUM;
-
-  const tmpdir = os.tmpdir();
-  let dxToolkitDownloadPath = path.join(tmpdir, "dx-toolkit.tar.gz");
-  if (platform === "win32") {
-    dxToolkitDownloadPath = path.join(utils.getDXToolkitDir(), "dx-toolkit.exe");
-  }
-
-  const dxToolkitInstallDir = utils.getDXToolkitDir();
-  const parentDir = path.dirname(dxToolkitInstallDir);
-
-  // TODO(Clay): handle download failures throughout this whole block.
-
-  updateProgress(["30%", "Downloading..."]);
-  utils.downloadFile(downloadURL, dxToolkitDownloadPath, () => {
-    updateProgress(["60%", "Verifying..."]);
-    utils.computeSHA256(dxToolkitDownloadPath, (err: any, downloadHash: string) => {
-      if (err) {
-        return callback(true, `Could not verify download!\n\n${err}.`);
-      }
-
-      if (downloadHash !== expectedDownloadHash) {
-        return callback(true, "Could not verify download (hash mismatch)!");
-      }
-
-      if (platform === "win32") {
-        // For Windows, just execute the installer.
-        updateProgress(["90%", "Installing..."]);
-        setTimeout(() => {
-          child_process.execSync(dxToolkitDownloadPath);
-          updateProgress(["100%", "Success!"]);
-          return callback(null, true);
-        }, 500);
-      } else {
-        // for Mac + Linux, untar to correct place.
-        updateProgress(["90%", "Extracting..."]);
-        utils.untarTo(dxToolkitDownloadPath, parentDir, function (err: any, res: any) {
-          if (err) {
-            return callback(true, `Could not extract dx-toolkit!\n\n${err}.`);
-          }
-
-          updateProgress(["100%", "Success!"]);
-          return callback(null, true);
-        });
-      }
-    });
-  });
 };

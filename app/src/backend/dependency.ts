@@ -1,11 +1,17 @@
 const os = require("os");
 const path = require("path");
+const { logging } = require("./logging");
 const config = require("../../../config.json");
 import {
   runCommand,
-  getUbuntuVersionOrNull
+  getUbuntuVersionOrNull,
+  initSJCloudHome,
+  anacondaDirectory,
+  anacondaActivatePath,
+  sjcloudHomeDirectory,
 } from "./utils";
-import { DXDownloadInfo, SuccessCallback } from "./types";
+import { existsSync } from "fs";
+import { DXDownloadInfo, SuccessCallback, ErrorCallback, ProgressCallback } from "./types";
 import { downloadFile, runCommandSync } from "../../bin/backend/utils";
 
 let arch = os.arch();
@@ -37,56 +43,48 @@ export function getDownloadInfo(packagename: string): DXDownloadInfo {
   return dlInfo;
 }
 
-function extractPython(
-  filepath: string,
-  callback: SuccessCallback,
-  outputDir: string = "~/.sjcloud/Python2.7/"
-) {
-  const supportedExt = [".pkg"];
-  let ext = path.extname(filepath);
-  let parentDir = path.dirname(filepath);
-
-  if (supportedExt.indexOf(ext) == -1) {
-    return callback(new Error(`Extension '${ext}' not supported!`), null);
-  }
-
-  if (ext == ".pkg") {
-    const commandLinePayload = path.join(parentDir, "Python_Framework.pkg/", "Payload");
-
-    try {
-      runCommandSync("which xar");
-      runCommandSync("which gunzip");
-      runCommandSync("which cpio");
-      runCommandSync(`xar -xf ${filepath} -C ${parentDir}`);
-      runCommandSync(`[[ -d ${outputDir} ]] || mkdir -p ${outputDir}`);
-      runCommandSync(`cd ${outputDir}; cat ${commandLinePayload} | gunzip -dc | cpio -i`)
-      console.log(parentDir);
-    } catch (e) {
-      console.error(e);
-    }
-
-    console.log("Done!");
-    callback(null, true);
-  }
-}
-
 /**
  * 
  */
-export function installPython() {
-  const downloadInfo = getDownloadInfo("PYTHON2.7");
-  if (!downloadInfo) throw new Error("Could not get download info for PYTHON2.7");
+export function installAnaconda(
+  progressCb: ProgressCallback,
+  finishedCb: SuccessCallback
+) {
+
+  if (existsSync(anacondaDirectory)) {
+    throw new Error("Anaconda is already installed! This method should not be called.");
+  }
+
+  const downloadInfo = getDownloadInfo("ANACONDA");
+  if (!downloadInfo) throw new Error("Could not get download info for Anaconda based on your platform!");
 
   const downloadURL: string = downloadInfo.URL;
   const expectedDownloadHash: string = downloadInfo.SHA256SUM;
 
   const tmpdir = os.tmpdir();
   const basename = path.basename(downloadURL);
-  console.log(basename);
 
   let destination = path.join(tmpdir, basename);
-  downloadFile(downloadURL, destination, () => {
-    extractPython(destination, (error, result) => {
+  progressCb(1, "Downloading...");
+  downloadFile(downloadURL, destination, (error: any) => {
+    if (error) return finishedCb(error, null);
+    progressCb(30, "Installing... (step 1/4)");
+    initSJCloudHome((error, result) => {
+      if (error) return finishedCb(error, null);
+      progressCb(40, "Installing... (step 2/4)");
+      runCommand(`bash ${destination} -b -p ${anacondaDirectory}`, (error, res) => {
+        if (error) return finishedCb(error, null);
+        progressCb(70, "Installing... (step 3/4)");
+        runCommand(`conda create -n sjcloud python=2.7.14 -y`, (error, res) => {
+          if (error) return finishedCb(error, null);
+          progressCb(85, "Installing... (step 4/4)");
+          runCommand("pip install dxpy", (error, result) => {
+            if (error) return finishedCb(error, null);
+            progressCb(100, "Finished!");
+            return finishedCb(null, true);
+          });
+        })
+      }, false);
     });
   });
 }

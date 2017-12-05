@@ -28,10 +28,12 @@ const { exec, spawn, execSync, spawnSync, } = require("child_process");
 
 const platform = os.platform();
 export const sjcloudHomeDirectory = path.join(os.homedir(), ".sjcloud");
-export const dxToolkitDirectory = path.join(sjcloudHomeDirectory, "dx-toolkit");
-export const dxToolkitEnvironmentFile = path.join(dxToolkitDirectory, "environment");
+export const anacondaDirectory = path.join(sjcloudHomeDirectory, "anaconda");
+export const anacondaBinDirectory = path.join(anacondaDirectory, "bin");
+export const anacondaActivatePath = path.join(anacondaBinDirectory, "activate");
+export const anacondaSJCloudEnv = path.join(anacondaDirectory, "envs", "sjcloud");
+export const anacondaSJCloudBin = path.join(anacondaSJCloudEnv, "bin");
 export const dnanexusCLIDirectory = "C:\\Program Files (x86)\\DNAnexus CLI";
-export const pythonBin = path.join(sjcloudHomeDirectory, "Python", "Versions", "2.7", "bin");
 export const defaultDownloadDir = path.join(os.homedir(), "Downloads");
 export const dnanexusPSscript = path.resolve(path.join(module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1"));
 
@@ -57,22 +59,40 @@ export function initSJCloudHome(callback: SuccessCallback): void {
 };
 
 
-/*******************************************************************************
- * Find or create the "dx-toolkit" directory in the ".sjcloud"
- * directory and return its path.
- *
- * @return {string} Path of "dx-toolkit" directory
- ******************************************************************************/
-export function getDXToolkitDir(): string {
-  if (!fs.existsSync(module.exports.dxToolkitDirectory)) {
-    mkdirp(module.exports.dxToolkitDirectory, function (err: any) {
-      if (err) { return null; }
-      return module.exports.dxToolkitDirectory;
-    });
-  }
-  return module.exports.dxToolkitDirectory;
-};
+/**
+ * Prepend the correct environment variables for a UNIX command.
+ * 
+ * @param {string} cmd The command to be run.
+ * @returns {string} A command with the correct sources and PATH variable.
+ */
+function unixBootstrapCommand(cmd: string): string {
+  try {
+    let stats = fs.statSync(anacondaSJCloudEnv);
+    if (stats) { cmd = `source ${anacondaActivatePath} sjcloud; ${cmd}` }
+  } catch (err) { /* ignore */ }
 
+  try {
+    let stats = fs.statSync(anacondaBinDirectory);
+    if (stats) { cmd = `PATH=${anacondaBinDirectory}:$PATH ${cmd}` }
+  } catch (err) { /* ignore */ }
+
+  return cmd;
+}
+
+/**
+ * Prepend the correct environment variables for a Windows command.
+ * 
+ * @param {string} cmd The command to be run.
+ * @returns {string} A command with the correct sources and PATH variable.
+ */
+function windowsBootstrapCommand(cmd: string): string {
+  try {
+    let stats = fs.statSync(dnanexusPSscript);
+    if (stats) { cmd = `.'${dnanexusPSscript}'; ${cmd} `; }
+  } catch (err) { /* ignore */ }
+
+  return cmd;
+}
 
 /*******************************************************************************
  * Run a command on the Unix platform.
@@ -91,19 +111,10 @@ function runCommandUnix(
   // fs.statSync() is only to check if the "dx" utility can be sourced.
   // If it fails rother commands can still be run.
 
-  try {
-    let stats = fs.statSync(dxToolkitEnvironmentFile);
-    if (stats) { cmd = `source ${dxToolkitEnvironmentFile}; ${cmd}` }
-  } catch (err) { /* ignore */ }
-
-  try {
-    let stats = fs.statSync(pythonBin);
-    if (stats) { cmd = "PATH=" + pythonBin + ":$PATH; " + cmd }
-  } catch (err) { /* ignore */ }
-
+  cmd = unixBootstrapCommand(cmd);
   cmd = `/usr/bin/env bash -c "${cmd}"`;
   logging.info(cmd);
-  return exec(cmd, { shell: "/bin/bash", maxBuffer: 10000000, }, innerCallback);
+  return exec(cmd, { maxBuffer: 10000000, }, innerCallback);
 }
 
 
@@ -124,11 +135,7 @@ function runCommandWindows(
   // fs.statSync() is only to check if the "dx" utility can be sourced.
   // If it fails rother commands can still be run.
 
-  try {
-    let stats = fs.statSync(dnanexusPSscript);
-    if (stats) { cmd = `.'${dnanexusPSscript}'; ${cmd} `; }
-  } catch (err) { /* ignore */ }
-
+  cmd = windowsBootstrapCommand(cmd);
   const args = [
     "-NoLogo", "-InputFormat", "Text", "-NonInteractive", "-NoProfile",
     "-Command", `${cmd} `
@@ -202,11 +209,7 @@ export function runCommandSyncUnix(cmd: string): string {
   // fs.statSync() is only to check if the "dx" utility can be sourced.
   // If it fails rother commands can still be run.
 
-  try {
-    let stats = fs.statSync(dxToolkitEnvironmentFile);
-    if (stats) { cmd = `source ${dxToolkitEnvironmentFile}; ${cmd};` }
-  } catch (err) { /* ignore */ }
-
+  cmd = unixBootstrapCommand(cmd);
   return execSync(cmd, { shell: "/bin/bash", maxBuffer: 10000000 });
 }
 
@@ -225,11 +228,7 @@ export function runCommandSyncWindows(cmd: string): string {
   // fs.statSync() is only to check if the "dx" utility can be sourced.
   // If it fails rother commands can still be run.
 
-  try {
-    let stats = fs.statSync(dnanexusPSscript);
-    if (stats) { cmd = `.'${dnanexusPSscript}'; ${cmd} `; }
-  } catch (err) { /* ignore */ }
-
+  cmd = windowsBootstrapCommand(cmd);
   const args = [
     "-NoLogo", "-InputFormat", "Text", "-NonInteractive", "-NoProfile",
     "-Command", `${cmd} `
@@ -237,7 +236,6 @@ export function runCommandSyncWindows(cmd: string): string {
 
   return spawnSync("powershell.exe", args, { stdio: "pipe", maxBuffer: 10000000 });
 }
-
 
 /*******************************************************************************
  * Runs commands on the system command line synchronously.
@@ -255,42 +253,21 @@ export function runCommandSync(cmd: string): string {
 
 
 /*******************************************************************************
- * Determines if OpenSSL is accessible on the PATH.
- *
- * @todo Change callback to SuccessCallback
- * @param {ResultCallback} callback
- ******************************************************************************/
-export function openSSLOnPath(callback: ResultCallback) {
-  let innerCallback = function (err: any, res: any) { return callback(err); };
-
-  if (platform === "linux" || platform === "darwin") {
-    runCommand("which openssl", innerCallback);
-  } else if (platform === "win32") {
-    runCommand("get-command openssl", innerCallback);
-  } else throw new Error(`Invalid platform: ${platform}.`);
-};
-
-
-/*******************************************************************************
  * Determines if Python 2.7.13+ is accessible on the PATH.
  *
  * @todo Change callback to SuccessCallback
  * @param {ResultCallback} callback
  ******************************************************************************/
 export function pythonOnPath(callback: ResultCallback): void {
-  let innerCallback = function (err: any, res: any) {
-
-    // python versions before 3.4 print --version to stderr.
-    // Command never has stdout.
-
-    if (err.search("2.7.") === -1 || parseInt(err.slice(err.lastIndexOf(".") + 1)) < 13) {
-      return callback(false);
-    } else {
-      return callback(true);
-    }
-  };
-
-  runCommand("python --version", innerCallback);
+  const regex = /Python ([0-9]+).([0-9]+).([0-9]+)/;
+  runCommand("python --version", (err, res) => {
+    let match = regex.exec(err);
+    let [full, major, minor, patch] = match;
+    let majorNum = parseInt(major);
+    let minorNum = parseInt(minor);
+    let patchNum = parseInt(patch);
+    return callback(majorNum === 2 && minorNum === 7 && patchNum >= 13);
+  });
 };
 
 
@@ -299,9 +276,10 @@ export function pythonOnPath(callback: ResultCallback): void {
  *
  * @param {SuccessCallback} callback
  ******************************************************************************/
-export function dxToolkitOnPath(callback: SuccessCallback): void {
+export function dxToolkitInstalled(callback: SuccessCallback): void {
   if (platform === "linux" || platform === "darwin") {
-    runCommand("which dx", callback);
+    const dxLocation = path.join(anacondaSJCloudBin, "dx");
+    runCommand(`[ -f ${dxLocation} ]`, callback);
   } else if (platform === "win32") {
     runCommand("get-command dx", callback);
   }

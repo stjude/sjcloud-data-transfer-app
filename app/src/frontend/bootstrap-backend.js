@@ -120,9 +120,6 @@ if (window.location.port != "3057" && window.location.port != "9876" &&
   };
   window.ui = {};
   window.utils = {
-    openSSLOnPath() {
-
-    },
     pythonOnPath() {
 
     },

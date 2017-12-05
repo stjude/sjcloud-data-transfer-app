@@ -5,10 +5,9 @@
 export default {
   state: {
     /** Install **/
-    openSSLOnPath: true,
     pythonOnPath: true,
     downloadStatus: "Downloading...",
-    installingDxToolkit: "waiting",
+    installingDependencies: "waiting",
 
     /** Login **/
     loginState: "waiting",
@@ -16,14 +15,11 @@ export default {
   },
   getters: {
     /** Install **/
-    openSSLOnPath(state) {
-      return state.openSSLOnPath;
-    },
     pythonOnPath(state) {
       return state.pythonOnPath;
     },
-    installingDxToolkit(state, getters) {
-      return state.installingDxToolkit;
+    installingDependencies(state, getters) {
+      return state.installingDependencies;
     },
     downloadStatus(state, getters) {
       return state.downloadStatus;
@@ -39,14 +35,11 @@ export default {
   },
   mutations: {
     /** Install **/
-    setOpenSSLOnPath(state, onPath) {
-      state.openSSLOnPath = onPath;
-    },
     setPythonOnPath(state, onPath) {
       state.pythonOnPath = onPath;
     },
-    setInstallingDxToolkit(state, installing) {
-      state.installingDxToolkit = installing;
+    setInstallingDependencies(state, installing) {
+      state.installingDependencies = installing;
     },
     setDownloadStatus(state, status) {
       state.downloadStatus = status;
