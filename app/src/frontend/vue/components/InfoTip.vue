@@ -1,10 +1,11 @@
 <template>
-  <i id="icon"
-     class='material-icons icon'
-     :title="infoTipText"
-     v-tippy="{'size': 'big', 'position': 'bottom', 'arrow': true}">
-    info
-  </i>
+  <div class='info-icon-wrapper-div'>
+    <i class='material-icons icon'
+       :title="infoTipText"
+       v-tippy="{'size': 'big', 'position': 'bottom', 'arrow': true}">
+      info
+    </i>
+  </div>
 </template>
 
 <script>
@@ -32,7 +33,16 @@ export default {
 </style>
 
 <style>
-  .tippy-tooltip-content {
-    font-size: 16px !important;
-  }
+.info-icon-wrapper-div {
+  display: inline-block;
+  vertical-align: middle;
+  padding: 0 0 0 0;
+  overflow: hidden;
+  margin: 0;
+  height: 30px;
+}
+
+.tippy-tooltip-content {
+  font-size: 16px !important;
+}
 </style>

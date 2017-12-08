@@ -158,4 +158,8 @@ body {
 input {
 	border: 1px solid #ccc;
 }
+
+.material-icons {
+	vertical-align: top;
+}
 </style>

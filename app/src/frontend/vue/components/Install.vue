@@ -115,7 +115,7 @@ export default {
 .info-icon-wrapper-div {
   display: inline-block;
   vertical-align: top;
-  padding: 0 0 8px 0;
+  padding: 5px 0 0 0;
   overflow: hidden;
   margin: 0;
   height: 30px;
