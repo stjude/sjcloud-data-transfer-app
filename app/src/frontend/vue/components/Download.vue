@@ -28,7 +28,7 @@
 					<input id="downloadTextInput" type="text"
 						   v-model="downloadLocation"
 						   v-on:click.prevent="selectDownloadLocation"
-						   readonly>
+						   readonly />
 				</div>
 				<div class="bottom-bar-right">
 					<button class='btn btn-primary btn-stjude download-btn' 

@@ -1,4 +1,4 @@
-import Config from "../../../../config.json";
+import Config from "../../../../../config.json";
 
 /*
 	To-Do: convert to a Vuex.module for use in store.js
