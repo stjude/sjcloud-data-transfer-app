@@ -8,8 +8,8 @@
 		      </div>
 
 		      <div class="modal-body">
-		        <slot name="body">
-		          <p>The St. Jude Cloud Platform is powered by the genomics processing company <a href='' target='_blank' @click.prevent='open("https://www.dnanexus.com/", $event)'>DNAnexus</a>. This desktop application uses their "dx-toolkit" software, a suite of tools that enables reliable uploads and downloads of files from their servers.</p>
+		        <slot name="body" style='font-style: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif'>
+		          <div>The St. Jude Cloud Platform is powered by the genomics processing company <a href='' target='_blank' @click.prevent='open("https://www.dnanexus.com/", $event)'>DNAnexus</a>. This desktop application uses their "dx-toolkit" software, a suite of tools that enables reliable uploads and downloads of files from their servers.</div>
 		          <h3>Learn more</h3>
 		          <ul>
 		          	<li><a href='' target='_blank' @click.prevent='open("https://github.com/dnanexus/dx-toolkit",$event)'>View dx-toolkit source</a></li>

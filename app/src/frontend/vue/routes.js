@@ -5,7 +5,7 @@ import Upload from "./components/Upload.vue";
 import Download from "./components/Download.vue";
 import Install from "./components/Install.vue";
 import LogIn from "./components/LogIn.vue";
-import Stepper from "./components/Stepper.vue";
+import InitialSteps from "./components/InitialSteps.vue";
 
 export default function() {
   return [{
@@ -13,10 +13,10 @@ export default function() {
     component: Home,
   }, {
     path: "/install",
-    component: Stepper,
+    component: InitialSteps,
   }, {
     path: "/login",
-    component: Stepper,
+    component: InitialSteps,
   }, {
     path: "/upload",
     component: Upload,
