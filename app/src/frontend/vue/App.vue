@@ -96,12 +96,10 @@ body {
 	width: 900px;
 }
 
-
 .sjcda-container {
 	background-color: #FFFFFF;
 	overflow: hidden;
 }
-
 
 .row {
 	margin-left:0;
@@ -155,5 +153,9 @@ body {
 	text-align: center;
 	z-index: 999999;
 	opacity: 1;
+}
+
+input {
+	border: 1px solid #ccc;
 }
 </style>
