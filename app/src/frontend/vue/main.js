@@ -39,7 +39,7 @@ export default function _App(selector, cachedState = {}) {
     VueApp.$router.replace("home");
   } else {
     VueApp.$router.replace("/");
-    window.state.getState((state) => {
+    window.state.getState((state) => { //state.path='install';
       VueApp.$router.replace(state.path);
       if (state.path === "install") {
         checkDependencies(VueApp);
@@ -72,27 +72,19 @@ function checkDependencies(VueApp) {
   const alertHandler = getAlertHandler(2);
   window.utils.openSSLOnPath((onPath) => {
     VueApp.$store.commit("setOpenSSLOnPath", onPath);
-    if (onPath === false) {
-      alertHandler(
-        "You don't have OpenSSL installed on your system, which is needed to run this program. "
-        + "You can download it here: <span class='alert-link' @click.stop='clickHandler($event)'>"
-        + "https://wiki.openssl.org/index.php/Binaries</span>"
-      );
-    } else {
-      alertHandler();
-    }
+    alertHandler( 1 || onPath !== false ? ''
+      : "You don't have OpenSSL installed on your system, which is needed to run this program. "
+      + "You can download it here: <span class='alert-link' @click.stop='clickHandler($event)'>"
+      + "https://wiki.openssl.org/index.php/Binaries</span>"
+    );
   });
   window.utils.pythonOnPath((onPath) => {
     VueApp.$store.commit("setPythonOnPath", onPath);
-    if (onPath === false) {
-      alertHandler(
-        "You need to have python version 2.7.13+ installed on your path. "
-        + "You can download it here: <span class='alert-link' @click.stop='clickHandler($event)'>"
-        + "https://www.python.org/downloads/release/python-2714/</span>"
-      );
-    } else {
-      alertHandler();
-    }
+    alertHandler( 1 || onPath !== false ? ''
+      : "You need to have python version 2.7.13+ installed on your path. "
+      + "You can download it here: <span class='alert-link' @click.stop='clickHandler($event)'>"
+      + "https://www.python.org/downloads/release/python-2714/</span>"
+    );
   });
 }
 

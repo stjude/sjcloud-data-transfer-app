@@ -38,7 +38,6 @@
 				<span style="left: 565px">Upload</span>
 			</div>
 		</div>
-		-->
 	</div>
 </template>
 

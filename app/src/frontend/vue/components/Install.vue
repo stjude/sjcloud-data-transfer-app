@@ -86,7 +86,7 @@ export default {
       this.$store.commit("setInstallingDxToolkit", "installing");
 
       window.dx.installDxToolkit(
-        (percent, text) => {
+        ([percent, text]) => {
           this.setDownloadStatus(text);
           this.percentage=100*percent;
         },

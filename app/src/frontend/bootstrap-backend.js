@@ -28,16 +28,16 @@ if (window.location.port != "3057" && window.location.port != "9876" &&
       }, 500);
     },
     installDxToolkit(updateProgress, callback) {
-      updateProgress(0.3, "Downloading...");
+      updateProgress([0.3, "Downloading..."]);
 
       setTimeout(() => {
-        updateProgress(0.6, "Verifying...");
+        updateProgress([0.6, "Verifying..."]);
 
         setTimeout(() => {
-          updateProgress(0.9, "Extracting...");
+          updateProgress([0.9, "Extracting..."]);
 
           setTimeout(() => {
-            updateProgress(1, "Completed!");
+            updateProgress([1, "Completed!"]);
             return callback(null, true);
           }, 2000);
         }, 1500);
@@ -121,8 +121,8 @@ if (window.location.port != "3057" && window.location.port != "9876" &&
     },
   };
   window.state = {
-    getState() {
-
+    getState(callback) {
+      callback({});
     },
   };
   window.ui = {};

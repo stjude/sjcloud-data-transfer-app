@@ -387,9 +387,9 @@ export function installDxToolkit(
 
   // TODO(Clay): handle download failures throughout this whole block.
 
-  updateProgress(["30%", "Downloading..."]);
+  updateProgress([0.3, "Downloading..."]);
   utils.downloadFile(downloadURL, dxToolkitDownloadPath, () => {
-    updateProgress(["60%", "Verifying..."]);
+    updateProgress([0.6, "Verifying..."]);
     utils.computeSHA256(dxToolkitDownloadPath, (err: any, downloadHash: string) => {
       if (err) {
         return callback(true, `Could not verify download!\n\n${err}.`);
@@ -401,21 +401,21 @@ export function installDxToolkit(
 
       if (platform === "win32") {
         // For Windows, just execute the installer.
-        updateProgress(["90%", "Installing..."]);
+        updateProgress([0.9, "Installing..."]);
         setTimeout(() => {
           child_process.execSync(dxToolkitDownloadPath);
-          updateProgress(["100%", "Success!"]);
+          updateProgress([1, "Success!"]);
           return callback(null, true);
         }, 500);
       } else {
         // for Mac + Linux, untar to correct place.
-        updateProgress(["90%", "Extracting..."]);
+        updateProgress([0.9, "Extracting..."]);
         utils.untarTo(dxToolkitDownloadPath, parentDir, function (err: any, res: any) {
           if (err) {
             return callback(true, `Could not extract dx-toolkit!\n\n${err}.`);
           }
 
-          updateProgress(["100%", "Success!"]);
+          updateProgress([1, "Success!"]);
           return callback(null, true);
         });
       }
