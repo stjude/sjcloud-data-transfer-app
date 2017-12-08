@@ -1,7 +1,7 @@
 <template>
   <i id="icon"
      class='material-icons icon'
-     :title="tooltipText"
+     :title="infoTipText"
      v-tippy="{'size': 'big', 'position': 'bottom', 'arrow': true}">
     info
   </i>
@@ -9,9 +9,9 @@
 
 <script>
 export default {
-  props: {
-    tooltipText: {
-      default: 'Hello world!'
+  computed: {
+    infoTipText() {
+      return this.$store.getters.infoTipText
     }
   },
   data: () => {

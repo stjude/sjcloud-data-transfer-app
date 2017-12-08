@@ -40,8 +40,7 @@
 				<!-- _empty_tip_ prevents tippy destroy error -->
 				<step-outcome 
 					successMessage='Upload complete!' 
-					outcome='done'
-					tooltipText="_empty_tip_"></step-outcome>
+					outcome='done'></step-outcome>
 				<div class="upload-complete-btn-div">
 					<button id="ready-to-run-btn" 
                   class='btn btn-stjude'
@@ -107,6 +106,9 @@ export default {
 		transferComplete() {
 			return this.$store.getters.transferComplete
 		}
+	},
+	mounted() {
+		this.$store.commit('setInfoTipText',"");
 	},
 	methods: {
 		openExternal(url) {

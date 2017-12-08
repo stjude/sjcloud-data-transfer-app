@@ -4,12 +4,14 @@ import routes from "./routes.js";
 import App from "./App.vue";
 import store from "./store";
 import vueTippy from "vue-tippy";
+import Quasar from 'quasar';
 
 // configure Vue
 Vue.config.debug = true;
 Vue.config.devtools = false; // silence message about downloading dev tools
 Vue.use(VueRouter);
 Vue.use(vueTippy);
+Vue.use(Quasar);
 console.log("Node Environment: " + process.env.NODE_ENV);
 
 // create router
@@ -43,6 +45,7 @@ export default function _App(selector, cachedState = {}) {
       }
     });
   }
+  
   return VueApp;
 }
 

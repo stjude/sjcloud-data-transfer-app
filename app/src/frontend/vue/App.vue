@@ -15,6 +15,9 @@ import UserMenu from './components/UserMenu.vue';
 import SettingsModal from './components/SettingsModal.vue';
 import tour from '../tour.js';
 import CustomAlert from './components/CustomAlert.vue';
+import 'quasar-extras/material-icons';
+import 'quasar-extras/roboto-font';
+import 'quasar/dist/quasar.mat.css';
 
 export default {
 	components: {

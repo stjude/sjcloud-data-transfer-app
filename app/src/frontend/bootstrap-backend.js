@@ -27,13 +27,21 @@ if (window.location.port != "3057" && window.location.port != "9876" &&
           .catch((err) => console.log(err));
       }, 500);
     },
-    install(updateProgress, callback) {
-      updateProgress("30%", "Downloading...");
+    installDxToolkit(updateProgress, callback) {
+      updateProgress(0.3, "Downloading...");
 
       setTimeout(() => {
-        updateProgress("100%", "Success!");
-        return callback(null, true);
-      }, 1500);
+        updateProgress(0.6, "Verifying...");
+
+        setTimeout(() => {
+          updateProgress(0.9, "Extracting...");
+
+          setTimeout(() => {
+            updateProgress(1, "Completed!");
+            return callback(null, true);
+          }, 3000);
+        }, 3000);
+      },3000);
     },
     login(token, callback) {
       setTimeout(callback, 1500);

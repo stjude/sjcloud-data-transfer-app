@@ -68,6 +68,7 @@ const storeGlobal = {
     currPath: "upload",
     downloadLocation: window.utils.defaultDownloadDir,
     testdata: "",
+    infoTipText: ''
   },
   getters: {
     environment(state, getters) {
@@ -82,6 +83,9 @@ const storeGlobal = {
     testdata(state) {
       return state.testdata;
     },
+    infoTipText(state) {
+      return state.infoTipText;
+    }
   },
   mutations: {
     // generic mutation setter
@@ -98,7 +102,9 @@ const storeGlobal = {
     setDownloadLocation(state, location) {
       state.downloadLocation = location;
     },
-
+    setInfoTipText(state,text) {
+      state.infoTipText = text;
+    },
     setTestdata(state, str) {
       state.testdata = str;
     },
