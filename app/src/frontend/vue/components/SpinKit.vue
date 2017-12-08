@@ -11,7 +11,7 @@
          v-bind:style='textStyle'>
          {{ btmLabel }}
     </div>
-    <q-progress v-show='percentage>0' :percentage="percentage" style='width: 500px; margin: auto' />
+    <q-progress v-show='percentage>0' :percentage="percentage" style='width: 350px; margin: auto' />
 	</div>
 </template>
 

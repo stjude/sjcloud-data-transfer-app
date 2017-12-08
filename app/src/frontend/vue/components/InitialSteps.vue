@@ -9,24 +9,23 @@
 			</select>
 		</div>
 
-		<!--
-		<q-stepper ref="stepper">
-			<q-step icon='1' title="Install">
+		<q-stepper v-if='stepper==1' ref='stepper'>
+			<q-step title="Install" name='install' key='initSteps' active-icon='file download'>
 				<install></install>
 			</q-step>
-			<q-step title="Login">
+		
+			<q-step title="Login" name='login' key='initSteps' active-icon='vpn key'>
 				<log-in></log-in>
 			</q-step>
-			<q-step title="Upload">
+			<q-step title="Upload" name='upload' key='initSteps' active-icon='timelapse'>
 				You are ready to upload.
 			</q-step>
 		</q-stepper>
-		-->
-
-		<install v-if="currPath=='install'"></install>
-		<log-in v-else="currPath=='login'"></log-in>
-
-		<div class='col-xs-12 footer'>
+		
+		<install v-if="currPath=='install' && !stepper"></install>
+		<log-in v-else="currPath=='login' && !stepper"></log-in>
+		
+		<div v-if='!stepper' class='col-xs-12 footer'>
 			<div class='progress'>
 				<div class='progress-bar progress-bar-div'></div>
 				<div class='progress-node progress-node-active'>1</div>
@@ -39,11 +38,12 @@
 				<span style="left: 565px">Upload</span>
 			</div>
 		</div>
+		-->
 	</div>
 </template>
 
 <script>
-import {QStepper, QStep} from "quasar";
+import {QStepper, QStep, QTransition} from "quasar";
 import Install from './Install.vue';
 import LogIn from './LogIn.vue';
 
@@ -52,19 +52,31 @@ export default {
 		QStepper,
 		QStep,
 		Install,
-		LogIn
+		LogIn,
+		QTransition
 	},
 	computed: {
 	    environment() {
 	      return this.$store.getters.environment;
 	    },
 	    currPath() {
+	    	if (this.$store.getters.currPath=='login' && this.stepper) {
+				this.$refs.stepper.goToStep('login')
+			}
 	    	return this.$store.getters.currPath;
 	    },
 	    step2IconCls() {
 	    	return this.$store.getters.currPath=="install" ? "progress-node progress-node-nonactive" : "progress-node progress-node-active"
+	    },
+	    stepper() {
+	    	return window.location.search.includes('stepper=1') //&& this.$refs.stepper
 	    }
 	},
+	updated() {
+		if (this.$store.getters.currPath=='login' && this.stepper) {
+			this.$refs.stepper.goToStep('login')
+		}
+	}, 
 	methods: {
 		setInstallingDxToolkit(installing) {
 	      this.$store.commit("setInstallingDxToolkit", installing);

@@ -8,7 +8,7 @@ import Quasar from 'quasar';
 
 // configure Vue
 Vue.config.debug = true;
-Vue.config.devtools = false; // silence message about downloading dev tools
+Vue.config.devtools = true;
 Vue.use(VueRouter);
 Vue.use(vueTippy);
 Vue.use(Quasar);
@@ -33,11 +33,12 @@ export default function _App(selector, cachedState = {}) {
     store: store(cachedState),
   });
 
-  VueApp.$router.replace("/");
-
-  if (process.env.NODE_ENV === "development") {
+  if (VueApp.$store.getters.testdata) {
+    // retain route path for easier testing on the browser
+  } else if (process.env.NODE_ENV === "development") {
     VueApp.$router.replace("home");
   } else {
+    VueApp.$router.replace("/");
     window.state.getState((state) => {
       VueApp.$router.replace(state.path);
       if (state.path === "install") {

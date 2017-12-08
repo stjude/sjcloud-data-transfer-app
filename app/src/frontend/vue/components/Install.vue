@@ -84,24 +84,22 @@ export default {
     },
     downloadDxToolkit() {
       this.$store.commit("setInstallingDxToolkit", "installing");
-      var that = this;
 
       window.dx.installDxToolkit(
-        function(percent, text) {
-          that.setDownloadStatus(text);
-          that.percentage=100*percent;
+        (percent, text) => {
+          this.setDownloadStatus(text);
+          this.percentage=100*percent;
         },
-        function(err, result) {
+        (err, result) => {
           if (err) {
-            that.setDownloadStatus(text);
-            that.$store.commit("setInstallingDxToolkit", "failed");
+            this.setDownloadStatus(text);
+            this.$store.commit("setInstallingDxToolkit", "failed");
           } else {
-            that.$store.commit("setInstallingDxToolkit", "completed");
-            setTimeout(function() {
-              that.$router.push("login");
+            this.$store.commit("setInstallingDxToolkit", "completed");
+            setTimeout(()=>{
+              this.$router.push("login");
             }, 2500);
           }
-
           return result;
         }
       );

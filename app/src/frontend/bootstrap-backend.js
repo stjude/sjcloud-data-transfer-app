@@ -39,9 +39,9 @@ if (window.location.port != "3057" && window.location.port != "9876" &&
           setTimeout(() => {
             updateProgress(1, "Completed!");
             return callback(null, true);
-          }, 3000);
-        }, 3000);
-      },3000);
+          }, 2000);
+        }, 1500);
+      },1500);
     },
     login(token, callback) {
       setTimeout(callback, 1500);
