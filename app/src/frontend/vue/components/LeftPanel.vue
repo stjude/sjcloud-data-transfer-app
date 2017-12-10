@@ -86,12 +86,11 @@ export default {
   },
   created() {},
   updated() {
-    console.log(this.$store.currPath);
     if (
       this.$store.currPath === "upload" ||
       this.$store.currPath === "download"
     ) {
-      this.$store.dispatch("updateToolsFromRemote");
+      this.$store.dispatch("updateCurrentToolFromURI");
     }
   },
   computed: {
