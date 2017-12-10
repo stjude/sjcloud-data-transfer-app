@@ -85,10 +85,10 @@ export default {
     downloadDependencies() {
       this.$store.commit("setInstallingDependencies", "installing");
 
-      window.dx.installDxToolkit(
-        ([percent, text]) => {
+      window.dependency.installAnaconda(
+        (percent, text) => {
           this.setDownloadStatus(text);
-          this.percentage = 100 * percent;
+          this.percentage = percent;
         },
         (err, result) => {
           if (err) {
