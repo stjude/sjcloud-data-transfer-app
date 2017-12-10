@@ -37,11 +37,12 @@ logging.info(" ###############################################");
 logging.info(" # Starting the SJCP Data Transfer Application #");
 logging.info(" ###############################################");
 logging.info("");
-logging.info(" [*] Environment: " + nodeEnvironment);
-logging.info(" [*] Log Level: " + logLevel);
-logging.info(" [*] Process arguments:");
+logging.info(" == Startup Information ==");
+logging.info("   [*] Environment: " + nodeEnvironment);
+logging.info("   [*] Log Level: " + logLevel);
+logging.info("   [*] Process arguments:");
 process.argv.forEach((elem, index) => {
-  logging.info("   " + index + ": " + elem);
+  logging.info("       [-] " + index + ": " + elem);
 });
 logging.info("");
 logging.info(" == Bootstrapping Environment ==");
@@ -86,9 +87,9 @@ function bootstrapWindow(mainWindow) {
     const autoupdater = require("./bin/backend/autoupdate");
     autoupdater.startUpdateClient();
   }
-}
 
-logging.info("");
+  logging.info("");
+}
 
 /**
  * Ensure that a main window exists.
@@ -129,7 +130,7 @@ app.on("ready", () => {
     }
 
     if (uriCommand) {
-      logging.info(`Running JS command: ${uriCommand}`);
+      logging.silly(`Running JS command: ${uriCommand}`);
       mainWindow.webContents.executeJavaScript("window.setCurrPath = 'upload';");
       mainWindow.webContents.executeJavaScript(uriCommand);
     }
@@ -151,7 +152,7 @@ app.on("open-url", (event, url) => {
 
     if (uriCommand !== "") {
       ensureWindow(() => {
-        logging.info(`Running JS command: ${uriCommand}`);
+        logging.silly(`Running JS command: ${uriCommand}`);
         mainWindow.webContents.executeJavaScript("window.currPath = 'upload';");
         mainWindow.webContents.executeJavaScript(uriCommand);
         mainWindow.webContents.executeJavaScript("window.VueApp.$store.dispatch('updateToolsFromRemote', true);");

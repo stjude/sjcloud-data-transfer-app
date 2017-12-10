@@ -15,7 +15,7 @@ app.setAsDefaultProtocolClient("sjcloud");
  */
 function handleURI(uri: string): string {
   if (uri && uri.search("sjcloud://") != -1) {
-    logging.info("Handling custom URI:", uri);
+    logging.debug("  [*] Handling custom URI:", uri);
     let projectName = uri.replace("sjcloud://", "");
 
     // remove ending slash.
