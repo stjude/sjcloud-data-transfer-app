@@ -2,16 +2,14 @@ const os = require("os");
 const path = require("path");
 const winston = require("winston");
 const moment = require("moment");
+const fs = require("fs-extra");
 
 const platform = os.platform();
 const nodeEnvironment = process.env.NODE_ENV || "production";
 
-let loggingFile = path.join(
-  platform === "win32" ? process.env.HOMEPATH : process.env.HOME,
-  ".sjcloud/log.txt"
-);
-
 let logLevel = "";
+let loggingFile = path.join(platform === "win32" ? process.env.USERPROFILE : process.env.HOME, ".sjcloud/log.txt");
+fs.ensureFileSync(loggingFile);
 
 if (process.env.LOG_LEVEL) {
   logLevel = process.env.LOG_LEVEL;
@@ -31,16 +29,14 @@ let logging = new (winston.Logger)({
         return `[${params.timestamp()}] [${params.level.padEnd(6)}] *** ${params.message}`;
       },
     }),
+    new (winston.transports.File)({
+      filename: loggingFile,
+      maxsize: 5242880,
+      json: false,
+    })
   ],
 });
 
-if (loggingFile !== "") {
-  logging.add(winston.transports.File, {
-    filename: loggingFile,
-    level: logLevel,
-    json: false,
-  });
-}
 
 export {
   logging,

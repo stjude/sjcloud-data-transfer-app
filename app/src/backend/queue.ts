@@ -15,7 +15,7 @@ const PRIORITY = {
 /**
  * @todo Better exposure of debugging.
  */
-const enableDebug = true;
+const enableDebug = false;
 
 /**
  * Log a message to the console if configured.

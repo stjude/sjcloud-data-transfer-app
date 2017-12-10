@@ -34,16 +34,14 @@ export function getState(callback: (state: object) => void) {
   self = this;
   const platform = os.platform();
   logging.debug("");
-  logging.debug("#####################");
-  logging.debug("# Determining state #");
-  logging.debug("#####################");
-  logging.debug("");
+  logging.debug("== Determining state ==");
 
   if (platform !== "darwin" && platform !== "linux" && platform !== "win32") {
-    console.error(`Could not determine platform: ${platform}.`);
+    console.error(`Invalid platform: ${platform}.`);
     return callback(states.UNKNOWN);
   }
 
+  logging.debug(`  [*] Platform is ${platform}.`);
   utils.initSJCloudHome((err: object, res: object) => {
     if (err) {
       console.error(err);
@@ -51,6 +49,7 @@ export function getState(callback: (state: object) => void) {
       return callback(states.UNKNOWN);
     }
 
+    logging.debug("  [*] SJCloud home directory initialized.");
     utils.dxToolkitInstalled((err: object, res: object) => {
 
       if (err) {

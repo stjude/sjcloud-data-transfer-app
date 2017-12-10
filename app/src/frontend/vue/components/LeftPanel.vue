@@ -84,11 +84,15 @@ export default {
       }
     };
   },
-  created() {
-    //this.$store.dispatch('updateToolsFromRemote');
-  },
+  created() {},
   updated() {
-    this.$store.dispatch("updateCurrentToolFromURI");
+    console.log(this.$store.currPath);
+    if (
+      this.$store.currPath === "upload" ||
+      this.$store.currPath === "download"
+    ) {
+      this.$store.dispatch("updateToolsFromRemote");
+    }
   },
   computed: {
     uriProject() {
@@ -115,7 +119,6 @@ export default {
   },
   watch: {
     uriProject: function(val) {
-      console.log("URI project changed!", val);
       this.$store.commit("setCurrToolName", val, true);
     }
   },

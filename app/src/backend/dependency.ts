@@ -1,6 +1,5 @@
 const os = require("os");
 const path = require("path");
-const { logging } = require("./logging");
 const config = require("../../../config.json");
 import {
   runCommand,
@@ -13,6 +12,7 @@ import {
 import { existsSync } from "fs";
 import { DXDownloadInfo, SuccessCallback, ErrorCallback, ProgressCallback } from "./types";
 import { downloadFile, runCommandSync } from "../../bin/backend/utils";
+import * as logging from "../../bin/backend/logging-remote";
 
 let arch = os.arch();
 let platform = os.platform();
@@ -28,18 +28,22 @@ export function getDownloadInfo(packagename: string): DXDownloadInfo {
   let archUpper = arch.toUpperCase();
   packagename = packagename.toUpperCase();
 
-  logging.debug(`Platform: ${platformUpper}, Arch: ${archUpper}`);
+  if (!('DOWNLOAD_INFO' in config)) {
+    return null;
+  }
 
-  if (!('DOWNLOAD_INFO' in config)
-    || !(packagename in config['DOWNLOAD_INFO'])
-    || !(platformUpper in config['DOWNLOAD_INFO'][packagename])) {
+  if (!(packagename in config['DOWNLOAD_INFO'])) {
+    return null;
+  }
+
+  if (!(platformUpper in config['DOWNLOAD_INFO'][packagename])) {
     return null;
   }
 
   let dlInfo = config['DOWNLOAD_INFO'][packagename][platformUpper];
-  if (('WIN32' in dlInfo) || ('IA32' in dlInfo) || ('X64' in dlInfo)) {
-    if (!(arch in dlInfo)) return null;
-    dlInfo = dlInfo[arch];
+  if (('IA32' in dlInfo) || ('X64' in dlInfo)) {
+    if (!(archUpper in dlInfo)) return null;
+    dlInfo = dlInfo[archUpper];
   }
 
   return dlInfo;
@@ -65,29 +69,38 @@ export function installAnaconda(
 
   const tmpdir = os.tmpdir();
   const basename = path.basename(downloadURL);
-
   let destination = path.join(tmpdir, basename);
 
   logging.debug("");
-  logging.debug("###########################");
-  logging.debug("# Installing Dependencies #");
-  logging.debug("###########################");
-  logging.debug("");
-
-
+  logging.debug("== Installing Dependencies ==");
+  logging.debug("  [*] Downloading anaconda.");
+  logging.silly(`      [-] Download location: ${destination}`);
   progressCb(1, "Downloading...");
   downloadFile(downloadURL, destination, (error: any) => {
     if (error) return finishedCb(error, null);
-    progressCb(30, "Installing... (step 1/4)");
+    logging.debug("  [*] Init SJCloud home directory.");
+    progressCb(30, "Installing...");
     initSJCloudHome((error, result) => {
       if (error) return finishedCb(error, null);
-      progressCb(40, "Installing... (step 2/4)");
-      runCommand(`bash ${destination} -b -p ${anacondaDirectory}`, (error, res) => {
+      logging.debug("  [*] Installing file.");
+      progressCb(40, "Installing... (step 1/3)");
+      let command = "";
+      if (platform === "win32") {
+        command = `Start-Process ${destination} -ArgumentList '/S','/AddToPath=0','RegisterPython=0','/D=${anacondaDirectory}' -Wait`
+      } else {
+        command = `bash ${destination} -b -p ${anacondaDirectory}`;
+      }
+      logging.silly(`      [-] Download location: ${anacondaDirectory}`);
+      logging.silly(`      [-] Command: ${command}`);
+
+      runCommand(command, (error, res) => {
         if (error) return finishedCb(error, null);
-        progressCb(70, "Installing... (step 3/4)");
+        logging.debug("")
+        progressCb(70, "Installing... (step 2/3)");
+        logging.debug("  [*] Installing DX-Toolkit.");
         runCommand(`conda create -n sjcloud python=2.7.14 -y`, (error, res) => {
           if (error) return finishedCb(error, null);
-          progressCb(85, "Installing... (step 4/4)");
+          progressCb(85, "Installing... (step 3/3)");
           runCommand("pip install dxpy", (error, result) => {
             if (error) return finishedCb(error, null);
             progressCb(100, "Finished!");

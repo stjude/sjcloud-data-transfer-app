@@ -17,6 +17,8 @@ const https = require("https");
 const mkdirp = require("mkdirp");
 const _crypto = require("crypto");
 const treeKill = require("tree-kill");
+const powershell = require("node-powershell");
+
 const { logging, } = require("./logging");
 const { remote, shell, } = require("electron");
 const { exec, spawn, execSync, spawnSync, } = require("child_process");
@@ -29,7 +31,7 @@ const { exec, spawn, execSync, spawnSync, } = require("child_process");
 const platform = os.platform();
 export const sjcloudHomeDirectory = path.join(os.homedir(), ".sjcloud");
 export const anacondaDirectory = path.join(sjcloudHomeDirectory, "anaconda");
-export const anacondaBinDirectory = path.join(anacondaDirectory, "bin");
+export const anacondaBinDirectory = (platform === "win32" ? path.join(anacondaDirectory, "Scripts") : path.join(anacondaDirectory, "bin"));
 export const anacondaActivatePath = path.join(anacondaBinDirectory, "activate");
 export const anacondaSJCloudEnv = path.join(anacondaDirectory, "envs", "sjcloud");
 export const anacondaSJCloudBin = path.join(anacondaSJCloudEnv, "bin");
@@ -66,32 +68,44 @@ export function initSJCloudHome(callback: SuccessCallback): void {
  * @returns {string} A command with the correct sources and PATH variable.
  */
 function unixBootstrapCommand(cmd: string): string {
-  try {
-    let stats = fs.statSync(anacondaSJCloudEnv);
-    if (stats) { cmd = `source ${anacondaActivatePath} sjcloud; ${cmd}` }
-  } catch (err) { /* ignore */ }
 
   try {
     let stats = fs.statSync(anacondaBinDirectory);
     if (stats) { cmd = `PATH=${anacondaBinDirectory}:$PATH ${cmd}` }
   } catch (err) { /* ignore */ }
 
+  try {
+    let stats = fs.statSync(anacondaSJCloudEnv);
+    if (stats) { cmd = `source ${anacondaActivatePath} sjcloud; ${cmd}` }
+  } catch (err) { /* ignore */ }
+
   return cmd;
 }
 
 /**
- * Prepend the correct environment variables for a Windows command.
+ * Calculate the correct environment variable settings for a Windows command.
  * 
  * @param {string} cmd The command to be run.
- * @returns {string} A command with the correct sources and PATH variable.
+ * @returns {string} The PATH commands to be prepended.
  */
-function windowsBootstrapCommand(cmd: string): string {
+function windowsBootstrapCommand(): string {
+  let paths = [];
+
+  console.log(`Trying: ${anacondaBinDirectory}.`);
   try {
-    let stats = fs.statSync(dnanexusPSscript);
-    if (stats) { cmd = `.'${dnanexusPSscript}'; ${cmd} `; }
+    let stats = fs.statSync(anacondaBinDirectory);
+    if (stats) {
+      paths.push(anacondaBinDirectory);
+      console.log("Succeeded.");
+    }
   } catch (err) { /* ignore */ }
 
-  return cmd;
+  try {
+    let stats = fs.statSync(anacondaSJCloudEnv);
+    if (stats) { paths.push(anacondaSJCloudEnv) }
+  } catch (err) { /* ignore */ }
+
+  return (paths.length != 0) ? `$ENV:PATH="${paths.join(";")};"+$ENV:PATH;` : null;
 }
 
 /*******************************************************************************
@@ -113,7 +127,7 @@ function runCommandUnix(
 
   cmd = unixBootstrapCommand(cmd);
   cmd = `/usr/bin/env bash -c "${cmd}"`;
-  logging.info(cmd);
+  logging.silly(cmd);
   return exec(cmd, { maxBuffer: 10000000, }, innerCallback);
 }
 
@@ -132,26 +146,41 @@ function runCommandWindows(
     throw new Error(`Invalid platform for 'runCommandWindows': ${platform}`);
   }
 
-  // fs.statSync() is only to check if the "dx" utility can be sourced.
-  // If it fails rother commands can still be run.
+  let ps = new powershell({
+    executionPolicy: "Bypass",
+    noProfile: true,
+    debugMsg: false,
+  });
 
-  cmd = windowsBootstrapCommand(cmd);
-  const args = [
-    "-NoLogo", "-InputFormat", "Text", "-NonInteractive", "-NoProfile",
-    "-Command", `${cmd} `, `; exit $LASTEXITCODE;`
-  ];
 
-  let p = spawn("powershell.exe", args, { stdio: "pipe", maxBuffer: 10000000 });
+  let bootstrapCommand = windowsBootstrapCommand();
+  if (bootstrapCommand) {
+    ps.addCommand(bootstrapCommand);
+  }
+
+  ps.addCommand(cmd);
+  logging.silly(`Running commands: ${ps._cmds}`);
 
   let stdout = "";
   let stderr = "";
 
-  p.stdout.on("data", function (data: any) { stdout += data.toString(); });
-  p.stderr.on("data", function (data: any) { stderr += data.toString(); });
-  p.on("error", function (err: any) { innerCallback(err, stdout, stderr); });
-  p.on("close", function (code: any) { innerCallback(null, stdout, stderr); });
+  ps._proc.stdout.on("data", function (data: any) {
+    stdout += data.toString();
+  });
 
-  return p;
+  ps._proc.stderr.on("data", function (data: any) {
+    stderr += data.toString();
+  });
+
+  ps.on("end", function (code: any) {
+    innerCallback(null, stdout, stderr);
+  });
+
+  ps.on("err", (err: any) => { ps.dispose(); });
+  ps.on("output", (err: any) => { ps.dispose(); })
+
+  ps.invoke();
+  return ps;
 }
 
 
@@ -184,6 +213,11 @@ export function runCommand(
       stdout = stdout.split("\n").slice(4).join("\n");
     }
 
+    if (platform === "win32" && stdout.includes("EOI")) {
+      stdout = stdout.replace("EOI", "");
+    }
+
+    console.log(stdout.trim());
     if (stdout.trim() === "False") {
       /** Powershell sometimes just returns False */
       return callback(new Error("STDOUT was False"), null);
@@ -208,7 +242,7 @@ export function runCommand(
  ******************************************************************************/
 export function runCommandSyncUnix(cmd: string): string {
   if (platform !== "darwin" && platform !== "linux") {
-    throw new Error(`Invalid platform for 'runCommandSyncUnix': ${platform}`);
+    throw new Error(`Invalid platform for 'runCommandSyncUnix': ${platform} `);
   }
 
   // fs.statSync() is only to check if the "dx" utility can be sourced.
@@ -227,19 +261,19 @@ export function runCommandSyncUnix(cmd: string): string {
  ******************************************************************************/
 export function runCommandSyncWindows(cmd: string): string {
   if (platform !== "win32") {
-    throw new Error(`Invalid platform for 'runCommandWindows': ${platform}`);
+    throw new Error(`Invalid platform for 'runCommandSyncWindows': ${platform} `);
   }
 
   // fs.statSync() is only to check if the "dx" utility can be sourced.
   // If it fails rother commands can still be run.
 
-  cmd = windowsBootstrapCommand(cmd);
-  const args = [
-    "-NoLogo", "-InputFormat", "Text", "-NonInteractive", "-NoProfile",
-    "-Command", `${cmd} `
-  ];
-
-  return spawnSync("powershell.exe", args, { stdio: "pipe", maxBuffer: 10000000 });
+  runCommandWindows(cmd, null).
+    then((output: any) => {
+      return output;
+    }).
+    catch((error: any) => {
+      throw new Error(error);
+    });
 }
 
 /*******************************************************************************
@@ -284,9 +318,9 @@ export function pythonOnPath(callback: ResultCallback): void {
 export function dxToolkitInstalled(callback: SuccessCallback): void {
   const dxLocation = path.join(anacondaSJCloudBin, "dx");
   if (platform === "linux" || platform === "darwin") {
-    runCommand(`[ -f ${dxLocation} ]`, callback);
+    runCommand(`[-f ${dxLocation} ]`, callback);
   } else if (platform === "win32") {
-    runCommand(`[System.IO.File]::Exists("${dxLocation}")`, callback);
+    runCommand(`[System.IO.File]::Exists("${dxLocation}") `, callback);
   }
 };
 
@@ -325,7 +359,7 @@ export function untarTo(
   destParentDir: string,
   callback: SuccessCallback
 ): void {
-  runCommand(`tar -C ${destParentDir} -zxf ${filepath}`, callback);
+  runCommand(`tar - C ${destParentDir} -zxf ${filepath} `, callback);
 };
 
 
