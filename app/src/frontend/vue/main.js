@@ -41,6 +41,7 @@ export default function _App(selector, cachedState = {}) {
 
   if (VueApp.$store.getters.testdata) {
     // retain route path for easier testing on the browser
+    VueApp.$store.dispatch("updateToolsFromRemote", true);
   } else if (process.env.NODE_ENV === "development") {
     VueApp.$router.replace("home");
   } else {
@@ -81,24 +82,28 @@ function getAlertHandler(numExpectedCalls = 0) {
   };
 }
 
+
 /**
  *
  * @param {*} VueApp
  */
 function checkDependencies(VueApp) {
   const alertHandler = getAlertHandler(2);
-  window.utils.pythonOnPath((onPath) => {
+  window.utils.openSSLOnPath((onPath) => { // console.log('ssl',onPath)
+    VueApp.$store.commit("setOpenSSLOnPath", onPath);
+    alertHandler( 0 && onPath !== false ? ''
+      : "You don't have OpenSSL installed on your system, which is needed to run this program. "
+      + "You can download it here: <span class='alert-link' @click.stop='clickHandler($event)'>"
+      + "https://wiki.openssl.org/index.php/Binaries</span>"
+    );
+  });
+  window.utils.pythonOnPath((onPath) => { // console.log('py',onPath)
     VueApp.$store.commit("setPythonOnPath", onPath);
-    if (onPath === false) {
-      alertHandler(
-        "Something has gone wrong during your installation process." +
-        "Please contact us at <span class='alert-link' " +
-        "@click.stop='clickHandler($event)'>https://stjude.cloud/contact" +
-        "</span>"
-      );
-    } else {
-      alertHandler();
-    }
+    alertHandler( 0 && onPath !== false ? ''
+      : "You need to have python version 2.7.13+ installed on your path. "
+      + "You can download it here: <span class='alert-link' @click.stop='clickHandler($event)'>"
+      + "https://www.python.org/downloads/release/python-2714/</span>"
+    );
   });
 }
 

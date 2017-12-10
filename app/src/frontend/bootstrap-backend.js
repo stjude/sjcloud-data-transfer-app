@@ -20,7 +20,7 @@ if (window.location.port != "3057" && window.location.port != "9876" &&
 
   window.dx = {
     getToolsInformation(showAllProjects, showAllFiles, callback) {
-      if (!window.location.search) return [];
+      if (!window.VueApp.$store.getters.testdata) callback([]);
       // to-do: write more elegantly
       setTimeout(() => {
         fetch("testdata/" + window.VueApp.$store.getters.testdata + ".json")
