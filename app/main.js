@@ -150,10 +150,12 @@ app.on("open-url", (event, url) => {
     uriCommand = protocol.handleURIMac(event, url);
 
     if (uriCommand !== "") {
-      logging.info(`Running JS command: ${uriCommand}`);
-      mainWindow.webContents.executeJavaScript("window.currPath = 'upload';");
-      mainWindow.webContents.executeJavaScript(uriCommand);
-      mainWindow.webContents.executeJavaScript("window.VueApp.$store.dispatch('updateToolsFromRemote', true);");
+      ensureWindow(() => {
+        logging.info(`Running JS command: ${uriCommand}`);
+        mainWindow.webContents.executeJavaScript("window.currPath = 'upload';");
+        mainWindow.webContents.executeJavaScript(uriCommand);
+        mainWindow.webContents.executeJavaScript("window.VueApp.$store.dispatch('updateToolsFromRemote', true);");
+      });
     }
   }
 });
