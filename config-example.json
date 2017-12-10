@@ -5,7 +5,7 @@
   "DOWNLOADABLE_TAG": "sjcp-result-file",
   "AUTOUPDATE_ENABLED": true,
   "CHROMIUM_MENU": false,
-  "UPDATE_SERVER": "https://warm-fortress-45813.herokuapp.com",
+  "UPDATE_SERVER": "https://dta.stjude.cloud",
   "DOWNLOAD_INFO": {
     "ANACONDA": {
       "WIN32": {
