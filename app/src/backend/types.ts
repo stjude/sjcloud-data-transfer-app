@@ -14,6 +14,14 @@ export type ResultCallback = (result: any) => void;
 export type ErrorCallback = (error: any) => void;
 
 /**
+ * Callback used to report progress of some task when it cannot fail.
+ * 
+ *    - percent: number = Percentage of task finished (0-100).
+ *    - status: string  = Accompanying status.
+ */
+export type ProgressCallback = (percent: number, status: string) => void;
+
+/**
  * Generic callback function where the arguments are:
  *    - error: any   = Error object on failure, null on success.
  *    - results: any = null on failure, object on success.
@@ -69,4 +77,9 @@ export interface SJDTAProject {
   project_name: string,
   dx_location: string,
   access_level: string,
+}
+
+export interface DXDownloadInfo {
+  URL: string;
+  SHA256SUM: string;
 }

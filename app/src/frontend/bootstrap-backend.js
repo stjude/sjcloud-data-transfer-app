@@ -5,7 +5,9 @@ if (window.location.port != "3057" && window.location.port != "9876" &&
    */
 
   window.dx = require("./bin/backend/dx");
+  window.dependency = require("./bin/backend/dependency");
   window.queue = require("./bin/backend/queue");
+  window.logging = require("./bin/backend/logging-remote");
   window.oauth = require("./bin/backend/oauth");
   window.state = require("./bin/backend/state");
   window.ui = require("./bin/backend/ui");
@@ -127,9 +129,6 @@ if (window.location.port != "3057" && window.location.port != "9876" &&
   };
   window.ui = {};
   window.utils = {
-    openSSLOnPath() {
-
-    },
     pythonOnPath() {
 
     },

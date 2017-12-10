@@ -13,13 +13,6 @@ A desktop application written on top of the [Electron Framework](https://electro
 
 You'll need the following prerequsites installed. We are working on adding support for installing and configuring these automatically.
 
-* Python 2.7.13+
-    - [Install](https://www.python.org/downloads/release/python-2714/)
-* OpenSSL
-    - [Windows](https://wiki.openssl.org/index.php/Binaries)
-    - Mac: `brew install openssl`
-    - [Other](https://wiki.openssl.org/index.php/Compilation_and_Installation)
-
 Building
 -------
 

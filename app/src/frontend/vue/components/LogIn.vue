@@ -94,16 +94,21 @@ export default {
           return;
         }
 
+        const that = this;
+
         window.dx.login(token, (err, result) => {
           if (err) {
             // TODO(clay): alert login error.
             console.error(err);
-            this.$store.commit("setLoginState", "failed");
+            that.$store.commit("setLoginState", "failed");
           } else {
-            this.$store.commit("setLoginState", "completed");
+            that.$store.commit("setLoginState", "completed");
             setTimeout(() => {
-              this.$router.push("upload");
-            }, 2500);
+              that.$store.dispatch("updateToolsFromRemote", true);
+              setTimeout(() => {
+                that.$router.push("upload");
+              }, 2500);
+            }, 1000);
           }
         });
       });
@@ -120,9 +125,12 @@ export default {
             that.$store.commit("setLoginState", "failed");
           } else {
             that.$store.commit("setLoginState", "completed");
-            setTimeout(function() {
-              that.$router.push("upload");
-            }, 2500);
+            setTimeout(() => {
+              that.$store.dispatch("updateToolsFromRemote", true);
+              setTimeout(() => {
+                that.$router.push("upload");
+              }, 2500);
+            }, 1000);
           }
         });
       });

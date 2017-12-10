@@ -6,7 +6,7 @@
 const app = require("electron").app;
 const { logging } = require("./logging");
 
-logging.info("   - Registering protocols...");
+logging.info("   [*] Registering protocols...");
 app.setAsDefaultProtocolClient("sjcloud");
 
 /**

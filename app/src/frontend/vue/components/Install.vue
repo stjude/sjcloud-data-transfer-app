@@ -5,33 +5,33 @@
 				<h1>Install</h1> 
 				<hr>
 			</div>
-			<div v-show="installingDxToolkit == 'waiting' " class='theater-body'>
+			<div v-show="installingDependencies == 'waiting' " class='theater-body'>
 				<div class="col-xs-6 theater-body-img"> 
 					<img src="img/screen-download.png">
 				</div>
 				<div class="col-xs-6">
 					<div class="theater-body-text">
-						The St. Jude Cloud desktop application requires the installation of third-party software. We'll take care of installing that for you. 
+						The St. Jude Cloud Data Transfer Application requires the installation of third-party software. We'll take care of installing that for you. 
 						<div class="info-icon-wrapper-div" @click="showModal()">
 							<i class="material-icons info-icon">info</i>
 						</div>
 					</div>
-					<div @click="downloadDxToolkit()" 
+					<div @click="downloadDependencies()" 
 						class="btn btn-large btn-stjude"
 						style="width:auto">
 						INSTALL
 					</div>
 				</div>
 			</div>
-			<div v-show="installingDxToolkit == 'installing'" class='theater-body'>
+			<div v-show="installingDependencies == 'installing'" class='theater-body'>
 				<spin-kit :status='downloadStatus' :btmLabel='downloadStatus' :percentage='percentage'></spin-kit>
 			</div>
-			<div v-show="installingDxToolkit == 'completed'" class='theater-body'>
+			<div v-show="installingDependencies == 'completed'" class='theater-body'>
 				<div class="col-xs-12">
 					<step-outcome successMessage='Completed!' outcome='done'></step-outcome>
 				</div>
 			</div>
-			<div v-show="installingDxToolkit == 'failed'" class='theater-body'>
+			<div v-show="installingDependencies == 'failed'" class='theater-body'>
 				<div class="col-xs-12">
 					<step-outcome failureMessage='Failed!' outcome='error'></step-outcome>
 				</div>
@@ -59,8 +59,8 @@ export default {
     };
   },
   computed: {
-    installingDxToolkit() {
-      return this.$store.getters.installingDxToolkit;
+    installingDependencies() {
+      return this.$store.getters.installingDependencies;
     },
     environment() {
       return this.$store.getters.environment;
@@ -76,27 +76,27 @@ export default {
     this.$store.commit("setTourHint", true);
   },
   methods: {
-    setInstallingDxToolkit(installing) {
-      this.$store.commit("setInstallingDxToolkit", installing);
+    setInstallingDependencies(installing) {
+      this.$store.commit("setInstallingDependencies", installing);
     },
     setDownloadStatus(status) {
       this.$store.commit("setDownloadStatus", status);
     },
-    downloadDxToolkit() {
-      this.$store.commit("setInstallingDxToolkit", "installing");
+    downloadDependencies() {
+      this.$store.commit("setInstallingDependencies", "installing");
 
       window.dx.installDxToolkit(
         ([percent, text]) => {
           this.setDownloadStatus(text);
-          this.percentage=100*percent;
+          this.percentage = 100 * percent;
         },
         (err, result) => {
           if (err) {
             this.setDownloadStatus(text);
-            this.$store.commit("setInstallingDxToolkit", "failed");
+            this.$store.commit("setInstallingDependencies", "failed");
           } else {
-            this.$store.commit("setInstallingDxToolkit", "completed");
-            setTimeout(()=>{
+            this.$store.commit("setInstallingDependencies", "completed");
+            setTimeout(() => {
               this.$router.push("login");
             }, 2500);
           }
@@ -120,7 +120,6 @@ export default {
   margin: 0;
   height: 30px;
 }
-
 
 .info-icon {
   color: #018dc4;
