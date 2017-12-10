@@ -46,6 +46,8 @@ export default function _App(selector, cachedState = {}) {
       VueApp.$router.replace(state.path);
       if (state.path === "login") {
         checkDependencies(VueApp);
+      } else if (state.path === "upload") {
+        VueApp.$store.dispatch("updateToolsFromRemote", true);
       }
     });
   }

@@ -67,19 +67,21 @@ export function initSJCloudHome(callback: SuccessCallback): void {
  * @param {string} cmd The command to be run.
  * @returns {string} A command with the correct sources and PATH variable.
  */
-function unixBootstrapCommand(cmd: string): string {
+function unixBootstrapCommand(): string {
+
+  let paths = [];
+
+  try {
+    let stats = fs.statSync(anacondaSJCloudBin);
+    if (stats) { paths.push(anacondaSJCloudBin) }
+  } catch (err) { /* ignore */ }
 
   try {
     let stats = fs.statSync(anacondaBinDirectory);
-    if (stats) { cmd = `PATH=${anacondaBinDirectory}:$PATH ${cmd}` }
+    if (stats) { paths.push(anacondaBinDirectory) }
   } catch (err) { /* ignore */ }
 
-  try {
-    let stats = fs.statSync(anacondaSJCloudEnv);
-    if (stats) { cmd = `source ${anacondaActivatePath} sjcloud; ${cmd}` }
-  } catch (err) { /* ignore */ }
-
-  return cmd;
+  return (paths.length != 0) ? `export PATH=${paths.join(":")}:$PATH;` : null;
 }
 
 /**
@@ -91,12 +93,10 @@ function unixBootstrapCommand(cmd: string): string {
 function windowsBootstrapCommand(): string {
   let paths = [];
 
-  console.log(`Trying: ${anacondaBinDirectory}.`);
   try {
     let stats = fs.statSync(anacondaBinDirectory);
     if (stats) {
       paths.push(anacondaBinDirectory);
-      console.log("Succeeded.");
     }
   } catch (err) { /* ignore */ }
 
@@ -122,10 +122,11 @@ function runCommandUnix(
     throw new Error(`Invalid platform for 'runCommandUnix': ${platform}`);
   }
 
-  // fs.statSync() is only to check if the "dx" utility can be sourced.
-  // If it fails rother commands can still be run.
+  let bootstrapCommand = unixBootstrapCommand();
+  if (bootstrapCommand) {
+    cmd = `${bootstrapCommand} ${cmd}`;
+  }
 
-  cmd = unixBootstrapCommand(cmd);
   cmd = `/usr/bin/env bash -c "${cmd}"`;
   logging.silly(cmd);
   return exec(cmd, { maxBuffer: 10000000, }, innerCallback);
@@ -217,7 +218,6 @@ export function runCommand(
       stdout = stdout.replace("EOI", "");
     }
 
-    console.log(stdout.trim());
     if (stdout.trim() === "False") {
       /** Powershell sometimes just returns False */
       return callback(new Error("STDOUT was False"), null);
@@ -318,7 +318,7 @@ export function pythonOnPath(callback: ResultCallback): void {
 export function dxToolkitInstalled(callback: SuccessCallback): void {
   const dxLocation = path.join(anacondaSJCloudBin, "dx");
   if (platform === "linux" || platform === "darwin") {
-    runCommand(`[-f ${dxLocation} ]`, callback);
+    runCommand(`[ -f ${dxLocation} ]`, callback);
   } else if (platform === "win32") {
     runCommand(`[System.IO.File]::Exists("${dxLocation}") `, callback);
   }

@@ -82,7 +82,7 @@ export function installAnaconda(
     progressCb(30, "Installing...");
     initSJCloudHome((error, result) => {
       if (error) return finishedCb(error, null);
-      logging.debug("  [*] Installing file.");
+      logging.debug("  [*] Installing anaconda.");
       progressCb(40, "Installing... (step 1/3)");
       let command = "";
       if (platform === "win32") {
@@ -97,9 +97,10 @@ export function installAnaconda(
         if (error) return finishedCb(error, null);
         logging.debug("")
         progressCb(70, "Installing... (step 2/3)");
-        logging.debug("  [*] Installing DX-Toolkit.");
+        logging.debug("  [*] Seeding anaconda environment.");
         runCommand(`conda create -n sjcloud python=2.7.14 -y`, (error, res) => {
           if (error) return finishedCb(error, null);
+          logging.debug("Installing DX-Toolkit.");
           progressCb(85, "Installing... (step 3/3)");
           runCommand("pip install dxpy", (error, result) => {
             if (error) return finishedCb(error, null);
