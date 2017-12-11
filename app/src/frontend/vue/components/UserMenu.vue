@@ -1,11 +1,11 @@
 <template>
     <div id='sjcda-top-bar-menu' v-show='isVisible'>
-	    <div id='tour-btn'
+	    <div id='settings-btn'
 	    	class='menu-item'
-	    	v-show='showTourBtn'
-	    	@click.stop='tour'>
-	    	<span class='material-icons menu-icon' style='color: #1381B3;'>explore</span>
-	    	Tour
+        	v-show='showSettingsBtn'
+	    	@click.stop='openSettings'>
+	    	<span class='material-icons menu-icon'>settings</span>
+	    	Settings
 	    </div>
 	    <div id='issues-btn'
 	    	class='menu-item'
@@ -13,33 +13,20 @@
 	    	<span class='material-icons menu-icon' style='color: #b71c1c;'>error_outline</span>
 	    	Issues
 	    </div>
-	    <div id='settings-btn'
-	    	class='menu-item'
-        v-show='showSettingsBtn'
-	    	@click.stop='openSettings'>
-	    	<span class='material-icons menu-icon'>settings</span>
-	    	Settings
-	    </div>
 	    <div id='logout-btn'
 	    	class='menu-item'
 	    	v-show='showLogoutBtn'
 	    	@click='logout'>
-	    	<span class='material-icons menu-icon'>exit_to_app</span>
+	    	<!--<span class='material-icons menu-icon'>exit_to_app</span>-->
 	    	Logout
 	    </div>
 	</div>
 </template>
 
 <script>
-import tour from '../../tour.js';
-let tourInitialized=false;
-
 export default {
 	computed: {
 		showLogoutBtn() {
-			return this.$route.path=='/download' || this.$route.path=='/upload';
-		},
-		showTourBtn() {
 			return this.$route.path=='/download' || this.$route.path=='/upload';
 		},
 		showSettingsBtn() {
@@ -57,10 +44,6 @@ export default {
 	        this.$router.replace('/login');
 	    	});
     	},
-    	tour() {
-    		this.$store.commit('closeMenu');
-			tour.__start();
-		},
 		fileAnIssue() {
 			this.$store.commit('closeMenu');
 			window.utils.openExternal('https://stjude.cloud/contact');
@@ -101,14 +84,5 @@ export default {
 .menu-icon {
 	vertical-align: top;
 	font-size: 16px;
-}
-
-#tour-btn {
-}
-
-#logout-btn {
-}
-
-#issues-btn {
 }
 </style>

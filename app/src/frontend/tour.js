@@ -27,15 +27,19 @@ const tour = new window.Tour({
   }, {
     element: ".left-panel-table-container",
     title: "Step 1: Select workspace",
-    content: `<p>Creating a data request or running a tool for the first time
-              will create a permanent 'workspace' area in the cloud.</p>
-
-              <p>For a data request, all of your data will be placed 
-              in the workspace that is created.</p>
-
-              <p>For tools, you will upload your data to the tool's workspace, run the tool
+    content: `<div>
+              Creating a data request or running a tool for the first time
+              will create a permanent 'workspace' area in the cloud.
+              </div>
+              <div>
+              For a data request, all of your data will be placed 
+              in the workspace that is created.
+              </div>
+              <div>
+              For tools, you will upload your data to the tool's workspace, run the tool
               on that data in the cloud, then download the results 
-              from the tool's workspace.</p>`,
+              from the tool's workspace.
+              </div>`,
     backdrop: true,
     backdropContainer: "body",
     onShow(tour) {
