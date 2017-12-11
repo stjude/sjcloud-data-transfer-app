@@ -25,6 +25,14 @@ function log(...message: any[]): void {
   if (enableDebug) console.log.apply(this, message);
 }
 
+/**
+ * Cleanup after failure or success of a file upload/download.
+ * 
+ * @param error error object from upload/download request.
+ * @param result result object from upload/download request.
+ * @param task task object which links to UI element.
+ * @param callback
+ */
 function handleFileFinish(
   error: any,
   result: any,
