@@ -2,8 +2,11 @@ node_modules/
 dist/*
 app/bin/*
 docs/*
+.nyc_output/*
 !app/bin/.gitkeep
 **/.DS_Store
+test/*
+!test/.gitkeep
 
 package-lock.json
 config.json

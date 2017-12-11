@@ -33,18 +33,24 @@ function runKarma(options, callback) {
   server.start(callback);
 }
 
-gulp.task("webpack", (callback) => {
-  return webpack(webpackConfig).run((err, stats) => {
-    if (err) {
-      gutil.log("ERROR:", err);
-      return callback();
-    }
-
-    return callback();
-  });
+gulp.task("copy-frontend-spec", () => {
+  return gulp.src("app/src/frontend/spec/*.js")
+    .pipe(gulp.dest("test/frontend/"));
 });
 
-gulp.task("compile-frontend", ["webpack"]);
+gulp.task("webpack",
+  (callback) => {
+    return webpack(webpackConfig).run((err, stats) => {
+      if (err) {
+        gutil.log("ERROR:", err);
+        return callback();
+      }
+
+      return callback();
+    });
+  });
+
+gulp.task("compile-frontend", ["copy-frontend-spec", "webpack"]);
 
 gulp.task("copy-javascript", () => {
   return gulp.src("app/src/backend/**/*.js")
@@ -57,7 +63,17 @@ gulp.task("compile-typescript", () => {
     .pipe(gulp.dest("app/bin/backend"));
 });
 
-gulp.task("compile-backend", ["copy-javascript", "compile-typescript"]);
+gulp.task("copy-backend-spec", () => {
+  return gulp.src("app/bin/backend/spec/*.js")
+    .pipe(gulp.dest("test/backend/"));
+});
+
+gulp.task("compile-backend",
+  [
+    "copy-javascript",
+    "compile-typescript",
+    "copy-backend-spec",
+  ]);
 
 gulp.task("watch", () => {
   gulp.watch(sources.frontend, ["compile-frontend"]);
@@ -79,6 +95,7 @@ gulp.task("develop",
  */
 gulp.task(
   "test-frontend",
+  ["compile-frontend"],
   (done) => {
     runKarma({
       singleRun: true,
@@ -90,7 +107,7 @@ gulp.task(
   "test-backend",
   ["compile-backend"],
   () => {
-    return gulp.src("app/bin/backend/spec/*spec.js")
+    return gulp.src("test/backend/*.spec.js")
       .pipe(jasmine());
   });
 

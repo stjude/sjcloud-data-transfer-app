@@ -1,5 +1,5 @@
-const dx = require("../dx");
-const config = require("../../../../config.json");
+const dx = require("../../app/bin/backend/dx");
+const config = require("../../config.json");
 
 const sampleToken = "XXXXXXXXXXX";
 const sampleDxFile = "file-XXXXXXXXXXX";
@@ -140,3 +140,10 @@ describe("Listing DX projects", () => {
       }, true);
     });
 });
+
+/*******************************************************************************
+ * dx.installDxToolkit
+ * 
+ * TODO(clay)
+ ******************************************************************************/
+
