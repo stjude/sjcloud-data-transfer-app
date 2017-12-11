@@ -17,7 +17,7 @@
 	    	class='menu-item'
 	    	v-show='showLogoutBtn'
 	    	@click='logout'>
-	    	<!--<span class='material-icons menu-icon'>exit_to_app</span>-->
+	    	<span class='material-icons menu-icon'>exit_to_app</span>
 	    	Logout
 	    </div>
 	</div>

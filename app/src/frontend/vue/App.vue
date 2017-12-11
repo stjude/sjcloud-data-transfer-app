@@ -12,7 +12,6 @@ import jQueryGlobalizer from "../helpers/jQueryGlobalizer";
 import TopBar from "./components/TopBar.vue";
 import UserMenu from "./components/UserMenu.vue";
 import SettingsModal from "./components/SettingsModal.vue";
-import tour from "../tour.js";
 import "quasar-extras/material-icons";
 import "quasar-extras/roboto-font";
 import "quasar/dist/quasar.mat.css";
@@ -40,9 +39,6 @@ export default {
   },
   updated() {
     this.$store.commit("setCurrPath", this.$route.path.slice(1));
-    if (this.$store.getters.tourHint) {
-      tour.__promptUser(this.$route.path);
-    }
   },
   mounted() {
     window.VueApp = this;
