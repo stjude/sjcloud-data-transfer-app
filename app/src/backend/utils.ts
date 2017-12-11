@@ -291,20 +291,24 @@ export function dxToolkitInstalled(callback: SuccessCallback): void {
  *
  * @param {string} url URL of download.
  * @param {string} dest Path for newly downloaded file.
- * @param {ErrorCallback} callback 
  * @see dx:downloadDxFile
  ******************************************************************************/
 export function downloadFile(
   url: string,
   dest: string,
-  callback: ErrorCallback
-): void {
-  let file = fs.createWriteStream(dest);
-  let request = https.get(url, (res: any) => {
-    res.pipe(file);
-    file.on("finish", () => {
-      file.close(callback);
+): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    let file = fs.createWriteStream(dest);
+    file.on('error', (error: any) => {
+      reject(error);
     });
+
+    file.on('finish', () => {
+      file.close();
+      resolve(true);
+    });
+
+    https.get(url, (res: any) => { res.pipe(file); });
   });
 };
 

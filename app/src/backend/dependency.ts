@@ -2,14 +2,7 @@ const os = require("os");
 const path = require("path");
 const fs = require("fs-extra");
 const config = require("../../../config.json");
-import {
-  runCommand,
-  getUbuntuVersionOrNull,
-  initSJCloudHome,
-  anacondaDirectory,
-  anacondaActivatePath,
-  sjcloudHomeDirectory,
-} from "./utils";
+import * as utils from "./utils";
 import { existsSync } from "fs";
 import { DXDownloadInfo, SuccessCallback, ErrorCallback, ProgressCallback } from "./types";
 import { downloadFile } from "../../bin/backend/utils";
@@ -17,7 +10,7 @@ import * as logging from "../../bin/backend/logging-remote";
 
 let arch = os.arch();
 let platform = os.platform();
-if (platform === "linux") { platform = getUbuntuVersionOrNull(); }
+if (platform === "linux") { platform = utils.getUbuntuVersionOrNull(); }
 if (!platform) throw new Error(`Unrecognized platform. Must be Windows, Mac, or Ubuntu.`);
 
 /**
@@ -55,9 +48,9 @@ function getAnacondaInstallCommand(destination: string): string {
   platform = platform.toUpperCase();
 
   if (platform === "WIN32") {
-    command = `Start-Process ${destination} -ArgumentList '/S','/AddToPath=0','RegisterPython=0','/D=${anacondaDirectory}' -Wait`
+    command = `Start-Process ${destination} -ArgumentList '/S','/AddToPath=0','RegisterPython=0','/D=${utils.anacondaDirectory}' -Wait`
   } else {
-    command = `bash ${destination} -b -p ${anacondaDirectory}`;
+    command = `bash ${destination} -b -p ${utils.anacondaDirectory}`;
   }
   return command;
 }
@@ -79,13 +72,13 @@ export function installAnaconda(
   removeAnacondaIfExists: boolean = true
 ) {
 
-  if (existsSync(anacondaDirectory)) {
+  if (existsSync(utils.anacondaDirectory)) {
     logging.debug("");
     logging.debug("== Installing Dependencies ==");
 
     if (removeAnacondaIfExists) {
       logging.debug("  [*] Removing existing anaconda installation.");
-      fs.remove(anacondaDirectory).catch((error: any) => { throw error; });
+      fs.remove(utils.anacondaDirectory).catch((error: any) => { throw error; });
     } else {
       throw new Error("Anaconda is already installed! This method should not be called.");
     }
@@ -102,36 +95,73 @@ export function installAnaconda(
   const basename = path.basename(downloadURL);
   let destination = path.join(tmpdir, basename);
 
-  logging.debug("  [*] Downloading anaconda.");
-  logging.silly(`      [-] Download location: ${destination}`);
-  progressCb(1, "Downloading...");
-  downloadFile(downloadURL, destination, (error: any) => {
-    if (error) return finishedCb(error, null);
+  let initSJCloudHome = () => {
+    progressCb(25, "Installing...");
+    return new Promise((resolve, reject) => {
+      utils.initSJCloudHome((error, result) => {
+        console.log("initSJCloudHome returned!");
+        if (error) return reject(error);
+        return resolve(result);
+      })
+    });
+  };
+
+  let installAnaconda = () => {
+    logging.debug("  [*] Installing anaconda.");
     progressCb(30, "Installing...");
-    initSJCloudHome((error, result) => {
-      if (error) return finishedCb(error, null);
-      logging.debug("  [*] Installing anaconda.");
-      progressCb(25, "Installing...");
+    return new Promise((resolve, reject) => {
       const command = getAnacondaInstallCommand(destination);
-      logging.silly(`      [-] Download location: ${anacondaDirectory}`);
+      logging.silly(`      [-] Download location: ${utils.anacondaDirectory}`);
       logging.silly(`      [-] Command: ${command}`);
 
-      runCommand(command, (error, res) => {
-        if (error) return finishedCb(error, null);
-        logging.debug("")
-        progressCb(60, "Installing...");
-        logging.debug("  [*] Seeding anaconda environment.");
-        runCommand(`conda create -n sjcloud python=2.7.14 -y`, (error, res) => {
-          if (error) return finishedCb(error, null);
-          logging.debug("Installing DX-Toolkit.");
-          progressCb(95, "Installing...");
-          runCommand("pip install dxpy", (error, result) => {
-            if (error) return finishedCb(error, null);
-            progressCb(100, "Finished!");
-            return finishedCb(null, true);
-          });
-        })
+      utils.runCommand(command, (error, result) => {
+        console.log("installAnaconda returned!");
+        if (error) return reject(error);
+        return resolve(result);
       }, false);
     });
-  });
+  };
+
+  let seedAnaconda = () => {
+    logging.debug("  [*] Seeding anaconda environment.");
+    progressCb(60, "Installing...");
+    return new Promise((resolve, reject) => {
+      console.log("seedAnaconda returned!");
+      utils.runCommand(`conda create -n sjcloud python=2.7.14 -y`, (error, result) => {
+        if (error) return reject(error);
+        return resolve(result);
+      });
+    });
+  }
+
+  let installDXToolkit = () => {
+    logging.debug("  [*] Installing DX-Toolkit.");
+    progressCb(95, "Installing...");
+    return new Promise((resolve, reject) => {
+      console.log("installDXToolkit returned!");
+      utils.runCommand("pip install dxpy", (error, result) => {
+        if (error) return reject(error);
+        return resolve(result);
+      });
+    });
+  }
+
+  progressCb(1, "Downloading...");
+  logging.debug("  [*] Downloading anaconda.");
+  logging.silly(`      [-] Download location: ${destination}`);
+  downloadFile(downloadURL, destination).
+    then(initSJCloudHome).
+    then(installAnaconda).
+    then(seedAnaconda).
+    then(installDXToolkit).
+    then(() => {
+      return new Promise((resolve, reject) => {
+        progressCb(100, "Finished!");
+        finishedCb(null, true);
+        resolve(true);
+      });
+    }).
+    catch((error) => {
+      finishedCb(error, null);
+    });
 }
