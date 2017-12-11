@@ -17,7 +17,24 @@ if (window.location.port != "3057" && window.location.port != "9876" &&
    * This block of code is run if we are in the browser.
    * @todo Figure out a way to use this from the test directory as helper functions
    */
+  window.dependency = {
+    installAnaconda(updateProgress, finishedCb, removeAnacondaIfExists=true) { console.log('-tttt')
+      updateProgress(30, "Downloading...");
 
+      setTimeout(() => {
+        updateProgress(60, "Verifying...");
+
+        setTimeout(() => {
+          updateProgress(90, "Extracting...");
+
+          setTimeout(() => {
+            updateProgress(100, "Completed!");
+            return finishedCb(null, true);
+          }, 2000);
+        }, 1500);
+      },1500);
+    }
+  };
   window.dx = {
     getToolsInformation(showAllProjects, showAllFiles, callback) {
       if (!window.VueApp.$store.getters.testdata) callback([]);
@@ -28,22 +45,6 @@ if (window.location.port != "3057" && window.location.port != "9876" &&
           .then(callback)
           .catch((err) => console.log(err));
       }, 500);
-    },
-    installDxToolkit(updateProgress, callback) {
-      updateProgress([0.3, "Downloading..."]);
-
-      setTimeout(() => {
-        updateProgress([0.6, "Verifying..."]);
-
-        setTimeout(() => {
-          updateProgress([0.9, "Extracting..."]);
-
-          setTimeout(() => {
-            updateProgress([1, "Completed!"]);
-            return callback(null, true);
-          }, 2000);
-        }, 1500);
-      },1500);
     },
     login(token, callback) {
       setTimeout(callback, 1500);

@@ -1,7 +1,7 @@
 <template>
 	<div class='q-stepper-wrapper'>
 		<div class="dev-box" v-show="currPath=='install' && environment == 'development'">
-			<select @change="setInstallingDxToolkit($event.target.value)">
+			<select @change="setInstallingDependencies($event.target.value)">
 				<option>waiting</option>
 				<option>installing</option>
 				<option>completed</option>
@@ -77,8 +77,8 @@ export default {
 		}
 	}, 
 	methods: {
-		setInstallingDxToolkit(installing) {
-	      this.$store.commit("setInstallingDxToolkit", installing);
+		setInstallingDependencies(installing) {
+	      this.$store.commit("setInstallingDependencies", installing);
 	    },
 	}
 }
