@@ -233,7 +233,6 @@ export function runCommand(
   } else throw new Error(`Unrecognized platform: ${platform}.`);
 };
 
-
 /*******************************************************************************
  * Runs a command synchronously in a UNIX environment.
  * 
@@ -245,51 +244,14 @@ export function runCommandSyncUnix(cmd: string): string {
     throw new Error(`Invalid platform for 'runCommandSyncUnix': ${platform} `);
   }
 
-  // fs.statSync() is only to check if the "dx" utility can be sourced.
-  // If it fails rother commands can still be run.
-
-  cmd = unixBootstrapCommand(cmd);
-  return execSync(cmd, { shell: "/bin/bash", maxBuffer: 10000000 });
-}
-
-
-/*******************************************************************************
- * Runs a command synchronously in a Windows environment.
- * 
- * @param {string} cmd The command to be run.
- * @return {string}
- ******************************************************************************/
-export function runCommandSyncWindows(cmd: string): string {
-  if (platform !== "win32") {
-    throw new Error(`Invalid platform for 'runCommandSyncWindows': ${platform} `);
+  let bootstrapCommand = unixBootstrapCommand();
+  if (bootstrapCommand) {
+    cmd = `${bootstrapCommand} ${cmd}`;
   }
 
-  // fs.statSync() is only to check if the "dx" utility can be sourced.
-  // If it fails rother commands can still be run.
-
-  runCommandWindows(cmd, null).
-    then((output: any) => {
-      return output;
-    }).
-    catch((error: any) => {
-      throw new Error(error);
-    });
+  cmd = `/usr/bin/env bash -c "${cmd}"`;
+  return execSync(cmd, { maxBuffer: 10000000 });
 }
-
-/*******************************************************************************
- * Runs commands on the system command line synchronously.
- *
- * @param {string} cmd The command to be run.
- * @return {string}
- ******************************************************************************/
-export function runCommandSync(cmd: string): string {
-  if (platform === "linux" || platform === "darwin") {
-    return runCommandSyncUnix(cmd)
-  } else if (platform == "win32") {
-    return runCommandSyncWindows(cmd);
-  } else throw new Error(`Invalid platform: ${platform}.`);
-};
-
 
 /*******************************************************************************
  * Determines if Python 2.7.13+ is accessible on the PATH.
@@ -579,7 +541,7 @@ export function readSJCloudFile(
  ******************************************************************************/
 export function getUbuntuVersionOrNull(): string {
   try {
-    const stdout = runCommandSync("lsb_release -ir");
+    const stdout = runCommandSyncUnix("lsb_release -ir");
 
     let [
       _label_distributor,

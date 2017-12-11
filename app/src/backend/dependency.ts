@@ -12,7 +12,7 @@ import {
 } from "./utils";
 import { existsSync } from "fs";
 import { DXDownloadInfo, SuccessCallback, ErrorCallback, ProgressCallback } from "./types";
-import { downloadFile, runCommandSync } from "../../bin/backend/utils";
+import { downloadFile } from "../../bin/backend/utils";
 import * as logging from "../../bin/backend/logging-remote";
 
 let arch = os.arch();

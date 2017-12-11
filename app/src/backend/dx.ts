@@ -169,13 +169,14 @@ export function downloadDxFile(
   const platform = os.platform();
   const outputPath = expandHomeDir(path.join(downloadLocation, fileName));
 
+  let command: string = null;
   if (platform === "darwin" || platform === "linux") {
-    utils.runCommandSync(`touch '${outputPath}'`);
+    command = `touch '${outputPath}'`;
   } else if (platform === "win32") {
-    utils.runCommandSync(`New-Item '${outputPath}' -type file -force`);
-  } else throw new Error(`Unknown platform: ${platform}.`);
+    command = `New-Item '${outputPath}' -type file -force`;
+  }
 
-  const cmd = `dx download -f ${remoteFileId} -o '${outputPath}'`;
+  command = `${command}; dx download -f ${remoteFileId} -o '${outputPath}'`;
   fs.watchFile(outputPath, { interval: 1000 }, () => {
     fs.stat(outputPath, (err: any, stats: any) => {
       if (stats !== undefined) {
@@ -185,7 +186,7 @@ export function downloadDxFile(
     });
   });
 
-  return utils.runCommand(cmd, finishedCb);
+  return utils.runCommand(command, finishedCb);
 };
 
 /**
@@ -246,13 +247,6 @@ export function uploadFile(
 ): child_process.ChildProcess {
   const basename: string = path.basename(file.path.trim())
   const dxRemotePath: string = `${projectId}: ${remoteFolder} /${basename}`
-
-  // If this fails, not a big deal. Just means there is no file at this path
-  // to begin with.
-  // TODO(clay): cleaner solution here. Ignoring this error seems hacky.
-  try {
-    utils.runCommandSync(`dx rm -a '${dxRemotePath}' || true`);
-  } catch (e) { }
 
   // keep track of the largest reported progress to ensure that if callbacks
   // get out of order, the progress meter isn't jumping all around.
