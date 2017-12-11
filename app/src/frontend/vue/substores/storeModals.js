@@ -7,8 +7,6 @@ export default {
     menuIsVisible: false,
     modalIsVisible: false,
     tourHint: false,
-    alertType: "",
-    alertMessage: "",
     modals: {
       toolkit: 0,
     },
@@ -25,12 +23,6 @@ export default {
     },
     tourHint(state) {
       return state.tourHint;
-    },
-    alertMessage(state) {
-      return state.alertMessage;
-    },
-    alertType(state) {
-      return state.alertType;
     },
   },
   mutations: {

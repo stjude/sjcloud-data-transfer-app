@@ -4,7 +4,6 @@
 		<router-view keep-alive class='app-route-placement'></router-view>
 		<user-menu></user-menu>
 		<settings-modal></settings-modal>
-		<custom-alert></custom-alert>
 	</div>
 </template>
 
@@ -14,7 +13,6 @@ import TopBar from "./components/TopBar.vue";
 import UserMenu from "./components/UserMenu.vue";
 import SettingsModal from "./components/SettingsModal.vue";
 import tour from "../tour.js";
-import CustomAlert from "./components/CustomAlert.vue";
 import "quasar-extras/material-icons";
 import "quasar-extras/roboto-font";
 import "quasar/dist/quasar.mat.css";
@@ -23,8 +21,7 @@ export default {
   components: {
     TopBar,
     UserMenu,
-    SettingsModal,
-    CustomAlert
+    SettingsModal
   },
   data() {
     return {};
@@ -167,5 +164,19 @@ input {
 
 .material-icons {
   vertical-align: top;
+}
+
+.q-alert-container {
+  width: 100%;
+}
+
+.q-alert {
+  max-width: 60%;
+  margin-left: 20% !important;
+}
+
+.q-alert-actions {
+  font-size: 1.2rem;
+  font-weight: 600;
 }
 </style>

@@ -129,8 +129,8 @@ if (window.location.port != "3057" && window.location.port != "9876" &&
   };
   window.ui = {};
   window.utils = {
-    pythonOnPath() {
-
+    pythonOnPath(callback) {
+      callback();
     },
     openExternal(url) {
       window.open(url, "_blank");
