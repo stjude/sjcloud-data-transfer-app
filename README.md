@@ -51,7 +51,7 @@ yarn start
 Development
 -----------
 
-[![Build Status](https://travis-ci.org/stjude/sjcloud-data-transfer-app.svg?branch=development)](https://travis-ci.org/stjude/sjcloud-data-transfer-app) [![Build status](https://ci.appveyor.com/api/projects/status/m0a9yidlkb96sgfi/branch/development?svg=true)](https://ci.appveyor.com/project/claymcleod/sjcloud-data-transfer-app/branch/development) [![Coverage Status](https://coveralls.io/repos/github/stjude/sjcloud-data-transfer-app/badge.svg?branch=testing)](https://coveralls.io/github/stjude/sjcloud-data-transfer-app?branch=testing)
+[![Build Status](https://travis-ci.org/stjude/sjcloud-data-transfer-app.svg?branch=development)](https://travis-ci.org/stjude/sjcloud-data-transfer-app) [![Build status](https://ci.appveyor.com/api/projects/status/m0a9yidlkb96sgfi/branch/development?svg=true)](https://ci.appveyor.com/project/claymcleod/sjcloud-data-transfer-app/branch/development) [![Coverage Status](https://coveralls.io/repos/github/stjude/sjcloud-data-transfer-app/badge.svg?branch=development)](https://coveralls.io/github/stjude/sjcloud-data-transfer-app?branch=development)
 
 Running the tool in development mode requires a few changes to the config:
 
