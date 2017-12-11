@@ -234,26 +234,6 @@ export function runCommand(
 };
 
 /*******************************************************************************
- * Runs a command synchronously in a UNIX environment.
- * 
- * @param {string} cmd The command to be run.
- * @return {string}
- ******************************************************************************/
-export function runCommandSyncUnix(cmd: string): string {
-  if (platform !== "darwin" && platform !== "linux") {
-    throw new Error(`Invalid platform for 'runCommandSyncUnix': ${platform} `);
-  }
-
-  let bootstrapCommand = unixBootstrapCommand();
-  if (bootstrapCommand) {
-    cmd = `${bootstrapCommand} ${cmd}`;
-  }
-
-  cmd = `/usr/bin/env bash -c "${cmd}"`;
-  return execSync(cmd, { maxBuffer: 10000000 });
-}
-
-/*******************************************************************************
  * Determines if Python 2.7.13+ is accessible on the PATH.
  *
  * @todo Change callback to SuccessCallback
@@ -536,29 +516,6 @@ export function readSJCloudFile(
     callback(data ? data.toString() : defaultContent);
   });
 };
-
-
-/*******************************************************************************
- * Attempts to parse out the Ubuntu version. 'null' if not running Ubuntu.
- * 
- * @returns {string?}
- ******************************************************************************/
-export function getUbuntuVersionOrNull(): string {
-  try {
-    const stdout = runCommandSyncUnix("lsb_release -ir");
-
-    let [
-      _label_distributor,
-      distro,
-      _label_release,
-      releaseNum
-    ] = stdout.split(/[\n\t]/);
-
-    if (distro !== "Ubuntu") { return null; }
-    return releaseNum.slice(0, 2) === "12" ? "ubuntu12" : "ubuntu14";
-  } catch (e) { return null; }
-};
-
 
 /*******************************************************************************
  * Gets the appropriate tab literal character based on the platform.

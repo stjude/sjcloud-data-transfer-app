@@ -10,12 +10,11 @@ import * as logging from "../../bin/backend/logging-remote";
 
 let arch = os.arch();
 let platform = os.platform();
-if (platform === "linux") { platform = utils.getUbuntuVersionOrNull(); }
 if (!platform) throw new Error(`Unrecognized platform. Must be Windows, Mac, or Ubuntu.`);
 
 /**
  * Get download information from config.json based on package name.
- * 
+ *
  * @param packagename Name of the package
  * @returns Relevant URL and SHA256 sum.
  */
@@ -57,7 +56,7 @@ function getAnacondaInstallCommand(destination: string): string {
 
 /**
  * Install Anaconda to the correct location.
- * 
+ *
  * @param progressCb Callback to update the progress of the UI.
  * @param finishedCb Called when either an error occurs or anaconda is
  *                   successfully installed.
@@ -86,7 +85,7 @@ export function installAnaconda(
 
   const downloadInfo = getDownloadInfo("ANACONDA");
   if (!downloadInfo)
-    throw new Error("Could not get download info for Anaconda based on your platform!");
+    throw new Error(`Could not get download info for Anaconda based on your platform!\nPlatform: ${platform}, Arch: ${arch}.`);
 
   const downloadURL: string = downloadInfo.URL;
   const expectedDownloadHash: string = downloadInfo.SHA256SUM;
@@ -99,7 +98,6 @@ export function installAnaconda(
     progressCb(25, "Installing...");
     return new Promise((resolve, reject) => {
       utils.initSJCloudHome((error, result) => {
-        console.log("initSJCloudHome returned!");
         if (error) return reject(error);
         return resolve(result);
       })
@@ -115,7 +113,6 @@ export function installAnaconda(
       logging.silly(`      [-] Command: ${command}`);
 
       utils.runCommand(command, (error, result) => {
-        console.log("installAnaconda returned!");
         if (error) return reject(error);
         return resolve(result);
       }, false);
@@ -126,7 +123,6 @@ export function installAnaconda(
     logging.debug("  [*] Seeding anaconda environment.");
     progressCb(60, "Installing...");
     return new Promise((resolve, reject) => {
-      console.log("seedAnaconda returned!");
       utils.runCommand(`conda create -n sjcloud python=2.7.14 -y`, (error, result) => {
         if (error) return reject(error);
         return resolve(result);
@@ -138,7 +134,6 @@ export function installAnaconda(
     logging.debug("  [*] Installing DX-Toolkit.");
     progressCb(95, "Installing...");
     return new Promise((resolve, reject) => {
-      console.log("installDXToolkit returned!");
       utils.runCommand("pip install dxpy", (error, result) => {
         if (error) return reject(error);
         return resolve(result);
