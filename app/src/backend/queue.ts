@@ -25,6 +25,35 @@ function log(...message: any[]): void {
   if (enableDebug) console.log.apply(this, message);
 }
 
+function handleFileFinish(
+  error: any,
+  result: any,
+  task: any,
+  callback: any
+) {
+  if (error) {
+    // On failure
+    console.error(error);
+    if (task._rawFile.cancelled) {
+      (window as any).utils.resetFileStatus(task._rawFile);
+      task._rawFile.checked = false;
+      return callback(null, result);
+    } else {
+      task._rawFile.errored = true;
+      return callback(error, null);
+    }
+  } else {
+    // On success
+    task._rawFile.status = 100;
+    setTimeout(() => {
+      task._rawFile.checked = true;
+      task._rawFile.finished = true;
+      return callback(null, task._rawFile);
+    }, 1000);
+  }
+}
+
+
 /**
  * Handles processing for download tasks.
  *
@@ -44,30 +73,12 @@ function downloadTask(task: any, callback: any) {
     (progress: Number) => {
       task._rawFile.status = progress;
     },
-    (err: any, result: any) => {
+    (error: any, result: any) => {
       (window as any).VueApp.$store.commit("removeOperationProcess", {
         filename: task.remote_location,
       });
 
-      if (err) {
-        console.error(err);
-        if (task._rawFile.cancelled) {
-          (window as any).utils.resetFileStatus(task._rawFile);
-          task._rawFile.checked = false;
-          return callback(null, result);
-        } else {
-          task._rawFile.errored = true;
-          return callback(err, null);
-        }
-      } else {
-        // Success
-        task._rawFile.status = 100;
-        setTimeout(() => {
-          task._rawFile.checked = true;
-          task._rawFile.finished = true;
-          return callback(null, task._rawFile);
-        }, 1000);
-      }
+      handleFileFinish(error, result, task, callback);
     }
   );
 
@@ -97,29 +108,12 @@ function uploadTask(task: any, callback: any) {
         task._rawFile.status = progress;
       }
     },
-    (err: any, result: any) => {
+    (error: any, result: any) => {
       (window as any).VueApp.$store.commit("removeOperationProcess", {
         filename: task.local_location,
       });
 
-      if (err) {
-        console.error(err);
-        if (task._rawFile.cancelled) {
-          (window as any).utils.resetFileStatus(task._rawFile);
-          task._rawFile.checked = false;
-          return callback(null, result);
-        } else {
-          task._rawFile.errored = true;
-          return callback(err, null);
-        }
-      }
-
-      task._rawFile.status = 100;
-      setTimeout(() => {
-        task._rawFile.checked = true;
-        task._rawFile.finished = true;
-        return callback(err, result);
-      }, 1000);
+      handleFileFinish(error, result, task, callback);
     }
   );
 
