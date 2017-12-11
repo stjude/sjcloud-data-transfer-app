@@ -80,7 +80,10 @@ module.exports = {
       host: "localhost",
       port: 3057,
       startPath: "?testdata=fakeTools",
-      server: {baseDir: ["app"]},
+      server: {
+        baseDir: "app",
+        index: "www.html"
+      },
     }),
     new WebpackNotifierPlugin(),
   ],
