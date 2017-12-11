@@ -162,10 +162,6 @@ input {
   border: 1px solid #ccc;
 }
 
-.material-icons {
-  vertical-align: top;
-}
-
 .q-alert-container {
   width: 100%;
 }

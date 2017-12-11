@@ -177,16 +177,17 @@ export default {
 	font-family: 'Lato';
 	color: #222222;
 	/* border-bottom: 1px solid #ccc; */
+	position:fixed; 
+	width:571px;  
+	z-index:1;
 }
 
 #file-status-div:hover {
 	overflow: auto;
 }
 
-#file-status-div {
-	position:fixed; 
-	width:571px;  
-	z-index:1;
+#file-status-div .material-icons {
+  vertical-align: top;
 }
 
 #file-status-table {

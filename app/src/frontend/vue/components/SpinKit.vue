@@ -10,7 +10,7 @@
           {{ percentage }}%
         </span>
       </div>
-			<q-spinner-oval :size='100' />
+			<q-spinner-oval :size='110' />
 		</div>
 		<div class="loading-text"
          v-bind:style='textStyle'>
@@ -62,13 +62,13 @@ export default {
 .spinner-pct-container {
   position: absolute;
   width: 100%; 
-  height: 100px; 
+  height: 110px; 
   text-align: center;
 }
 
 .spinner-pct-text {
   font-size: 30px;
-  line-height: 100px;
+  line-height: 110px;
   vertical-align: middle;
 }
 </style>

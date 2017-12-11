@@ -61,7 +61,7 @@ export default {
 }
 
 .done-icon {
-  font-size: 120pt;
+  font-size: 110pt;
   font-weight: 700;
   color: #4F8A10;
 }

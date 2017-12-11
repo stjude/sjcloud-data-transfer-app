@@ -208,7 +208,6 @@ td {
 .sjcda-left-panel-table-thead-tr-th-value {
   width: 30%;
   text-align: right;
-  padding-right: 25px;
 }
 </style>
 

@@ -115,14 +115,14 @@ export default {
 .info-icon-wrapper-div {
   display: inline-block;
   vertical-align: top;
-  padding: 5px 0 0 0;
+  padding: 0;
   overflow: hidden;
   margin: 0;
-  height: 30px;
 }
 
 .info-icon {
   color: #018dc4;
   cursor: pointer;
+  margin-top: -5px;
 }
 </style>

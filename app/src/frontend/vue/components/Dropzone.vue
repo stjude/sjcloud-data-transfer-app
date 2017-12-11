@@ -83,7 +83,7 @@ export default {
 
 .dropzone-container-text {
   position: relative;
-  top: -12px;
+  top: 3px;
   left: 5px;
 }
 

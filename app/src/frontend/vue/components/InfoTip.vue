@@ -1,6 +1,6 @@
 <template>
   <div class='info-icon-wrapper-div'>
-    <i class='material-icons icon'
+    <i class='material-icons info-icon'
        :title="infoTipText"
        v-tippy="{'size': 'big', 'position': 'bottom', 'arrow': true}">
       info
@@ -26,20 +26,16 @@ export default {
 </script>
 
 <style scoped>
-  .icon {
-    color: #018dc4;
-    cursor: pointer
-  }
-</style>
+.info-icon {
+  color: #018dc4;
+  cursor: pointer;
+  margin-top: -5px;
+}
 
-<style>
 .info-icon-wrapper-div {
   display: inline-block;
-  vertical-align: middle;
-  padding: 0 0 0 0;
-  overflow: hidden;
+  padding: 0;
   margin: 0;
-  height: 30px;
 }
 
 .tippy-tooltip-content {
