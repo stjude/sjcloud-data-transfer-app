@@ -134,7 +134,7 @@ const tour = new window.Tour({
   }, {
     element: "#sjcda-top-bar-menu",
     title: "File a bug report",
-    content: "If you encounter issues, please file a bug report.",
+    content: "If you encounter issues, follow the Issues link to contact us.",
     backdrop: true,
   	backdropContainer: "body",
     orphan: true,

@@ -63,7 +63,7 @@ export default {
 		},
 		fileAnIssue() {
 			this.$store.commit('closeMenu');
-			window.utils.openExternal('https://github.com/stjude/sjcloud-data-transfer-app/issues');
+			window.utils.openExternal('https://stjude.cloud/contact');
 		},
 		openSettings() {
 			this.$store.commit('closeMenu');
