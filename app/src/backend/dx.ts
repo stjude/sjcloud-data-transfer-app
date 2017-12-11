@@ -81,7 +81,7 @@ export function logout(
  *
  * @param dnanexusId The DNAnexus object identifier (ex: file-XXXXXX).
  * @param callback
- * @param dryrun Return the command that would have been run as a string. 
+ * @param dryrun Return the command that would have been run as a string.
  * @returns {any} ChildProcess or string depending on the value of 'dryrun'.
  **/
 export function describeDXItem(
@@ -104,15 +104,26 @@ export function describeDXItem(
 
 /*******************************************************************************
  * Checks if there's at least one project the user can upload data to.
- * 
+ *
  * @param {SuccessCallback} callback
+ * @param {boolean} dryrun Return the command that would have been run as a string.
+ * @param {string} overridePlatform Override the platform string with this value.
  ******************************************************************************/
-export function checkProjectAccess(callback: SuccessCallback): void {
-  if (platform === "linux" || platform === "darwin") {
-    utils.runCommand("echo '0' | dx select --level UPLOAD", callback);
-  } else if (platform === "win32") {
-    utils.runCommand("\"echo 0 | dx select --level UPLOAD\"", callback);
-  }
+export function checkProjectAccess(
+  callback: SuccessCallback,
+  dryrun: boolean = false,
+  overridePlatform: string = null
+): any {
+  let cmd = "";
+  let platformToUse = overridePlatform || platform;
+
+  if (platformToUse === "linux" || platformToUse === "darwin") {
+    cmd = "echo '0' | dx select --level UPLOAD";
+  } else if (platformToUse === "win32") {
+    cmd = "\"echo 0 | dx select --level UPLOAD\"";
+  } else throw new Error(`Unrecognized platform: '${platformToUse}'.`);
+
+  return dryrun ? cmd : utils.runCommand(cmd, callback);
 };
 
 

@@ -6,6 +6,17 @@ const sampleDxFile = "file-XXXXXXXXXXX";
 const sampleDxProject = "project-XXXXXXXXXXX";
 
 /*******************************************************************************
+ * dx.loggedIn
+ ******************************************************************************/
+
+describe("DNAnexus loggedIn check", () => {
+  it("should run the following command.", () => {
+    const result = dx.loggedIn(null, true);
+    expect(result).toBe("dx whoami");
+  });
+});
+
+/*******************************************************************************
  * dx.login
  ******************************************************************************/
 
@@ -24,7 +35,7 @@ describe("DNAnexus login", () => {
     });
   });
 
-  it(`should run the following command with token '${sampleToken}'`, () => {
+  it(`should run the following command with token '${sampleToken}'.`, () => {
     let output = dx.login(sampleToken, null, true);
     expect(output).toBe(`dx login --token ${sampleToken} --noprojects`);
   });
@@ -67,10 +78,36 @@ describe("Describing a DX Item", () => {
 });
 
 /*******************************************************************************
+ * dx.checkProjectAccess
+ ******************************************************************************/
+
+ describe("Checking DNAnexus project access", () => {
+  it("should return this command with platform 'linux'", () => {
+    const result = dx.checkProjectAccess(null, true, "linux");
+    expect(result).toBe("echo '0' | dx select --level UPLOAD");
+  });
+
+  it("should return this command with platform 'darwin'", () => {
+    const result = dx.checkProjectAccess(null, true, "darwin");
+    expect(result).toBe("echo '0' | dx select --level UPLOAD");
+  });
+
+  it("should return this command with platform 'win32'", () => {
+    const result = dx.checkProjectAccess(null, true, "win32");
+    expect(result).toBe("\"echo 0 | dx select --level UPLOAD\"");
+  });
+
+  it("should error when platform is 'bleep'", () => {
+    expect(() => {dx.checkProjectAccess(null, true, "bleep")}).
+    toThrow(new Error("Unrecognized platform: 'bleep'."));
+  });
+ });
+
+/*******************************************************************************
  * dx.listDownloadableFiles
  ******************************************************************************/
 
-describe("Listing Dx files", () => {
+describe("Listing DX files", () => {
   it("should fail if the dx-project is null.", (done) => {
     dx.listDownloadableFiles(null, false, (error: any, result: any) => {
       expect(error.message).toBe("Dx-project cannot be null/empty!");
@@ -117,7 +154,7 @@ describe("Listing Dx files", () => {
 
 
 /*******************************************************************************
- * dx.listDownloadableFiles
+ * dx.listProjects
  ******************************************************************************/
 
 describe("Listing DX projects", () => {
@@ -143,7 +180,7 @@ describe("Listing DX projects", () => {
 
 /*******************************************************************************
  * dx.installDxToolkit
- * 
+ *
  * TODO(clay)
  ******************************************************************************/
 

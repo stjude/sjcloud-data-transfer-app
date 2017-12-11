@@ -93,25 +93,32 @@ gulp.task("develop",
 /**
  * Testing
  */
+const testFrontend = (done) => {
+  runKarma({
+    singleRun: true,
+  }, done);
+}
+
+const testBackend = () => {
+  return gulp.src("test/backend/*.spec.js")
+             .pipe(jasmine());
+}
+
 gulp.task(
   "test-frontend",
   ["compile-frontend"],
-  (done) => {
-    runKarma({
-      singleRun: true,
-    }, done);
-  }
+  testFrontend
 );
 
 gulp.task(
   "test-backend",
   ["compile-backend"],
-  () => {
-    return gulp.src("test/backend/*.spec.js")
-      .pipe(jasmine());
-  });
+  testBackend
+);
 
 gulp.task("test", ["test-frontend", "test-backend"]);
+gulp.task("test-frontend-no-compile", testFrontend);
+gulp.task("test-backend-no-compile", testBackend);
 
 gulp.task("docs", ["compile-backend"], (callback) => {
   gulp.src(
