@@ -350,20 +350,13 @@ export function openExternal(url: string): void {
  ******************************************************************************/
 export function openDirectoryDialog(
   callback: ResultCallback,
-  defaultPath: string = undefined
+  defaultPath: string = null
 ): void {
-  let options = {
+  return callback(remote.dialog.showOpenDialog({
     buttonLabel: "Select",
     properties: ["openDirectory", "createDirectory"],
-  };
-
-  if (defaultPath !== undefined) {
-    options = Object.assign(options, {
-      defaultPath,
-    });
-  }
-
-  callback(remote.dialog.showOpenDialog(options));
+    defaultPath
+  }));
 };
 
 
