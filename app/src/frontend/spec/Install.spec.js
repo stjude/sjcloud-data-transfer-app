@@ -19,10 +19,8 @@ describe("Install", function() {
   });
 
   it("should display the initial download screen", function(done) {
-    setTimeout(() => {
-      expect(holder.select(".theater-body-img img").attr("src")).toEqual("img/screen-download.png");
-      done();
-    }, 50);
+    expect(holder.select(".theater-body-img img").attr("src")).toEqual("img/screen-download.png");
+    done();
   });
 
   afterAll(function(done) {

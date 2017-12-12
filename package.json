@@ -26,6 +26,7 @@
     "postpack:mac": "bash ./build/scripts/finalize.sh 'SJCP Data Transfer'",
     "postpack:win": "npm run postpack:mac",
     "test": "./node_modules/.bin/nyc ./node_modules/.bin/gulp test",
+    "test-www": "NODE_ENV=development && cp -f app/src/frontend/spec/* test/frontend/ && karma start karma.conf.js",
     "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls"
   },
   "author": "St. Jude Children's Research Hospital <clay.mcleod@stjude.org>",
