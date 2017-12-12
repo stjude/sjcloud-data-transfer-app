@@ -11,7 +11,7 @@
   "scripts": {
     "start": "electron app/main.js",
     "clean": "rm -rf ./dist/*",
-    "www": "NODE_ENV=development && webpack --config=webpack.conf.js --watch --progress --colors",
+    "www": "export NODE_ENV=development && webpack --config=webpack.conf.js --watch --progress --colors",
     "www-no-watch": "./node_modules/.bin/gulp develop-once",
     "dist:mac": "build -m --x64 --ia32",
     "dist:linux": "build -l deb rpm zip --x64 --ia32",

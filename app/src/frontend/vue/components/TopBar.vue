@@ -17,7 +17,7 @@
 	    <div v-show='showTourBtn'
 	    	class='tour-prompt'
 	    	@click='tour'>
-	    	<q-btn color='standard' small>Tour</q-btn>
+	    	<q-btn color='secondary' small>Tour</q-btn>
 	    </div>
 	</div>
 </template>
@@ -103,11 +103,16 @@ export default {
 
 .tour-prompt {
   float: right;
-  margin: 3px 15px 0px 0px;
+  margin: 4px 15px 0px 0px;
 }
 
 .q-btn-small {
-	min-height: 20px;
+	min-height: 18px;
 	font-weight: 600;
+}
+
+/* override color for the tour button */
+.bg-secondary {
+	background: #00BE19 !important;
 }
 </style>
