@@ -64,6 +64,7 @@ function getParams() {
 /** Global Store **/
 const storeGlobal = {
   state: {
+    platform: window.utils.platform,
     environment: process.env.NODE_ENV || "development",
     currPath: "upload",
     downloadLocation: window.utils.defaultDownloadDir,
@@ -71,6 +72,9 @@ const storeGlobal = {
     infoTipText: ''
   },
   getters: {
+    platform(state, getters) {
+      return state.platform;
+    },
     environment(state, getters) {
       return state.environment;
     },

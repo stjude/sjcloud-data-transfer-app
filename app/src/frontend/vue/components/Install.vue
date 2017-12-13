@@ -41,7 +41,7 @@
 	</div>
 </template>
 
-<script>
+<script @load="checkLinuxURIWarning()">
 import StepOutcome from "./StepOutcome.vue";
 import SpinKit from "./SpinKit.vue";
 import ToolkitModal from "./ToolkitModal.vue";
@@ -76,6 +76,14 @@ export default {
     this.$store.commit("setTourHint", true);
   },
   methods: {
+    checkLinuxURIWarning() {
+      if (this.$store.getters.platform === "linux") {
+        this.$store.commit('byKey', {alertType: "info", alertMessage: "Custom URIs " +
+          "are not supported on Linux. " +
+          "Other platforms can launch this app with a default project selected. " +
+          "These links will not work on this computer."});
+      }
+    },
     setInstallingDependencies(installing) {
       this.$store.commit("setInstallingDependencies", installing);
     },

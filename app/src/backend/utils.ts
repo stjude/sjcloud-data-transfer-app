@@ -28,7 +28,7 @@ const { exec, spawn, execSync, spawnSync, } = require("child_process");
  * CONSTANTS
  ******************************************************************************/
 
-const platform = os.platform();
+export const platform = os.platform();
 export const defaultDownloadDir = path.join(os.homedir(), "Downloads");
 
 interface StJudeCloudPaths {
