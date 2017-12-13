@@ -19,7 +19,6 @@
     "dist:all": "build -lwm --x64 --ia32",
     "release:prerelease": "build -lwm --x64 --ia32 --prerelease -p",
     "release:all": "build -lwm --x64 --ia32 -p",
-    "postdist:win": "build\\scripts\\change_manifest.bat",
     "pack:mac": "./node_modules/.bin/electron-packager . 'SJCP Data Transfer' --electron-version=1.6.15 --app-version=$npm_package_version --out=dist --ignore='^/dist$' --platform=darwin --arch=x64 --icon=build/icon.icns --overwrite",
     "pack:dmg": "./node_modules/.bin/appdmg ./build/dmg.json 'dist/SJCP Data Transfer.dmg'",
     "pack:win": "./node_modules/.bin/electron-packager . 'SJCP Data Transfer' --electron-version=1.6.15 --app-version=%npm_package_version% --out=dist --ignore='^/dist$' --platform=win32 --arch=ia32 --version-string.CompanyName='St. Jude Childrens Research Hospital' --app-copyright=\"Copyright (C) 2017 St. Jude Childrens Research Hospital\" --version-string.FileDescription='SJCP Data Transfer' --version-string.OriginalFilename='SJCP-Data-Transfer.exe' --version-string.InternalName='SJCP Data Transfer' --version-string.ProductName='SJCP Data Transfer' --version-string.ProductVersion=%npm_package_version% --asar --icon=build/logo.ico --overwrite",
