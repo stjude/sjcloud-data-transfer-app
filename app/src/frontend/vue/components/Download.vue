@@ -15,9 +15,8 @@
 
 			<div class="alert-container" v-else-if="hasTools && noFilesVisible">
 				<step-outcome failureMessage='No files to download!'
-										  textStyle='font-size: 24pt; text-align: center;'
-											tooltipText="If you'd like to see all files, please toggle the 'Show all files' option in the settings."
-										  outcome='error'></step-outcome>
+							  textStyle='font-size: 24pt; text-align: center;'
+							  outcome='error'></step-outcome>	
 			</div>
 
 			<div class="alert-container" v-else-if="hasTools && filesLoading">
@@ -29,7 +28,7 @@
 					<input id="downloadTextInput" type="text"
 						   v-model="downloadLocation"
 						   v-on:click.prevent="selectDownloadLocation"
-						   readonly>
+						   readonly />
 				</div>
 				<div class="bottom-bar-right">
 					<button class='btn btn-primary btn-stjude download-btn' 
@@ -53,7 +52,6 @@ import FileStatus from './FileStatus.vue';
 import UploadTarget from './UploadTarget.vue';
 import SpinKit from './SpinKit.vue';
 import StepOutcome from './StepOutcome.vue';
-import InfoTooltip from './InfoTooltip.vue';
 
 export default {
 	components: {
@@ -63,7 +61,6 @@ export default {
 		UploadTarget,
 		SpinKit,
 		StepOutcome,
-		InfoTooltip,
 	},
 	computed: {
 		noProjectsFound() {
@@ -105,6 +102,9 @@ export default {
 				)
 			)
 		}
+	},
+	mounted() {
+		this.$store.commit('setInfoTipText',"If you'd like to see all files, please toggle the 'Show all files' option in the settings.");
 	},
 	methods: {
 		selectDownloadLocation() {

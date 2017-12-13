@@ -7,6 +7,7 @@ import {
   ResultCallback,
   SJDTAFile,
   SJDTAProject,
+  DXDownloadInfo
 } from "./types";
 
 import * as fs from "fs";
@@ -19,40 +20,27 @@ import * as child_process from "child_process";
 const async = require("async");
 const expandHomeDir = require("expand-home-dir");
 const config = require("../../../config.json");
+const platform = os.platform();
 
-/**********************************************************
- *                 Utility Functionality                  *
- **********************************************************/
-
-interface dxDownloadInfo {
-  URL: string;
-  SHA256SUM: string;
-}
-
-/**
- * Returns the URL and hash of the precompiled dx-toolkit 
- * for the platform passed in. The only platforms supported
- * are Mac, Windows, and Ubuntu flavored Linux. 
- * 
- * Unknown platform case handled in state.js.
- *
- * @see state.js
- * @param platform Name of the operating system.
- * @returns URL and hash of the download
- */
-function dxToolkitDownloadInfo(platform: string): dxDownloadInfo {
-  switch (platform) {
-    case "darwin": return config.DOWNLOAD_INFO.MAC;
-    case "ubuntu12": return config.DOWNLOAD_INFO.UBUNTU_12;
-    case "ubuntu14": return config.DOWNLOAD_INFO.UBUNTU_14;
-    case "win32": return config.DOWNLOAD_INFO.WINDOWS;
-    default: throw new Error("Unrecognized platform: " + platform);
-  }
-}
 
 /**********************************************************
  *                DX-Toolkit Functionality                *
  **********************************************************/
+
+/*******************************************************************************
+* Runs a command to determine if we are logged in to DNAnexus.
+* 
+* @param {SuccessCallback} callback
+* @param dryrun Return the command that would have been run as a string.
+* @returns ChildProcess or string depending on the value of 'dryrun'.
+******************************************************************************/
+export function loggedIn(
+  callback: SuccessCallback,
+  dryrun: boolean = false
+): any {
+  const cmd = "dx whoami";
+  return dryrun ? cmd : utils.runCommand(cmd, callback);
+};
 
 /**
  * Login to DNAnexus using an authentication token
@@ -61,8 +49,8 @@ function dxToolkitDownloadInfo(platform: string): dxDownloadInfo {
  * @param token Authentication token
  * @param callback
  * @param dryrun Return the command that would have been run as a string.
-* @returns ChildProcess or string depending on the value of 'dryrun'.
-*/
+ * @returns ChildProcess or string depending on the value of 'dryrun'.
+ */
 export function login(
   token: string,
   callback: SuccessCallback,
@@ -93,7 +81,7 @@ export function logout(
  *
  * @param dnanexusId The DNAnexus object identifier (ex: file-XXXXXX).
  * @param callback
- * @param dryrun Return the command that would have been run as a string. 
+ * @param dryrun Return the command that would have been run as a string.
  * @returns {any} ChildProcess or string depending on the value of 'dryrun'.
  **/
 export function describeDXItem(
@@ -112,6 +100,32 @@ export function describeDXItem(
     callback(err, JSON.parse(stdout));
   });
 };
+
+
+/*******************************************************************************
+ * Checks if there's at least one project the user can upload data to.
+ *
+ * @param {SuccessCallback} callback
+ * @param {boolean} dryrun Return the command that would have been run as a string.
+ * @param {string} overridePlatform Override the platform string with this value.
+ ******************************************************************************/
+export function checkProjectAccess(
+  callback: SuccessCallback,
+  dryrun: boolean = false,
+  overridePlatform: string = null
+): any {
+  let cmd = "";
+  let platformToUse = overridePlatform || platform;
+
+  if (platformToUse === "linux" || platformToUse === "darwin") {
+    cmd = "echo '0' | dx select --level UPLOAD";
+  } else if (platformToUse === "win32") {
+    cmd = "\"echo 0 | dx select --level UPLOAD\"";
+  } else throw new Error(`Unrecognized platform: '${platformToUse}'.`);
+
+  return dryrun ? cmd : utils.runCommand(cmd, callback);
+};
+
 
 /**
  * List all of the files available for download in a DNAnexus project.
@@ -166,13 +180,14 @@ export function downloadDxFile(
   const platform = os.platform();
   const outputPath = expandHomeDir(path.join(downloadLocation, fileName));
 
+  let command: string = null;
   if (platform === "darwin" || platform === "linux") {
-    utils.runCommandSync(`touch '${outputPath}'`);
+    command = `touch '${outputPath}'`;
   } else if (platform === "win32") {
-    utils.runCommandSync(`New-Item '${outputPath}' -type file -force`);
-  } else throw new Error(`Unknown platform: ${platform}.`);
+    command = `New-Item '${outputPath}' -type file -force`;
+  }
 
-  const cmd = `dx download -f ${remoteFileId} -o '${outputPath}'`;
+  command = `${command}; dx download -f ${remoteFileId} -o '${outputPath}'`;
   fs.watchFile(outputPath, { interval: 1000 }, () => {
     fs.stat(outputPath, (err: any, stats: any) => {
       if (stats !== undefined) {
@@ -182,7 +197,7 @@ export function downloadDxFile(
     });
   });
 
-  return utils.runCommand(cmd, finishedCb);
+  return utils.runCommand(command, finishedCb);
 };
 
 /**
@@ -243,13 +258,6 @@ export function uploadFile(
 ): child_process.ChildProcess {
   const basename: string = path.basename(file.path.trim())
   const dxRemotePath: string = `${projectId}: ${remoteFolder} /${basename}`
-
-  // If this fails, not a big deal. Just means there is no file at this path
-  // to begin with.
-  // TODO(clay): cleaner solution here. Ignoring this error seems hacky.
-  try {
-    utils.runCommandSync(`dx rm -a '${dxRemotePath}' || true`);
-  } catch (e) { }
 
   // keep track of the largest reported progress to ensure that if callbacks
   // get out of order, the progress meter isn't jumping all around.
@@ -345,7 +353,6 @@ export function listProjects(
 
       utils.runCommand(iterCmd, (err: any, stdout: string) => {
         if (err) { return iteratorCallback(err, []); }
-
         return iteratorCallback(null, parseDxProjects(stdout));
       });
     },
@@ -356,69 +363,4 @@ export function listProjects(
       return callback(null, [].concat.apply([], results));
     }
   )
-};
-
-/**
- * Installs the dx-toolkit via the command line utility.
- *
- * @param updateProgress Function that updates on-screen progress bar.
- * @param callback Callback function.
-*/
-export function installDxToolkit(
-  updateProgress: ResultCallback,
-  callback: SuccessCallback
-) {
-  let platform: string = os.platform().toString();
-  if (platform === "linux") { platform = utils.getUbuntuVersionOrNull(); }
-  if (!platform) throw new Error(`Unrecognized platform: ${platform}.`);
-
-  const downloadInfo = dxToolkitDownloadInfo(platform);
-  const downloadURL: string = downloadInfo.URL;
-  const expectedDownloadHash: string = downloadInfo.SHA256SUM;
-
-  const tmpdir = os.tmpdir();
-  let dxToolkitDownloadPath = path.join(tmpdir, "dx-toolkit.tar.gz");
-  if (platform === "win32") {
-    dxToolkitDownloadPath = path.join(utils.getDXToolkitDir(), "dx-toolkit.exe");
-  }
-
-  const dxToolkitInstallDir = utils.getDXToolkitDir();
-  const parentDir = path.dirname(dxToolkitInstallDir);
-
-  // TODO(Clay): handle download failures throughout this whole block.
-
-  updateProgress(["30%", "Downloading..."]);
-  utils.downloadFile(downloadURL, dxToolkitDownloadPath, () => {
-    updateProgress(["60%", "Verifying..."]);
-    utils.computeSHA256(dxToolkitDownloadPath, (err: any, downloadHash: string) => {
-      if (err) {
-        return callback(true, `Could not verify download!\n\n${err}.`);
-      }
-
-      if (downloadHash !== expectedDownloadHash) {
-        return callback(true, "Could not verify download (hash mismatch)!");
-      }
-
-      if (platform === "win32") {
-        // For Windows, just execute the installer.
-        updateProgress(["90%", "Installing..."]);
-        setTimeout(() => {
-          child_process.execSync(dxToolkitDownloadPath);
-          updateProgress(["100%", "Success!"]);
-          return callback(null, true);
-        }, 500);
-      } else {
-        // for Mac + Linux, untar to correct place.
-        updateProgress(["90%", "Extracting..."]);
-        utils.untarTo(dxToolkitDownloadPath, parentDir, function (err: any, res: any) {
-          if (err) {
-            return callback(true, `Could not extract dx-toolkit!\n\n${err}.`);
-          }
-
-          updateProgress(["100%", "Success!"]);
-          return callback(null, true);
-        });
-      }
-    });
-  });
 };

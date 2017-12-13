@@ -45,7 +45,10 @@ module.exports = {
   resolve: {
     modules: ["node_modules"],
     extensions: [".ts", ".tsx", ".js", ".vue", ".json"],
-    alias: {vue: "vue/dist/vue.js"},
+    alias: {
+      vue: "vue/dist/vue.js",
+      quasar: "quasar-framework",
+    },
   },
   entry: {
     app: ["./app/src/frontend/vue/main.js"],
@@ -77,7 +80,10 @@ module.exports = {
       host: "localhost",
       port: 3057,
       startPath: "?testdata=fakeTools",
-      server: {baseDir: ["app"]},
+      server: {
+        baseDir: "app",
+        index: "www.html"
+      },
     }),
     new WebpackNotifierPlugin(),
   ],

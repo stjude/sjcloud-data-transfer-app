@@ -1,5 +1,5 @@
-import "../app/src/frontend/bootstrap-backend.js";
-import _App from "../app/src/frontend/vue/main.js";
+import "../../app/src/frontend/bootstrap-www.js";
+import _App from "../../app/src/frontend/vue/main.js";
 import {
   select,
 } from "d3-selection"; //

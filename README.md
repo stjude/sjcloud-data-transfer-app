@@ -3,7 +3,7 @@
 St. Jude Cloud Data Transfer Application
 ========================================
 
-[![Build Status](https://travis-ci.org/stjude/sjcloud-data-transfer-app.svg?branch=master)](https://travis-ci.org/stjude/sjcloud-data-transfer-app) [![Build status](https://ci.appveyor.com/api/projects/status/m0a9yidlkb96sgfi/branch/master?svg=true)](https://ci.appveyor.com/project/claymcleod/sjcloud-data-transfer-app/branch/master) [![Maintainability](https://api.codeclimate.com/v1/badges/ce7eed7d778bf50ac81a/maintainability)](https://codeclimate.com/github/stjude/sjcloud-data-transfer-app/maintainability) 
+[![Build Status](https://travis-ci.org/stjude/sjcloud-data-transfer-app.svg?branch=master)](https://travis-ci.org/stjude/sjcloud-data-transfer-app) [![Build status](https://ci.appveyor.com/api/projects/status/m0a9yidlkb96sgfi/branch/master?svg=true)](https://ci.appveyor.com/project/claymcleod/sjcloud-data-transfer-app/branch/master) [![Maintainability](https://api.codeclimate.com/v1/badges/ce7eed7d778bf50ac81a/maintainability)](https://codeclimate.com/github/stjude/sjcloud-data-transfer-app/maintainability) [![Coverage Status](https://coveralls.io/repos/github/stjude/sjcloud-data-transfer-app/badge.svg?branch=)master](https://coveralls.io/github/stjude/sjcloud-data-transfer-app?branch=master)
 
 A desktop application written on top of the [Electron Framework](https://electron.atom.io/) facilitating easy uploading and downloading of genomic data to the  St. Jude Cloud. Functionality includes:
 
@@ -12,13 +12,6 @@ A desktop application written on top of the [Electron Framework](https://electro
 * Reliably uploading and downloading genomic data files to/from the platform.
 
 You'll need the following prerequsites installed. We are working on adding support for installing and configuring these automatically.
-
-* Python 2.7.13+
-    - [Install](https://www.python.org/downloads/release/python-2714/)
-* OpenSSL
-    - [Windows](https://wiki.openssl.org/index.php/Binaries)
-    - Mac: `brew install openssl`
-    - [Other](https://wiki.openssl.org/index.php/Compilation_and_Installation)
 
 Building
 -------
@@ -58,7 +51,7 @@ yarn start
 Development
 -----------
 
-[![Build Status](https://travis-ci.org/stjude/sjcloud-data-transfer-app.svg?branch=development)](https://travis-ci.org/stjude/sjcloud-data-transfer-app) [![Build status](https://ci.appveyor.com/api/projects/status/m0a9yidlkb96sgfi/branch/development?svg=true)](https://ci.appveyor.com/project/claymcleod/sjcloud-data-transfer-app/branch/development)
+[![Build Status](https://travis-ci.org/stjude/sjcloud-data-transfer-app.svg?branch=development)](https://travis-ci.org/stjude/sjcloud-data-transfer-app) [![Build status](https://ci.appveyor.com/api/projects/status/m0a9yidlkb96sgfi/branch/development?svg=true)](https://ci.appveyor.com/project/claymcleod/sjcloud-data-transfer-app/branch/development) [![Coverage Status](https://coveralls.io/repos/github/stjude/sjcloud-data-transfer-app/badge.svg?branch=development)](https://coveralls.io/github/stjude/sjcloud-data-transfer-app?branch=development)
 
 Running the tool in development mode requires a few changes to the config:
 

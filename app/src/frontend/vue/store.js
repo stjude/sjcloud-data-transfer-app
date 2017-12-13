@@ -1,11 +1,11 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import Config from "../../../../config.json";
-import storeStart from "./storeStart";
-import storeModals from "./storeModals";
-import storeProjects from "./storeProjects";
-import storeFiles from "./storeFiles";
-import storeOperations from "./storeOperations";
+import storeStart from "./substores/storeStart";
+import storeModals from "./substores/storeModals";
+import storeProjects from "./substores/storeProjects";
+import storeFiles from "./substores/storeFiles";
+import storeOperations from "./substores/storeOperations";
 
 Vue.use(Vuex);
 
@@ -64,12 +64,17 @@ function getParams() {
 /** Global Store **/
 const storeGlobal = {
   state: {
+    platform: window.utils.platform,
     environment: process.env.NODE_ENV || "development",
     currPath: "upload",
     downloadLocation: window.utils.defaultDownloadDir,
     testdata: "",
+    infoTipText: ''
   },
   getters: {
+    platform(state, getters) {
+      return state.platform;
+    },
     environment(state, getters) {
       return state.environment;
     },
@@ -82,6 +87,9 @@ const storeGlobal = {
     testdata(state) {
       return state.testdata;
     },
+    infoTipText(state) {
+      return state.infoTipText;
+    }
   },
   mutations: {
     // generic mutation setter
@@ -98,53 +106,35 @@ const storeGlobal = {
     setDownloadLocation(state, location) {
       state.downloadLocation = location;
     },
-
+    setInfoTipText(state,text) {
+      state.infoTipText = text;
+    },
     setTestdata(state, str) {
       state.testdata = str;
     },
   },
+  actions: {}
 };
 
 /** Store generator **/
+function storeCopier(key,substores) {
+  const copy={};
+  substores.forEach(substore=>{
+    if (key in substore) Object.assign(copy, substore[key])
+  });
+  return copy;
+}
+
 export default function getVuexStore(cachedState = {}) {
+  const substores = [storeGlobal, storeStart, storeModals, storeProjects, storeFiles, storeOperations];
   /*
-    To-Do: use Vuex.modules instead of Object.assign
+    To-Do: use Vuex.modules instead of Object.assign in storeCopier
   */
   return new Vuex.Store({
-    state: Object.assign(
-      storeGlobal.state,
-      storeStart.state,
-      storeModals.state,
-      storeProjects.state,
-      storeFiles.state,
-      storeOperations.state,
-      cachedState,
-      getParams()
-    ),
-    getters: Object.assign(
-      storeGlobal.getters,
-      storeStart.getters,
-      storeModals.getters,
-      storeProjects.getters,
-      storeFiles.getters,
-      storeOperations.getters
-    ),
-    mutations: Object.assign(
-      storeGlobal.mutations,
-      storeStart.mutations,
-      storeModals.mutations,
-      storeProjects.mutations,
-      storeFiles.mutations,
-      storeOperations.mutations
-    ),
-    actions: Object.assign(
-      {},
-      storeStart.actions,
-      storeModals.actions,
-      storeProjects.actions,
-      storeFiles.actions,
-      storeOperations.actions
-    ),
+    state: storeCopier('state', substores.concat({state: cachedState}, {state: getParams()})),
+    getters: storeCopier('getters', substores),
+    mutations: storeCopier('mutations', substores),
+    actions: storeCopier('actions', substores),
     plugins: [projectToolScopeWatcher],
   });
 }

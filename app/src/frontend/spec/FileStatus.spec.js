@@ -79,7 +79,7 @@ describe("FileStatus table for a project with pending downloads", function() {
     done();
   });
 
-  it("should have 1 starting status cells", function(done) {
+  it("should have 1 starting status cell", function(done) {
     expect(
       holder.select("#file-status-table-body")
         .selectAll(".file-status-cell-status-progress-text")

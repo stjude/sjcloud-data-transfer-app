@@ -6,8 +6,7 @@
 			</div>
 			<div class="status-text" v-bind:style='textStyle'>
 				{{ successMessage }}
-				<info-tooltip v-show='tooltipText.length && tooltipText!="_empty_tip_"'
-								      :tooltipText="tooltipText"></info-tooltip>
+				<info-tip v-if='infoTipText.length'></info-tip>
 			</div>
 		</div>
 		<div v-show='outcome=="error"'>
@@ -16,24 +15,20 @@
 			</div>
 			<div class="status-text" v-bind:style='textStyle'>
 				{{ failureMessage }}
-				<info-tooltip v-show='tooltipText.length && tooltipText!="_empty_tip_"'
-							        :tooltipText="tooltipText"></info-tooltip>
+				<info-tip v-if='infoTipText.length'></info-tip>
 			</div>
 		</div>
 	</div>
 </template>
 
 <script>
-import InfoTooltip from './InfoTooltip.vue';
+import InfoTip from './InfoTip.vue';
 
 export default {
 	components: {
-		InfoTooltip,
+		InfoTip,
 	},
 	props: {
-		'tooltipText': {
-			default: ''
-		},
 		'outcome': {
 			default: ''
 		},
@@ -50,7 +45,13 @@ export default {
 				}
 			}	
 		}
+	},
+	computed: {
+		infoTipText() {
+			return this.$store.getters.infoTipText
+		}
 	}
+
 }
 </script>
 
@@ -60,7 +61,7 @@ export default {
 }
 
 .done-icon {
-  font-size: 120pt;
+  font-size: 110pt;
   font-weight: 700;
   color: #4F8A10;
 }

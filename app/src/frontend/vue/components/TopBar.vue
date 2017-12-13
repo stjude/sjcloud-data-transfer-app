@@ -14,11 +14,27 @@
 	    	@click.stop='toggleMenu'>
 	    	view_headline
 	    </div>
+	    <div v-show='showTourBtn'
+	    	class='tour-prompt'
+	    	@click='tour'>
+	    	<q-btn color='secondary' small>Tour</q-btn>
+	    </div>
 	</div>
 </template>
 
 <script>
+import { QBtn } from 'quasar';
+import tour from '../../tour.js';
+
 export default {
+	components: {
+		QBtn
+	},
+	computed: {
+		showTourBtn() {
+			return this.$route.path=='/download' || this.$route.path=='/upload';
+		}
+	},
 	methods: {
 		goHome() {
 			if (this.$store.getters.environment === "development") {
@@ -29,12 +45,16 @@ export default {
 		},
 		toggleMenu() {
 			this.$store.commit('toggleMenu');
+		},
+    	tour() {
+    		this.$store.commit('closeMenu');
+			tour.__start();
 		}
 	}
 }
 </script>
 
-<style>
+<style scoped>
 .sjcda-top-bar {
 	/* background-color: #2A8BB6; */
 	background-color: #1381B3;
@@ -73,11 +93,26 @@ export default {
 }
 
 .title-font {
-	font-weight: 800;
+  font-weight: 800;
 }
 
 .title-font-thin {
-	font-weight: 300;
+  font-weight: 300;
   color: #A1CDE1;
+}
+
+.tour-prompt {
+  float: right;
+  margin: 4px 15px 0px 0px;
+}
+
+.q-btn-small {
+	min-height: 18px;
+	font-weight: 600;
+}
+
+/* override color for the tour button */
+.bg-secondary {
+	background: #00BE19 !important;
 }
 </style>

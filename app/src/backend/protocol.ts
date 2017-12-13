@@ -6,7 +6,7 @@
 const app = require("electron").app;
 const { logging } = require("./logging");
 
-logging.info("   - Registering protocols...");
+logging.info("   [*] Registering protocols...");
 app.setAsDefaultProtocolClient("sjcloud");
 
 /**
@@ -15,7 +15,7 @@ app.setAsDefaultProtocolClient("sjcloud");
  */
 function handleURI(uri: string): string {
   if (uri && uri.search("sjcloud://") != -1) {
-    logging.info("Handling custom URI:", uri);
+    logging.debug("  [*] Handling custom URI:", uri);
     let projectName = uri.replace("sjcloud://", "");
 
     // remove ending slash.

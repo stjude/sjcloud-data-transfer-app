@@ -10,6 +10,13 @@ import SpinKit from './SpinKit.vue'
 export default {
   components: {
     SpinKit
+  },
+  mounted() {
+  	if (process.env.NODE_ENV === "development") {
+  		setTimeout(()=>{
+  			VueApp.$router.replace("home");
+  		},1000);
+  	}
   }
 }
 </script>

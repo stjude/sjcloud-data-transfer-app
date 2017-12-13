@@ -84,11 +84,14 @@ export default {
       }
     };
   },
-  created() {
-    //this.$store.dispatch('updateToolsFromRemote');
-  },
+  created() {},
   updated() {
-    this.$store.dispatch("updateCurrentToolFromURI");
+    if (
+      this.$store.currPath === "upload" ||
+      this.$store.currPath === "download"
+    ) {
+      this.$store.dispatch("updateCurrentToolFromURI");
+    }
   },
   computed: {
     uriProject() {
@@ -115,7 +118,6 @@ export default {
   },
   watch: {
     uriProject: function(val) {
-      console.log("URI project changed!", val);
       this.$store.commit("setCurrToolName", val, true);
     }
   },
@@ -206,7 +208,6 @@ td {
 .sjcda-left-panel-table-thead-tr-th-value {
   width: 30%;
   text-align: right;
-  padding-right: 25px;
 }
 </style>
 

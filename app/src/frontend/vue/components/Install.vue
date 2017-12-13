@@ -1,69 +1,47 @@
 <template>
 	<div class="row">
-		<div class="dev-box" v-show="environment == 'dev'">
-			<select @change="setInstallingDxToolkit($event.target.value)">
-				<option>waiting</option>
-				<option>installing</option>
-				<option>completed</option>
-				<option>failed</option>
-			</select>
-		</div>
 		<div class='col-xs-12 main'>
 			<div class="theater-heading">
 				<h1>Install</h1> 
 				<hr>
 			</div>
-			<div v-show="installingDxToolkit == 'waiting' " class='theater-body'>
+			<div v-show="installingDependencies == 'waiting' " class='theater-body'>
 				<div class="col-xs-6 theater-body-img"> 
 					<img src="img/screen-download.png">
 				</div>
 				<div class="col-xs-6">
 					<div class="theater-body-text">
-						The St. Jude Cloud desktop application requires the installation of third-party software. We'll take care of installing that for you. 
+						The St. Jude Cloud Data Transfer Application requires the installation of third-party software. We'll take care of installing that for you. 
 						<div class="info-icon-wrapper-div" @click="showModal()">
 							<i class="material-icons info-icon">info</i>
 						</div>
 					</div>
-					<div @click="downloadDxToolkit()" 
+					<div @click="downloadDependencies()" 
 						class="btn btn-large btn-stjude"
 						style="width:auto">
 						INSTALL
 					</div>
 				</div>
 			</div>
-			<div v-show="installingDxToolkit == 'installing'" class='theater-body'>
-				<spin-kit :status='downloadStatus' :btmLabel='downloadStatus'></spin-kit>
+			<div v-show="installingDependencies == 'installing'" class='theater-body'>
+				<spin-kit :status='downloadStatus' :btmLabel='downloadStatus' :percentage='percentage'></spin-kit>
 			</div>
-			<div v-show="installingDxToolkit == 'completed'" class='theater-body'>
+			<div v-show="installingDependencies == 'completed'" class='theater-body'>
 				<div class="col-xs-12">
 					<step-outcome successMessage='Completed!' outcome='done'></step-outcome>
 				</div>
 			</div>
-			<div v-show="installingDxToolkit == 'failed'" class='theater-body'>
+			<div v-show="installingDependencies == 'failed'" class='theater-body'>
 				<div class="col-xs-12">
 					<step-outcome failureMessage='Failed!' outcome='error'></step-outcome>
 				</div>
 			</div>
 		</div>
-		<div class='col-xs-12 footer'>
-			<div class='progress'>
-				<div class='progress-bar progress-bar-div'></div>
-				<div class='progress-node progress-node-active'>1</div>
-				<div class='progress-node progress-node-nonactive' style='margin-left: 142px'>2</div>
-				<div class='progress-node progress-node-nonactive' style='margin-left: 277px'>3</div>
-			</div>
-			<div class='progress-text'>
-				<span style="left: 294px">Install</span>
-				<span style="left: 435px">Log In</span>
-				<span style="left: 565px">Upload</span>
-			</div>
-		</div>
-
 		<toolkit-modal v-show='toolkitModalVisibility'></toolkit-modal>
 	</div>
 </template>
 
-<script>
+<script @load="checkLinuxURIWarning()">
 import StepOutcome from "./StepOutcome.vue";
 import SpinKit from "./SpinKit.vue";
 import ToolkitModal from "./ToolkitModal.vue";
@@ -71,17 +49,18 @@ import ToolkitModal from "./ToolkitModal.vue";
 export default {
   components: {
     StepOutcome,
-    SpinKit,
-    ToolkitModal
+    ToolkitModal,
+    SpinKit
   },
   data() {
     return {
-      openModal: false
+      openModal: false,
+      percentage: 0
     };
   },
   computed: {
-    installingDxToolkit() {
-      return this.$store.getters.installingDxToolkit;
+    installingDependencies() {
+      return this.$store.getters.installingDependencies;
     },
     environment() {
       return this.$store.getters.environment;
@@ -97,31 +76,38 @@ export default {
     this.$store.commit("setTourHint", true);
   },
   methods: {
-    setInstallingDxToolkit(installing) {
-      this.$store.commit("setInstallingDxToolkit", installing);
+    checkLinuxURIWarning() {
+      if (this.$store.getters.platform === "linux") {
+        this.$store.commit('byKey', {alertType: "info", alertMessage: "Custom URIs " +
+          "are not supported on Linux. " +
+          "Other platforms can launch this app with a default project selected. " +
+          "These links will not work on this computer."});
+      }
+    },
+    setInstallingDependencies(installing) {
+      this.$store.commit("setInstallingDependencies", installing);
     },
     setDownloadStatus(status) {
       this.$store.commit("setDownloadStatus", status);
     },
-    downloadDxToolkit() {
-      this.$store.commit("setInstallingDxToolkit", "installing");
-      var that = this;
+    downloadDependencies() {
+      this.$store.commit("setInstallingDependencies", "installing");
 
-      window.dx.installDxToolkit(
-        function([percent, text]) {
-          that.setDownloadStatus(text);
+      window.dependency.installAnaconda(
+        (percent, text) => {
+          this.setDownloadStatus(text);
+          this.percentage = percent;
         },
-        function(err, result) {
+        (err, result) => {
           if (err) {
-            that.setDownloadStatus(text);
-            that.$store.commit("setInstallingDxToolkit", "failed");
+            this.setDownloadStatus(text);
+            this.$store.commit("setInstallingDependencies", "failed");
           } else {
-            that.$store.commit("setInstallingDxToolkit", "completed");
-            setTimeout(function() {
-              that.$router.push("login");
+            this.$store.commit("setInstallingDependencies", "completed");
+            setTimeout(() => {
+              this.$router.push("login");
             }, 2500);
           }
-
           return result;
         }
       );
@@ -134,123 +120,17 @@ export default {
 </script>
 
 <style scoped>
-.row {
-  margin: 0px;
-}
-
-.dev-box {
-  position: absolute;
-  left: 750px;
-  top: 20px;
-  z-index: 1;
-}
-
-.main {
-  margin-bottom: 50px;
-}
-
-.theater-heading {
-  margin: 0px 45px 0px 45px;
-}
-
-.theater-heading > h1 {
-  margin-top: 35px;
-  font-style: "Open Sans", "Helvetica Neue";
-  font-size: 36px;
-  color: #000000;
-}
-
-.theater-heading > hr {
-  margin: 10px 0px 10px 0px;
-  float: center;
-  border-top: 2px solid #dedede;
-  width: 780px;
-}
-
-.theater-body {
-  margin: 35px 40px 0px 45px;
-  text-align: center;
-  font-style: "Open Sans", "Helvetica Neue";
-  font-size: 24px;
-  height: 300px;
-}
-
-.theater-body .btn {
-  margin: 35px 0px 50px 0px;
-  width: 145px;
-  font-size: 24px;
-}
-
-.footer {
-  position: absolute;
-  top: 545px;
-  left: -10px;
-}
-
-.footer .progress {
-  width: 300px;
-  height: 4pt;
-  float: center;
-  margin: 0 auto;
-  margin-bottom: 25px;
-}
-
-.footer .progress-bar {
-  background-color: #158cba;
-}
-
-.footer .progress-node {
-  position: absolute;
-  margin-top: -20px;
-  z-index: 1;
-  height: 45px;
-  width: 45px;
-  border: 3px solid #1381b3;
-  border-radius: 25px;
-  line-height: 40px;
-  font-size: 26px;
-  text-align: center;
-}
-
-.footer .progress-node-active {
-  color: #ffffff;
-  background-color: #158cba;
-}
-
-.footer .progress-node-nonactive {
-  color: #158cba;
-  background-color: #ffffff;
-}
-
-.footer .progress-text span {
-  position: absolute;
-  color: #158cba;
-  font-size: 16pt;
-}
-
 .info-icon-wrapper-div {
   display: inline-block;
   vertical-align: top;
-  padding: 3px 0 0 0;
+  padding: 0;
   overflow: hidden;
   margin: 0;
-  height: 30px;
-}
-
-.theater-body-img {
-  margin-top: 35px;
-}
-
-.theater-body-text {
-  margin-top: 15px;
 }
 
 .info-icon {
   color: #018dc4;
   cursor: pointer;
-}
-
-.progress-bar-div {
-  width: 100%;
+  margin-top: -5px;
 }
 </style>

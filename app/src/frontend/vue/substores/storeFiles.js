@@ -45,8 +45,7 @@ export default {
 	mutations: {
       addFile(state, file, checked) {
         const tool = state.tools.filter((t) => t.dx_location === state.currToolName)[0];
-        if (!tool || !tool[state.currPath]) {
-          console.error(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
+        if (toolError(tool,state)) {
           return;
         }
 
@@ -54,8 +53,7 @@ export default {
       },
       addFiles(state, files) {
         const tool = state.tools.filter((t) => t.dx_location === state.currToolName)[0];
-        if (!tool || !tool[state.currPath]) {
-          console.error(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
+        if (toolError(tool,state)) {
           return;
         }
 
@@ -72,8 +70,7 @@ export default {
       },
       removeCheckedFiles(state) {
         const tool = state.tools.filter((t) => t.dx_location === state.currToolName)[0];
-        if (!tool || !tool[state.currPath]) {
-          console.error(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
+        if (toolError(tool,state)) {
           return;
         }
 
@@ -81,8 +78,7 @@ export default {
       },
       removeAllFiles(state) {
         const tool = state.tools.filter((t) => t.dx_location === state.currToolName)[0];
-        if (!tool || !tool[state.currPath]) {
-          console.error(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
+        if (toolError(tool,state)) {
           return;
         }
 
@@ -90,8 +86,7 @@ export default {
       },
       cancelCheckedFiles(state) {
         const tool = state.tools.filter((t) => t.dx_location === state.currToolName)[0];
-        if (!tool || !tool[state.currPath]) {
-          console.error(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
+        if (toolError(tool,state)) {
           return;
         }
 
@@ -136,7 +131,9 @@ export default {
 	}
 } 
 
-/* Helpers */
+/* 
+  Helpers 
+*/
 
 function sortFiles(state, files) {
   if (!state.currFileSortKey || state.currFileSortDirection === 0) return;
@@ -164,5 +161,12 @@ function sortFiles(state, files) {
     });
   } else if (state.currFileSortKey == "checked") {
     files.sort((a, b) => a.checked == b.checked ? 0 : a.checked ? i : j);
+  }
+}
+
+function toolError(tool,state) {
+  if (!tool || !tool[state.currPath]) {
+    console.error(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
+    return true;
   }
 }

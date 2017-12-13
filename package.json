@@ -1,13 +1,17 @@
 {
   "name": "SJCPDataTransferApp",
-  "version": "1.0.4",
-  "description": "The St. Jude Cloud desktop app, designed for getting data in the St. Jude Cloud easily and reliably.",
+  "version": "1.0.5",
+  "description": "The St. Jude Cloud Data Transfer App, designed for getting data in the St. Jude Cloud easily and reliably.",
   "homepage": "https://github.com/stjude/sjcloud-data-transfer",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/stjude/sjcloud-data-transfer"
+  },
   "main": "app/main.js",
   "scripts": {
     "start": "electron app/main.js",
     "clean": "rm -rf ./dist/*",
-    "www": "./node_modules/.bin/gulp develop",
+    "www": "export NODE_ENV=development && webpack --config=webpack.conf.js --watch --progress --colors",
     "www-no-watch": "./node_modules/.bin/gulp develop-once",
     "dist:mac": "build -m --x64 --ia32",
     "dist:linux": "build -l deb rpm zip --x64 --ia32",
@@ -21,7 +25,9 @@
     "pack:win": "./node_modules/.bin/electron-packager . 'SJCP Data Transfer' --electron-version=1.6.15 --app-version=%npm_package_version% --out=dist --ignore='^/dist$' --platform=win32 --arch=ia32 --version-string.CompanyName='St. Jude Childrens Research Hospital' --app-copyright=\"Copyright (C) 2017 St. Jude Childrens Research Hospital\" --version-string.FileDescription='SJCP Data Transfer' --version-string.OriginalFilename='SJCP-Data-Transfer.exe' --version-string.InternalName='SJCP Data Transfer' --version-string.ProductName='SJCP Data Transfer' --version-string.ProductVersion=%npm_package_version% --asar --icon=build/logo.ico --overwrite",
     "postpack:mac": "bash ./build/scripts/finalize.sh 'SJCP Data Transfer'",
     "postpack:win": "npm run postpack:mac",
-    "test": "./node_modules/.bin/gulp develop-once && ./node_modules/.bin/gulp test"
+    "test": "./node_modules/.bin/nyc ./node_modules/.bin/gulp test",
+    "test-www": "NODE_ENV=development && cp -f app/src/frontend/spec/* test/frontend/ && karma start karma.conf.js",
+    "coverage": "./node_modules/.bin/nyc report --reporter=text-lcov | ./node_modules/.bin/coveralls"
   },
   "author": "St. Jude Children's Research Hospital <clay.mcleod@stjude.org>",
   "build": {
@@ -46,14 +52,20 @@
     "bootstrap-tour": "^0.11.0",
     "expand-home-dir": "0.0.3",
     "express": "^4.15.4",
+    "fs-extra": "^4.0.3",
     "glob-to-regexp": "^0.3.0",
     "gulp": "^3.9.1",
     "gulp-typescript": "^3.2.3",
     "gulp-watch": "^4.3.11",
     "gulp-webpack": "^1.5.0",
     "jquery": "^3.2.1",
+    "lodash": "^4.17.4",
     "mkdirp": "^0.5.1",
+    "moment": "^2.19.3",
+    "node-powershell": "^3.3.1",
     "pem": "^1.9.7",
+    "quasar-extras": "^0.0.8",
+    "quasar-framework": "^0.14.7",
     "selfsigned": "^1.10.1",
     "spinkit": "^1.2.5",
     "tippy.js": "^1.2.0",
@@ -76,9 +88,11 @@
     "babel-runtime": "^6.26.0",
     "browser-sync": "^2.18.13",
     "browser-sync-webpack-plugin": "^1.2.0",
+    "codecov": "^3.0.0",
+    "coveralls": "^3.0.0",
     "css-loader": "^0.28.4",
     "d3-selection": "^1.1.0",
-    "electron": "~1.6.2",
+    "electron": "~1.7.9",
     "electron-builder": "^19.37.1",
     "electron-packager": "^9.1.0",
     "eslint": "^4.0.0",
@@ -98,6 +112,7 @@
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
     "null-loader": "^0.1.1",
+    "nyc": "^11.3.0",
     "style-loader": "^0.18.2",
     "ts-loader": "^3.1.1",
     "typescript": "^2.6.1",
@@ -109,5 +124,16 @@
     "vue2-dropzone": "^2.3.5",
     "vuex": "^2.3.1",
     "webpack-notifier": "^1.5.0"
+  },
+  "nyc": {
+    "include": [
+      "app/bin/backend/**/*.js",
+      "app/bin/frontend/**/*.js"
+    ],
+    "exclude": [
+      "gulpfile.js",
+      "*.conf.js",
+      "*.config.js"
+    ]
   }
 }

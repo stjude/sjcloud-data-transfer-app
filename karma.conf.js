@@ -10,7 +10,7 @@ module.exports = function(config) {
     frameworks: ["jasmine"],
     files: [
       "./app/bin/frontend/app.bundle.css",
-      "./test/test.index.js",
+      "./test/frontend/test.index.js",
       // serve assets, script, data file used in testing
       {
         pattern: "./app/testdata/*",
@@ -44,7 +44,7 @@ module.exports = function(config) {
 
     // we will pass the entry file to webpack for bundling.
     preprocessors: {
-      "./test/*.js": ["webpack"],
+      "./test/frontend/*.js": ["webpack"],
       "*.js": ["webpack"],
       "*": ["webpack"],
     },

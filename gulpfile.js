@@ -33,18 +33,24 @@ function runKarma(options, callback) {
   server.start(callback);
 }
 
-gulp.task("webpack", (callback) => {
-  return webpack(webpackConfig).run((err, stats) => {
-    if (err) {
-      gutil.log("ERROR:", err);
-      return callback();
-    }
-
-    return callback();
-  });
+gulp.task("copy-frontend-spec", () => {
+  return gulp.src("app/src/frontend/spec/*.js")
+    .pipe(gulp.dest("test/frontend/"));
 });
 
-gulp.task("compile-frontend", ["webpack"]);
+gulp.task("webpack",
+  (callback) => {
+    return webpack(webpackConfig).run((err, stats) => {
+      if (err) {
+        gutil.log("ERROR:", err);
+        return callback();
+      }
+
+      return callback();
+    });
+  });
+
+gulp.task("compile-frontend", ["copy-frontend-spec", "webpack"]);
 
 gulp.task("copy-javascript", () => {
   return gulp.src("app/src/backend/**/*.js")
@@ -57,7 +63,17 @@ gulp.task("compile-typescript", () => {
     .pipe(gulp.dest("app/bin/backend"));
 });
 
-gulp.task("compile-backend", ["copy-javascript", "compile-typescript"]);
+gulp.task("copy-backend-spec", () => {
+  return gulp.src("app/bin/backend/spec/*.js")
+    .pipe(gulp.dest("test/backend/"));
+});
+
+gulp.task("compile-backend",
+  [
+    "copy-javascript",
+    "compile-typescript",
+    "copy-backend-spec",
+  ]);
 
 gulp.task("watch", () => {
   gulp.watch(sources.frontend, ["compile-frontend"]);
@@ -77,24 +93,32 @@ gulp.task("develop",
 /**
  * Testing
  */
+const testFrontend = (done) => {
+  runKarma({
+    singleRun: true,
+  }, done);
+}
+
+const testBackend = () => {
+  return gulp.src("test/backend/*.spec.js")
+             .pipe(jasmine());
+}
+
 gulp.task(
   "test-frontend",
-  (done) => {
-    runKarma({
-      singleRun: true,
-    }, done);
-  }
+  ["compile-frontend"],
+  testFrontend
 );
 
 gulp.task(
   "test-backend",
   ["compile-backend"],
-  () => {
-    return gulp.src("app/bin/backend/spec/*spec.js")
-      .pipe(jasmine());
-  });
+  testBackend
+);
 
 gulp.task("test", ["test-frontend", "test-backend"]);
+gulp.task("test-frontend-no-compile", testFrontend);
+gulp.task("test-backend-no-compile", testBackend);
 
 gulp.task("docs", ["compile-backend"], (callback) => {
   gulp.src(

@@ -17,6 +17,8 @@ const https = require("https");
 const mkdirp = require("mkdirp");
 const _crypto = require("crypto");
 const treeKill = require("tree-kill");
+const powershell = require("node-powershell");
+
 const { logging, } = require("./logging");
 const { remote, shell, } = require("electron");
 const { exec, spawn, execSync, spawnSync, } = require("child_process");
@@ -26,27 +28,70 @@ const { exec, spawn, execSync, spawnSync, } = require("child_process");
  * CONSTANTS
  ******************************************************************************/
 
-const platform = os.platform();
-export const sjcloudHomeDirectory = path.join(os.homedir(), ".sjcloud");
-export const dxToolkitDirectory = path.join(sjcloudHomeDirectory, "dx-toolkit");
-export const dxToolkitEnvironmentFile = path.join(dxToolkitDirectory, "environment");
-export const dnanexusCLIDirectory = "C:\\Program Files (x86)\\DNAnexus CLI";
+export const platform = os.platform();
 export const defaultDownloadDir = path.join(os.homedir(), "Downloads");
-export const dnanexusPSscript = path.resolve(path.join(module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1"));
+
+interface StJudeCloudPaths {
+  SJCLOUD_HOME?: string,
+  ANACONDA_HOME?: string,
+  ANACONDA_BIN?: string,
+  ANACONDA_SJCLOUD_ENV?: string,
+  ANACONDA_SJCLOUD_BIN?: string,
+}
+
+export function getSJCloudPaths(
+  sjcloudHomeDirectory: string = null,
+  thePlatform: string = platform
+): StJudeCloudPaths {
+  let result: StJudeCloudPaths = {};
+
+  if (!sjcloudHomeDirectory) {
+    sjcloudHomeDirectory = path.join(os.homedir(), ".sjcloud");
+  }
+
+  result.SJCLOUD_HOME = sjcloudHomeDirectory;
+  result.ANACONDA_HOME = path.join(sjcloudHomeDirectory, "anaconda");
+  result.ANACONDA_BIN = (thePlatform === "win32" ? path.join(result.ANACONDA_HOME, "Scripts") : path.join(result.ANACONDA_HOME, "bin"));
+  result.ANACONDA_SJCLOUD_ENV = path.join(result.ANACONDA_HOME, "envs", "sjcloud");
+  result.ANACONDA_SJCLOUD_BIN = path.join(result.ANACONDA_SJCLOUD_ENV, "bin");
+
+  return result;
+}
+
+/**
+ * 
+ * @param pathProperName 
+ * @param sjcloudHomeDirectory 
+ */
+export function lookupPath(
+  pathProperName: string,
+  sjcloudHomeDirectory: string = null
+): string {
+  const paths = getSJCloudPaths(sjcloudHomeDirectory);
+  return (pathProperName in paths) ? (paths as any)[pathProperName] : null;
+}
 
 
 /*******************************************************************************
- * Creates the ~/.sjcloud directory, if it doesn't exist.
- * Callback takes args (error, created_dir) to determine
- * whether this is the user's first time to run the app.
+ * Creates the ~/.sjcloud directory if it doesn't already exist.
+ * Callback takes args (error, created_dir) to determine whether this is the 
+ * user's first time to run the app.
  *
- * @param {SuccessCallback} callback
+ * @param {SuccessCallback} callback Returns (error, was directory created?)
+ * @param {string?} directory Directory for SJCloud home if not default.
  ******************************************************************************/
-export function initSJCloudHome(callback: SuccessCallback): void {
+export function initSJCloudHome(
+  callback: SuccessCallback,
+  sjcloudHomeDirectory: string = null
+): void {
+  sjcloudHomeDirectory = lookupPath("SJCLOUD_HOME", sjcloudHomeDirectory);
   fs.stat(sjcloudHomeDirectory, function (statErr: any, stats: any) {
     if (statErr || !stats) {
       mkdirp(sjcloudHomeDirectory, function (mkdirErr: any) {
-        if (mkdirErr) { return callback(mkdirErr, null); }
+        if (mkdirErr) {
+          return callback(mkdirErr, null);
+        }
+
         return callback(null, true);
       });
     } else {
@@ -57,21 +102,50 @@ export function initSJCloudHome(callback: SuccessCallback): void {
 
 
 /*******************************************************************************
- * Find or create the "dx-toolkit" directory in the ".sjcloud"
- * directory and return its path.
- *
- * @return {string} Path of "dx-toolkit" directory
+ * Return the boostrapping command on a UNIX machine. This will inject the 
+ * correct binaries on the PATH based on what has been successfully installed
+ * up until this point.
+ * 
+ * @returns {string} A command with the correct sources and PATH variable.
  ******************************************************************************/
-export function getDXToolkitDir(): string {
-  if (!fs.existsSync(module.exports.dxToolkitDirectory)) {
-    mkdirp(module.exports.dxToolkitDirectory, function (err: any) {
-      if (err) { return null; }
-      return module.exports.dxToolkitDirectory;
-    });
-  }
-  return module.exports.dxToolkitDirectory;
-};
+function unixBootstrapCommand(): string {
+  let paths = [];
 
+  try {
+    let stats = fs.statSync(lookupPath("ANACONDA_SJCLOUD_BIN"));
+    if (stats) { paths.push(lookupPath("ANACONDA_SJCLOUD_BIN")) }
+  } catch (err) { /* ignore */ }
+
+  try {
+    let stats = fs.statSync(lookupPath("ANACONDA_BIN"));
+    if (stats) { paths.push(lookupPath("ANACONDA_BIN")) }
+  } catch (err) { /* ignore */ }
+
+  return (paths.length != 0) ? `export PATH=${paths.join(":")}:$PATH;` : null;
+}
+
+/*******************************************************************************
+ * Return the boostrapping command on a Windows machine. This will inject the 
+ * correct binaries on the PATH based on what has been successfully installed
+ * up until this point.
+ * 
+ * @returns {string} A command with the correct sources and PATH variable.
+ ******************************************************************************/
+function windowsBootstrapCommand(): string {
+  let paths = [];
+
+  try {
+    let stats = fs.statSync(lookupPath("ANACONDA_BIN"));
+    if (stats) { paths.push(lookupPath("ANACONDA_BIN")); }
+  } catch (err) { /* ignore */ }
+
+  try {
+    let stats = fs.statSync(lookupPath("ANACONDA_SJCLOUD_ENV"));
+    if (stats) { paths.push(lookupPath("ANACONDA_SJCLOUD_ENV")) }
+  } catch (err) { /* ignore */ }
+
+  return (paths.length != 0) ? `$ENV:PATH="${paths.join(";")};"+$ENV:PATH;` : null;
+}
 
 /*******************************************************************************
  * Run a command on the Unix platform.
@@ -87,17 +161,14 @@ function runCommandUnix(
     throw new Error(`Invalid platform for 'runCommandUnix': ${platform}`);
   }
 
-  // fs.statSync() is only to check if the "dx" utility can be sourced.
-  // If it fails rother commands can still be run.
-
-  try {
-    let stats = fs.statSync(dxToolkitEnvironmentFile);
-    if (stats) { cmd = `source ${dxToolkitEnvironmentFile}; ${cmd};` }
-  } catch (err) { /* ignore */ }
+  let bootstrapCommand = unixBootstrapCommand();
+  if (bootstrapCommand) {
+    cmd = `${bootstrapCommand} ${cmd}`;
+  }
 
   cmd = `/usr/bin/env bash -c "${cmd}"`;
-  logging.info(cmd);
-  return exec(cmd, { shell: "/bin/bash", maxBuffer: 10000000, }, innerCallback);
+  logging.silly(cmd);
+  return exec(cmd, { maxBuffer: 10000000, }, innerCallback);
 }
 
 
@@ -115,30 +186,41 @@ function runCommandWindows(
     throw new Error(`Invalid platform for 'runCommandWindows': ${platform}`);
   }
 
-  // fs.statSync() is only to check if the "dx" utility can be sourced.
-  // If it fails rother commands can still be run.
+  let ps = new powershell({
+    executionPolicy: "Bypass",
+    noProfile: true,
+    debugMsg: false,
+  });
 
-  try {
-    let stats = fs.statSync(dnanexusPSscript);
-    if (stats) { cmd = `.'${dnanexusPSscript}'; ${cmd} `; }
-  } catch (err) { /* ignore */ }
 
-  const args = [
-    "-NoLogo", "-InputFormat", "Text", "-NonInteractive", "-NoProfile",
-    "-Command", `${cmd} `
-  ];
+  let bootstrapCommand = windowsBootstrapCommand();
+  if (bootstrapCommand) {
+    ps.addCommand(bootstrapCommand);
+  }
 
-  let p = spawn("powershell.exe", args, { stdio: "pipe", maxBuffer: 10000000 });
+  ps.addCommand(cmd);
+  logging.silly(`Running commands: ${ps._cmds}`);
 
   let stdout = "";
   let stderr = "";
 
-  p.stdout.on("data", function (data: any) { stdout += data.toString(); });
-  p.stderr.on("data", function (data: any) { stderr += data.toString(); });
-  p.on("error", function (err: any) { innerCallback(err, stdout, stderr); });
-  p.on("close", function (code: any) { innerCallback(null, stdout, stderr); });
+  ps._proc.stdout.on("data", function (data: any) {
+    stdout += data.toString();
+  });
 
-  return p;
+  ps._proc.stderr.on("data", function (data: any) {
+    stderr += data.toString();
+  });
+
+  ps.on("end", function (code: any) {
+    innerCallback(null, stdout, stderr);
+  });
+
+  ps.on("err", (err: any) => { ps.dispose(); });
+  ps.on("output", (err: any) => { ps.dispose(); })
+
+  ps.invoke();
+  return ps;
 }
 
 
@@ -147,11 +229,13 @@ function runCommandWindows(
  *
  * @param {string} cmd Text to be entered at the command line
  * @param {SuccessCallback} callback
+ * @param {boolean} [raiseOnStderr=true] Raise an error if we see anything on stderr. 
  * @return {string}
  ******************************************************************************/
 export function runCommand(
   cmd: string,
-  callback: SuccessCallback
+  callback: SuccessCallback,
+  raiseOnStderr: boolean = true
 ): ChildProcess {
   const innerCallback = function (err: any, stdout: string, stderr: string) {
     if (err) {
@@ -159,7 +243,7 @@ export function runCommand(
       return callback(err, null);
     }
 
-    if (stderr && stderr.length > 0) {
+    if (raiseOnStderr && stderr && stderr.length > 0) {
       logging.error(stderr);
       return callback(stderr, null);
     }
@@ -167,6 +251,15 @@ export function runCommand(
     // removes banner printed by dnanexus-shell.ps1 script
     if (platform === "win32" && stdout.startsWith("DNAnexus CLI initialized")) {
       stdout = stdout.split("\n").slice(4).join("\n");
+    }
+
+    if (platform === "win32" && stdout.includes("EOI")) {
+      stdout = stdout.replace("EOI", "");
+    }
+
+    if (stdout.trim() === "False") {
+      /** Powershell sometimes just returns False */
+      return callback(new Error("STDOUT was False"), null);
     }
 
     return callback(null, stdout);
@@ -179,90 +272,6 @@ export function runCommand(
   } else throw new Error(`Unrecognized platform: ${platform}.`);
 };
 
-
-/*******************************************************************************
- * Runs a command synchronously in a UNIX environment.
- * 
- * @param {string} cmd The command to be run.
- * @return {string}
- ******************************************************************************/
-export function runCommandSyncUnix(cmd: string): string {
-  if (platform !== "darwin" && platform !== "linux") {
-    throw new Error(`Invalid platform for 'runCommandSyncUnix': ${platform}`);
-  }
-
-  // fs.statSync() is only to check if the "dx" utility can be sourced.
-  // If it fails rother commands can still be run.
-
-  try {
-    let stats = fs.statSync(dxToolkitEnvironmentFile);
-    if (stats) { cmd = `source ${dxToolkitEnvironmentFile}; ${cmd};` }
-  } catch (err) { /* ignore */ }
-
-  return execSync(cmd, { shell: "/bin/bash", maxBuffer: 10000000 });
-}
-
-
-/*******************************************************************************
- * Runs a command synchronously in a Windows environment.
- * 
- * @param {string} cmd The command to be run.
- * @return {string}
- ******************************************************************************/
-export function runCommandSyncWindows(cmd: string): string {
-  if (platform !== "win32") {
-    throw new Error(`Invalid platform for 'runCommandWindows': ${platform}`);
-  }
-
-  // fs.statSync() is only to check if the "dx" utility can be sourced.
-  // If it fails rother commands can still be run.
-
-  try {
-    let stats = fs.statSync(dnanexusPSscript);
-    if (stats) { cmd = `.'${dnanexusPSscript}'; ${cmd} `; }
-  } catch (err) { /* ignore */ }
-
-  const args = [
-    "-NoLogo", "-InputFormat", "Text", "-NonInteractive", "-NoProfile",
-    "-Command", `${cmd} `
-  ];
-
-  return spawnSync("powershell.exe", args, { stdio: "pipe", maxBuffer: 10000000 });
-}
-
-
-/*******************************************************************************
- * Runs commands on the system command line synchronously.
- *
- * @param {string} cmd The command to be run.
- * @return {string}
- ******************************************************************************/
-export function runCommandSync(cmd: string): string {
-  if (platform === "linux" || platform === "darwin") {
-    return runCommandSyncUnix(cmd)
-  } else if (platform == "win32") {
-    return runCommandSyncWindows(cmd);
-  } else throw new Error(`Invalid platform: ${platform}.`);
-};
-
-
-/*******************************************************************************
- * Determines if OpenSSL is accessible on the PATH.
- *
- * @todo Change callback to SuccessCallback
- * @param {ResultCallback} callback
- ******************************************************************************/
-export function openSSLOnPath(callback: ResultCallback) {
-  let innerCallback = function (err: any, res: any) { return callback(err); };
-
-  if (platform === "linux" || platform === "darwin") {
-    runCommand("which openssl", innerCallback);
-  } else if (platform === "win32") {
-    runCommand("get-command openssl", innerCallback);
-  } else throw new Error(`Invalid platform: ${platform}.`);
-};
-
-
 /*******************************************************************************
  * Determines if Python 2.7.13+ is accessible on the PATH.
  *
@@ -270,19 +279,15 @@ export function openSSLOnPath(callback: ResultCallback) {
  * @param {ResultCallback} callback
  ******************************************************************************/
 export function pythonOnPath(callback: ResultCallback): void {
-  let innerCallback = function (err: any, res: any) {
-
-    // python versions before 3.4 print --version to stderr.
-    // Command never has stdout.
-
-    if (err.search("2.7.") === -1 || parseInt(err.slice(err.lastIndexOf(".") + 1)) < 13) {
-      return callback(false);
-    } else {
-      return callback(true);
-    }
-  };
-
-  runCommand("python --version", innerCallback);
+  const regex = /Python ([0-9]+).([0-9]+).([0-9]+)/;
+  runCommand("python --version", (err, res) => {
+    let match = regex.exec(err);
+    let [full, major, minor, patch] = match;
+    let majorNum = parseInt(major);
+    let minorNum = parseInt(minor);
+    let patchNum = parseInt(patch);
+    return callback(majorNum === 2 && minorNum === 7 && patchNum >= 13);
+  });
 };
 
 
@@ -291,58 +296,38 @@ export function pythonOnPath(callback: ResultCallback): void {
  *
  * @param {SuccessCallback} callback
  ******************************************************************************/
-export function dxToolkitOnPath(callback: SuccessCallback): void {
+export function dxToolkitInstalled(callback: SuccessCallback): void {
+  const dxLocation = path.join(lookupPath("ANACONDA_SJCLOUD_BIN"), "dx");
   if (platform === "linux" || platform === "darwin") {
-    runCommand("which dx", callback);
+    runCommand(`[ -f ${dxLocation} ]`, callback);
   } else if (platform === "win32") {
-    runCommand("get-command dx", callback);
+    runCommand(`[System.IO.File]::Exists("${dxLocation}") `, callback);
   }
 };
-
-
-/*******************************************************************************
- * Runs a command to determine if we are logged in to DNAnexus.
- * 
- * @param {SuccessCallback} callback
- ******************************************************************************/
-export function dxLoggedIn(callback: SuccessCallback): void {
-  runCommand("dx whoami", callback);
-};
-
-
-/*******************************************************************************
- * Checks if there's at least one project the user can upload data to.
- * 
- * @param {SuccessCallback} callback
- ******************************************************************************/
-export function dxCheckProjectAccess(callback: SuccessCallback): void {
-  if (platform === "linux" || platform === "darwin") {
-    runCommand("echo '0' | dx select --level UPLOAD", callback);
-  } else if (platform === "win32") {
-    runCommand("\"echo 0 | dx select --level UPLOAD\"", callback);
-  }
-};
-
 
 /*******************************************************************************
  * Downloads a normal file. Downloading of a DXFile is in dx.js
  *
  * @param {string} url URL of download.
  * @param {string} dest Path for newly downloaded file.
- * @param {ErrorCallback} callback 
  * @see dx:downloadDxFile
  ******************************************************************************/
 export function downloadFile(
   url: string,
   dest: string,
-  callback: ErrorCallback
-): void {
-  let file = fs.createWriteStream(dest);
-  let request = https.get(url, (res: any) => {
-    res.pipe(file);
-    file.on("finish", () => {
-      file.close(callback);
+): Promise<boolean> {
+  return new Promise((resolve, reject) => {
+    let file = fs.createWriteStream(dest);
+    file.on('error', (error: any) => {
+      reject(error);
     });
+
+    file.on('finish', () => {
+      file.close();
+      resolve(true);
+    });
+
+    https.get(url, (res: any) => { res.pipe(file); });
   });
 };
 
@@ -359,7 +344,7 @@ export function untarTo(
   destParentDir: string,
   callback: SuccessCallback
 ): void {
-  runCommand(`tar -C ${destParentDir} -zxf ${filepath}`, callback);
+  runCommand(`tar - C ${destParentDir} -zxf ${filepath} `, callback);
 };
 
 
@@ -404,20 +389,13 @@ export function openExternal(url: string): void {
  ******************************************************************************/
 export function openDirectoryDialog(
   callback: ResultCallback,
-  defaultPath: string = undefined
+  defaultPath: string = null
 ): void {
-  let options = {
+  return callback(remote.dialog.showOpenDialog({
     buttonLabel: "Select",
     properties: ["openDirectory", "createDirectory"],
-  };
-
-  if (defaultPath !== undefined) {
-    options = Object.assign(options, {
-      defaultPath,
-    });
-  }
-
-  callback(remote.dialog.showOpenDialog(options));
+    defaultPath
+  }));
 };
 
 
@@ -546,7 +524,7 @@ export function saveToSJCloudFile(
   content: string,
   callback: ErrorCallback = undefined
 ): void {
-  const dest = path.join(sjcloudHomeDirectory, filename);
+  const dest = path.join(lookupPath("SJCLOUD_HOME"), filename);
   fs.writeFile(dest, content, callback);
 };
 
@@ -564,35 +542,12 @@ export function readSJCloudFile(
   callback: ResultCallback,
   defaultContent: any = null
 ): void {
-  const dest = path.join(sjcloudHomeDirectory, filename);
+  const dest = path.join(lookupPath("SJCLOUD_HOME"), filename);
   fs.readFile(dest, (err: any, data: any) => {
     if (err) { if (!defaultContent) return; }
     callback(data ? data.toString() : defaultContent);
   });
 };
-
-
-/*******************************************************************************
- * Attempts to parse out the Ubuntu version. 'null' if not running Ubuntu.
- * 
- * @returns {string?}
- ******************************************************************************/
-export function getUbuntuVersionOrNull(): string {
-  try {
-    const stdout = runCommandSync("lsb_release -ir");
-
-    let [
-      _label_distributor,
-      distro,
-      _label_release,
-      releaseNum
-    ] = stdout.split(/[\n\t]/);
-
-    if (distro !== "Ubuntu") { return null; }
-    return releaseNum.slice(0, 2) === "12" ? "ubuntu12" : "ubuntu14";
-  } catch (e) { return null; }
-};
-
 
 /*******************************************************************************
  * Gets the appropriate tab literal character based on the platform.

@@ -1,0 +1,1 @@
+const menu = require("../../app/bin/backend/menu");

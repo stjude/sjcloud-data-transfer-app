@@ -147,7 +147,7 @@ export default {
 			if (file.started) {
 				if (!file.finished && !('startTime' in file)) {
 					file.startTime=+new Date();
-					file.timeRemaining="Starting...";
+					file.timeRemaining="Started";
 				}
 				else {
 					const dt=(+new Date()-file.startTime);
@@ -177,16 +177,17 @@ export default {
 	font-family: 'Lato';
 	color: #222222;
 	/* border-bottom: 1px solid #ccc; */
+	position:fixed; 
+	width:571px;  
+	z-index:1;
 }
 
 #file-status-div:hover {
 	overflow: auto;
 }
 
-#file-status-div {
-	position:fixed; 
-	width:571px;  
-	z-index:1;
+#file-status-div .material-icons {
+  vertical-align: top;
 }
 
 #file-status-table {

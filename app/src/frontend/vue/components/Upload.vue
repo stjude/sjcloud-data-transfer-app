@@ -40,8 +40,7 @@
 				<!-- _empty_tip_ prevents tippy destroy error -->
 				<step-outcome 
 					successMessage='Upload complete!' 
-					outcome='done'
-					tooltipText="_empty_tip_"></step-outcome>
+					outcome='done'></step-outcome>
 				<div class="upload-complete-btn-div">
 					<button id="ready-to-run-btn" 
                   class='btn btn-stjude'
@@ -63,106 +62,113 @@
 </template>
 
 <script>
-import LeftPanel from './LeftPanel.vue'
-import NavBar from './NavBar.vue';
-import FileStatus from './FileStatus.vue';
-import UploadTarget from './UploadTarget.vue';
-import Dropzone from './Dropzone.vue';
-import StepOutcome from './StepOutcome.vue'
+import LeftPanel from "./LeftPanel.vue";
+import NavBar from "./NavBar.vue";
+import FileStatus from "./FileStatus.vue";
+import UploadTarget from "./UploadTarget.vue";
+import Dropzone from "./Dropzone.vue";
+import StepOutcome from "./StepOutcome.vue";
 
 export default {
-	components: {
-		LeftPanel,
-		NavBar,
-		FileStatus,
-		UploadTarget,
-		Dropzone,
-		StepOutcome
-	},
-	data() {
-		return {}
-	},
-	computed: {
-		currTool() {
-			return this.$store.getters.currTool
-		},
-		noProjectsFound() {
-			return this.$store.getters.noProjectsFound
-		},
-		hasFiles() {
-			return this.$store.getters.currFiles.length
-		},
-		hasFilesInStaging() {
-			return this.$store.getters.hasFilesInStaging
-		},
-		hasFilesInTransit() {
-			return this.$store.getters.hasFilesInTransit
-		},
-		hasTools() {
-			return this.$store.getters.tools.length
-		},
-		checkedFiles() {
-			return this.$store.getters.checkedFiles
-		},
-		transferComplete() {
-			return this.$store.getters.transferComplete
-		}
-	},
-	methods: {
-		openExternal(url) {
-			window.utils.openExternal(url);
-		},
-		uploadFiles() {
-			const files = this.$store.getters.currTool.upload.filter((f) => f.checked);
-			const dnanexusProjectId = this.$store.getters.currTool.dx_location;
-			const concurrency = this.$store.getters.concurrentOperations;
-			console.log("Uploading", files.length, "files with a concurrency of", concurrency);
+  components: {
+    LeftPanel,
+    NavBar,
+    FileStatus,
+    UploadTarget,
+    Dropzone,
+    StepOutcome
+  },
+  data() {
+    return {};
+  },
+  computed: {
+    currTool() {
+      return this.$store.getters.currTool;
+    },
+    noProjectsFound() {
+      return this.$store.getters.noProjectsFound;
+    },
+    hasFiles() {
+      return this.$store.getters.currFiles.length;
+    },
+    hasFilesInStaging() {
+      return this.$store.getters.hasFilesInStaging;
+    },
+    hasFilesInTransit() {
+      return this.$store.getters.hasFilesInTransit;
+    },
+    hasTools() {
+      return this.$store.getters.tools.length;
+    },
+    checkedFiles() {
+      return this.$store.getters.checkedFiles;
+    },
+    transferComplete() {
+      return this.$store.getters.transferComplete;
+    }
+  },
+  mounted() {
+    this.$store.commit("setInfoTipText", "");
+  },
+  methods: {
+    openExternal(url) {
+      window.utils.openExternal(url);
+    },
+    uploadFiles() {
+      const files = this.$store.getters.currTool.upload.filter(f => f.checked);
+      const dnanexusProjectId = this.$store.getters.currTool.dx_location;
+      const concurrency = this.$store.getters.concurrentOperations;
+      console.log(
+        "Uploading",
+        files.length,
+        "files with a concurrency of",
+        concurrency
+      );
 
-			files.forEach(function(file) {
+      files.forEach(function(file) {
         window.utils.resetFileStatus(file);
         file.waiting = true;
-        
+
         let task = {
           _rawFile: file,
           local_location: file.path,
-          remote_location: dnanexusProjectId,
+          remote_location: dnanexusProjectId
         };
 
         window.queue.addUploadTask(task);
-			});
-		},
-		removeCheckedFiles() {
-			this.$store.commit('removeCheckedFiles');
-		},
-		removeAllFiles() {
-			this.$store.commit('removeAllFiles');
-			this.$store.dispatch('updateToolsFromRemote', true);
-		},
-		cancelCheckedFiles() {
-			this.$store.commit('cancelCheckedFiles');
-		}
-	}
-}
+      });
+    },
+    removeCheckedFiles() {
+      this.$store.commit("removeCheckedFiles");
+    },
+    removeAllFiles() {
+      this.$store.commit("removeAllFiles");
+      this.$store.dispatch("updateToolsFromRemote", true);
+    },
+    cancelCheckedFiles() {
+      this.$store.commit("cancelCheckedFiles");
+    }
+  }
+};
 </script>
 
 <style scoped>
-
 .left-panel-container {
-	font-family: 'Open Sans';
+  font-family: "Open Sans";
 }
 
 .right-panel-container {
-	height: 570px;
-	font-family: 'Lato';
+  height: 570px;
+  font-family: "Lato";
 }
 
 .alert-container {
-	margin-top: 90px;
-	text-align: center;
+  margin-top: 90px;
+  text-align: center;
 }
 
 .bottom-bar-right button {
-	margin: 2px;
+  margin: 2px;
 }
 
 .upload-complete-div {

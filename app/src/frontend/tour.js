@@ -27,15 +27,19 @@ const tour = new window.Tour({
   }, {
     element: ".left-panel-table-container",
     title: "Step 1: Select workspace",
-    content: `<p>Creating a data request or running a tool for the first time
-              will create a permanent 'workspace' area in the cloud.</p>
-
-              <p>For a data request, all of your data will be placed 
-              in the workspace that is created.</p>
-
-              <p>For tools, you will upload your data to the tool's workspace, run the tool
+    content: `<div>
+              Creating a data request or running a tool for the first time
+              will create a permanent 'workspace' area in the cloud.
+              </div>
+              <div>
+              For a data request, all of your data will be placed 
+              in the workspace that is created.
+              </div>
+              <div>
+              For tools, you will upload your data to the tool's workspace, run the tool
               on that data in the cloud, then download the results 
-              from the tool's workspace.</p>`,
+              from the tool's workspace.
+              </div>`,
     backdrop: true,
     backdropContainer: "body",
     onShow(tour) {
@@ -134,7 +138,7 @@ const tour = new window.Tour({
   }, {
     element: "#sjcda-top-bar-menu",
     title: "File a bug report",
-    content: "If you encounter issues, please file a bug report.",
+    content: "If you encounter issues, follow the Issues link to contact us.",
     backdrop: true,
   	backdropContainer: "body",
     orphan: true,
@@ -189,13 +193,16 @@ const tour = new window.Tour({
 
 let tourInitialized=false;
 let waitingForTools=false;
+let userPrompted=false;
 
 tour.__promptUser = (path)=>{
-  if (tourInitialized ) return;
+  if (tourInitialized || userPrompted) return;
   if (path!=="/upload" && path!=="/download") return;
   if (window.location.port=="9876") return;
-  
-  let numTries=0
+
+  userPrompted=true;
+  let numTries=0;
+
   waitingForTools = setInterval(()=>{
     if (!window.VueApp.$store.getters.tools.length) {
       numTries+=1;
@@ -203,14 +210,13 @@ tour.__promptUser = (path)=>{
       return;
     }
     clearInterval(waitingForTools);
-
     tourInitialized=true;
     tour.init();
     tour.goTo(0);
     tour.start(true);
     tour.__promptTimeout=setTimeout(()=>{
       tour.end();
-    }, 6000);
+    }, 5000);
   }, 300);
 };
 

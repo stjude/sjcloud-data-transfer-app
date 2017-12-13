@@ -22,8 +22,8 @@ describe("Upload panel for an empty project", function() {
     }, 600);
   });
 
-  it("should not display spinkit", function(done) {
-    expect(selectAll(".sk-circle").size()).toEqual(0);
+  it("should not display a loading spinner", function(done) {
+    expect(holder.selectAll(".spinner-pct-container").size()).toEqual(0);
     done();
   });
 

@@ -4,12 +4,14 @@ import routes from "./routes.js";
 import App from "./App.vue";
 import store from "./store";
 import vueTippy from "vue-tippy";
+import Quasar, { Alert } from "quasar";
 
 // configure Vue
 Vue.config.debug = true;
-Vue.config.devtools = false; // silence message about downloading dev tools
+Vue.config.devtools = true;
 Vue.use(VueRouter);
 Vue.use(vueTippy);
+Vue.use(Quasar);
 console.log("Node Environment: " + process.env.NODE_ENV);
 
 // create router
@@ -20,8 +22,14 @@ const router = new VueRouter({
   routes: routes(),
 });
 
-// exporting as a function allows delayed start
-// for testing, etc.
+/**
+ * exporting as a function allows delayed start
+ * for testing, etc.
+ *
+ * @param {*} selector
+ * @param {*} cachedState
+ * @return {*}
+ */
 export default function _App(selector, cachedState = {}) {
   // boostrap the app
   const VueApp = new Vue({
@@ -31,63 +39,46 @@ export default function _App(selector, cachedState = {}) {
     store: store(cachedState),
   });
 
-  VueApp.$router.replace("/");
-
-  if (process.env.NODE_ENV === "development") {
+  if (VueApp.$store.getters.testdata) {
+    // retain route path for easier testing on the browser
+    VueApp.$store.dispatch("updateToolsFromRemote", true);
+  } else if (process.env.NODE_ENV === "development") {
     VueApp.$router.replace("home");
   } else {
+    VueApp.$router.replace("/");
     window.state.getState((state) => {
       VueApp.$router.replace(state.path);
-      if (state.path === "install") {
+      if (state.path === "login") {
         checkDependencies(VueApp);
+      } else if (state.path === "upload") {
+        VueApp.$store.dispatch("updateToolsFromRemote", true);
       }
     });
   }
+
   return VueApp;
 }
 
-function getAlertHandler(numExpectedCalls = 0) {
-  const messages = [];
-  let numCalls = 0;
-
-  return (message = null) => {
-    numCalls++;
-    if (message) {
-      messages.push(message);
-    }
-    if (numCalls == numExpectedCalls && messages.length) {
-      VueApp.$store.commit("byKey", {
-        alertType: "warning",
-        alertMessage: messages.join("<br><br>"),
-      });
-    }
-  };
-}
-
+/**
+ *
+ * @param {*} VueApp
+ */
 function checkDependencies(VueApp) {
-  const alertHandler = getAlertHandler(2);
-  window.utils.openSSLOnPath((onPath) => {
-    VueApp.$store.commit("setOpenSSLOnPath", onPath);
-    if (onPath === false) {
-      alertHandler(
-        "You don't have OpenSSL installed on your system, which is needed to run this program. "
-        + "You can download it here: <span class='alert-link' @click.stop='clickHandler($event)'>"
-        + "https://wiki.openssl.org/index.php/Binaries</span>"
-      );
-    } else {
-      alertHandler();
-    }
-  });
   window.utils.pythonOnPath((onPath) => {
     VueApp.$store.commit("setPythonOnPath", onPath);
+    const contactUrl = "https://stjude.cloud/contact";
+
     if (onPath === false) {
-      alertHandler(
-        "You need to have python version 2.7.13+ installed on your path. "
-        + "You can download it here: <span class='alert-link' @click.stop='clickHandler($event)'>"
-        + "https://www.python.org/downloads/release/python-2714/</span>"
-      );
-    } else {
-      alertHandler();
+      Alert.create({
+        html: "Something has gone wrong during your installation process." +
+          " Please contact us at " + contactUrl + ".", 
+        actions: [{
+          label: "Open Link",
+          handler: ()=>{
+            window.utils.openExternal(contactUrl);
+          }
+        }]
+      });
     }
   });
 }

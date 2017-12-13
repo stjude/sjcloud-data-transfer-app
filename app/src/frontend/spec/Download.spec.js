@@ -21,18 +21,10 @@ describe("Download panel for an empty project", function() {
     }, 600);
   });
 
-  it("should not display spinkit", function(done) {
-    expect(holder.selectAll(".sk-circle").size()).toEqual(0);
+  it("should not display loading spinner", function(done) {
+    expect(holder.selectAll(".spinner-pct-container").size()).toEqual(0);
     done();
   });
-
-  /* it('should show a drop-zone for uploads', function (done) {
-  	app.$router.push('/upload');
-  	setTimeout(()=>{
-  		expect(selectAll('.dropzone').size()).toEqual(1);
-  		done();
-  	},600);
-  });*/
 
   afterAll(function(done) {
     holder.remove();
@@ -55,7 +47,7 @@ describe("Download panel for a project with completed transfer", function() {
     setTimeout(() => {
       app.$store.commit("setCurrToolName", "x3");
       done();
-    }, 1600);
+    }, 100);
   });
 
   it("should have 2 completed icons for downloads", function(done) {
@@ -70,11 +62,11 @@ describe("Download panel for a project with completed transfer", function() {
         .toEqual(2);
 
       done();
-    });
+    },1);
   });
 
   afterAll(function(done) {
-    // holder.remove();
+    holder.remove();
     done();
   });
 });
