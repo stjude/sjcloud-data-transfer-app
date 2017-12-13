@@ -5,7 +5,7 @@
   "tasks": [
     {
       "type": "gulp",
-      "task": "develop-once",
+      "task": "compile",
       "group": {
         "kind": "build",
         "isDefault": true

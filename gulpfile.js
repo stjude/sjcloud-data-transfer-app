@@ -80,7 +80,7 @@ gulp.task("watch", () => {
   gulp.watch(sources.backend, ["compile-backend"]);
 });
 
-gulp.task("develop-once", ["compile-frontend", "compile-backend"]);
+gulp.task("compile", ["compile-frontend", "compile-backend"]);
 
 gulp.task("develop",
   ["watch", "compile-frontend", "compile-backend"],
@@ -97,12 +97,12 @@ const testFrontend = (done) => {
   runKarma({
     singleRun: true,
   }, done);
-}
+};
 
 const testBackend = () => {
   return gulp.src("test/backend/*.spec.js")
-             .pipe(jasmine());
-}
+    .pipe(jasmine());
+};
 
 gulp.task(
   "test-frontend",
@@ -130,8 +130,8 @@ gulp.task("docs", ["compile-backend"], (callback) => {
 gulp.task("default", () => {
   gutil.log("Commands you might be interested in:");
   gutil.log("");
-  gutil.log("  gulp develop-once : Compile front-end and backend code once.");
-  gutil.log("  gulp develop      : Run a autocompiling server for both frontend and backend.");
-  gutil.log("  gulp test         : Run all testing functionality for the project.");
+  gutil.log("  gulp compile : Compile front-end and backend code once.");
+  gutil.log("  gulp develop : Run a autocompiling server for both frontend and backend.");
+  gutil.log("  gulp test    : Run all testing functionality for the project.");
   gutil.log("");
 });
