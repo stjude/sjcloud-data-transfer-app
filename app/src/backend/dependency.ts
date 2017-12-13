@@ -47,9 +47,9 @@ function getAnacondaInstallCommand(destination: string): string {
   platform = platform.toUpperCase();
 
   if (platform === "WIN32") {
-    command = `Start-Process ${destination} -ArgumentList '/S','/AddToPath=0','RegisterPython=0','/D=${utils.anacondaDirectory}' -Wait`
+    command = `Start-Process ${destination} -ArgumentList '/S','/AddToPath=0','RegisterPython=0','/D=${utils.lookupPath("ANACONDA_HOME")}' -Wait`
   } else {
-    command = `bash ${destination} -b -p ${utils.anacondaDirectory}`;
+    command = `bash ${destination} -b -p ${utils.lookupPath("ANACONDA_HOME")}`;
   }
   return command;
 }
@@ -71,13 +71,13 @@ export function installAnaconda(
   removeAnacondaIfExists: boolean = true
 ) {
 
-  if (existsSync(utils.anacondaDirectory)) {
+  if (existsSync(utils.lookupPath("ANACONDA_HOME"))) {
     logging.debug("");
     logging.debug("== Installing Dependencies ==");
 
     if (removeAnacondaIfExists) {
       logging.debug("  [*] Removing existing anaconda installation.");
-      fs.remove(utils.anacondaDirectory).catch((error: any) => { throw error; });
+      fs.remove(utils.lookupPath("ANACONDA_HOME")).catch((error: any) => { throw error; });
     } else {
       throw new Error("Anaconda is already installed! This method should not be called.");
     }
@@ -109,7 +109,7 @@ export function installAnaconda(
     progressCb(30, "Installing...");
     return new Promise((resolve, reject) => {
       const command = getAnacondaInstallCommand(destination);
-      logging.silly(`      [-] Download location: ${utils.anacondaDirectory}`);
+      logging.silly(`      [-] Download location: ${utils.lookupPath("ANACONDA_HOME")}`);
       logging.silly(`      [-] Command: ${command}`);
 
       utils.runCommand(command, (error, result) => {

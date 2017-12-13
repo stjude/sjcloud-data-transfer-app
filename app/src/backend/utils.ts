@@ -29,15 +29,47 @@ const { exec, spawn, execSync, spawnSync, } = require("child_process");
  ******************************************************************************/
 
 const platform = os.platform();
-export const sjcloudHomeDirectory = path.join(os.homedir(), ".sjcloud");
-export const anacondaDirectory = path.join(sjcloudHomeDirectory, "anaconda");
-export const anacondaBinDirectory = (platform === "win32" ? path.join(anacondaDirectory, "Scripts") : path.join(anacondaDirectory, "bin"));
-export const anacondaActivatePath = path.join(anacondaBinDirectory, "activate");
-export const anacondaSJCloudEnv = path.join(anacondaDirectory, "envs", "sjcloud");
-export const anacondaSJCloudBin = path.join(anacondaSJCloudEnv, "bin");
-export const dnanexusCLIDirectory = "C:\\Program Files (x86)\\DNAnexus CLI";
 export const defaultDownloadDir = path.join(os.homedir(), "Downloads");
-export const dnanexusPSscript = path.resolve(path.join(module.exports.dnanexusCLIDirectory, "dnanexus-shell.ps1"));
+
+interface StJudeCloudPaths {
+  SJCLOUD_HOME?: string,
+  ANACONDA_HOME?: string,
+  ANACONDA_BIN?: string,
+  ANACONDA_SJCLOUD_ENV?: string,
+  ANACONDA_SJCLOUD_BIN?: string,
+}
+
+export function getSJCloudPaths(
+  sjcloudHomeDirectory: string = null,
+  thePlatform: string = platform
+): StJudeCloudPaths {
+  let result: StJudeCloudPaths = {};
+
+  if (!sjcloudHomeDirectory) {
+    sjcloudHomeDirectory = path.join(os.homedir(), ".sjcloud");
+  }
+
+  result.SJCLOUD_HOME = sjcloudHomeDirectory;
+  result.ANACONDA_HOME = path.join(sjcloudHomeDirectory, "anaconda");
+  result.ANACONDA_BIN = (thePlatform === "win32" ? path.join(result.ANACONDA_HOME, "Scripts") : path.join(result.ANACONDA_HOME, "bin"));
+  result.ANACONDA_SJCLOUD_ENV = path.join(result.ANACONDA_HOME, "envs", "sjcloud");
+  result.ANACONDA_SJCLOUD_BIN = path.join(result.ANACONDA_SJCLOUD_ENV, "bin");
+
+  return result;
+}
+
+/**
+ * 
+ * @param pathProperName 
+ * @param sjcloudHomeDirectory 
+ */
+export function lookupPath(
+  pathProperName: string,
+  sjcloudHomeDirectory: string = null
+): string {
+  const paths = getSJCloudPaths(sjcloudHomeDirectory);
+  return (pathProperName in paths) ? (paths as any)[pathProperName] : null;
+}
 
 
 /*******************************************************************************
@@ -45,13 +77,21 @@ export const dnanexusPSscript = path.resolve(path.join(module.exports.dnanexusCL
  * Callback takes args (error, created_dir) to determine whether this is the 
  * user's first time to run the app.
  *
- * @param {SuccessCallback} callback
+ * @param {SuccessCallback} callback Returns (error, was directory created?)
+ * @param {string?} directory Directory for SJCloud home if not default.
  ******************************************************************************/
-export function initSJCloudHome(callback: SuccessCallback): void {
+export function initSJCloudHome(
+  callback: SuccessCallback,
+  sjcloudHomeDirectory: string = null
+): void {
+  sjcloudHomeDirectory = lookupPath("SJCLOUD_HOME", sjcloudHomeDirectory);
   fs.stat(sjcloudHomeDirectory, function (statErr: any, stats: any) {
     if (statErr || !stats) {
       mkdirp(sjcloudHomeDirectory, function (mkdirErr: any) {
-        if (mkdirErr) { return callback(mkdirErr, null); }
+        if (mkdirErr) {
+          return callback(mkdirErr, null);
+        }
+
         return callback(null, true);
       });
     } else {
@@ -61,48 +101,47 @@ export function initSJCloudHome(callback: SuccessCallback): void {
 };
 
 
-/**
- * Prepend the correct environment variables for a UNIX command.
+/*******************************************************************************
+ * Return the boostrapping command on a UNIX machine. This will inject the 
+ * correct binaries on the PATH based on what has been successfully installed
+ * up until this point.
  * 
- * @param {string} cmd The command to be run.
  * @returns {string} A command with the correct sources and PATH variable.
- */
+ ******************************************************************************/
 function unixBootstrapCommand(): string {
-
   let paths = [];
 
   try {
-    let stats = fs.statSync(anacondaSJCloudBin);
-    if (stats) { paths.push(anacondaSJCloudBin) }
+    let stats = fs.statSync(lookupPath("ANACONDA_SJCLOUD_BIN"));
+    if (stats) { paths.push(lookupPath("ANACONDA_SJCLOUD_BIN")) }
   } catch (err) { /* ignore */ }
 
   try {
-    let stats = fs.statSync(anacondaBinDirectory);
-    if (stats) { paths.push(anacondaBinDirectory) }
+    let stats = fs.statSync(lookupPath("ANACONDA_BIN"));
+    if (stats) { paths.push(lookupPath("ANACONDA_BIN")) }
   } catch (err) { /* ignore */ }
 
   return (paths.length != 0) ? `export PATH=${paths.join(":")}:$PATH;` : null;
 }
 
-/**
- * Calculate the correct environment variable settings for a Windows command.
+/*******************************************************************************
+ * Return the boostrapping command on a Windows machine. This will inject the 
+ * correct binaries on the PATH based on what has been successfully installed
+ * up until this point.
  * 
- * @param {string} cmd The command to be run.
- * @returns {string} The PATH commands to be prepended.
- */
+ * @returns {string} A command with the correct sources and PATH variable.
+ ******************************************************************************/
 function windowsBootstrapCommand(): string {
   let paths = [];
 
   try {
-    let stats = fs.statSync(anacondaBinDirectory);
-    if (stats) {
-      paths.push(anacondaBinDirectory);
-    }
+    let stats = fs.statSync(lookupPath("ANACONDA_BIN"));
+    if (stats) { paths.push(lookupPath("ANACONDA_BIN")); }
   } catch (err) { /* ignore */ }
 
   try {
-    let stats = fs.statSync(anacondaSJCloudEnv);
-    if (stats) { paths.push(anacondaSJCloudEnv) }
+    let stats = fs.statSync(lookupPath("ANACONDA_SJCLOUD_ENV"));
+    if (stats) { paths.push(lookupPath("ANACONDA_SJCLOUD_ENV")) }
   } catch (err) { /* ignore */ }
 
   return (paths.length != 0) ? `$ENV:PATH="${paths.join(";")};"+$ENV:PATH;` : null;
@@ -258,7 +297,7 @@ export function pythonOnPath(callback: ResultCallback): void {
  * @param {SuccessCallback} callback
  ******************************************************************************/
 export function dxToolkitInstalled(callback: SuccessCallback): void {
-  const dxLocation = path.join(anacondaSJCloudBin, "dx");
+  const dxLocation = path.join(lookupPath("ANACONDA_SJCLOUD_BIN"), "dx");
   if (platform === "linux" || platform === "darwin") {
     runCommand(`[ -f ${dxLocation} ]`, callback);
   } else if (platform === "win32") {
@@ -485,7 +524,7 @@ export function saveToSJCloudFile(
   content: string,
   callback: ErrorCallback = undefined
 ): void {
-  const dest = path.join(sjcloudHomeDirectory, filename);
+  const dest = path.join(lookupPath("SJCLOUD_HOME"), filename);
   fs.writeFile(dest, content, callback);
 };
 
@@ -503,7 +542,7 @@ export function readSJCloudFile(
   callback: ResultCallback,
   defaultContent: any = null
 ): void {
-  const dest = path.join(sjcloudHomeDirectory, filename);
+  const dest = path.join(lookupPath("SJCLOUD_HOME"), filename);
   fs.readFile(dest, (err: any, data: any) => {
     if (err) { if (!defaultContent) return; }
     callback(data ? data.toString() : defaultContent);

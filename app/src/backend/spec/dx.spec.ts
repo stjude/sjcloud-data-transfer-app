@@ -81,7 +81,7 @@ describe("Describing a DX Item", () => {
  * dx.checkProjectAccess
  ******************************************************************************/
 
- describe("Checking DNAnexus project access", () => {
+describe("Checking DNAnexus project access", () => {
   it("should return this command with platform 'linux'", () => {
     const result = dx.checkProjectAccess(null, true, "linux");
     expect(result).toBe("echo '0' | dx select --level UPLOAD");
@@ -98,10 +98,10 @@ describe("Describing a DX Item", () => {
   });
 
   it("should error when platform is 'bleep'", () => {
-    expect(() => {dx.checkProjectAccess(null, true, "bleep")}).
-    toThrow(new Error("Unrecognized platform: 'bleep'."));
+    expect(() => { dx.checkProjectAccess(null, true, "bleep") }).
+      toThrow(new Error("Unrecognized platform: 'bleep'."));
   });
- });
+});
 
 /*******************************************************************************
  * dx.listDownloadableFiles
@@ -134,7 +134,7 @@ describe("Listing DX files", () => {
     }
   );
 
-  it(`should run the following command with args(${sampleDxProject}, true).`,
+  it(`should run the following command with args (${sampleDxProject}, true).`,
     () => {
       let output = dx.listDownloadableFiles(sampleDxProject, true, null, true);
       expect(output).toBe(`dx find data ` +
@@ -172,7 +172,7 @@ describe("Listing DX projects", () => {
     (done) => {
       dx.listProjects(true, (error: any, result: any) => {
         expect(result.length).toEqual(1);
-        expect(result).toMatch(new RegExp(`dx find projects --level UPLOAD --delim .*`));
+        expect(result[0]).toMatch(new RegExp(`dx find projects --level UPLOAD --delim .*`));
         done();
       }, true);
     });
