@@ -17,19 +17,15 @@ let sources = {
 };
 
 /**
+ * Runs Karma testing through Gulp.
  *
  * @param {object} options
  * @param {callback} callback
  */
 function runKarma(options, callback) {
   const configPath = path.resolve(path.join(__dirname, "./karma.conf.js"));
-  const config = karmaParseConfig(configPath, {});
-
-  Object.keys(options).forEach(function(key) {
-    config[key] = options[key];
-  });
-
-  let server = new karma.Server(config);
+  const config = Object.assign({}, karmaParseConfig(configPath, {}), options);
+  const server = new karma.Server(config);
   server.start(callback);
 }
 
