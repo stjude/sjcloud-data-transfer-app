@@ -1,19 +1,20 @@
+os: osx
+osx_image: xcode9.2
 language: node_js
 node_js:
   - "node"
 before_install:
   - cp config-example.json config.json
-  - export CHROME_BIN=/usr/bin/google-chrome
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
-  - sudo apt-get update
-  - sudo apt-get install -y libappindicator1 fonts-liberation
-  - wget https://dl.google.com/linux/direct/google-chrome-stable_current_amd64.deb
-  - sudo dpkg -i google-chrome*.deb
-  - yarn compile
+  - brew update
+  - brew outdated google-chrome || brew cask install google-chrome
+  - brew outdated rpm || brew install rpm
+install:
+  - yarn install
 after_success: 
   - yarn coverage
-  - yarn dist:publish-unix
+  - if [ $TRAVIS_BRANCH == "development" ] || [ $TRAVIS_BRANCH == "master" ]; then
+      yarn dist:publish-unix
+    fi
 cache:
   directories:
     - "node_modules"
