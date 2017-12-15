@@ -15,13 +15,14 @@
     "dist:mac": "cross-env NODE_ENV=production build -m --x64 --ia32",
     "dist:linux": "cross-env NODE_ENV=production build -l deb rpm zip --x64 --ia32",
     "dist:win": "cross-env NODE_ENV=production build -w --x64 --ia32",
-    "dist:publish": "cross-env NODE_ENV=production build -lwm --x64 --ia32 -p always",
+    "dist:publish-unix": "cross-env NODE_ENV=production build -l deb rpm zip -m --x64 --ia32 -p always",
+    "dist:publish-win": "cross-env NODE_ENV=production build -w --x64 --ia32 -p always",
     "test": "nyc gulp test",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },
   "author": "St. Jude Children's Research Hospital <clay.mcleod@stjude.org>",
   "build": {
-    "appId": "cloud.stjude",
+    "appId": "cloud.stjude.dta",
     "productName": "SJCP Data Transfer",
     "dmg": {},
     "linux": {
