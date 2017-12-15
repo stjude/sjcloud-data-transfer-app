@@ -12,7 +12,7 @@ before_install:
   - sudo dpkg -i google-chrome*.deb
 after_success: 
   - yarn coverage
-  - yarn publish
+  - yarn dist:publish
 cache:
   directories:
     - "node_modules"
