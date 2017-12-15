@@ -1,7 +1,6 @@
-const _ = require("lodash");
 const os = require("os");
-const fs = require("fs-extra");
 const path = require("path");
+const fs = require("fs-extra");
 const utils = require("../../app/bin/backend/utils");
 
 
@@ -11,62 +10,19 @@ const utils = require("../../app/bin/backend/utils");
 
 describe("Determining SJCloud paths", () => {
   describe("in UNIX", () => {
+    const tildeDir = path.join(os.homedir(), ".sjcloud");
+
     it("should return the following by default", () => {
       const result = utils.getSJCloudPaths(null, "linux");
       const expectedResult = {
-        SJCLOUD_HOME: '/Users/cmcleod/.sjcloud',
-        ANACONDA_HOME: '/Users/cmcleod/.sjcloud/anaconda',
-        ANACONDA_BIN: '/Users/cmcleod/.sjcloud/anaconda/bin',
-        ANACONDA_SJCLOUD_ENV: '/Users/cmcleod/.sjcloud/anaconda/envs/sjcloud',
-        ANACONDA_SJCLOUD_BIN: '/Users/cmcleod/.sjcloud/anaconda/envs/sjcloud/bin'
+        SJCLOUD_HOME: tildeDir,
+        ANACONDA_HOME: path.join(tildeDir, "anaconda"),
+        ANACONDA_BIN: path.join(tildeDir, "anaconda", "bin"),
+        ANACONDA_SJCLOUD_ENV: path.join(tildeDir, "anaconda", "envs", "sjcloud"),
+        ANACONDA_SJCLOUD_BIN: path.join(tildeDir, "anaconda", "envs", "sjcloud", "bin"),
       };
-
       expect(result).toEqual(expectedResult);
     });
-
-    it("should return the following with sjcloudHomeDirectory = '/test/'", () => {
-      const result = utils.getSJCloudPaths('/test/', "linux");
-      const expectedResult =
-        {
-          SJCLOUD_HOME: '/test/',
-          ANACONDA_HOME: '/test/anaconda',
-          ANACONDA_BIN: '/test/anaconda/bin',
-          ANACONDA_SJCLOUD_ENV: '/test/anaconda/envs/sjcloud',
-          ANACONDA_SJCLOUD_BIN: '/test/anaconda/envs/sjcloud/bin'
-        }
-
-      expect(result).toEqual(expectedResult);
-    });
-  });
-
-  describe("in Windows", () => {
-    it("should return the following by default", () => {
-      const result = utils.getSJCloudPaths(null, "win32");
-      const expectedResult = {
-        SJCLOUD_HOME: '/Users/cmcleod/.sjcloud',
-        ANACONDA_HOME: '/Users/cmcleod/.sjcloud/anaconda',
-        ANACONDA_BIN: '/Users/cmcleod/.sjcloud/anaconda/Scripts',
-        ANACONDA_SJCLOUD_ENV: '/Users/cmcleod/.sjcloud/anaconda/envs/sjcloud',
-        ANACONDA_SJCLOUD_BIN: '/Users/cmcleod/.sjcloud/anaconda/envs/sjcloud/bin'
-      };
-
-      expect(result).toEqual(expectedResult);
-    });
-
-    it("should return the following with sjcloudHomeDirectory = '/test/'", () => {
-      const result = utils.getSJCloudPaths('/test/', "win32");
-      const expectedResult =
-        {
-          SJCLOUD_HOME: '/test/',
-          ANACONDA_HOME: '/test/anaconda',
-          ANACONDA_BIN: '/test/anaconda/Scripts',
-          ANACONDA_SJCLOUD_ENV: '/test/anaconda/envs/sjcloud',
-          ANACONDA_SJCLOUD_BIN: '/test/anaconda/envs/sjcloud/bin'
-        }
-
-      expect(result).toEqual(expectedResult);
-    });
-
   });
 });
 
