@@ -1,6 +1,6 @@
 {
   "name": "SJCPDataTransferApp",
-  "version": "1.0.5",
+  "version": "1.1.0",
   "description": "The St. Jude Cloud Data Transfer App, designed for getting data in the St. Jude Cloud easily and reliably.",
   "homepage": "https://github.com/stjude/sjcloud-data-transfer",
   "repository": {
@@ -15,7 +15,7 @@
     "dist:mac": "cross-env NODE_ENV=production build -m --x64 --ia32",
     "dist:linux": "cross-env NODE_ENV=production build -l deb rpm zip --x64 --ia32",
     "dist:win": "cross-env NODE_ENV=production build -w --x64 --ia32",
-    "dist:all": "cross-env NODE_ENV=production build -lwm --x64 --ia32",
+    "publish": "cross-env NODE_ENV=production build -lwm --x64 --ia32 -p always",
     "test": "nyc gulp test",
     "coverage": "nyc report --reporter=text-lcov | coveralls"
   },

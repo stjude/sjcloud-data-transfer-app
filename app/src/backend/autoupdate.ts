@@ -12,7 +12,6 @@ export const feed = `${server}/update/${platform}/${electron.app.getVersion()}`;
  */
 export function startUpdateClient() {
   logging.info("   - Starting autoupdate server...");
-  logging.info(`     Server: ${server}`);
   logging.info(`     Feed:   ${feed}`);
   logging.info("");
   logging.warn(" ***********");
@@ -34,7 +33,7 @@ export function startUpdateClient() {
   });
 
   electron.autoUpdater.on("checking-for-update", () => {
-    logging.info("Checking for updates...");
+    logging.debug("Checking for updates...");
   });
 
   electron.autoUpdater.on("update-available", () => {
@@ -42,7 +41,7 @@ export function startUpdateClient() {
   });
 
   electron.autoUpdater.on("update-not-available", () => {
-    logging.info("Update not available.");
+    logging.debug("Update not available.");
   });
 
   electron.autoUpdater.on(
@@ -62,7 +61,7 @@ export function startUpdateClient() {
         if (response === 0) {
           electron.autoUpdater.quitAndInstall();
         } else {
-          logging.debug("User declined update.");
+          logging.info("User declined update.");
         }
       });
     });
