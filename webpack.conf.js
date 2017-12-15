@@ -35,6 +35,7 @@ module.exports = {
       test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
       loader: "file-loader",
     }, {
+      // KEEP THIS AS LAST RULE, will be modified in karma.conf.js
       test: /\.less$/,
       use: ExtractTextPlugin.extract({
         fallback: "style-loader",

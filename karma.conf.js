@@ -1,9 +1,15 @@
-let webpackConfig = require("./webpack.conf.js");
+const webpackConfig = require("./webpack.conf.js");
 
 module.exports = function(config) {
-  const wc = webpackConfig;
-
-  wc.plugins = [];
+  // no need to extract css into a file, so  
+  // to take out ExtractTextPlugin rule for .less,
+  // assumed to be the LAST rule in the rules array
+  webpackConfig.module.rules[ webpackConfig.module.rules.length-1 ] = {
+    test: /\.less$/,
+    use: ["css-loader", "less-loader"]
+  };
+  // optional plugins are not needed in testing 
+  webpackConfig.plugins = [];
 
   config.set({
     browsers: ["Chrome"],
@@ -50,7 +56,7 @@ module.exports = function(config) {
     },
 
     // use the webpack config
-    webpack: wc,
+    webpack: webpackConfig,
     singleRun: true,
     client: {
       captureConsole: true,
