@@ -12,15 +12,15 @@ module.exports = {
     }, {
       test: /\.css$/,
       use: [
-        {loader: "style-loader"},
-        {loader: "css-loader"},
+        { loader: "style-loader" },
+        { loader: "css-loader" },
       ],
     }, {
       test: /\.js$/,
       use: [{
         loader: "babel-loader",
         options: {
-          presets: [["es2015", {modules: false}], "stage-2"],
+          presets: [["es2015", { modules: false }], "stage-2"],
           plugins: ["syntax-dynamic-import"],
         },
       }],
@@ -83,7 +83,7 @@ module.exports = {
       startPath: "?testdata=fakeTools",
       server: {
         baseDir: "app",
-        index: "www.html"
+        index: "www.html",
       },
     }),
     new WebpackNotifierPlugin(),

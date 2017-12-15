@@ -1,14 +1,14 @@
 const webpackConfig = require("./webpack.conf.js");
 
 module.exports = function(config) {
-  // no need to extract css into a file, so  
+  // no need to extract css into a file, so
   // to take out ExtractTextPlugin rule for .less,
   // assumed to be the LAST rule in the rules array
-  webpackConfig.module.rules[ webpackConfig.module.rules.length-1 ] = {
+  webpackConfig.module.rules[webpackConfig.module.rules.length - 1] = {
     test: /\.less$/,
-    use: ["css-loader", "less-loader"]
+    use: ["css-loader", "less-loader"],
   };
-  // optional plugins are not needed in testing 
+  // optional plugins are not needed in testing
   webpackConfig.plugins = [];
 
   config.set({
