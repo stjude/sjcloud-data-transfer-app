@@ -1,11 +1,11 @@
 /*
-	To-Do: convert to a Vuex.module for use in store.js
+  To-Do: convert to a Vuex.module for use in store.js
 */
 
 export default {
   state: {
-    uriProject: "",
-    currToolName: "", // value is project/tool dx_location
+    uriProject: '',
+    currToolName: '', // value is project/tool dx_location
     tools: [], // see app/testdata/fakeTools.json for expected schema
     noProjectsFound: false,
     showAllProjects: false,
@@ -19,15 +19,15 @@ export default {
       return state.showAllProjects;
     },
 
-    /** Upload/Download **/
+    /** Upload/Download * */
     currTool(state) {
-      return state.tools.filter((t) => t.dx_location === state.currToolName)[0];
+      return state.tools.filter(t => t.dx_location === state.currToolName)[0];
     },
     toolByName(state) {
       return (name) => {
         if (!name) return null;
 
-        let toolsWithName = state.tools.filter((t) => t.name === name);
+        const toolsWithName = state.tools.filter(t => t.name === name);
         if (!toolsWithName || !toolsWithName.length) {
           return null;
         }
@@ -36,7 +36,7 @@ export default {
       };
     },
     tool(state) {
-      return (name) => state.tools.filter((t) => t.name === name)[0];
+      return name => state.tools.filter(t => t.name === name)[0];
     },
     tools(state) {
       return state.tools;
@@ -50,7 +50,7 @@ export default {
       state.uriProject = value;
     },
 
-    /** Upload/Download **/
+    /** Upload/Download * */
     setNoProjectsFound(state, value) {
       state.noProjectsFound = value;
     },
@@ -64,35 +64,34 @@ export default {
       state.tools.splice(0, state.tools.length, ...tools);
     },
     setCurrToolName(state, toolName, removeURI = false) {
-      state.searchTerm = "";
+      state.searchTerm = '';
       state.currToolName = toolName;
-      let tools = state.tools.filter((t) => t.dx_location === toolName);
+      const tools = state.tools.filter(t => t.dx_location === toolName);
 
       if (!tools || !tools.length) {
         if (!state.tools || !state.tools.length) {
           console.log("Appears the tools haven't loaded yet.");
           return;
-        } else {
-          console.error("Could not find tool:", toolName);
-          return;
         }
+        console.error('Could not find tool:', toolName);
+        return;
       }
 
-      let tool = tools[0];
+      const tool = tools[0];
       if (!tool.download.length) {
         window.dx.listDownloadableFiles(
           tool.dx_location,
           state.showAllFiles,
           // this is not called in browser testing mode
           (err, files) => {
-            let downloadableFiles = [];
+            const downloadableFiles = [];
 
             files.forEach((elem) => {
               if (isNaN(elem.describe.size)) {
-                console.error("Handle this NaN case:", elem);
+                console.error('Handle this NaN case:', elem);
               }
 
-              let dl_file = {
+              const dl_file = {
                 name: elem.describe.name,
                 status: 0,
                 checked: false,
@@ -102,7 +101,7 @@ export default {
                 cancelled: false,
                 size: window.utils.readableFileSize(elem.describe.size),
                 raw_size: elem.describe.size,
-                dx_location: elem.project + ":" + elem.id,
+                dx_location: `${elem.project}:${elem.id}`,
               };
 
               downloadableFiles.push(dl_file);
@@ -110,12 +109,12 @@ export default {
 
             tool.loadedAvailableDownloads = true;
             tool.download = downloadableFiles;
-          }
+          },
         );
       }
 
       if (removeURI) {
-        state.uriProject = "";
+        state.uriProject = '';
       }
     },
   },
@@ -125,17 +124,17 @@ export default {
       state,
       getters,
     }) {
-      let projectToPick = getters.uriProject;
+      const projectToPick = getters.uriProject;
       if (!projectToPick) return false;
 
-      let tool = getters.toolByName(projectToPick);
+      const tool = getters.toolByName(projectToPick);
       if (!tool) {
         // TODO: add red alert here to say project could not be picked.
         console.error(`Could not pick project (does not exist): ${tool}`);
         return false;
       }
 
-      commit("setCurrToolName", projectToPick);
+      commit('setCurrToolName', projectToPick);
       window.utils.setURIProject(undefined);
       return true;
     },
@@ -145,12 +144,12 @@ export default {
       getters,
       dispatch,
     }, force = false) {
-      let previousTool = state.currToolName;
+      const previousTool = state.currToolName;
 
-      commit("setNoProjectsFound", false);
+      commit('setNoProjectsFound', false);
 
-      /** TODO: this is not an elegant solution. **/
-      let uploadMap = {};
+      /** TODO: this is not an elegant solution. * */
+      const uploadMap = {};
       state.tools.forEach((tool) => {
         uploadMap[tool.dx_location] = tool.upload;
       });
@@ -162,24 +161,24 @@ export default {
           state.showAllProjects,
           (err, results) => {
             if (results.length > 0) {
-              commit("setNoProjectsFound", false);
+              commit('setNoProjectsFound', false);
 
-              let tools = [];
+              const tools = [];
               results.forEach((elem) => {
-                let item = {
+                const item = {
                   name: elem.project_name,
                   dx_location: elem.dx_location,
                   access_level: elem.access_level,
-                  size: "",
+                  size: '',
                   upload: [],
                   download: [],
                   loadedAvailableDownloads: false,
                   isSJCPTool: false,
-                  SJCPToolURL: "",
+                  SJCPToolURL: '',
                   isSJCPDataRequest: false,
                 };
 
-                /** TODO: see todo above **/
+                /** TODO: see todo above * */
                 if (item.dx_location in uploadMap) {
                   item.upload = uploadMap[item.dx_location];
                 }
@@ -187,17 +186,17 @@ export default {
                 tools.push(item);
               });
 
-              commit("setTools", tools);
+              commit('setTools', tools);
               let resetCurrToolName = true;
               if (window.uriProject) {
                 for (let i = 0; i < tools.length; i++) {
-                  let tool = tools[i];
+                  const tool = tools[i];
                   if (tool.dx_location === window.uriProject) {
                     resetCurrToolName = false;
-                    commit("setCurrToolName", window.uriProject);
+                    commit('setCurrToolName', window.uriProject);
                     window.uriProject = null;
                     break;
-                  };
+                  }
                 }
 
                 if (resetCurrToolName) {
@@ -206,15 +205,15 @@ export default {
               }
 
               for (let i = 0; i < tools.length; i++) {
-                let tool = tools[i];
+                const tool = tools[i];
                 if (tool.dx_location === previousTool) {
                   resetCurrToolName = false;
                   break;
-                };
+                }
               }
 
               if (resetCurrToolName) {
-                commit("setCurrToolName", tools[0].dx_location);
+                commit('setCurrToolName', tools[0].dx_location);
               }
 
               tools.forEach((elem) => {
@@ -223,9 +222,9 @@ export default {
                 });
               });
             } else {
-              commit("setNoProjectsFound", true);
+              commit('setNoProjectsFound', true);
             }
-          }
+          },
         );
       }
     },

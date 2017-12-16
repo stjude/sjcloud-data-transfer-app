@@ -1,25 +1,11 @@
 module.exports = {
+    "parser": "babel-eslint",
     "env": {
         "es6": true,
-        "node": true
+        "node": true,
+        "browser": true,
+        "jasmine": true
     },
-    "extends": "google",
-    "parserOptions": {
-        "sourceType": "module"
-    },
-    "rules": {
-        "indent": [
-            "error",
-            2
-        ],
-        "quotes": [
-            "error",
-            "double"
-        ],
-        "semi": [
-            "error",
-            "always"
-        ],
-        "linebreak-style": 0
-    }
+    "extends": "airbnb",
+    "plugins": ["jasmine"]
 };

@@ -2,7 +2,6 @@
   "editor.tabSize": 2,
   "editor.detectIndentation": false,
   "editor.insertSpaces": true,
-  "editor.formatOnSave": true,
   "eslint.autoFixOnSave": true,
   "editor.rulers": [
     80,

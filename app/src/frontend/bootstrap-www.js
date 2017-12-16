@@ -3,32 +3,33 @@
  * @todo Figure out a way to use this from the test directory as helper functions
  */
 window.dependency = {
-  installAnaconda(updateProgress, finishedCb, removeAnacondaIfExists=true) { console.log('-tttt')
-    updateProgress(30, "Downloading...");
+  installAnaconda(updateProgress, finishedCb, removeAnacondaIfExists = true) {
+    console.log('-tttt');
+    updateProgress(30, 'Downloading...');
 
     setTimeout(() => {
-      updateProgress(60, "Verifying...");
+      updateProgress(60, 'Verifying...');
 
       setTimeout(() => {
-        updateProgress(90, "Extracting...");
+        updateProgress(90, 'Extracting...');
 
         setTimeout(() => {
-          updateProgress(100, "Completed!");
+          updateProgress(100, 'Completed!');
           return finishedCb(null, true);
         }, 2000);
       }, 1500);
-    },1500);
-  }
+    }, 1500);
+  },
 };
 window.dx = {
   getToolsInformation(showAllProjects, showAllFiles, callback) {
     if (!window.VueApp.$store.getters.testdata) callback([]);
     // to-do: write more elegantly
     setTimeout(() => {
-      fetch("testdata/" + window.VueApp.$store.getters.testdata + ".json")
-        .then((response) => response.json())
+      fetch(`testdata/${window.VueApp.$store.getters.testdata}.json`)
+        .then(response => response.json())
         .then(callback)
-        .catch((err) => console.log(err));
+        .catch(err => console.log(err));
     }, 500);
   },
   login(token, callback) {
@@ -37,21 +38,21 @@ window.dx = {
   listProjects(showAllProjects, callback) {
     if (!window.VueApp) return;
 
-    fetch("testdata/" + window.VueApp.$store.getters.testdata + ".json")
-      .then((response) => response.json())
+    fetch(`testdata/${window.VueApp.$store.getters.testdata}.json`)
+      .then(response => response.json())
       .then((arr) => {
         const tools = [];
         arr.forEach((elem, i) => {
-          let item = {
+          const item = {
             name: elem.name,
-            dx_location: "dx_location" in elem ? elem.dx_location : elem.name + "---" + i,
+            dx_location: 'dx_location' in elem ? elem.dx_location : `${elem.name}---${i}`,
             access_level: 5,
             size: elem.size,
             upload: elem.upload,
             download: elem.download,
             loadedAvailableDownloads: true,
-            isSJCPTool: "isSJCPTool" in elem ? elem.isSJCPTool : false,
-            SJCPToolURL: "",
+            isSJCPTool: 'isSJCPTool' in elem ? elem.isSJCPTool : false,
+            SJCPToolURL: '',
           };
 
           item.download.forEach((f, i) => {
@@ -59,17 +60,17 @@ window.dx = {
               name: f.name,
               size: f.raw_size,
             };
-            f.status = "status" in f ? f.status : 0;
-            f.checked = "checked" in f ? f.checked : false;
-            f.waiting = "waiting" in f ? f.waiting : false;
-            f.started = "started" in f ? f.started : f.status ? true : false;
-            f.finished = "finished" in f ? f.finished : f.status >= 100 ? true : false;
-            f.cancelled = "cancelled" in f ? f.cancelled : false;
-            f.dx_location = f.name + "---" + i;
+            f.status = 'status' in f ? f.status : 0;
+            f.checked = 'checked' in f ? f.checked : false;
+            f.waiting = 'waiting' in f ? f.waiting : false;
+            f.started = 'started' in f ? f.started : !!f.status;
+            f.finished = 'finished' in f ? f.finished : f.status >= 100;
+            f.cancelled = 'cancelled' in f ? f.cancelled : false;
+            f.dx_location = `${f.name}---${i}`;
             if (f.started && f.status > 0) {
               const dt = 5000;
               f.startTime = +new Date() - dt;
-              const rate = f.status == 0 || dt == 0 ? 0.01 : f.status / dt;
+              const rate = f.status === 0 || dt === 0 ? 0.01 : f.status / dt;
               const msRemaining = (100 - f.status) / rate;
               f.timeRemaining = new Date(msRemaining).toISOString().substr(11, 8);
             }
@@ -78,16 +79,16 @@ window.dx = {
           tools.push(item);
         });
 
-        window.VueApp.$store.commit("setTools", tools);
+        window.VueApp.$store.commit('setTools', tools);
         if (!tools.length) {
-          window.VueApp.$store.commit("setNoProjectsFound", true);
+          window.VueApp.$store.commit('setNoProjectsFound', true);
         }
 
         if (!window.VueApp.$store.getters.currTool && tools[0]) {
-          window.VueApp.$store.commit("setCurrToolName", tools[0].dx_location);
+          window.VueApp.$store.commit('setCurrToolName', tools[0].dx_location);
         }
       })
-      .catch((err) => console.log(err));
+      .catch(err => console.log(err));
   },
   listDownloadableFiles(projectId, allFiles, callback) {
     if (!window.VueApp) return;
@@ -105,7 +106,7 @@ window.dx = {
 };
 window.oauth = {
   getToken(internal, callback) {
-    return callback(null, "abcxyz");
+    return callback(null, 'abcxyz');
   },
 };
 window.state = {
@@ -119,22 +120,22 @@ window.utils = {
     callback();
   },
   openExternal(url) {
-    window.open(url, "_blank");
+    window.open(url, '_blank');
   },
   readableFileSize(bytes, roundNumbers = false) {
     if (isNaN(bytes)) {
-      return "0 B";
+      return '0 B';
     }
     if (bytes === 0) {
-      return "0 GB";
+      return '0 GB';
     }
 
-    let thresh = 1000;
+    const thresh = 1000;
     if (Math.abs(bytes) < thresh) {
-      return bytes + " B";
+      return `${bytes} B`;
     }
 
-    let units = ["kB", "MB", "GB", "TB", "PB", "EB", "ZB", "YB"];
+    const units = ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
     let u = -1;
 
     do {
@@ -148,7 +149,7 @@ window.utils = {
       number = Math.round(number);
     }
 
-    return number + " " + units[u];
+    return `${number} ${units[u]}`;
   },
   readSJCloudFile(filename, callback) {
     callback(JSON.stringify({
@@ -173,7 +174,7 @@ window.utils = {
 };
 window.queue = {
   addToolInfoTask(task, callback) {
-    if (typeof callback == "function") callback(null, {});
+    if (typeof callback === 'function') callback(null, {});
   },
   removeAllTaskOfType(type) {
 
@@ -185,7 +186,7 @@ window.queue = {
     }
     numTaskAdded++;
     fakeProgress(file);
-    window.VueApp.$store.commit("addOperationProcess", {
+    window.VueApp.$store.commit('addOperationProcess', {
       filename: file.dx_location,
     });
   },
@@ -206,7 +207,7 @@ function fakeProgress(file) {
       file.started = true;
     } else if (!file.waiting) {
       file.waiting = true;
-      file.timeRemaining = "Waiting...";
+      file.timeRemaining = 'Waiting...';
     } else {
       file.waiting = false;
       file.finished = true;
@@ -214,9 +215,9 @@ function fakeProgress(file) {
       numTaskCompleted++;
       clearInterval(i);
       if (numTaskCompleted > numTaskAdded) {
-        console.log("More tasks completed than added: " + numTaskCompleted + " vs " + numTaskAdded + ".");
-      };
-      window.VueApp.$store.commit("removeOperationProcess", {
+        console.log(`More tasks completed than added: ${numTaskCompleted} vs ${numTaskAdded}.`);
+      }
+      window.VueApp.$store.commit('removeOperationProcess', {
         filename: file.dx_location,
       });
     }

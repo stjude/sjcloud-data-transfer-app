@@ -1,20 +1,20 @@
 /*
-	To-Do: convert to a Vuex.module for use in store.js
+  To-Do: convert to a Vuex.module for use in store.js
 */
 
 export default {
   state: {
-    /** Install **/
+    /** Install * */
     pythonOnPath: true,
-    downloadStatus: "Downloading...",
-    installingDependencies: "waiting",
+    downloadStatus: 'Downloading...',
+    installingDependencies: 'waiting',
 
-    /** Login **/
-    loginState: "waiting",
-    token: "",
+    /** Login * */
+    loginState: 'waiting',
+    token: '',
   },
   getters: {
-    /** Install **/
+    /** Install * */
     pythonOnPath(state) {
       return state.pythonOnPath;
     },
@@ -25,7 +25,7 @@ export default {
       return state.downloadStatus;
     },
 
-    /** Login **/
+    /** Login * */
     loginState(state, getters) {
       return state.loginState;
     },
@@ -34,7 +34,7 @@ export default {
     },
   },
   mutations: {
-    /** Install **/
+    /** Install * */
     setPythonOnPath(state, onPath) {
       state.pythonOnPath = onPath;
     },
@@ -45,11 +45,11 @@ export default {
       state.downloadStatus = status;
     },
 
-    /** Login **/
+    /** Login * */
     setLoginState(state, status) {
       state.loginState = status;
-      if (status == "waiting") {
-        state.currToolName = "";
+      if (status === 'waiting') {
+        state.currToolName = '';
         state.tools.splice(0, state.tools.length);
       }
     },

@@ -1,46 +1,46 @@
 import {
   select,
-} from "d3-selection";
+} from 'd3-selection';
 
 const _App = window._App;
 
-describe("User Menu's logout button", function() {
-  const holder = select("body").append("div");
-  holder.append("div").attr("id", "usermenuaaa");
+describe("User Menu's logout button", () => {
+  const holder = select('body').append('div');
+  holder.append('div').attr('id', 'usermenuaaa');
   let app;
 
-  beforeAll(function(done) {
-    app = _App("#usermenuaaa", {
-      testdata: "fakeTools",
+  beforeAll((done) => {
+    app = _App('#usermenuaaa', {
+      testdata: 'fakeTools',
       showAllFiles: true,
       showAllProjects: true,
     });
-    app.$router.push("/download");
+    app.$router.push('/download');
     // note: simulated data load is delayed by 500 ms
     setTimeout(() => {
-      app.$store.commit("setCurrToolName", "x2");
+      app.$store.commit('setCurrToolName', 'x2');
       done();
     }, 500);
   });
 
-  it("should trigger the emptying and replacement of the state.tools array when clicked", function(done) {
-    const numRowsBeforeLogut = holder.selectAll("#sjcda-left-panel-table-body tr").size();
-    holder.select("#logout-btn").node().click();
-    app.$store.commit("setURIProject", "");
-    app.$store.commit("setTestdata", "fakeToolsShort");
-    app.$store.dispatch("updateToolsFromRemote");
-    app.$router.push("/download");
+  it('should trigger the emptying and replacement of the state.tools array when clicked', (done) => {
+    const numRowsBeforeLogut = holder.selectAll('#sjcda-left-panel-table-body tr').size();
+    holder.select('#logout-btn').node().click();
+    app.$store.commit('setURIProject', '');
+    app.$store.commit('setTestdata', 'fakeToolsShort');
+    app.$store.dispatch('updateToolsFromRemote');
+    app.$router.push('/download');
 
     setTimeout(() => {
       expect(JSON.stringify([
         numRowsBeforeLogut,
-        holder.selectAll("#sjcda-left-panel-table-body tr").size(),
-      ])).toEqual("[11,1]");
+        holder.selectAll('#sjcda-left-panel-table-body tr').size(),
+      ])).toEqual('[11,1]');
       done();
     }, 500);
   });
 
-  afterAll(function(done) {
+  afterAll((done) => {
     holder.remove();
     done();
   });

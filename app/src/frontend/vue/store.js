@@ -1,42 +1,42 @@
-import Vue from "vue";
-import Vuex from "vuex";
-import Config from "../../../../config.json";
-import storeStart from "./substores/storeStart";
-import storeModals from "./substores/storeModals";
-import storeProjects from "./substores/storeProjects";
-import storeFiles from "./substores/storeFiles";
-import storeOperations from "./substores/storeOperations";
+import Vue from 'vue';
+import Vuex from 'vuex';
+import Config from '../../../../config.json';
+import storeStart from './substores/storeStart';
+import storeModals from './substores/storeModals';
+import storeProjects from './substores/storeProjects';
+import storeFiles from './substores/storeFiles';
+import storeOperations from './substores/storeOperations';
 
 Vue.use(Vuex);
 
-/** Plugins **/
+/** Plugins * */
 const projectToolScopeWatcher = (store) => {
   store.subscribe((mutation, state) => {
-    if (mutation.type === "setShowAllFiles") {
-      store.dispatch("refreshFiles");
+    if (mutation.type === 'setShowAllFiles') {
+      store.dispatch('refreshFiles');
       cacheState(state);
     }
 
-    if (mutation.type === "setShowAllProjects") {
-      window.queue.removeAllTaskOfType("toolInfo");
-      store.dispatch("updateToolsFromRemote", true);
+    if (mutation.type === 'setShowAllProjects') {
+      window.queue.removeAllTaskOfType('toolInfo');
+      store.dispatch('updateToolsFromRemote', true);
       cacheState(state);
     }
 
-    if (mutation.type === "setURIProject") {
-      store.commit("setCurrToolName", state.uriProject, true);
+    if (mutation.type === 'setURIProject') {
+      store.commit('setCurrToolName', state.uriProject, true);
     }
 
-    if (mutation.type !== "toggleMenu" && mutation.type !== "closeMenu" && mutation.type !== "openMenu") {
+    if (mutation.type !== 'toggleMenu' && mutation.type !== 'closeMenu' && mutation.type !== 'openMenu') {
       state.menuIsVisible = false;
     }
   });
 };
 
 
-/** Helpers **/
+/** Helpers * */
 function cacheState(state) {
-  window.utils.saveToSJCloudFile("state.json", JSON.stringify({
+  window.utils.saveToSJCloudFile('state.json', JSON.stringify({
     showAllFiles: state.showAllFiles,
     showAllProjects: state.showAllProjects,
     concurrentOperations: state.concurrentOperations,
@@ -47,29 +47,29 @@ function cacheState(state) {
 // a simple search string parser used in testing
 // to override state settings
 function getParams() {
-  if (window.location.port != "3057" && window.location.port != "9876") {
+  if (window.location.port !== '3057' && window.location.port !== '9876') {
     return {};
   }
 
   const params = {};
   if (window.testdata) params.testdata = window.testdata;
-  window.location.search.substr(1).split("&").forEach((kv) => {
-    const [key, value] = kv.split("=");
+  window.location.search.substr(1).split('&').forEach((kv) => {
+    const [key, value] = kv.split('=');
     params[key] = value;
   });
   return params;
 }
 
 
-/** Global Store **/
+/** Global Store * */
 const storeGlobal = {
   state: {
     platform: window.utils.platform,
-    environment: process.env.NODE_ENV || "development",
-    currPath: "upload",
+    environment: process.env.NODE_ENV || 'development',
+    currPath: 'upload',
     downloadLocation: window.utils.defaultDownloadDir,
-    testdata: "",
-    infoTipText: ''
+    testdata: '',
+    infoTipText: '',
   },
   getters: {
     platform(state, getters) {
@@ -89,7 +89,7 @@ const storeGlobal = {
     },
     infoTipText(state) {
       return state.infoTipText;
-    }
+    },
   },
   mutations: {
     // generic mutation setter
@@ -106,21 +106,21 @@ const storeGlobal = {
     setDownloadLocation(state, location) {
       state.downloadLocation = location;
     },
-    setInfoTipText(state,text) {
+    setInfoTipText(state, text) {
       state.infoTipText = text;
     },
     setTestdata(state, str) {
       state.testdata = str;
     },
   },
-  actions: {}
+  actions: {},
 };
 
-/** Store generator **/
-function storeCopier(key,substores) {
-  const copy={};
-  substores.forEach(substore=>{
-    if (key in substore) Object.assign(copy, substore[key])
+/** Store generator * */
+function storeCopier(key, substores) {
+  const copy = {};
+  substores.forEach((substore) => {
+    if (key in substore) Object.assign(copy, substore[key]);
   });
   return copy;
 }
@@ -131,7 +131,7 @@ export default function getVuexStore(cachedState = {}) {
     To-Do: use Vuex.modules instead of Object.assign in storeCopier
   */
   return new Vuex.Store({
-    state: storeCopier('state', substores.concat({state: cachedState}, {state: getParams()})),
+    state: storeCopier('state', substores.concat({ state: cachedState }, { state: getParams() })),
     getters: storeCopier('getters', substores),
     mutations: storeCopier('mutations', substores),
     actions: storeCopier('actions', substores),

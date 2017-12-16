@@ -1,5 +1,5 @@
 /*
-	To-Do: convert to a Vuex.module for use in store.js
+  To-Do: convert to a Vuex.module for use in store.js
 */
 
 export default {
@@ -13,7 +13,7 @@ export default {
   },
   getters: {
     modalVisibility(state, getters) {
-      return (name) => state.modals[name];
+      return name => state.modals[name];
     },
     menuIsVisible(state) {
       return state.menuIsVisible;
@@ -26,7 +26,7 @@ export default {
     },
   },
   mutations: {
-    /** Modals **/
+    /** Modals * */
     showModal(state, name) {
       state.modals[name] = 1;
     },
@@ -56,5 +56,4 @@ export default {
   actions: {
 
   },
-}
-;
+};
