@@ -14,25 +14,33 @@ const sources = {
   backend: ['app/src/backend/**/*'],
 };
 
-gulp.task('compile:frontend:source', (callback) => {
-  const wpInstance = webpack(webpackConfig);
-  wpInstance.run((err) => {
-    if (err) { return callback(err); }
-    return callback();
-  });
-});
+gulp.task(
+  'compile:frontend:source', ['clean:app:bin:frontend'],
+  (callback) => {
+    const wpInstance = webpack(webpackConfig);
+    wpInstance.run((err) => {
+      if (err) { return callback(err); }
+      return callback();
+    });
+  },
+);
 
 gulp.task(
-  'compile:frontend:spec', ['clean:tmp:test:frontend'],
+  'compile:frontend:spec',
+  ['clean:tmp:test:frontend'],
   () => gulp.src('app/src/frontend/spec/*.js')
     .pipe(gulp.dest('.tmp/test/frontend/')),
 );
 
 gulp.task('compile:frontend', ['compile:frontend:source', 'compile:frontend:spec']);
 
-gulp.task('compile:backend:source', () => gulp.src('app/src/backend/**/*.ts')
-  .pipe(typescript.createProject(TS_CONFIG_PATH)())
-  .pipe(gulp.dest('app/bin/backend')));
+gulp.task(
+  'compile:backend:source',
+  ['clean:app:bin:backend'],
+  () => gulp.src('app/src/backend/**/*.ts')
+    .pipe(typescript.createProject(TS_CONFIG_PATH)())
+    .pipe(gulp.dest('app/bin/backend')),
+);
 
 gulp.task(
   'compile:backend:spec', ['clean:tmp:test:backend'],

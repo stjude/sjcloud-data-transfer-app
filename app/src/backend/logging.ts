@@ -3,6 +3,7 @@ const path = require("path");
 const winston = require("winston");
 const moment = require("moment");
 const fs = require("fs-extra");
+const env = require("./env");
 
 const platform = os.platform();
 const nodeEnvironment = process.env.NODE_ENV || "production";
@@ -13,7 +14,9 @@ fs.ensureFileSync(loggingFile);
 
 if (process.env.LOG_LEVEL) {
   logLevel = process.env.LOG_LEVEL;
-} else if (nodeEnvironment === "production") {
+} else if (env.isTesting()) {
+  logLevel = "critical";
+}else if (env.isProduction()) {
   logLevel = "info";
 } else logLevel = "debug";
 

@@ -8,8 +8,8 @@ const { parseConfig } = require('karma/lib/config');
 const KARMA_CONFIG_PATH = path.resolve(path.join(__dirname, '../.karma.conf.js'));
 
 const sources = {
-  frontend: ['app/src/frontend/spec/*'],
-  backend: ['app/src/backend/spec/*'],
+  frontend: ['app/src/frontend/**/*'],
+  backend: ['app/src/backend/**/*'],
 };
 
 /**
@@ -37,8 +37,8 @@ const testBackend = () => {
 
 gulp.task('test:frontend:no-compile', testFrontend);
 gulp.task('test:backend:no-compile', testBackend);
-gulp.task('test:frontend', ['compile:frontend'], testFrontend);
-gulp.task('test:backend', ['compile:backend'], testBackend);
+gulp.task('test:frontend', ['env:set-test', 'compile:frontend'], testFrontend);
+gulp.task('test:backend', ['env:set-test', 'compile:backend'], testBackend);
 gulp.task('test:frontend:watch', () => gulp.watch(sources.frontend, ['test:frontend']));
 gulp.task('test:backend:watch', () => gulp.watch(sources.backend, ['test:backend']));
 gulp.task('test:watch', ['test:frontend:watch', 'test:backend:watch']);
