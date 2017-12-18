@@ -6,8 +6,7 @@ coverage/*
 .nyc_output/*
 !app/bin/.gitkeep
 **/.DS_Store
-test/*
-!test/.gitkeep
+.tmp/*
 
 package-lock.json
 config.json

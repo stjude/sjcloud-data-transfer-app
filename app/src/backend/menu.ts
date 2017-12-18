@@ -3,7 +3,6 @@
  *
  */
 
-
 const app = require("electron").app;
 import { logging } from "./logging";
 

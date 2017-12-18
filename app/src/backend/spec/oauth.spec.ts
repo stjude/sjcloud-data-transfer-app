@@ -1,1 +1,1 @@
-const oauth = require("../../app/bin/backend/oauth");
+const oauth = require("../../../app/bin/backend/oauth");

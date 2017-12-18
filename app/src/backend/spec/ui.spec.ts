@@ -1,1 +1,1 @@
-const ui = require("../../app/bin/backend/ui");
+const ui = require("../../../app/bin/backend/ui");

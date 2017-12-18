@@ -1,7 +1,7 @@
 const os = require("os");
 const path = require("path");
 const fs = require("fs-extra");
-const utils = require("../../app/bin/backend/utils");
+const utils = require("../../../app/bin/backend/utils");
 
 
 /*******************************************************************************

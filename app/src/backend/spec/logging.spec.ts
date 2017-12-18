@@ -1,1 +1,0 @@
-const logging = require("../../app/bin/backend/logging");
