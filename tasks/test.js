@@ -42,4 +42,4 @@ gulp.task('test:backend', ['env:set-test', 'compile:backend'], testBackend);
 gulp.task('test:frontend:watch', () => gulp.watch(sources.frontend, ['test:frontend']));
 gulp.task('test:backend:watch', () => gulp.watch(sources.backend, ['test:backend']));
 gulp.task('test:watch', ['test:frontend:watch', 'test:backend:watch']);
-gulp.task('test', ['test-frontend', 'test-backend']);
+gulp.task('test', ['test:frontend', 'test:backend']);

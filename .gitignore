@@ -14,3 +14,4 @@ config.json
 # developer specific symlink to [project-path/]test/testdata 
 
 *.log
+test/*
