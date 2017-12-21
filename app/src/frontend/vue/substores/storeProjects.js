@@ -2,6 +2,104 @@
   To-Do: convert to a Vuex.module for use in store.js
 */
 
+
+/**
+  Helper functions
+*/
+
+function handleDownloadableFiles(tool) {
+  return (err, files) => {
+    const downloadableFiles = [];
+
+    files.forEach((elem) => {
+      if (isNaN(elem.describe.size)) {
+        console.error('Handle this NaN case:', elem);
+      }
+
+      const dl_file = {
+        name: elem.describe.name,
+        status: 0,
+        checked: false,
+        waiting: false,
+        started: false,
+        finished: false,
+        cancelled: false,
+        size: window.utils.readableFileSize(elem.describe.size),
+        raw_size: elem.describe.size,
+        dx_location: `${elem.project}:${elem.id}`,
+      };
+
+      downloadableFiles.push(dl_file);
+    });
+
+    tool.loadedAvailableDownloads = true;
+    tool.download = downloadableFiles;
+  }
+}
+
+function getUploadMap(tools) {
+  const uploadMap = {};
+  tools.forEach((tool) => {
+    uploadMap[tool.dx_location] = tool.upload;
+  });
+  return uploadMap;
+}
+
+function getToolItem(elem, uploadMap) {
+  const item = {
+    name: elem.project_name,
+    dx_location: elem.dx_location,
+    access_level: elem.access_level,
+    size: '',
+    upload: [],
+    download: [],
+    loadedAvailableDownloads: false,
+    isSJCPTool: false,
+    SJCPToolURL: '',
+    isSJCPDataRequest: false,
+  };
+
+  /** TODO: see todo above * */
+  if (item.dx_location in uploadMap) {
+    item.upload = uploadMap[item.dx_location];
+  }
+
+  return item;
+}
+
+function resetCurrToolName(tools, previousTool, commit) {
+  let forceReset = true;
+  if (window.uriProject) {
+    for (const tool of tools) {
+      if (tool.dx_location === window.uriProject) {
+        forceReset = false;
+        commit('setCurrToolName', window.uriProject);
+        window.uriProject = null;
+        break;
+      }
+    }
+
+    if (forceReset) {
+      // TODO: error, project was not found.
+    }
+  }
+
+  for (const tool of tools) {
+    if (tool.dx_location === previousTool) {
+      forceReset = false;
+      break;
+    }
+  }
+
+  if (forceReset) {
+    commit('setCurrToolName', tools[0].dx_location);
+  }
+}
+
+/**
+  exported function
+*/
+
 export default {
   state: {
     uriProject: '',
@@ -83,33 +181,7 @@ export default {
           tool.dx_location,
           state.showAllFiles,
           // this is not called in browser testing mode
-          (err, files) => {
-            const downloadableFiles = [];
-
-            files.forEach((elem) => {
-              if (isNaN(elem.describe.size)) {
-                console.error('Handle this NaN case:', elem);
-              }
-
-              const dl_file = {
-                name: elem.describe.name,
-                status: 0,
-                checked: false,
-                waiting: false,
-                started: false,
-                finished: false,
-                cancelled: false,
-                size: window.utils.readableFileSize(elem.describe.size),
-                raw_size: elem.describe.size,
-                dx_location: `${elem.project}:${elem.id}`,
-              };
-
-              downloadableFiles.push(dl_file);
-            });
-
-            tool.loadedAvailableDownloads = true;
-            tool.download = downloadableFiles;
-          },
+          handleDownloadableFiles(tool)
         );
       }
 
@@ -147,75 +219,19 @@ export default {
       const previousTool = state.currToolName;
 
       commit('setNoProjectsFound', false);
-
-      /** TODO: this is not an elegant solution. * */
-      const uploadMap = {};
-      state.tools.forEach((tool) => {
-        uploadMap[tool.dx_location] = tool.upload;
-      });
-
       if (force) state.tools = [];
 
       if (!state.tools.length) {
+        const uploadMap = getUploadMap(state.tools);
+
         window.dx.listProjects(
           state.showAllProjects,
           (err, results) => {
             if (results.length > 0) {
               commit('setNoProjectsFound', false);
-
-              const tools = [];
-              results.forEach((elem) => {
-                const item = {
-                  name: elem.project_name,
-                  dx_location: elem.dx_location,
-                  access_level: elem.access_level,
-                  size: '',
-                  upload: [],
-                  download: [],
-                  loadedAvailableDownloads: false,
-                  isSJCPTool: false,
-                  SJCPToolURL: '',
-                  isSJCPDataRequest: false,
-                };
-
-                /** TODO: see todo above * */
-                if (item.dx_location in uploadMap) {
-                  item.upload = uploadMap[item.dx_location];
-                }
-
-                tools.push(item);
-              });
-
+              const tools = results.map((elem) => getToolItem(elem, uploadMap));
               commit('setTools', tools);
-              let resetCurrToolName = true;
-              if (window.uriProject) {
-                for (let i = 0; i < tools.length; i++) {
-                  const tool = tools[i];
-                  if (tool.dx_location === window.uriProject) {
-                    resetCurrToolName = false;
-                    commit('setCurrToolName', window.uriProject);
-                    window.uriProject = null;
-                    break;
-                  }
-                }
-
-                if (resetCurrToolName) {
-                  // TODO: error, project was not found.
-                }
-              }
-
-              for (let i = 0; i < tools.length; i++) {
-                const tool = tools[i];
-                if (tool.dx_location === previousTool) {
-                  resetCurrToolName = false;
-                  break;
-                }
-              }
-
-              if (resetCurrToolName) {
-                commit('setCurrToolName', tools[0].dx_location);
-              }
-
+              resetCurrToolName(tools, previousTool, commit);
               tools.forEach((elem) => {
                 window.queue.addToolInfoTask({
                   _rawTool: elem,

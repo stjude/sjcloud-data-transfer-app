@@ -1,6 +1,5 @@
 /**
  * This block of code is run if we are in the browser.
- * @todo Figure out a way to use this from the test directory as helper functions
  */
 window.dependency = {
   installAnaconda(updateProgress, finishedCb, removeAnacondaIfExists = true) {
