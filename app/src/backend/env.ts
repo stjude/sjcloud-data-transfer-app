@@ -1,3 +1,7 @@
+if (!process.env.NODE_ENV) {
+  process.env.NODE_ENV = "production";
+}
+
 export function getEnv() {
   return process.env.NODE_ENV.toString().toLowerCase();
 }
