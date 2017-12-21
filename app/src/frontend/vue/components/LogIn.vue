@@ -24,7 +24,7 @@
 				</div>
 			</div>
 			<div v-show="loginState == 'validating'" class='theater-body'>
-				<spin-kit :status='validating' :btmLabel='validating'></spin-kit>
+				<spin-kit :status='validating' :btmLabel='validating' percentage='0'></spin-kit>
 			</div>
 			<div v-show="loginState == 'completed'" class='theater-body'>
 				<div class="col-xs-12">

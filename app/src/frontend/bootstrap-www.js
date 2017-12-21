@@ -3,7 +3,6 @@
  */
 window.dependency = {
   installAnaconda(updateProgress, finishedCb, removeAnacondaIfExists = true) {
-    console.log('-tttt');
     updateProgress(30, 'Downloading...');
 
     setTimeout(() => {
@@ -21,16 +20,6 @@ window.dependency = {
   },
 };
 window.dx = {
-  getToolsInformation(showAllProjects, showAllFiles, callback) {
-    if (!window.VueApp.$store.getters.testdata) callback([]);
-    // to-do: write more elegantly
-    setTimeout(() => {
-      fetch(`testdata/${window.VueApp.$store.getters.testdata}.json`)
-        .then(response => response.json())
-        .then(callback)
-        .catch(err => console.log(err));
-    }, 500);
-  },
   login(token, callback) {
     setTimeout(callback, 1500);
   },
