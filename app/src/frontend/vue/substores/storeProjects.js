@@ -241,7 +241,7 @@ export default function(ref) {
                   });
                 });
 
-                if (ref.VueApp.readyCallback) {
+                if (ref.VueApp && ref.VueApp.readyCallback) {
                   ref.VueApp.readyCallback();
                   delete ref.VueApp.readyCallback;
                 }

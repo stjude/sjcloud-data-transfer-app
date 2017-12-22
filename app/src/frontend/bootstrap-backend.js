@@ -24,7 +24,7 @@ window.utils = require('./bin/backend/utils');
 */ 
 window.backend = {
 	install(Vue, options) {
-		Vue.prototype.setBackend = function () {
+		Vue.prototype.$setBackend = function () {
 			if (this.backend) {
 		    	throw "The $root.backend has already been set.";
 		    }
@@ -34,7 +34,7 @@ window.backend = {
 					dependency: require('./bin/backend/dependency'),
 					queue: require('./bin/backend/queue'),
 					logging: require('./bin/backend/logging-remote'),
-					oauth: equire('./bin/backend/oauth'),
+					oauth: require('./bin/backend/oauth'),
 					state: require('./bin/backend/state'),
 					ui: require('./bin/backend/ui'),
 					utils: require('./bin/backend/utils'),
