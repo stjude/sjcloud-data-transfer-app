@@ -12,6 +12,7 @@ Vue.config.devtools = true;
 Vue.use(VueRouter);
 Vue.use(vueTippy);
 Vue.use(Quasar);
+Vue.use(window.backend);
 console.log(`Node Environment: ${process.env.NODE_ENV}`);
 
 // create router
@@ -30,14 +31,20 @@ const router = new VueRouter({
  * @param {*} cachedState
  * @return {*}
  */
-export default function _App(selector, cachedState = {}) {
+export default function _App(selector, cachedState = {}, dataReadyCallback=null) {
   // boostrap the app
+  const newStore = store(cachedState);
+  
   const VueApp = new Vue({
     el: selector,
     render: h => h(App),
     router,
-    store: store(cachedState),
+    store: newStore.main,
   });
+
+  VueApp.$setBackend();  
+  newStore.setRef('backend',VueApp.backend);
+  VueApp.dataReadyCallback = dataReadyCallback;
 
   if (VueApp.$store.getters.testdata) {
     // retain route path for easier testing on the browser
@@ -46,7 +53,7 @@ export default function _App(selector, cachedState = {}) {
     VueApp.$router.replace('home');
   } else {
     VueApp.$router.replace('/');
-    window.state.getState((state) => {
+    VueApp.backend.state.getState((state) => {
       VueApp.$router.replace(state.path);
       if (state.path === 'login') {
         checkDependencies(VueApp);
@@ -64,7 +71,7 @@ export default function _App(selector, cachedState = {}) {
  * @param {*} VueApp
  */
 function checkDependencies(VueApp) {
-  window.utils.pythonOnPath((onPath) => {
+  VueApp.backend.utils.pythonOnPath((onPath) => {
     VueApp.$store.commit('setPythonOnPath', onPath);
     const contactUrl = 'https://stjude.cloud/contact';
 
@@ -75,7 +82,7 @@ function checkDependencies(VueApp) {
         actions: [{
           label: 'Open Link',
           handler: () => {
-            window.utils.openExternal(contactUrl);
+            VueApp.backend.utils.openExternal(contactUrl);
           },
         }],
       });
@@ -85,8 +92,9 @@ function checkDependencies(VueApp) {
 
 // if this code was bundled and included in index.html,
 // where the expected container div is present,
-// then start the app immediately
-if (document.querySelector('#sjcda-main-div')) {
+// then start the app immediately. The alternative
+// scenario is a test that creates the VueApp as needed.
+if (document.querySelector('#sjcda-main-div') && window.utils) {
   window.utils.readSJCloudFile('state.json', (content) => {
     const obj = JSON.parse(content);
     if (!obj) {

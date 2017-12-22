@@ -25,7 +25,7 @@ describe('NavBar search', () => {
   it('should display 10 rows for term=_c', (done) => {
     const searchTerm = '_c';
     holder.select('#sjcda-nav-search-bar').property('value', searchTerm);
-    window.VueApp.$store.commit('setSearchTerm', searchTerm);
+    app.$store.commit('setSearchTerm', searchTerm);
     setTimeout(() => {
       expect(holder.selectAll('#file-status-table-body tr').size()).toEqual(6);
       done();

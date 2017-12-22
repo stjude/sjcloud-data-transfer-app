@@ -112,7 +112,7 @@ export default {
   },
   methods: {
     openExternal(url) {
-      window.utils.openExternal(url);
+      this.$root.backend.utils.openExternal(url);
     },
     uploadFiles() {
       const files = this.$store.getters.currTool.upload.filter(f => f.checked);
@@ -126,7 +126,7 @@ export default {
       );
 
       files.forEach(function(file) {
-        window.utils.resetFileStatus(file);
+        this.$root.backend.utils.resetFileStatus(file);
         file.waiting = true;
 
         let task = {
@@ -135,7 +135,7 @@ export default {
           remote_location: dnanexusProjectId
         };
 
-        window.queue.addUploadTask(task);
+        this.$root.backend.queue.addUploadTask(task);
       });
     },
     removeCheckedFiles() {

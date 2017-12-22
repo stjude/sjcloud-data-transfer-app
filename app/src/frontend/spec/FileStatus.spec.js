@@ -13,19 +13,16 @@ describe('FileStatus table for an empty project', () => {
       testdata: 'fakeTools',
       showAllFiles: true,
       showAllProjects: true,
-    });
-    app.$router.push('/download');
-    setTimeout(() => {
+    }, ()=>{
+      app.$router.push('/download');
       app.$store.commit('setCurrToolName', 'x1');
       done();
-    }, 600);
+    });
   });
 
   it('should not be displayed', (done) => {
-    setTimeout(() => {
-      expect(holder.select('#file-status-div').node()).toEqual(null);
-      done();
-    }, 500);
+    expect(holder.select('#file-status-div').node()).toEqual(null);
+    done();
   });
 
   afterAll((done) => {
@@ -44,12 +41,11 @@ describe('FileStatus table for a project with pending downloads', () => {
       testdata: 'fakeTools',
       showAllFiles: true,
       showAllProjects: true,
-    });
-    app.$router.push('/download');
-    setTimeout(() => {
+    }, ()=>{
+      app.$router.push('/download');
       app.$store.commit('setCurrToolName', 'x2');
       done();
-    }, 600);
+    });
   });
 
   it('should be displayed', (done) => {

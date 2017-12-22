@@ -63,7 +63,6 @@
 </template>
 
 <script>
-import Vue from 'vue';
 import SortArrows from './SortArrows.vue';
 import globToRegExp from 'glob-to-regexp';
 
@@ -112,7 +111,7 @@ export default {
 			return this.$store.getters.checkedFiles.length
 		},
 		sizeSelectedFiles() {
-			return window.utils.readableFileSize(this.$store.getters.checkedFiles
+			return this.$root.backend.utils.readableFileSize(this.$store.getters.checkedFiles
 					.reduce((a,b)=>a + b.raw_size, 0))
 		},
 		tBodyDivStyle() {

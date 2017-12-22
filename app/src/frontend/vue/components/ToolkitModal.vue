@@ -47,7 +47,7 @@ export default {
     open(url, event) {
       event.preventDefault();
       event.stopPropagation();
-      window.utils.openExternal(url);
+      this.$root.backend.utils.openExternal(url);
       return false;
     }
   }

@@ -39,14 +39,14 @@ export default {
   methods: {
     logout() {
       this.$store.commit("closeMenu");
-      window.dx.logout((err, result) => {
+      this.$root.backend.dx.logout((err, result) => {
         this.$store.commit("setLoginState", "waiting");
         this.$router.replace("/login");
       });
     },
     fileAnIssue() {
       this.$store.commit("closeMenu");
-      window.utils.openExternal("https://stjude.cloud/contact");
+      this.$root.backend.utils.openExternal("https://stjude.cloud/contact");
     },
     openSettings() {
       this.$store.commit("closeMenu");
