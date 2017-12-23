@@ -14,12 +14,13 @@ describe('Upload panel for an empty project', () => {
       testdata: 'fakeTools',
       showAllFiles: true,
       showAllProjects: true,
-    });
-    app.$router.push('/upload');
-    setTimeout(() => {
+    }, ()=>{
+      app.$router.push('/upload');
       app.$store.commit('setCurrToolName', 'x1');
-      done();
-    }, 600);
+      setTimeout(() => {
+        done();
+      }, 500);
+    });
   });
 
   it('should not display a loading spinner', (done) => {
@@ -51,13 +52,13 @@ describe('Upload panel for a project with completed transfer', () => {
       testdata: 'fakeTools',
       showAllFiles: true,
       showAllProjects: true,
-    });
-    app.$router.push('/upload');
-    // note: simulated data load is delayed by 500 ms
-    setTimeout(() => {
+    }, ()=>{
+      app.$router.push('/upload');
       app.$store.commit('setCurrToolName', 'x3');
-      done();
-    }, 600);
+      setTimeout(() => {
+        done();
+      }, 600);
+    });
   });
 
   it('should display a completion message', (done) => {

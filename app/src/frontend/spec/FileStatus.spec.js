@@ -16,7 +16,9 @@ describe('FileStatus table for an empty project', () => {
     }, ()=>{
       app.$router.push('/download');
       app.$store.commit('setCurrToolName', 'x1');
-      done();
+      setTimeout(()=>{
+        done();
+      },500);
     });
   });
 
@@ -44,22 +46,20 @@ describe('FileStatus table for a project with pending downloads', () => {
     }, ()=>{
       app.$router.push('/download');
       app.$store.commit('setCurrToolName', 'x2');
-      done();
+      setTimeout(()=>{
+        done();
+      },500);
     });
   });
 
   it('should be displayed', (done) => {
-    setTimeout(() => {
-      expect(holder.select('#file-status-div').size()).toEqual(1);
-      done();
-    }, 500);
+    expect(holder.select('#file-status-div').size()).toEqual(1);
+    done();
   });
 
   it('should have 9 rows of listed files', (done) => {
-    setTimeout(() => {
-      expect(holder.select('#file-status-table-body').selectAll('tr').size()).toEqual(9);
-      done();
-    }, 500);
+    expect(holder.select('#file-status-table-body').selectAll('tr').size()).toEqual(9);
+    done();
   });
 
   it('should have 1 empty status cells', (done) => {
@@ -108,7 +108,7 @@ describe('FileStatus table for a project with pending downloads', () => {
   });
 
   afterAll((done) => {
-    // holder.remove();
+    holder.remove();
     done();
   });
 });
@@ -123,20 +123,21 @@ describe('FileStatus table for a project with completed transfer', () => {
       testdata: 'fakeTools',
       showAllFiles: true,
       showAllProjects: true,
-    });
-    app.$router.push('/download');
-    setTimeout(() => {
+    }, ()=>{
+      app.$router.push('/download');
       app.$store.commit('setCurrToolName', 'x3');
-      done();
-    }, 500);
+      setTimeout(()=>{
+        done();
+      },500);
+    })
   });
 
   it('should not be displayed for uploads', (done) => {
     app.$router.push('/upload');
-    setTimeout(() => {
+    setTimeout(()=>{
       expect(holder.select('#file-status-div').node().parentNode.style.display).toEqual('none');
       done();
-    }, 600);
+    },100)
   });
 
   it('should have no in-progress status cells', (done) => {
@@ -165,4 +166,3 @@ describe('FileStatus table for a project with completed transfer', () => {
     done();
   });
 });
-

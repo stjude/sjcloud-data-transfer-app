@@ -13,13 +13,12 @@ describe('LeftPanel for a user with no projects', () => {
       testdata: 'emptyTools',
       showAllFiles: true,
       showAllProjects: true,
+    }, ()=>{
+      app.$router.push('/download');
+      setTimeout(() => {
+        done();
+      }, 500);
     });
-    app.$router.push('/download');
-    // note: simulated data load is delayed by 500 ms
-    setTimeout(() => {
-      // app.$store.commit('setCurrToolName','x2');
-      done();
-    }, 500);
   });
   /*
   !!!
@@ -32,7 +31,7 @@ describe('LeftPanel for a user with no projects', () => {
     setTimeout(() => {
       expect(holder.selectAll('.no-projects-div').size()).toEqual(1);
       done();
-    }, 1200);
+    }, 1000);
   });
 
   afterAll((done) => {
@@ -51,13 +50,14 @@ describe('LeftPanel for a user with projects', () => {
       testdata: 'fakeTools',
       showAllFiles: true,
       showAllProjects: true,
+    }, ()=>{
+      app.$router.push('/download');
+      // note: simulated data load is delayed by 500 ms
+      setTimeout(() => {
+        app.$store.commit('setCurrToolName', 'x2');
+        done();
+      }, 500);
     });
-    app.$router.push('/download');
-    // note: simulated data load is delayed by 500 ms
-    setTimeout(() => {
-      app.$store.commit('setCurrToolName', 'x2');
-      done();
-    }, 500);
   });
 
   it('should have the correct # of rows for tools', (done) => {

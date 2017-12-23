@@ -13,9 +13,12 @@ describe('Install', () => {
       testdata: 'emptyTools',
       showAllFiles: true,
       showAllProjects: true,
+    }, ()=>{
+      app.$router.push('/install');
+      setTimeout(()=>{
+        done();
+      }, 500);
     });
-    app.$router.push('/install');
-    done();
   });
 
   it('should display the initial download screen', (done) => {

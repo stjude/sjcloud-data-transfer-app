@@ -13,13 +13,13 @@ describe('NavBar search', () => {
       testdata: 'fakeTools',
       showAllFiles: true,
       showAllProjects: true,
-    });
-    app.$router.push('/download');
-    // note: simulated data load is delayed by 500 ms
-    setTimeout(() => {
+    }, ()=>{
+      app.$router.push('/download');
       app.$store.commit('setCurrToolName', 'x4');
-      done();
-    }, 600);
+      setTimeout(() => {
+        done();
+      }, 500);
+    });
   });
 
   it('should display 10 rows for term=_c', (done) => {

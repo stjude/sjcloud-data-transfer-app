@@ -13,12 +13,13 @@ describe('Download panel for an empty project', () => {
       testdata: 'fakeTools',
       showAllFiles: true,
       showAllProjects: true,
-    });
-    app.$router.push('/download');
-    setTimeout(() => {
+    }, ()=>{
+      app.$router.push('/download');
       app.$store.commit('setCurrToolName', 'x1');
-      done();
-    }, 600);
+      setTimeout(() => {
+        done();
+      }, 500);
+    });
   });
 
   it('should not display loading spinner', (done) => {
@@ -42,12 +43,13 @@ describe('Download panel for a project with completed transfer', () => {
       testdata: 'fakeTools',
       showAllFiles: true,
       showAllProjects: true,
-    });
-    app.$router.push('/download');
-    setTimeout(() => {
+    }, ()=>{
+      app.$router.push('/download');
       app.$store.commit('setCurrToolName', 'x3');
-      done();
-    }, 100);
+      setTimeout(() => {
+        done();
+      }, 500);
+    });
   });
 
   it('should have 2 completed icons for downloads', (done) => {
@@ -61,7 +63,7 @@ describe('Download panel for a project with completed transfer', () => {
         .toEqual(2);
 
       done();
-    }, 1);
+    }, 100);
   });
 
   afterAll((done) => {
