@@ -109,6 +109,7 @@
     "eslint-plugin-react": "^7.5.1",
     "extract-text-webpack-plugin": "^3.0.0",
     "file-loader": "^0.11.2",
+    "gulp-bump": "^2.9.0",
     "jasmine": "^2.8.0",
     "jasmine-core": "*",
     "jasmine-ts": "^0.2.1",

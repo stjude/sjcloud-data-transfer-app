@@ -19,6 +19,9 @@ gulp.task('default', () => {
   util.log('    gulp test         , Run all testing functionality for the project.');
   util.log('    gulp test:watch   , Run all tests, watch for updates.');
   util.log('');
+  util.log('  == Publishing ==');
+  util.log('    gulp bump:<LEVEL> , Bump the version of the app by the SemVer <LEVEL> (semver.org).');
+  util.log('');
   util.log('  == Documentation ==');
   util.log('');
   util.log('    gulp docs         , Build documentation for the project.');
