@@ -1,0 +1,27 @@
+environment:
+  GH_TOKEN:
+    secure: IOg+qGyyMMk72bZMBUn60Nbshg0k7doVDKQzb1bsGsvyd6R3R7XIRmTJH/CAN4mm
+install:
+  - ps: |
+      Install-Product node 9
+      $ENV:CI=true
+      $ENV:PATH=$ENV:APPDATA + "\npm;" + $ENV:PATH
+      yarn install
+      yarn compile
+skip_tags: true
+shallow_clone: true
+test_script:
+  - ps: |
+      node --version
+      yarn --version
+      Copy-Item config-example.json config.json
+      yarn test
+platform: x64
+on_success:
+  - ps: |
+      if ($ENV:APPVEYOR_REPO_BRANCH -eq "master" -Or $ENV:APPVEYOR_REPO_BRANCH -eq "development") {
+        yarn dist:publish-win
+      }
+build: off
+matrix:
+  fast_finish: true

@@ -93,7 +93,7 @@ export default {
     downloadDependencies() {
       this.$store.commit("setInstallingDependencies", "installing");
 
-      window.dependency.installAnaconda(
+      this.$root.backend.dependency.installAnaconda(
         (percent, text) => {
           this.setDownloadStatus(text);
           this.percentage = percent;

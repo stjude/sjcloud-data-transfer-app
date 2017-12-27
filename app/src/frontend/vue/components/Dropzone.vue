@@ -44,16 +44,16 @@ export default {
   },
   methods: {
     clicked(e) {
-      window.utils.openFileDialog((files) => {
+      this.$root.backend.utils.openFileDialog((files) => {
         for (let f of files) {
-          this.$store.commit('addFile', window.utils.fileInfoFromPath(f, true));
+          this.$store.commit('addFile', this.$root.backend.utils.fileInfoFromPath(f, true));
         }
       })
     },
     dropped(e) {
       this.dragging = false;
       for (let f of e.dataTransfer.files) {
-        this.$store.commit('addFile', window.utils.fileInfoFromPath(f.path, true));
+        this.$store.commit('addFile', this.$root.backend.utils.fileInfoFromPath(f.path, true));
       }
     }
   }

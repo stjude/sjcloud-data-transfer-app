@@ -2,11 +2,11 @@ node_modules/
 dist/*
 app/bin/*
 docs/*
+coverage/*
 .nyc_output/*
 !app/bin/.gitkeep
 **/.DS_Store
-test/*
-!test/.gitkeep
+.tmp/*
 
 package-lock.json
 config.json
@@ -14,3 +14,4 @@ config.json
 # developer specific symlink to [project-path/]test/testdata 
 
 *.log
+test/*

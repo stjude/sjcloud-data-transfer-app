@@ -35,7 +35,7 @@ export default {
     },
     clickHandler(event) {
       if (event.target.className!='alert-link') return;
-      window.utils.openExternal(event.target.innerHTML);
+      this.$root.backend.utils.openExternal(event.target.innerHTML);
     }
   }
 };

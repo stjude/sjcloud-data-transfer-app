@@ -5,8 +5,8 @@ const config = require("../../../config.json");
 import * as utils from "./utils";
 import { existsSync } from "fs";
 import { DXDownloadInfo, SuccessCallback, ErrorCallback, ProgressCallback } from "./types";
-import { downloadFile } from "../../bin/backend/utils";
-import * as logging from "../../bin/backend/logging-remote";
+import { downloadFile } from "./utils";
+import * as logging from "./logging-remote";
 
 let arch = os.arch();
 let platform = os.platform();
@@ -156,7 +156,7 @@ export function installAnaconda(
         resolve(true);
       });
     }).
-    catch((error) => {
+    catch((error: any) => {
       finishedCb(error, null);
     });
 }

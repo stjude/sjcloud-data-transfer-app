@@ -4,14 +4,17 @@
          v-bind:style='textStyle'>
          {{ topLabel }}
     </div>
-		<div class="spinner-wrapper">
+		<div v-if='percentText' class="spinner-wrapper">
       <div class='spinner-pct-container'>
         <span class='spinner-pct-text'>
-          {{ percentage }}%
+          {{ percentText }}
         </span>
       </div>
-			<q-spinner-oval :size='110' />
+			<q-spinner-oval :size='110' style='color: #1381B3'/>
 		</div>
+    <div v-else class='spinner-wrapper-no-text'>
+      <q-spinner-oval :size='55' style='color: #1381B3'/>
+    </div>
 		<div class="loading-text"
          v-bind:style='textStyle'>
          {{ btmLabel }}
@@ -35,7 +38,7 @@ export default {
       default:''
     },
     percentage: {
-      default: 0
+      default: ""
     },
     textStyle: {
       default: () => {
@@ -45,7 +48,15 @@ export default {
         }
       }
     }
-	}
+	},
+  computed: {
+    percentText() {
+      return this.percentage || this.percentage===0 ? this.percentage+"%" : ""
+    },
+    spinnerSize() {
+      return this.percentage || this.percentage===0 ? 110 : 55
+    }
+  }
 }
 </script>
 
@@ -59,6 +70,14 @@ export default {
   position: relative;
 }
 
+.spinner-wrapper-no-text {
+  margin: 0px auto;
+  margin-top: 40px;
+  margin-bottom: 10px;
+  width: 100%;
+  text-align: center;
+}
+
 .spinner-pct-container {
   position: absolute;
   width: 100%; 
@@ -70,5 +89,6 @@ export default {
   font-size: 30px;
   line-height: 110px;
   vertical-align: middle;
+  color: #1381B3;
 }
 </style>

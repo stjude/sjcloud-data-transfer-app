@@ -42,7 +42,7 @@ cp config-example.json config.json
 export NODE_ENV=production
 
 # compile the frontend/backend code.
-gulp develop-once
+gulp compile
 
 # start the application
 yarn start
@@ -74,7 +74,7 @@ vim config.json
 export NODE_ENV=development
 
 # compile the frontend/backend code.
-gulp develop-once
+gulp compile
 
 # start the application
 yarn start 

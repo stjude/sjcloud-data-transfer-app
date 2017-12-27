@@ -1,9 +1,10 @@
-const dx = require("../../app/bin/backend/dx");
-const config = require("../../config.json");
+const dx = require("../../../app/bin/backend/dx");
+const config = require("../../../config.json");
 
 const sampleToken = "XXXXXXXXXXX";
 const sampleDxFile = "file-XXXXXXXXXXX";
 const sampleDxProject = "project-XXXXXXXXXXX";
+
 
 /*******************************************************************************
  * dx.loggedIn
@@ -15,6 +16,7 @@ describe("DNAnexus loggedIn check", () => {
     expect(result).toBe("dx whoami");
   });
 });
+
 
 /*******************************************************************************
  * dx.login

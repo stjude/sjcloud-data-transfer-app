@@ -1,71 +1,72 @@
 import {
   select,
   selectAll,
-} from "d3-selection";
+} from 'd3-selection';
 
 const _App = window._App;
 
-describe("Upload panel for an empty project", function() {
-  const holder = select("body").append("div");
-  holder.append("div").attr("id", "uploadaaa");
+describe('Upload panel for an empty project', () => {
+  const holder = select('body').append('div');
+  holder.append('div').attr('id', 'uploadaaa');
   let app;
-  beforeAll(function(done) {
-    app = _App("#uploadaaa", {
-      testdata: "fakeTools",
+  beforeAll((done) => {
+    app = _App('#uploadaaa', {
+      testdata: 'fakeTools',
       showAllFiles: true,
       showAllProjects: true,
+    }, ()=>{
+      app.$router.push('/upload');
+      app.$store.commit('setCurrToolName', 'x1');
+      setTimeout(() => {
+        done();
+      }, 500);
     });
-    app.$router.push("/upload");
-    setTimeout(() => {
-      app.$store.commit("setCurrToolName", "x1");
-      done();
-    }, 600);
   });
 
-  it("should not display a loading spinner", function(done) {
-    expect(holder.selectAll(".spinner-pct-container").size()).toEqual(0);
+  it('should not display a loading spinner', (done) => {
+    expect(holder.selectAll('.spinner-pct-container').size()).toEqual(0);
     done();
   });
 
-  it("should show a drop-zone for uploads", function(done) {
-    app.$router.push("/upload");
+  it('should show a drop-zone for uploads', (done) => {
+    app.$router.push('/upload');
     setTimeout(() => {
-      expect(holder.selectAll(".dropzone").size()).toEqual(1);
+      expect(holder.selectAll('.dropzone').size()).toEqual(1);
       done();
     }, 600);
   });
 
-  afterAll(function(done) {
+  afterAll((done) => {
     holder.remove();
     done();
   });
 });
 
-describe("Upload panel for a project with completed transfer", function() {
-  const holder = select("body").append("div");
-  holder.append("div").attr("id", "uploadccc");
+describe('Upload panel for a project with completed transfer', () => {
+  const holder = select('body').append('div');
+  holder.append('div').attr('id', 'uploadccc');
   let app;
 
-  beforeAll(function(done) {
-    app = _App("#uploadccc", {
-      testdata: "fakeTools",
+  beforeAll((done) => {
+    app = _App('#uploadccc', {
+      testdata: 'fakeTools',
       showAllFiles: true,
       showAllProjects: true,
+    }, ()=>{
+      app.$router.push('/upload');
+      app.$store.commit('setCurrToolName', 'x3');
+      setTimeout(() => {
+        done();
+      }, 600);
     });
-    app.$router.push("/upload");
-    // note: simulated data load is delayed by 500 ms
-    setTimeout(() => {
-      app.$store.commit("setCurrToolName", "x3");
-      done();
-    }, 600);
   });
 
-  it("should display a completion message", function(done) {
+  it('should display a completion message', (done) => {
     expect(holder
-      .selectAll(".sjcda-step-outcome-root-div")
-      .selectAll(".material-icons")
-      .filter(function(d) {
-        return select(this).html().trim() == "done";
+      .selectAll('.sjcda-step-outcome-root-div')
+      .selectAll('.material-icons')
+      .filter(function (d) {
+        return select(this).html().trim() === 'done';
       })
       .size())
       .toEqual(1);
@@ -73,14 +74,14 @@ describe("Upload panel for a project with completed transfer", function() {
     done();
   });
 
-  it("should display two buttons", function(done) {
+  it('should display two buttons', (done) => {
     setTimeout(() => {
       expect(holder
-        .selectAll("button")
-        .selectAll(".material-icons")
-        .filter(function(d) {
+        .selectAll('button')
+        .selectAll('.material-icons')
+        .filter(function (d) {
           const html = select(this).html().trim();
-          return html == "cloud_upload" || html == "open_in_browser";
+          return html === 'cloud_upload' || html === 'open_in_browser';
         })
         .size())
         .toEqual(2);
@@ -89,7 +90,7 @@ describe("Upload panel for a project with completed transfer", function() {
     done();
   });
 
-  afterAll(function() {
+  afterAll(() => {
     holder.remove();
   });
 });

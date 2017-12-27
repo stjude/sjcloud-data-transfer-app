@@ -24,7 +24,7 @@
 				</div>
 			</div>
 			<div v-show="loginState == 'validating'" class='theater-body'>
-				<spin-kit :status='validating' :btmLabel='validating'></spin-kit>
+				<spin-kit :status='validating' :btmLabel='validating' percentage='0'></spin-kit>
 			</div>
 			<div v-show="loginState == 'completed'" class='theater-body'>
 				<div class="col-xs-12">
@@ -84,7 +84,7 @@ export default {
       this.$store.commit("setToken", token);
     },
     internal() {
-      window.oauth.getToken(true, (err, token) => {
+      this.$root.backend.oauth.getToken(true, (err, token) => {
         this.$store.commit("setToken", token);
         this.$store.commit("setLoginState", "validating");
 
@@ -96,7 +96,7 @@ export default {
 
         const that = this;
 
-        window.dx.login(token, (err, result) => {
+        this.$root.backend.dx.login(token, (err, result) => {
           if (err) {
             // TODO(clay): alert login error.
             console.error(err);
@@ -114,13 +114,13 @@ export default {
       });
     },
     external(openURL = true) {
-      window.oauth.getToken(false, (err, token) => {
+      this.$root.backend.oauth.getToken(false, (err, token) => {
         this.$store.commit("setToken", token);
         this.$store.commit("setLoginState", "validating");
 
         const that = this;
 
-        window.dx.login(token, function(err, result) {
+        this.$root.backend.dx.login(token, function(err, result) {
           if (err) {
             that.$store.commit("setLoginState", "failed");
           } else {

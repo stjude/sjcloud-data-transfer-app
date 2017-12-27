@@ -19,7 +19,12 @@ const ipcRenderer = require("electron").ipcRenderer;
  * @param showInternalURL Show internal (St. Jude) or external URL.
  * @param callback 
  */
-function waitForCode(showInternalURL: boolean, callback: any) {
+function waitForCode(
+  showInternalURL: boolean,
+  callback: any,
+  dryrun: boolean = false,
+) {
+
   ui.createOauthWindow(showInternalURL, (window: any) => {
     if (!window) {
       return callback(new Error("Could not create window!"), null);

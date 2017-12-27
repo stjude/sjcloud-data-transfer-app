@@ -56,7 +56,7 @@ export default {
 <style>
 .sjcda-sort-arrow {
 	font-size:24px; 
-	/*vertical-align:middle;*/
+	vertical-align:top !important;
 	cursor:default;
 	position: absolute;
 	color:#aaa;
@@ -74,7 +74,7 @@ export default {
 }
 
 #sort-arrow-bottom {
-  top: 1px;
+  top: 5px;
   height: 15px;
 }
 </style>

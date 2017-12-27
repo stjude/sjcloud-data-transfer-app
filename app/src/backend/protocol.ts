@@ -3,17 +3,20 @@
  * supported on are Windows and Mac.
  */
 
-const app = require("electron").app;
 const { logging } = require("./logging");
+const env = require("./env");
 
-logging.info("   [*] Registering protocols...");
-app.setAsDefaultProtocolClient("sjcloud");
+if (!env.isTesting()) {
+  const app = require("electron").app;
+  logging.info("   [*] Registering protocols...");
+  app.setAsDefaultProtocolClient("sjcloud");
+}
 
 /**
  * @param uri uri passed into the program.
  * @returns Command to be run in the remote javascript runtime.
  */
-function handleURI(uri: string): string {
+export function handleURI(uri: string): string {
   if (uri && uri.search("sjcloud://") != -1) {
     logging.debug("  [*] Handling custom URI:", uri);
     let projectName = uri.replace("sjcloud://", "");
