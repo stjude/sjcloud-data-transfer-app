@@ -3,13 +3,13 @@
  * supported on are Windows and Mac.
  */
 
-const { logging } = require("./logging");
-const env = require("./env");
+const {logging} = require('./logging');
+const env = require('./env');
 
 if (!env.isTesting()) {
-  const app = require("electron").app;
-  logging.info("   [*] Registering protocols...");
-  app.setAsDefaultProtocolClient("sjcloud");
+  const app = require('electron').app;
+  logging.info('   [*] Registering protocols...');
+  app.setAsDefaultProtocolClient('sjcloud');
 }
 
 /**
@@ -17,12 +17,12 @@ if (!env.isTesting()) {
  * @returns Command to be run in the remote javascript runtime.
  */
 export function handleURI(uri: string): string {
-  if (uri && uri.search("sjcloud://") != -1) {
-    logging.debug("  [*] Handling custom URI:", uri);
-    let projectName = uri.replace("sjcloud://", "");
+  if (uri && uri.search('sjcloud://') != -1) {
+    logging.debug('  [*] Handling custom URI:', uri);
+    let projectName = uri.replace('sjcloud://', '');
 
     // remove ending slash.
-    if (projectName.slice(-1) === "/") {
+    if (projectName.slice(-1) === '/') {
       projectName = projectName.substring(0, projectName.length - 1);
     }
 
@@ -47,7 +47,7 @@ export function handleURI(uri: string): string {
 export function handleURIWindows(): string {
   let args = process.argv.slice(1);
   return handleURI(args[0]);
-};
+}
 
 /**
  * Mac protocol handler
@@ -65,4 +65,4 @@ export function handleURIMac(event: Event, uri: string): string {
   }
 
   return handleURI(uri);
-};
+}

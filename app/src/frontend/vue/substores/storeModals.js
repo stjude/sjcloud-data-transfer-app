@@ -2,7 +2,7 @@
   To-Do: convert to a Vuex.module for use in store.js
 */
 
-export default function (ref) {
+export default function(ref) {
   return {
     state: {
       menuIsVisible: false,
@@ -54,8 +54,6 @@ export default function (ref) {
         state.tourHint = bool;
       },
     },
-    actions: {
-
-    },
-  }
-};
+    actions: {},
+  };
+}

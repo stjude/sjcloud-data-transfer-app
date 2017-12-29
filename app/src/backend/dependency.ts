@@ -1,16 +1,22 @@
-const os = require("os");
-const path = require("path");
-const fs = require("fs-extra");
-const config = require("../../../config.json");
-import * as utils from "./utils";
-import { existsSync } from "fs";
-import { DXDownloadInfo, SuccessCallback, ErrorCallback, ProgressCallback } from "./types";
-import { downloadFile } from "./utils";
-import * as logging from "./logging-remote";
+const os = require('os');
+const path = require('path');
+const fs = require('fs-extra');
+const config = require('../../../config.json');
+import * as utils from './utils';
+import {existsSync} from 'fs';
+import {
+  DXDownloadInfo,
+  SuccessCallback,
+  ErrorCallback,
+  ProgressCallback,
+} from './types';
+import {downloadFile} from './utils';
+import * as logging from './logging-remote';
 
 let arch = os.arch();
 let platform = os.platform();
-if (!platform) throw new Error(`Unrecognized platform. Must be Windows, Mac, or Ubuntu.`);
+if (!platform)
+  throw new Error(`Unrecognized platform. Must be Windows, Mac, or Ubuntu.`);
 
 /**
  * Get download information from config.json based on package name.
@@ -24,12 +30,18 @@ export function getDownloadInfo(packagename: string): DXDownloadInfo {
   packagename = packagename.toUpperCase();
 
   // Combining these made the code unreadable.
-  if (!('DOWNLOAD_INFO' in config)) { return null; }
-  if (!(packagename in config['DOWNLOAD_INFO'])) { return null; }
-  if (!(platformUpper in config['DOWNLOAD_INFO'][packagename])) { return null; }
+  if (!('DOWNLOAD_INFO' in config)) {
+    return null;
+  }
+  if (!(packagename in config['DOWNLOAD_INFO'])) {
+    return null;
+  }
+  if (!(platformUpper in config['DOWNLOAD_INFO'][packagename])) {
+    return null;
+  }
 
   let dlInfo = config['DOWNLOAD_INFO'][packagename][platformUpper];
-  if (('IA32' in dlInfo) || ('X64' in dlInfo)) {
+  if ('IA32' in dlInfo || 'X64' in dlInfo) {
     if (!(archUpper in dlInfo)) return null;
     dlInfo = dlInfo[archUpper];
   }
@@ -43,13 +55,17 @@ export function getDownloadInfo(packagename: string): DXDownloadInfo {
  * @returns Anaconda install command to be run.
  */
 function getAnacondaInstallCommand(destination: string): string {
-  let command = "";
+  let command = '';
   platform = platform.toUpperCase();
 
-  if (platform === "WIN32") {
-    command = `Start-Process ${destination} -ArgumentList '/S','/AddToPath=0','RegisterPython=0','/D=${utils.lookupPath("ANACONDA_HOME")}' -Wait`
+  if (platform === 'WIN32') {
+    command = `Start-Process ${
+      destination
+    } -ArgumentList '/S','/AddToPath=0','RegisterPython=0','/D=${utils.lookupPath(
+      'ANACONDA_HOME'
+    )}' -Wait`;
   } else {
-    command = `bash ${destination} -b -p ${utils.lookupPath("ANACONDA_HOME")}`;
+    command = `bash ${destination} -b -p ${utils.lookupPath('ANACONDA_HOME')}`;
   }
   return command;
 }
@@ -70,22 +86,29 @@ export function installAnaconda(
   finishedCb: SuccessCallback,
   removeAnacondaIfExists: boolean = true
 ) {
-
-  if (existsSync(utils.lookupPath("ANACONDA_HOME"))) {
-    logging.debug("");
-    logging.debug("== Installing Dependencies ==");
+  if (existsSync(utils.lookupPath('ANACONDA_HOME'))) {
+    logging.debug('');
+    logging.debug('== Installing Dependencies ==');
 
     if (removeAnacondaIfExists) {
-      logging.debug("  [*] Removing existing anaconda installation.");
-      fs.remove(utils.lookupPath("ANACONDA_HOME")).catch((error: any) => { throw error; });
+      logging.debug('  [*] Removing existing anaconda installation.');
+      fs.remove(utils.lookupPath('ANACONDA_HOME')).catch((error: any) => {
+        throw error;
+      });
     } else {
-      throw new Error("Anaconda is already installed! This method should not be called.");
+      throw new Error(
+        'Anaconda is already installed! This method should not be called.'
+      );
     }
   }
 
-  const downloadInfo = getDownloadInfo("ANACONDA");
+  const downloadInfo = getDownloadInfo('ANACONDA');
   if (!downloadInfo)
-    throw new Error(`Could not get download info for Anaconda based on your platform!\nPlatform: ${platform}, Arch: ${arch}.`);
+    throw new Error(
+      `Could not get download info for Anaconda based on your platform!\nPlatform: ${
+        platform
+      }, Arch: ${arch}.`
+    );
 
   const downloadURL: string = downloadInfo.URL;
   const expectedDownloadHash: string = downloadInfo.SHA256SUM;
@@ -95,68 +118,77 @@ export function installAnaconda(
   let destination = path.join(tmpdir, basename);
 
   let initSJCloudHome = () => {
-    progressCb(25, "Installing...");
+    progressCb(25, 'Installing...');
     return new Promise((resolve, reject) => {
       utils.initSJCloudHome((error, result) => {
         if (error) return reject(error);
         return resolve(result);
-      })
+      });
     });
   };
 
   let installAnaconda = () => {
-    logging.debug("  [*] Installing anaconda.");
-    progressCb(30, "Installing...");
+    logging.debug('  [*] Installing anaconda.');
+    progressCb(30, 'Installing...');
     return new Promise((resolve, reject) => {
       const command = getAnacondaInstallCommand(destination);
-      logging.silly(`      [-] Download location: ${utils.lookupPath("ANACONDA_HOME")}`);
+      logging.silly(
+        `      [-] Download location: ${utils.lookupPath('ANACONDA_HOME')}`
+      );
       logging.silly(`      [-] Command: ${command}`);
 
-      utils.runCommand(command, (error, result) => {
-        if (error) return reject(error);
-        return resolve(result);
-      }, false);
+      utils.runCommand(
+        command,
+        (error, result) => {
+          if (error) return reject(error);
+          return resolve(result);
+        },
+        false
+      );
     });
   };
 
   let seedAnaconda = () => {
-    logging.debug("  [*] Seeding anaconda environment.");
-    progressCb(60, "Installing...");
+    logging.debug('  [*] Seeding anaconda environment.');
+    progressCb(60, 'Installing...');
     return new Promise((resolve, reject) => {
-      utils.runCommand(`conda create -n sjcloud python=2.7.14 -y`, (error, result) => {
-        if (error) return reject(error);
-        return resolve(result);
-      });
+      utils.runCommand(
+        `conda create -n sjcloud python=2.7.14 -y`,
+        (error, result) => {
+          if (error) return reject(error);
+          return resolve(result);
+        }
+      );
     });
-  }
+  };
 
   let installDXToolkit = () => {
-    logging.debug("  [*] Installing DX-Toolkit.");
-    progressCb(95, "Installing...");
+    logging.debug('  [*] Installing DX-Toolkit.');
+    progressCb(95, 'Installing...');
     return new Promise((resolve, reject) => {
-      utils.runCommand("pip install dxpy", (error, result) => {
+      utils.runCommand('pip install dxpy', (error, result) => {
         if (error) return reject(error);
         return resolve(result);
       });
     });
-  }
+  };
 
-  progressCb(1, "Downloading...");
-  logging.debug("  [*] Downloading anaconda.");
+  progressCb(1, 'Downloading...');
+  logging.debug('  [*] Downloading anaconda.');
   logging.silly(`      [-] Download location: ${destination}`);
-  downloadFile(downloadURL, destination).
-    then(initSJCloudHome).
-    then(installAnaconda).
-    then(seedAnaconda).
-    then(installDXToolkit).
-    then(() => {
+  downloadFile(downloadURL, destination)
+    .then(initSJCloudHome)
+    .then(installAnaconda)
+    .then(seedAnaconda)
+    .then(installDXToolkit)
+    .then(() => {
       return new Promise((resolve, reject) => {
-        progressCb(100, "Finished!");
+        progressCb(100, 'Finished!');
         finishedCb(null, true);
         resolve(true);
       });
-    }).
-    catch((error: any) => {
+    })
+    .catch((error: any) => {
       finishedCb(error, null);
     });
 }

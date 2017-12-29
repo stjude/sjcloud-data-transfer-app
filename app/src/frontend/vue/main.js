@@ -4,7 +4,7 @@ import routes from './routes.js';
 import App from './App.vue';
 import store from './store';
 import vueTippy from 'vue-tippy';
-import Quasar, { Alert } from 'quasar';
+import Quasar, {Alert} from 'quasar';
 
 // configure Vue
 Vue.config.debug = true;
@@ -31,10 +31,14 @@ const router = new VueRouter({
  * @param {*} cachedState
  * @return {*}
  */
-export default function _App(selector, cachedState = {}, dataReadyCallback=null) {
+export default function _App(
+  selector,
+  cachedState = {},
+  dataReadyCallback = null
+) {
   // boostrap the app
   const newStore = store(cachedState);
-  
+
   const VueApp = new Vue({
     el: selector,
     render: h => h(App),
@@ -42,8 +46,8 @@ export default function _App(selector, cachedState = {}, dataReadyCallback=null)
     store: newStore.main,
   });
 
-  VueApp.$setBackend();  
-  newStore.setRef('backend',VueApp.backend);
+  VueApp.$setBackend();
+  newStore.setRef('backend', VueApp.backend);
   VueApp.dataReadyCallback = dataReadyCallback;
 
   if (VueApp.$store.getters.testdata) {
@@ -53,7 +57,7 @@ export default function _App(selector, cachedState = {}, dataReadyCallback=null)
     VueApp.$router.replace('home');
   } else {
     VueApp.$router.replace('/');
-    VueApp.backend.state.getState((state) => {
+    VueApp.backend.state.getState(state => {
       VueApp.$router.replace(state.path);
       if (state.path === 'login') {
         checkDependencies(VueApp);
@@ -71,7 +75,7 @@ export default function _App(selector, cachedState = {}, dataReadyCallback=null)
  * @param {*} VueApp
  */
 function checkDependencies(VueApp) {
-  VueApp.backend.utils.pythonOnPath((onPath) => {
+  VueApp.backend.utils.pythonOnPath(onPath => {
     VueApp.$store.commit('setPythonOnPath', onPath);
     const contactUrl = 'https://stjude.cloud/contact';
 
@@ -79,12 +83,14 @@ function checkDependencies(VueApp) {
       Alert.create({
         html: `${'Something has gone wrong during your installation process.' +
           ' Please contact us at '}${contactUrl}.`,
-        actions: [{
-          label: 'Open Link',
-          handler: () => {
-            VueApp.backend.utils.openExternal(contactUrl);
+        actions: [
+          {
+            label: 'Open Link',
+            handler: () => {
+              VueApp.backend.utils.openExternal(contactUrl);
+            },
           },
-        }],
+        ],
       });
     }
   });
@@ -95,13 +101,17 @@ function checkDependencies(VueApp) {
 // then start the app immediately. The alternative
 // scenario is a test that creates the VueApp as needed.
 if (document.querySelector('#sjcda-main-div') && window.utils) {
-  window.utils.readSJCloudFile('state.json', (content) => {
-    const obj = JSON.parse(content);
-    if (!obj) {
-      console.log('Error parsing the cached state file.');
-      _App('#sjcda-main-div');
-    } else {
-      _App('#sjcda-main-div', obj);
-    }
-  }, '{}');
+  window.utils.readSJCloudFile(
+    'state.json',
+    content => {
+      const obj = JSON.parse(content);
+      if (!obj) {
+        console.log('Error parsing the cached state file.');
+        _App('#sjcda-main-div');
+      } else {
+        _App('#sjcda-main-div', obj);
+      }
+    },
+    '{}'
+  );
 }

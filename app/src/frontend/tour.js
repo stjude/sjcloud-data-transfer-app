@@ -36,7 +36,7 @@ const tour = new window.Tour({
         }
         window.VueApp.$store.commit('toggleMenu');
       },
-    }), 
+    }),
     getStep({
       element: '.left-panel-table-container',
       title: 'Step 1: Select workspace',
@@ -53,13 +53,13 @@ const tour = new window.Tour({
                 on that data in the cloud, then download the results 
                 from the tool's workspace.
                 </div>`,
-      
+
       onShow(tour) {
         if (tour.__promptTimeout) {
           clearTimeout(tour.__promptTimeout);
         }
         window.VueApp.$router.replace('/upload');
-      }
+      },
     }),
     getStep({
       element: '.right-panel-container',
@@ -73,7 +73,7 @@ const tour = new window.Tour({
         }
         window.VueApp.$router.replace('/upload');
       },
-    }), 
+    }),
     getStep({
       element: '.upload-download-btn-container',
       title: 'Step 2: Work with files (cont.)',
@@ -86,7 +86,7 @@ const tour = new window.Tour({
         }
         window.VueApp.$router.replace('/upload');
       },
-    }), 
+    }),
     getStep({
       element: '#upload-panel',
       title: 'Step 3a: Upload files',
@@ -97,7 +97,7 @@ const tour = new window.Tour({
         if (!window.VueApp) return;
         window.VueApp.$router.replace('/upload');
       },
-    }), 
+    }),
     getStep({
       element: '#download-panel',
       title: 'Step 3b: Download files',
@@ -120,17 +120,18 @@ const tour = new window.Tour({
         if (!window.VueApp) return;
         window.VueApp.$router.replace('/download');
       },
-    }), 
+    }),
     getStep({
       element: '.download-btn',
       title: 'Download button',
-      content: 'You can download requested St. Jude data or results files to your computer.',
+      content:
+        'You can download requested St. Jude data or results files to your computer.',
       onShow(tour) {
         if (!window.VueApp) return;
         window.VueApp.$router.replace('/download');
         window.VueApp.$store.commit('closeModal');
       },
-    }), 
+    }),
     getStep({
       element: '#sjcda-top-bar-menu',
       title: 'File a bug report',
@@ -142,11 +143,12 @@ const tour = new window.Tour({
         window.VueApp.$store.commit('closeModal');
         window.VueApp.$store.commit('openMenu');
       },
-    }), 
+    }),
     getStep({
       element: '#sjcda-top-bar-menu',
       title: 'User preferences',
-      content: "You can set user preferences by selecting 'Settings' from the drop down menu.",
+      content:
+        "You can set user preferences by selecting 'Settings' from the drop down menu.",
       orphan: true,
       onShow(tour) {
         if (tour.__promptTimeout) {
@@ -156,11 +158,12 @@ const tour = new window.Tour({
         window.VueApp.$store.commit('closeModal');
         window.VueApp.$store.commit('openMenu');
       },
-    }), 
+    }),
     getStep({
       element: '#left-panel-project-filters',
       title: 'Files and Project Filter Buttons',
-      content: 'These filters may be used to show or hide certain projects or files. By default, we focus on St. Jude Cloud projects.',
+      content:
+        'These filters may be used to show or hide certain projects or files. By default, we focus on St. Jude Cloud projects.',
       onShow(tour) {
         if (tour.__promptTimeout) {
           clearTimeout(tour.__promptTimeout);
@@ -169,7 +172,7 @@ const tour = new window.Tour({
         window.VueApp.$store.commit('closeMenu');
         window.VueApp.$store.commit('toggleModal');
       },
-    })
+    }),
   ],
   afterGetState(key, value) {
     // console.log(key,value)
@@ -185,7 +188,7 @@ let tourInitialized = false;
 let waitingForTools = false;
 let userPrompted = false;
 
-tour.__promptUser = (path) => {
+tour.__promptUser = path => {
   if (tourInitialized || userPrompted) return;
   if (path !== '/upload' && path !== '/download') return;
   if (window.location.port === '9876') return;

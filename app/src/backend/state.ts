@@ -3,12 +3,10 @@
  * show based on that state.
  **/
 
-const os = require("os");
-const utils = require("./utils");
-import * as logging from "./logging-remote";
-import {
-
-} from "./types";
+const os = require('os');
+const utils = require('./utils');
+import * as logging from './logging-remote';
+import {} from './types';
 
 /**
  * Enum for possible states of the application.
@@ -16,13 +14,13 @@ import {
  * @enum {any}
  */
 const states = {
-  NEED_INSTALL: { path: "install" },
-  NEED_LOGIN: { path: "login" },
-  UPLOAD: { path: "upload" },
-  UNKNOWN: { path: "unknown" },
+  NEED_INSTALL: {path: 'install'},
+  NEED_LOGIN: {path: 'login'},
+  UPLOAD: {path: 'upload'},
+  UNKNOWN: {path: 'unknown'},
 };
 
-export { states }
+export {states};
 
 /**
  * Determines what route to use on startup.
@@ -33,10 +31,10 @@ export { states }
 export function getState(callback: (state: object) => void) {
   self = this;
   const platform = os.platform();
-  logging.debug("");
-  logging.debug("== Determining state ==");
+  logging.debug('');
+  logging.debug('== Determining state ==');
 
-  if (platform !== "darwin" && platform !== "linux" && platform !== "win32") {
+  if (platform !== 'darwin' && platform !== 'linux' && platform !== 'win32') {
     console.error(`Invalid platform: ${platform}.`);
     return callback(states.UNKNOWN);
   }
@@ -45,40 +43,41 @@ export function getState(callback: (state: object) => void) {
   utils.initSJCloudHome((err: object, res: object) => {
     if (err) {
       console.error(err);
-      logging.debug("  --> State is UNKNOWN (error initializing SJCloud home).");
+      logging.debug(
+        '  --> State is UNKNOWN (error initializing SJCloud home).'
+      );
       return callback(states.UNKNOWN);
     }
 
-    logging.debug("  [*] SJCloud home directory initialized.");
+    logging.debug('  [*] SJCloud home directory initialized.');
     utils.dxToolkitInstalled((err: object, res: object) => {
-
       if (err) {
         console.error(err);
-        logging.debug("  --> State is NEED_INSTALL.");
+        logging.debug('  --> State is NEED_INSTALL.');
         return callback(states.NEED_INSTALL);
       }
 
-      logging.debug("  [*] DXToolkit is installed.");
+      logging.debug('  [*] DXToolkit is installed.');
       dx.loggedIn((err: object, res: object) => {
-
         if (err) {
-          logging.debug("  --> State is NEED_LOGIN.");
+          logging.debug('  --> State is NEED_LOGIN.');
           return callback(states.NEED_LOGIN);
         }
 
-        logging.debug("  [*] We are logged into DNAnexus.");
+        logging.debug('  [*] We are logged into DNAnexus.');
         dx.checkProjectAccess((err: object, res: object) => {
-
           if (err) {
             console.error(err);
-            logging.debug("  --> State is UNKNOWN (error checking project access).");
+            logging.debug(
+              '  --> State is UNKNOWN (error checking project access).'
+            );
             return callback(states.UNKNOWN);
           }
 
-          logging.debug("  [*] We have project access.");
+          logging.debug('  [*] We have project access.');
           return callback(states.UPLOAD);
         });
       });
     });
   });
-};
+}

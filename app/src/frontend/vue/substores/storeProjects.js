@@ -2,14 +2,13 @@
   To-Do: convert to a Vuex.module for use in store.js
 */
 
-
 /**
   Helper functions
 */
 
 function getUploadMap(tools) {
   const uploadMap = {};
-  tools.forEach((tool) => {
+  tools.forEach(tool => {
     uploadMap[tool.dx_location] = tool.upload;
   });
   return uploadMap;
@@ -77,7 +76,7 @@ export default function(ref) {
     return (err, files) => {
       const downloadableFiles = [];
 
-      files.forEach((elem) => {
+      files.forEach(elem => {
         if (isNaN(elem.describe.size)) {
           console.error('Handle this NaN case:', elem);
         }
@@ -100,7 +99,7 @@ export default function(ref) {
 
       tool.loadedAvailableDownloads = true;
       tool.download = downloadableFiles;
-    }
+    };
   }
 
   return {
@@ -125,7 +124,7 @@ export default function(ref) {
         return state.tools.filter(t => t.dx_location === state.currToolName)[0];
       },
       toolByName(state) {
-        return (name) => {
+        return name => {
           if (!name) return null;
 
           const toolsWithName = state.tools.filter(t => t.name === name);
@@ -194,11 +193,7 @@ export default function(ref) {
       },
     },
     actions: {
-      updateCurrentToolFromURI({
-        commit,
-        state,
-        getters,
-      }) {
+      updateCurrentToolFromURI({commit, state, getters}) {
         const projectToPick = getters.uriProject;
         if (!projectToPick) return false;
 
@@ -213,12 +208,7 @@ export default function(ref) {
         ref.backend.utils.setURIProject(undefined);
         return true;
       },
-      updateToolsFromRemote({
-        commit,
-        state,
-        getters,
-        dispatch,
-      }, force = false) {
+      updateToolsFromRemote({commit, state, getters, dispatch}, force = false) {
         const previousTool = state.currToolName;
 
         commit('setNoProjectsFound', false);
@@ -227,31 +217,28 @@ export default function(ref) {
         if (!state.tools.length) {
           const uploadMap = getUploadMap(state.tools);
 
-          ref.backend.dx.listProjects(
-            state.showAllProjects,
-            (err, results) => {
-              if (results.length > 0) {
-                commit('setNoProjectsFound', false);
-                const tools = results.map((elem) => getToolItem(elem, uploadMap));
-                commit('setTools', tools);
-                resetCurrToolName(tools, previousTool, commit);
-                tools.forEach((elem) => {
-                  ref.backend.queue.addToolInfoTask({
-                    _rawTool: elem,
-                  });
+          ref.backend.dx.listProjects(state.showAllProjects, (err, results) => {
+            if (results.length > 0) {
+              commit('setNoProjectsFound', false);
+              const tools = results.map(elem => getToolItem(elem, uploadMap));
+              commit('setTools', tools);
+              resetCurrToolName(tools, previousTool, commit);
+              tools.forEach(elem => {
+                ref.backend.queue.addToolInfoTask({
+                  _rawTool: elem,
                 });
+              });
 
-                if (ref.VueApp && ref.VueApp.readyCallback) {
-                  ref.VueApp.readyCallback();
-                  delete ref.VueApp.readyCallback;
-                }
-              } else {
-                commit('setNoProjectsFound', true);
+              if (ref.VueApp && ref.VueApp.readyCallback) {
+                ref.VueApp.readyCallback();
+                delete ref.VueApp.readyCallback;
               }
-            },
-          );
+            } else {
+              commit('setNoProjectsFound', true);
+            }
+          });
         }
       },
     },
-  }
-};
+  };
+}

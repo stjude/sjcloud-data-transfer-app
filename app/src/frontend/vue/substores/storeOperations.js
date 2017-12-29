@@ -3,7 +3,7 @@ import Config from '../../../../../config.json';
 /*
   To-Do: convert to a Vuex.module for use in store.js
 */
-export default function (ref) {
+export default function(ref) {
   return {
     state: {
       operationProcesses: {},
@@ -20,10 +20,12 @@ export default function (ref) {
         }
 
         for (let i = 0; i < checkedFiles.length; i++) {
-          if (checkedFiles[i].status === 0 &&
+          if (
+            checkedFiles[i].status === 0 &&
             !checkedFiles[i].waiting &&
             !checkedFiles[i].started &&
-            !checkedFiles[i].finished) {
+            !checkedFiles[i].finished
+          ) {
             return true;
           }
         }
@@ -52,8 +54,7 @@ export default function (ref) {
 
         for (let i = 0; i < currFiles.length; i++) {
           if (
-            (currFiles[i].waiting || currFiles[i].started) // either waiting or started
-            &&
+            (currFiles[i].waiting || currFiles[i].started) && // either waiting or started
             !currFiles[i].finished // and not finished
           ) {
             return false;
@@ -77,8 +78,6 @@ export default function (ref) {
         }
       },
     },
-    actions: {
-
-    },
-  }
-};
+    actions: {},
+  };
+}

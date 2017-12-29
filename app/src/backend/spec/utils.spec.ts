@@ -1,25 +1,35 @@
-const os = require("os");
-const path = require("path");
-const fs = require("fs-extra");
-const utils = require("../../../app/bin/backend/utils");
-
+const os = require('os');
+const path = require('path');
+const fs = require('fs-extra');
+const utils = require('../../../app/bin/backend/utils');
 
 /*******************************************************************************
  * utils.getSJCloudPaths
  ******************************************************************************/
 
-describe("Determining SJCloud paths", () => {
-  describe("in UNIX", () => {
-    const tildeDir = path.join(os.homedir(), ".sjcloud");
+describe('Determining SJCloud paths', () => {
+  describe('in UNIX', () => {
+    const tildeDir = path.join(os.homedir(), '.sjcloud');
 
-    it("should return the following by default", () => {
-      const result = utils.getSJCloudPaths(null, "linux");
+    it('should return the following by default', () => {
+      const result = utils.getSJCloudPaths(null, 'linux');
       const expectedResult = {
         SJCLOUD_HOME: tildeDir,
-        ANACONDA_HOME: path.join(tildeDir, "anaconda"),
-        ANACONDA_BIN: path.join(tildeDir, "anaconda", "bin"),
-        ANACONDA_SJCLOUD_ENV: path.join(tildeDir, "anaconda", "envs", "sjcloud"),
-        ANACONDA_SJCLOUD_BIN: path.join(tildeDir, "anaconda", "envs", "sjcloud", "bin"),
+        ANACONDA_HOME: path.join(tildeDir, 'anaconda'),
+        ANACONDA_BIN: path.join(tildeDir, 'anaconda', 'bin'),
+        ANACONDA_SJCLOUD_ENV: path.join(
+          tildeDir,
+          'anaconda',
+          'envs',
+          'sjcloud'
+        ),
+        ANACONDA_SJCLOUD_BIN: path.join(
+          tildeDir,
+          'anaconda',
+          'envs',
+          'sjcloud',
+          'bin'
+        ),
       };
       expect(result).toEqual(expectedResult);
     });
@@ -30,10 +40,10 @@ describe("Determining SJCloud paths", () => {
  * utils.initSJCloudHome
  ******************************************************************************/
 
-describe("Initializing SJCloud home directory", () => {
-  const fakeSJCloudHome = path.join(os.homedir(), ".sjcloud-testing-init");
+describe('Initializing SJCloud home directory', () => {
+  const fakeSJCloudHome = path.join(os.homedir(), '.sjcloud-testing-init');
 
-  it("should return the following result when directory doesn't exist", (done) => {
+  it("should return the following result when directory doesn't exist", done => {
     fs.remove(fakeSJCloudHome, (error: any) => {
       utils.initSJCloudHome((error: any, result: any) => {
         expect(error).toBeNull();
@@ -44,7 +54,7 @@ describe("Initializing SJCloud home directory", () => {
     });
   });
 
-  it("should return the following result when directory does exist", (done) => {
+  it('should return the following result when directory does exist', done => {
     utils.initSJCloudHome((error: any, result: any) => {
       expect(error).toBeNull();
       expect(result).toBe(false);
@@ -53,5 +63,9 @@ describe("Initializing SJCloud home directory", () => {
     }, fakeSJCloudHome);
   });
 
-  afterAll((done) => { fs.remove(fakeSJCloudHome, () => { done(); }); })
+  afterAll(done => {
+    fs.remove(fakeSJCloudHome, () => {
+      done();
+    });
+  });
 });

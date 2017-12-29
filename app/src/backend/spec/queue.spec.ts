@@ -1,1 +1,1 @@
-const queue = require("../../../app/bin/backend/queue");
+const queue = require('../../../app/bin/backend/queue');
