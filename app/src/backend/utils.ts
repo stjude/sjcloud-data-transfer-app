@@ -268,14 +268,6 @@ export function runCommand(
       return callback(stderr, null);
     }
 
-    // removes banner printed by dnanexus-shell.ps1 script
-    if (platform === 'win32' && stdout.startsWith('DNAnexus CLI initialized')) {
-      stdout = stdout
-        .split('\n')
-        .slice(4)
-        .join('\n');
-    }
-
     if (platform === 'win32' && stdout.includes('EOI')) {
       stdout = stdout.replace('EOI', '');
     }
@@ -295,6 +287,25 @@ export function runCommand(
   } else throw new Error(`Unrecognized platform: ${platform}.`);
 }
 
+/**
+ * Parse Python version from a string. Presumably, output from 'python --version'.
+ * @param versionString String to parse Python version from
+ * @returns A tuple containing [majorNum, minorNum, patchNum]
+ */
+export function parsePythonVersion(versionString: string) {
+  const regex = /Python ([0-9]+).([0-9]+).([0-9]+)/;
+  let match = regex.exec(versionString);
+
+  if (!match) {
+    throw new Error(
+      `Could not parse Python version from string '${versionString}'`
+    );
+  }
+
+  let [full, major, minor, patch] = match;
+  return [parseInt(major), parseInt(minor), parseInt(patch)];
+}
+
 /*******************************************************************************
  * Determines if Python 2.7.13+ is accessible on the PATH.
  *
@@ -302,13 +313,9 @@ export function runCommand(
  * @param {ResultCallback} callback
  ******************************************************************************/
 export function pythonOnPath(callback: ResultCallback): void {
-  const regex = /Python ([0-9]+).([0-9]+).([0-9]+)/;
   runCommand('python --version', (err, res) => {
-    let match = regex.exec(err);
-    let [full, major, minor, patch] = match;
-    let majorNum = parseInt(major);
-    let minorNum = parseInt(minor);
-    let patchNum = parseInt(patch);
+    let majorNum: number, minorNum: number, patchNum: number;
+    [majorNum, minorNum, patchNum] = parsePythonVersion(err);
     return callback(majorNum === 2 && minorNum === 7 && patchNum >= 13);
   });
 }
@@ -380,6 +387,15 @@ export function computeSHA256(
   callback: SuccessCallback
 ): void {
   let shasum = _crypto.createHash('SHA256');
+
+  if (!fs.existsSync(filepath)) {
+    throw new Error(`${filepath} does not exist!`);
+  }
+
+  if (!fs.lstatSync(filepath).isFile()) {
+    throw new Error(`${filepath} is not a file!`);
+  }
+
   let s = fs.ReadStream(filepath);
   s.on('data', (chunk: object) => {
     shasum.update(chunk);
