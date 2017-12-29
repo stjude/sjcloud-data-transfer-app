@@ -5,9 +5,9 @@ const sampleToken = 'XXXXXXXXXXX';
 const sampleDxFile = 'file-XXXXXXXXXXX';
 const sampleDxProject = 'project-XXXXXXXXXXX';
 
-/*******************************************************************************
+/**
  * dx.loggedIn
- ******************************************************************************/
+ */
 
 describe('DNAnexus loggedIn check', () => {
   it('should run the following command.', () => {
@@ -16,9 +16,9 @@ describe('DNAnexus loggedIn check', () => {
   });
 });
 
-/*******************************************************************************
+/**
  * dx.login
- ******************************************************************************/
+ */
 
 describe('DNAnexus login', () => {
   it('should fail if the token is null.', done => {
@@ -41,9 +41,9 @@ describe('DNAnexus login', () => {
   });
 });
 
-/*******************************************************************************
+/**
  * dx.logout
- ******************************************************************************/
+ */
 
 describe('DNAnexus logout', () => {
   it('should run the following command', () => {
@@ -52,9 +52,9 @@ describe('DNAnexus logout', () => {
   });
 });
 
-/*******************************************************************************
+/**
  * dx.describeDXItem
- ******************************************************************************/
+ */
 
 describe('Describing a DX Item', () => {
   it('should fail if the dx-identifier is null.', done => {
@@ -79,9 +79,9 @@ describe('Describing a DX Item', () => {
   });
 });
 
-/*******************************************************************************
+/**
  * dx.checkProjectAccess
- ******************************************************************************/
+ */
 
 describe('Checking DNAnexus project access', () => {
   it("should return this command with platform 'linux'", () => {
@@ -106,9 +106,9 @@ describe('Checking DNAnexus project access', () => {
   });
 });
 
-/*******************************************************************************
+/**
  * dx.listDownloadableFiles
- ******************************************************************************/
+ */
 
 describe('Listing DX files', () => {
   it('should fail if the dx-project is null.', done => {
@@ -153,15 +153,15 @@ describe('Listing DX files', () => {
   });
 });
 
-/*******************************************************************************
+/**
  * dx.parseDxProjects
  *
  * TODO(clay)
- ******************************************************************************/
+ */
 
-/*******************************************************************************
+/**
  * dx.listProjects
- ******************************************************************************/
+ */
 
 describe('Listing DX projects', () => {
   it('should return the following commands for allProjects = false', done => {
@@ -204,8 +204,8 @@ describe('Listing DX projects', () => {
   });
 });
 
-/*******************************************************************************
+/**
  * dx.installDxToolkit
  *
  * TODO(clay)
- ******************************************************************************/
+ */

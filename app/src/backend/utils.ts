@@ -23,9 +23,9 @@ const {logging} = require('./logging');
 const {remote, shell} = require('electron');
 const {exec, spawn, execSync, spawnSync} = require('child_process');
 
-/*******************************************************************************
+/**
  * CONSTANTS
- ******************************************************************************/
+ */
 
 export const platform = os.platform();
 export const defaultDownloadDir = path.join(os.homedir(), 'Downloads');
@@ -77,14 +77,14 @@ export function lookupPath(
   return pathProperName in paths ? (paths as any)[pathProperName] : null;
 }
 
-/*******************************************************************************
+/**
  * Creates the ~/.sjcloud directory if it doesn't already exist.
  * Callback takes args (error, created_dir) to determine whether this is the
  * user's first time to run the app.
  *
  * @param {SuccessCallback} callback Returns (error, was directory created?)
  * @param {string?} directory Directory for SJCloud home if not default.
- ******************************************************************************/
+ */
 export function initSJCloudHome(
   callback: SuccessCallback,
   sjcloudHomeDirectory: string = null
@@ -105,13 +105,13 @@ export function initSJCloudHome(
   });
 }
 
-/*******************************************************************************
+/**
  * Return the boostrapping command on a UNIX machine. This will inject the
  * correct binaries on the PATH based on what has been successfully installed
  * up until this point.
  *
  * @returns {string} A command with the correct sources and PATH variable.
- ******************************************************************************/
+ */
 function unixBootstrapCommand(): string {
   let paths = [];
 
@@ -136,13 +136,13 @@ function unixBootstrapCommand(): string {
   return paths.length != 0 ? `export PATH=${paths.join(':')}:$PATH;` : null;
 }
 
-/*******************************************************************************
+/**
  * Return the boostrapping command on a Windows machine. This will inject the
  * correct binaries on the PATH based on what has been successfully installed
  * up until this point.
  *
  * @returns {string} A command with the correct sources and PATH variable.
- ******************************************************************************/
+ */
 function windowsBootstrapCommand(): string {
   let paths = [];
 
@@ -169,12 +169,12 @@ function windowsBootstrapCommand(): string {
     : null;
 }
 
-/*******************************************************************************
+/**
  * Run a command on the Unix platform.
  *
  * @param {string} cmd The command to be run.
  * @param {CommandCallback} innerCallback Callback to process the command output.
- ******************************************************************************/
+ */
 function runCommandUnix(
   cmd: string,
   innerCallback: CommandCallback
@@ -193,12 +193,12 @@ function runCommandUnix(
   return exec(cmd, {maxBuffer: 10000000}, innerCallback);
 }
 
-/*******************************************************************************
+/**
  * Run a command on the Windows platform.
  *
  * @param {string} cmd The command to be run.
  * @param {CommandCallback} innerCallback Callback to process the command output.
- ******************************************************************************/
+ */
 function runCommandWindows(cmd: string, innerCallback: CommandCallback) {
   if (platform !== 'win32') {
     throw new Error(`Invalid platform for 'runCommandWindows': ${platform}`);
@@ -244,14 +244,14 @@ function runCommandWindows(cmd: string, innerCallback: CommandCallback) {
   return ps;
 }
 
-/*******************************************************************************
+/**
  * Runs command based on the system.
  *
  * @param {string} cmd Text to be entered at the command line
  * @param {SuccessCallback} callback
  * @param {boolean} [raiseOnStderr=true] Raise an error if we see anything on stderr.
  * @return {string}
- ******************************************************************************/
+ */
 export function runCommand(
   cmd: string,
   callback: SuccessCallback,
@@ -306,12 +306,12 @@ export function parsePythonVersion(versionString: string) {
   return [parseInt(major), parseInt(minor), parseInt(patch)];
 }
 
-/*******************************************************************************
+/**
  * Determines if Python 2.7.13+ is accessible on the PATH.
  *
  * @todo Change callback to SuccessCallback
  * @param {ResultCallback} callback
- ******************************************************************************/
+ */
 export function pythonOnPath(callback: ResultCallback): void {
   runCommand('python --version', (err, res) => {
     let majorNum: number, minorNum: number, patchNum: number;
@@ -320,11 +320,11 @@ export function pythonOnPath(callback: ResultCallback): void {
   });
 }
 
-/*******************************************************************************
+/**
  * Determines if dx-toolkit is accessible on the PATH.
  *
  * @param {SuccessCallback} callback
- ******************************************************************************/
+ */
 export function dxToolkitInstalled(callback: SuccessCallback): void {
   const dxLocation = path.join(lookupPath('ANACONDA_SJCLOUD_BIN'), 'dx');
   if (platform === 'linux' || platform === 'darwin') {
@@ -334,13 +334,13 @@ export function dxToolkitInstalled(callback: SuccessCallback): void {
   }
 }
 
-/*******************************************************************************
+/**
  * Downloads a normal file. Downloading of a DXFile is in dx.js
  *
  * @param {string} url URL of download.
  * @param {string} dest Path for newly downloaded file.
  * @see dx:downloadDxFile
- ******************************************************************************/
+ */
 export function downloadFile(url: string, dest: string): Promise<boolean> {
   return new Promise((resolve, reject) => {
     let file = fs.createWriteStream(dest);
@@ -359,13 +359,13 @@ export function downloadFile(url: string, dest: string): Promise<boolean> {
   });
 }
 
-/*******************************************************************************
+/**
  * Untars a file to the specified location.
  *
  * @param {string} filepath Path to TAR file.
  * @param {string} destParentDir Path to the parent directory of TAR content.
  * @param {SuccessCallback} callback
- ******************************************************************************/
+ */
 export function untarTo(
   filepath: string,
   destParentDir: string,
@@ -374,14 +374,14 @@ export function untarTo(
   runCommand(`tar - C ${destParentDir} -zxf ${filepath} `, callback);
 }
 
-/*******************************************************************************
+/**
  * Computes the SHA256 sum of a given file.
  *
  * @todo No error possible in callback, the calculation needs to be checked
  *       for success.
  * @param {string} filepath Path to file being checksummed
  * @param {SuccessCallback} callback
- ******************************************************************************/
+ */
 export function computeSHA256(
   filepath: string,
   callback: SuccessCallback
@@ -406,7 +406,7 @@ export function computeSHA256(
   });
 }
 
-/*******************************************************************************
+/**
  * Opens a URL in the default, external browser (in other words, not inside
  * of the electron window).
  *
@@ -416,12 +416,12 @@ export function openExternal(url: string): void {
   shell.openExternal(url);
 }
 
-/*******************************************************************************
+/**
  * Open a file dialog that can be used to select a directory.
  *
  * @param {ResultCallback} callback
  * @param {string} [defaultPath=undefined]
- ******************************************************************************/
+ */
 export function openDirectoryDialog(
   callback: ResultCallback,
   defaultPath: string = null
@@ -435,11 +435,11 @@ export function openDirectoryDialog(
   );
 }
 
-/*******************************************************************************
+/**
  * Open a file dialog that can be used to select a file.
  *
  * @param {ResultCallback} callback
- ******************************************************************************/
+ */
 export function openFileDialog(callback: ResultCallback) {
   return callback(
     remote.dialog.showOpenDialog({
@@ -448,7 +448,7 @@ export function openFileDialog(callback: ResultCallback) {
   );
 }
 
-/*******************************************************************************
+/**
  * Returns a readable size from a raw byte count.
  *
  * Base function derived from stack overflow.
@@ -459,7 +459,7 @@ export function openFileDialog(callback: ResultCallback) {
  * @param {number} [divisor=1000] how many bytes are in one 'unit'? Usually,
  *                                this is 1000 or 1024.
  * @return {string} Human-readable size.
- ******************************************************************************/
+ */
 export function readableFileSize(
   bytes: number,
   roundNumbers: boolean = false,
@@ -489,13 +489,13 @@ export function readableFileSize(
   return number + ' ' + units[u];
 }
 
-/*******************************************************************************
+/**
  * Return the basename and size of a file from the path.
  *
  * @param {string} filepath Path where the file resides.
  * @param {boolean} [checked=false] Whether the entry should start out checked.
  * @return {object} object containing name and size properties.
- ******************************************************************************/
+ */
 export function fileInfoFromPath(
   filepath: string,
   checked: boolean = false
@@ -515,33 +515,33 @@ export function fileInfoFromPath(
   };
 }
 
-/*******************************************************************************
+/**
  * Generate a random number between min and max.
  *
  * @param {number} min minimum number
  * @param {number} max maximum number
  * @return {number} random integer.
- ******************************************************************************/
+ */
 export function randomInt(min: number, max: number) {
   min = Math.ceil(min);
   max = Math.floor(max);
   return Math.floor(Math.random() * (max - min)) + min;
 }
 
-/*******************************************************************************
+/**
  * Kills an entire process tree using a 3rd party package.
  *
  * @param {number} pid PID of the process to kill.
- ******************************************************************************/
+ */
 export function killProcess(pid: number): void {
   return treeKill(pid);
 }
 
-/*******************************************************************************
+/**
  * Reset a file object's status in Vuex.
  * @todo move to a more appropriate location.
  * @param {any} file File object
- ******************************************************************************/
+ */
 export function resetFileStatus(file: any): void {
   file.status = 0;
   file.waiting = false;
@@ -550,13 +550,13 @@ export function resetFileStatus(file: any): void {
   file.errored = false;
 }
 
-/*******************************************************************************
+/**
  * Saves some contents to a file in the SJCloud directory.
  *
  * @param {string} filename name of the file.
  * @param {string} content contents of the file.
  * @param {ErrorCallback} [callback=undefined]
- ******************************************************************************/
+ */
 export function saveToSJCloudFile(
   filename: string,
   content: string,
@@ -566,14 +566,14 @@ export function saveToSJCloudFile(
   fs.writeFile(dest, content, callback);
 }
 
-/*******************************************************************************
+/**
  * Reads a file from the SJCloud directory's contents.
  *
  * @todo Should the error case be a SuccessCallback rather than a return?
  * @param filename name of the file
  * @param callback results of the SJCloud file
  * @param defaultContent
- ******************************************************************************/
+ */
 export function readSJCloudFile(
   filename: string,
   callback: ResultCallback,
@@ -588,9 +588,9 @@ export function readSJCloudFile(
   });
 }
 
-/*******************************************************************************
+/**
  * Gets the appropriate tab literal character based on the platform.
- ******************************************************************************/
+ */
 export function getTabLiteral() {
   if (platform === 'darwin' || platform === 'linux') {
     return "$'\t'";

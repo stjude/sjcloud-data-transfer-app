@@ -26,13 +26,13 @@ const platform = os.platform();
  *                DX-Toolkit Functionality                *
  **********************************************************/
 
-/*******************************************************************************
+/**
  * Runs a command to determine if we are logged in to DNAnexus.
  *
  * @param {SuccessCallback} callback
  * @param dryrun Return the command that would have been run as a string.
  * @returns ChildProcess or string depending on the value of 'dryrun'.
- ******************************************************************************/
+ */
 export function loggedIn(
   callback: SuccessCallback,
   dryrun: boolean = false
@@ -107,13 +107,13 @@ export function describeDXItem(
       });
 }
 
-/*******************************************************************************
+/**
  * Checks if there's at least one project the user can upload data to.
  *
  * @param {SuccessCallback} callback
  * @param {boolean} dryrun Return the command that would have been run as a string.
  * @param {string} overridePlatform Override the platform string with this value.
- ******************************************************************************/
+ */
 export function checkProjectAccess(
   callback: SuccessCallback,
   dryrun: boolean = false,

@@ -3,9 +3,11 @@ const path = require('path');
 const fs = require('fs-extra');
 const utils = require('../../../app/bin/backend/utils');
 
-/*******************************************************************************
+const platform = os.platform();
+
+/**
  * utils.getSJCloudPaths
- ******************************************************************************/
+ */
 
 describe('Determining SJCloud paths', () => {
   describe('in UNIX', () => {
@@ -36,9 +38,9 @@ describe('Determining SJCloud paths', () => {
   });
 });
 
-/*******************************************************************************
+/**
  * utils.initSJCloudHome
- ******************************************************************************/
+ */
 
 describe('Initializing SJCloud home directory', () => {
   const fakeSJCloudHome = path.join(os.homedir(), '.sjcloud-testing-init');
@@ -70,22 +72,30 @@ describe('Initializing SJCloud home directory', () => {
   });
 });
 
-/*******************************************************************************
+/**
  * utils.runCommand
- ******************************************************************************/
+ */
 
 describe('Running', () => {
+  let command: string;
+
+  if (platform === 'win32') {
+    command = 'Write-Debug "Bleep Blop Bloop" -Debug';
+  } else {
+    command = "echo 'Bleep Blop Bloop'";
+  }
+
   it('an echo command should work without erroring', done => {
-    utils.runCommand("echo 'Hello'", (error: any, result: any) => {
+    utils.runCommand(command, (error: any, result: any) => {
       expect(error).toBeNull();
       done();
     });
   });
 });
 
-/*******************************************************************************
+/**
  * utils.parsePythonVersion
- ******************************************************************************/
+ */
 
 describe('Parsing the Python version', () => {
   it("should return [2.7.14] for input 'Python 2.7.14'", () => {
@@ -106,9 +116,9 @@ describe('Parsing the Python version', () => {
   });
 });
 
-/*******************************************************************************
+/**
  * utils.computeSHA256
- ******************************************************************************/
+ */
 
 describe('Computing the SHA256 sum', () => {
   const tempdir = fs.mkdtempSync('.tmp/test-');
