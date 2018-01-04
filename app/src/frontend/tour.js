@@ -2,6 +2,10 @@ import jQueryGlobalizer from './helpers/jQueryGlobalizer';
 import boostrap from 'bootstrap';
 import Tour from 'bootstrap-tour';
 
+/**
+  Helpers
+**/
+
 function getStep(overrides) {
   return Object.assign(
     // defaults
@@ -14,6 +18,23 @@ function getStep(overrides) {
     overrides
   );
 }
+
+function goToUpload(tour) {
+  if (tour.__promptTimeout) {
+    clearTimeout(tour.__promptTimeout);
+  }
+  if (!window.VueApp) return;
+  window.VueApp.$router.replace('/upload');
+}
+
+function goToDownload(tour) {
+  if (!window.VueApp) return;
+  window.VueApp.$router.replace('/download');
+}
+
+/**
+  exported tour instance
+**/
 
 const tour = new window.Tour({
   storage: false,
@@ -54,12 +75,7 @@ const tour = new window.Tour({
                 from the tool's workspace.
                 </div>`,
 
-      onShow(tour) {
-        if (tour.__promptTimeout) {
-          clearTimeout(tour.__promptTimeout);
-        }
-        window.VueApp.$router.replace('/upload');
-      },
+      onShow: goToUpload,
     }),
     getStep({
       element: '.right-panel-container',
@@ -67,12 +83,7 @@ const tour = new window.Tour({
       content: `Selecting a workspace in Step 1 will update the
                 files shown in the upload/download pane.`,
       smartPlacement: true,
-      onShow(tour) {
-        if (tour.__promptTimeout) {
-          clearTimeout(tour.__promptTimeout);
-        }
-        window.VueApp.$router.replace('/upload');
-      },
+      onShow: goToUpload,
     }),
     getStep({
       element: '.upload-download-btn-container',
@@ -80,12 +91,7 @@ const tour = new window.Tour({
       content: `You can switch between uploading input files
                 for tools or downloading results files from either
                 your data request or tool workspaces.`,
-      onShow(tour) {
-        if (tour.__promptTimeout) {
-          clearTimeout(tour.__promptTimeout);
-        }
-        window.VueApp.$router.replace('/upload');
-      },
+      onShow: goToUpload,
     }),
     getStep({
       element: '#upload-panel',
@@ -93,10 +99,7 @@ const tour = new window.Tour({
       content: `After selecting the 'Upload' tab, you can click
                 or drag files over the highlighted area to send
                 input files to the cloud for processing.`,
-      onShow(tour) {
-        if (!window.VueApp) return;
-        window.VueApp.$router.replace('/upload');
-      },
+      onShow: goToUpload,
     }),
     getStep({
       element: '#download-panel',
@@ -106,20 +109,14 @@ const tour = new window.Tour({
                 data requests. Note: if you do not see any files 
                 here now, you may have to successfully complete
                 running a tool first.`,
-      onShow(tour) {
-        if (!window.VueApp) return;
-        window.VueApp.$router.replace('/download');
-      },
+      onShow: goToDownload,
     }),
     getStep({
       element: '.bottom-bar-left',
       title: 'Download location',
       content: `If you'd like to download your results file to somewhere
                 other than the default location, click here.`,
-      onShow(tour) {
-        if (!window.VueApp) return;
-        window.VueApp.$router.replace('/download');
-      },
+      onShow: goToDownload,
     }),
     getStep({
       element: '.download-btn',
@@ -135,7 +132,7 @@ const tour = new window.Tour({
     getStep({
       element: '#sjcda-top-bar-menu',
       title: 'File a bug report',
-      content: 'If you encounter issues, follow the Issues link to contact us.',
+      content: 'If you encounter issues, follow the Help link to contact us.',
       orphan: true,
       onShow(tour) {
         if (!window.VueApp) return;
