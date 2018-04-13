@@ -1,8 +1,7 @@
 {
   "name": "SJCPDataTransferApp",
   "version": "1.2.0",
-  "description":
-    "The St. Jude Cloud Data Transfer App, designed for getting data in the St. Jude Cloud easily and reliably.",
+  "description": "The St. Jude Cloud Data Transfer App, designed for getting data in the St. Jude Cloud easily and reliably.",
   "homepage": "https://github.com/stjude/sjcloud-data-transfer",
   "repository": {
     "type": "git",
@@ -14,13 +13,10 @@
     "compile": "gulp compile",
     "develop": "cross-env NODE_ENV=development gulp compile",
     "dist:mac": "cross-env NODE_ENV=production build -m --x64 --ia32",
-    "dist:linux":
-      "cross-env NODE_ENV=production build -l deb rpm zip --x64 --ia32",
+    "dist:linux": "cross-env NODE_ENV=production build -l deb rpm zip --x64 --ia32",
     "dist:win": "cross-env NODE_ENV=production build -w --x64 --ia32",
-    "dist:publish-unix":
-      "cross-env NODE_ENV=production build -l deb rpm zip -m --x64 --ia32 -p always",
-    "dist:publish-win":
-      "cross-env NODE_ENV=production build -w --x64 --ia32 -p always",
+    "dist:publish-unix": "cross-env NODE_ENV=production build -l deb rpm zip -m --x64 --ia32 -p always",
+    "dist:publish-win": "cross-env NODE_ENV=production build -w --x64 --ia32 -p always",
     "pretty": "prettier --write --tab-width 2 \"app/src/**/*.{js,ts}\"",
     "test": "nyc gulp test",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
@@ -33,7 +29,10 @@
     "dmg": {},
     "linux": {
       "category": "Utility",
-      "target": ["AppImage", "deb"]
+      "target": [
+        "AppImage",
+        "deb"
+      ]
     },
     "win": {
       "target": "NSIS",
@@ -41,8 +40,14 @@
     }
   },
   "lint-staged": {
-    "*.js": ["npm run pretty", "git add"],
-    "*.ts": ["npm run pretty", "git add"]
+    "*.js": [
+      "npm run pretty",
+      "git add"
+    ],
+    "*.ts": [
+      "npm run pretty",
+      "git add"
+    ]
   },
   "dependencies": {
     "async": "^2.4.1",
@@ -139,7 +144,14 @@
     "webpack-notifier": "^1.5.0"
   },
   "nyc": {
-    "include": ["app/bin/backend/**/*.js", "app/bin/frontend/**/*.js"],
-    "exclude": ["gulpfile.js", "*.conf.js", "*.config.js"]
+    "include": [
+      "app/bin/backend/**/*.js",
+      "app/bin/frontend/**/*.js"
+    ],
+    "exclude": [
+      "gulpfile.js",
+      "*.conf.js",
+      "*.config.js"
+    ]
   }
 }
