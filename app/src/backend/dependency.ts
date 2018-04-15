@@ -166,10 +166,15 @@ export function installAnaconda(
     logging.debug('  [*] Installing DX-Toolkit.');
     progressCb(95, 'Installing...');
     return new Promise((resolve, reject) => {
-      utils.runCommand('pip install dxpy', (error, result) => {
-        if (error) return reject(error);
-        return resolve(result);
-      });
+      utils.runCommand(
+        'pip install dxpy',
+        (error, result) => {
+          if (error) return reject(error);
+          return resolve(result);
+        },
+        false
+      ); // sometimes dxtoolkit returns a pip update warning to stderr
+      // which causes the command to fail
     });
   };
 
@@ -189,6 +194,6 @@ export function installAnaconda(
       });
     })
     .catch((error: any) => {
-      finishedCb(error, null);
+      finishedCb(error, 'Could not install!');
     });
 }

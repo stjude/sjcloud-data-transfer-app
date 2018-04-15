@@ -18,7 +18,7 @@
 					<div class="bottom-bar-right">
 						<button class='btn btn-primary btn-stjude download-btn'
 									  v-bind:disabled='!hasFilesInStaging'
-										@click='uploadFiles'>
+										@click='uploadFiles()'>
 							Upload
 						</button>
 						<button class='btn btn-danger btn-stjude-warning delete-btn'
@@ -118,7 +118,6 @@ export default {
       const files = this.$store.getters.currTool.upload.filter(f => f.checked);
       const dnanexusProjectId = this.$store.getters.currTool.dx_location;
       const concurrency = this.$store.getters.concurrentOperations;
-      const that = this;
       
       console.log(
         "Uploading",
@@ -127,8 +126,8 @@ export default {
         concurrency
       );
 
-      files.forEach(function(file) {
-        that.$root.backend.utils.resetFileStatus(file);
+      files.forEach(file => {
+        this.$root.backend.utils.resetFileStatus(file);
         file.waiting = true;
 
         let task = {
@@ -137,7 +136,7 @@ export default {
           remote_location: dnanexusProjectId
         };
 
-        that.$root.backend.queue.addUploadTask(task);
+        this.$root.backend.queue.addUploadTask(task);
       });
     },
     removeCheckedFiles() {
