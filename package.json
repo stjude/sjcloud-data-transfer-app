@@ -11,8 +11,9 @@
   "main": "app/main.js",
   "scripts": {
     "start": "electron app/main.js",
-    "compile": "gulp compile",
-    "develop": "cross-env NODE_ENV=development gulp compile",
+    "start-dev": "cross-env NODE_ENV=development electron app/main.js",
+    "compile": "cross-env gulp compile",
+    "develop": "cross-env NODE_ENV=development gulp develop",
     "dist:mac": "cross-env NODE_ENV=production build -m --x64 --ia32",
     "dist:linux":
       "cross-env NODE_ENV=production build -l deb rpm zip --x64 --ia32",
@@ -104,7 +105,7 @@
     "cross-env": "^5.1.1",
     "css-loader": "^0.28.4",
     "d3-selection": "^1.1.0",
-    "electron": "~1.7.9",
+    "electron": "~1.8.4",
     "electron-builder": "^19.37.1",
     "electron-packager": "^9.1.0",
     "eslint": "^4.0.0",
