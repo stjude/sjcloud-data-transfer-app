@@ -1,5 +1,8 @@
 <template>
 	<div class="row">
+    <custom-alert>
+      Hello!
+    </custom-alert>
 		<div class='col-xs-12 main'>
 			<div class="theater-heading">
 				<h1>Install</h1> 
@@ -38,24 +41,29 @@
 			</div>
 		</div>
 		<toolkit-modal v-show='toolkitModalVisibility'></toolkit-modal>
+    <beta-modal v-show='betaModalVisibility'></beta-modal>
 	</div>
 </template>
 
 <script @load="checkLinuxURIWarning()">
-import StepOutcome from "./StepOutcome.vue";
-import SpinKit from "./SpinKit.vue";
-import ToolkitModal from "./ToolkitModal.vue";
+import StepOutcome from './StepOutcome.vue';
+import SpinKit from './SpinKit.vue';
+import ToolkitModal from './ToolkitModal.vue';
+import BetaModal from './BetaModal.vue';
+import CustomAlert from './CustomAlert.vue';
 
 export default {
   components: {
     StepOutcome,
     ToolkitModal,
-    SpinKit
+    BetaModal,
+    SpinKit,
+    CustomAlert,
   },
   data() {
     return {
       openModal: false,
-      percentage: 0
+      percentage: 0,
     };
   },
   computed: {
@@ -69,29 +77,36 @@ export default {
       return this.$store.getters.downloadStatus;
     },
     toolkitModalVisibility() {
-      return this.$store.getters.modalVisibility("toolkit");
-    }
+      return this.$store.getters.modalVisibility('toolkit');
+    },
+    betaModalVisibility() {
+      return this.$store.getters.modalVisibility('beta');
+    },
   },
   mounted() {
-    this.$store.commit("setTourHint", true);
+    this.$store.commit('setTourHint', true);
   },
   methods: {
     checkLinuxURIWarning() {
-      if (this.$store.getters.platform === "linux") {
-        this.$store.commit('byKey', {alertType: "info", alertMessage: "Custom URIs " +
-          "are not supported on Linux. " +
-          "Other platforms can launch this app with a default project selected. " +
-          "These links will not work on this computer."});
+      if (this.$store.getters.platform === 'linux') {
+        this.$store.commit('byKey', {
+          alertType: 'info',
+          alertMessage:
+            'Custom URIs ' +
+            'are not supported on Linux. ' +
+            'Other platforms can launch this app with a default project selected. ' +
+            'These links will not work on this computer.',
+        });
       }
     },
     setInstallingDependencies(installing) {
-      this.$store.commit("setInstallingDependencies", installing);
+      this.$store.commit('setInstallingDependencies', installing);
     },
     setDownloadStatus(status) {
-      this.$store.commit("setDownloadStatus", status);
+      this.$store.commit('setDownloadStatus', status);
     },
     downloadDependencies() {
-      this.$store.commit("setInstallingDependencies", "installing");
+      this.$store.commit('setInstallingDependencies', 'installing');
 
       this.$root.backend.dependency.installAnaconda(
         (percent, text) => {
@@ -100,12 +115,12 @@ export default {
         },
         (err, result) => {
           if (err) {
-            this.setDownloadStatus(text);
-            this.$store.commit("setInstallingDependencies", "failed");
+            this.setDownloadStatus(result);
+            this.$store.commit('setInstallingDependencies', 'failed');
           } else {
-            this.$store.commit("setInstallingDependencies", "completed");
+            this.$store.commit('setInstallingDependencies', 'completed');
             setTimeout(() => {
-              this.$router.push("login");
+              this.$router.push('login');
             }, 2500);
           }
           return result;
@@ -113,9 +128,9 @@ export default {
       );
     },
     showModal() {
-      this.$store.commit("showModal", "toolkit");
-    }
-  }
+      this.$store.commit('showModal', 'toolkit');
+    },
+  },
 };
 </script>
 

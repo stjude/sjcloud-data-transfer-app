@@ -19,27 +19,34 @@ function getParams() {
 
   const params = {};
   if (window.testdata) params.testdata = window.testdata;
-  window.location.search.substr(1).split('&').forEach((kv) => {
-    const [key, value] = kv.split('=');
-    params[key] = value;
-  });
+  window.location.search
+    .substr(1)
+    .split('&')
+    .forEach(kv => {
+      const [key, value] = kv.split('=');
+      params[key] = value;
+    });
   return params;
 }
 
 /** Store generator * */
 function storeCopier(key, substores) {
   const copy = {};
-  substores.forEach((substore) => {
+  substores.forEach(substore => {
     if (key in substore) Object.assign(copy, substore[key]);
   });
   return copy;
 }
 
 export default function getVuexStore(cachedState = {}) {
-  const ref={}
+  const ref = {};
   const substores = [
-    storeGlobal(ref), storeStart(ref), storeModals(ref), 
-    storeProjects(ref), storeFiles(ref), storeOperations(ref)
+    storeGlobal(ref),
+    storeStart(ref),
+    storeModals(ref),
+    storeProjects(ref),
+    storeFiles(ref),
+    storeOperations(ref),
   ];
 
   /** Plugins * */
@@ -60,22 +67,27 @@ export default function getVuexStore(cachedState = {}) {
         store.commit('setCurrToolName', state.uriProject, true);
       }
 
-      if (mutation.type !== 'toggleMenu' && mutation.type !== 'closeMenu' && mutation.type !== 'openMenu') {
+      if (
+        mutation.type !== 'toggleMenu' &&
+        mutation.type !== 'closeMenu' &&
+        mutation.type !== 'openMenu'
+      ) {
         state.menuIsVisible = false;
       }
     });
-  };
-
+  }
 
   /** Helpers * */
   function cacheState(state) {
-    ref.backend.utils.saveToSJCloudFile('state.json', JSON.stringify({
-      showAllFiles: state.showAllFiles,
-      showAllProjects: state.showAllProjects,
-      concurrentOperations: state.concurrentOperations,
-    }));
+    ref.backend.utils.saveToSJCloudFile(
+      'state.json',
+      JSON.stringify({
+        showAllFiles: state.showAllFiles,
+        showAllProjects: state.showAllProjects,
+        concurrentOperations: state.concurrentOperations,
+      })
+    );
   }
-
 
   /*
     To-Do: use Vuex.modules instead of Object.assign in storeCopier
@@ -83,18 +95,20 @@ export default function getVuexStore(cachedState = {}) {
   return {
     setRef(key, val) {
       if (key in ref) {
-        throw "The store reference='"+key+"' has already been set";
-      }
-      else {
+        throw "The store reference='" + key + "' has already been set";
+      } else {
         ref[key] = val;
       }
     },
     main: new Vuex.Store({
-      state: storeCopier('state', substores.concat({ state: cachedState }, { state: getParams() })),
+      state: storeCopier(
+        'state',
+        substores.concat({state: cachedState}, {state: getParams()})
+      ),
       getters: storeCopier('getters', substores),
       mutations: storeCopier('mutations', substores),
       actions: storeCopier('actions', substores),
       plugins: [projectToolScopeWatcher],
-    })
-  }
+    }),
+  };
 }

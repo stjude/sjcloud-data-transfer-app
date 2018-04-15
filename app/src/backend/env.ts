@@ -1,5 +1,5 @@
 if (!process.env.NODE_ENV) {
-  process.env.NODE_ENV = "production";
+  process.env.NODE_ENV = 'production';
 }
 
 export function getEnv() {
@@ -23,5 +23,7 @@ export function isTesting() {
 
 export function checkIsValid() {
   const result = isProduction() || isDevelopment() || isTesting();
-  if (!result) { throw new Error(`Invalid NODE_ENV: ${process.env.NODE_ENV}!`); }
+  if (!result) {
+    throw new Error(`Invalid NODE_ENV: ${process.env.NODE_ENV}!`);
+  }
 }

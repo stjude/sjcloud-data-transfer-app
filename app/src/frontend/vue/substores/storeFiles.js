@@ -5,7 +5,7 @@ import globToRegExp from 'glob-to-regexp';
    Arguments:
   - ref: the main store's reference to run-time added methods and properties
 */
-export default function (ref) {
+export default function(ref) {
   return {
     state: {
       showAllFiles: false,
@@ -19,7 +19,10 @@ export default function (ref) {
       },
       currFiles(state, getters) {
         const tool = getters.currTool;
-        const files = !tool || !Array.isArray(tool[state.currPath]) ? [] : tool[state.currPath];
+        const files =
+          !tool || !Array.isArray(tool[state.currPath])
+            ? []
+            : tool[state.currPath];
         sortFiles(state, files);
 
         if (state.currPath !== 'download' || !state.searchTerm) {
@@ -35,8 +38,9 @@ export default function (ref) {
       },
       checkedFiles(state, getters) {
         const tool = getters.currTool;
-        return !tool || !Array.isArray(tool[state.currPath]) ? [] :
-          tool[state.currPath].filter(f => f.checked);
+        return !tool || !Array.isArray(tool[state.currPath])
+          ? []
+          : tool[state.currPath].filter(f => f.checked);
       },
       searchTerm(state) {
         return state.searchTerm;
@@ -44,7 +48,9 @@ export default function (ref) {
     },
     mutations: {
       addFile(state, file, checked) {
-        const tool = state.tools.filter(t => t.dx_location === state.currToolName)[0];
+        const tool = state.tools.filter(
+          t => t.dx_location === state.currToolName
+        )[0];
         if (toolError(tool, state)) {
           return;
         }
@@ -52,13 +58,15 @@ export default function (ref) {
         tool[state.currPath].push(file);
       },
       addFiles(state, files) {
-        const tool = state.tools.filter(t => t.dx_location === state.currToolName)[0];
+        const tool = state.tools.filter(
+          t => t.dx_location === state.currToolName
+        )[0];
         if (toolError(tool, state)) {
           return;
         }
 
         const currFiles = tool[state.currPath];
-        files.forEach((f) => {
+        files.forEach(f => {
           const thisFile = {
             name: f.name,
             size: f.size,
@@ -69,7 +77,9 @@ export default function (ref) {
         });
       },
       removeCheckedFiles(state) {
-        const tool = state.tools.filter(t => t.dx_location === state.currToolName)[0];
+        const tool = state.tools.filter(
+          t => t.dx_location === state.currToolName
+        )[0];
         if (toolError(tool, state)) {
           return;
         }
@@ -77,7 +87,9 @@ export default function (ref) {
         tool[state.currPath] = tool[state.currPath].filter(t => !t.checked);
       },
       removeAllFiles(state) {
-        const tool = state.tools.filter(t => t.dx_location === state.currToolName)[0];
+        const tool = state.tools.filter(
+          t => t.dx_location === state.currToolName
+        )[0];
         if (toolError(tool, state)) {
           return;
         }
@@ -85,13 +97,17 @@ export default function (ref) {
         tool[state.currPath] = [];
       },
       cancelCheckedFiles(state) {
-        const tool = state.tools.filter(t => t.dx_location === state.currToolName)[0];
+        const tool = state.tools.filter(
+          t => t.dx_location === state.currToolName
+        )[0];
         if (toolError(tool, state)) {
           return;
         }
 
-        const files = tool[state.currPath].filter(t => t.checked && t.started && !t.finished);
-        files.forEach((elem) => {
+        const files = tool[state.currPath].filter(
+          t => t.checked && t.started && !t.finished
+        );
+        files.forEach(elem => {
           elem.cancelled = true;
           let process = null;
           if (state.currPath === 'upload') {
@@ -116,11 +132,8 @@ export default function (ref) {
       },
     },
     actions: {
-      refreshFiles({
-        commit,
-        state,
-      }) {
-        state.tools.forEach((tool) => {
+      refreshFiles({commit, state}) {
+        state.tools.forEach(tool => {
           tool.upload = [];
           tool.download = [];
           tool.loadedAvailableDownloads = false;
@@ -129,8 +142,8 @@ export default function (ref) {
         commit('setCurrToolName', state.currToolName);
       },
     },
-  }
-};
+  };
+}
 
 /*
   Helpers
@@ -163,7 +176,11 @@ function sortFiles(state, files) {
 
 function toolError(tool, state) {
   if (!tool || !tool[state.currPath]) {
-    console.error(`Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`);
+    console.error(
+      `Invalid tool name '${state.currToolName}' and/or path='${
+        state.currPath
+      }'.`
+    );
     return true;
   }
 }

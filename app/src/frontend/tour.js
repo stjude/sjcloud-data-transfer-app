@@ -2,6 +2,10 @@ import jQueryGlobalizer from './helpers/jQueryGlobalizer';
 import boostrap from 'bootstrap';
 import Tour from 'bootstrap-tour';
 
+/**
+  Helpers
+**/
+
 function getStep(overrides) {
   return Object.assign(
     // defaults
@@ -14,6 +18,23 @@ function getStep(overrides) {
     overrides
   );
 }
+
+function goToUpload(tour) {
+  if (tour.__promptTimeout) {
+    clearTimeout(tour.__promptTimeout);
+  }
+  if (!window.VueApp) return;
+  window.VueApp.$router.replace('/upload');
+}
+
+function goToDownload(tour) {
+  if (!window.VueApp) return;
+  window.VueApp.$router.replace('/download');
+}
+
+/**
+  exported tour instance
+**/
 
 const tour = new window.Tour({
   storage: false,
@@ -36,7 +57,7 @@ const tour = new window.Tour({
         }
         window.VueApp.$store.commit('toggleMenu');
       },
-    }), 
+    }),
     getStep({
       element: '.left-panel-table-container',
       title: 'Step 1: Select workspace',
@@ -53,13 +74,8 @@ const tour = new window.Tour({
                 on that data in the cloud, then download the results 
                 from the tool's workspace.
                 </div>`,
-      
-      onShow(tour) {
-        if (tour.__promptTimeout) {
-          clearTimeout(tour.__promptTimeout);
-        }
-        window.VueApp.$router.replace('/upload');
-      }
+
+      onShow: goToUpload,
     }),
     getStep({
       element: '.right-panel-container',
@@ -67,37 +83,24 @@ const tour = new window.Tour({
       content: `Selecting a workspace in Step 1 will update the
                 files shown in the upload/download pane.`,
       smartPlacement: true,
-      onShow(tour) {
-        if (tour.__promptTimeout) {
-          clearTimeout(tour.__promptTimeout);
-        }
-        window.VueApp.$router.replace('/upload');
-      },
-    }), 
+      onShow: goToUpload,
+    }),
     getStep({
       element: '.upload-download-btn-container',
       title: 'Step 2: Work with files (cont.)',
       content: `You can switch between uploading input files
                 for tools or downloading results files from either
                 your data request or tool workspaces.`,
-      onShow(tour) {
-        if (tour.__promptTimeout) {
-          clearTimeout(tour.__promptTimeout);
-        }
-        window.VueApp.$router.replace('/upload');
-      },
-    }), 
+      onShow: goToUpload,
+    }),
     getStep({
       element: '#upload-panel',
       title: 'Step 3a: Upload files',
       content: `After selecting the 'Upload' tab, you can click
                 or drag files over the highlighted area to send
                 input files to the cloud for processing.`,
-      onShow(tour) {
-        if (!window.VueApp) return;
-        window.VueApp.$router.replace('/upload');
-      },
-    }), 
+      onShow: goToUpload,
+    }),
     getStep({
       element: '#download-panel',
       title: 'Step 3b: Download files',
@@ -106,35 +109,30 @@ const tour = new window.Tour({
                 data requests. Note: if you do not see any files 
                 here now, you may have to successfully complete
                 running a tool first.`,
-      onShow(tour) {
-        if (!window.VueApp) return;
-        window.VueApp.$router.replace('/download');
-      },
+      onShow: goToDownload,
     }),
     getStep({
       element: '.bottom-bar-left',
       title: 'Download location',
       content: `If you'd like to download your results file to somewhere
                 other than the default location, click here.`,
-      onShow(tour) {
-        if (!window.VueApp) return;
-        window.VueApp.$router.replace('/download');
-      },
-    }), 
+      onShow: goToDownload,
+    }),
     getStep({
       element: '.download-btn',
       title: 'Download button',
-      content: 'You can download requested St. Jude data or results files to your computer.',
+      content:
+        'You can download requested St. Jude data or results files to your computer.',
       onShow(tour) {
         if (!window.VueApp) return;
         window.VueApp.$router.replace('/download');
         window.VueApp.$store.commit('closeModal');
       },
-    }), 
+    }),
     getStep({
       element: '#sjcda-top-bar-menu',
       title: 'File a bug report',
-      content: 'If you encounter issues, follow the Issues link to contact us.',
+      content: 'If you encounter issues, follow the Help link to contact us.',
       orphan: true,
       onShow(tour) {
         if (!window.VueApp) return;
@@ -142,11 +140,12 @@ const tour = new window.Tour({
         window.VueApp.$store.commit('closeModal');
         window.VueApp.$store.commit('openMenu');
       },
-    }), 
+    }),
     getStep({
       element: '#sjcda-top-bar-menu',
       title: 'User preferences',
-      content: "You can set user preferences by selecting 'Settings' from the drop down menu.",
+      content:
+        "You can set user preferences by selecting 'Settings' from the drop down menu.",
       orphan: true,
       onShow(tour) {
         if (tour.__promptTimeout) {
@@ -156,11 +155,12 @@ const tour = new window.Tour({
         window.VueApp.$store.commit('closeModal');
         window.VueApp.$store.commit('openMenu');
       },
-    }), 
+    }),
     getStep({
       element: '#left-panel-project-filters',
       title: 'Files and Project Filter Buttons',
-      content: 'These filters may be used to show or hide certain projects or files. By default, we focus on St. Jude Cloud projects.',
+      content:
+        'These filters may be used to show or hide certain projects or files. By default, we focus on St. Jude Cloud projects.',
       onShow(tour) {
         if (tour.__promptTimeout) {
           clearTimeout(tour.__promptTimeout);
@@ -169,7 +169,7 @@ const tour = new window.Tour({
         window.VueApp.$store.commit('closeMenu');
         window.VueApp.$store.commit('toggleModal');
       },
-    })
+    }),
   ],
   afterGetState(key, value) {
     // console.log(key,value)
@@ -185,7 +185,7 @@ let tourInitialized = false;
 let waitingForTools = false;
 let userPrompted = false;
 
-tour.__promptUser = (path) => {
+tour.__promptUser = path => {
   if (tourInitialized || userPrompted) return;
   if (path !== '/upload' && path !== '/download') return;
   if (window.location.port === '9876') return;

@@ -58,8 +58,6 @@ export default function(ref) {
         state.token = token;
       },
     },
-    actions: {
-
-    },
-  }
-};
+    actions: {},
+  };
+}

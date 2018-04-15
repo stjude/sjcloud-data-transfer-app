@@ -7,13 +7,15 @@ window.utils = {
   platform: 'n/a',
   downloadLocation: 'n/a',
   readSJCloudFile(filename, callback) {
-    callback(JSON.stringify({
-      showAllFiles: true,
-      showAllProjects: true,
-      concurrentOperations: 2,
-    }));
-  }
-}
+    callback(
+      JSON.stringify({
+        showAllFiles: true,
+        showAllProjects: true,
+        concurrentOperations: 2,
+      })
+    );
+  },
+};
 
 function dependency(VueApp) {
   return {
@@ -33,7 +35,7 @@ function dependency(VueApp) {
         }, 1500);
       }, 1500);
     },
-  }
+  };
 }
 
 function dx(VueApp) {
@@ -46,12 +48,15 @@ function dx(VueApp) {
 
       fetch(`testdata/${VueApp.$store.getters.testdata}.json`)
         .then(response => response.json())
-        .then((arr) => {
+        .then(arr => {
           const tools = [];
           arr.forEach((elem, i) => {
             const item = {
               name: elem.name,
-              dx_location: 'dx_location' in elem ? elem.dx_location : `${elem.name}---${i}`,
+              dx_location:
+                'dx_location' in elem
+                  ? elem.dx_location
+                  : `${elem.name}---${i}`,
               access_level: 5,
               size: elem.size,
               upload: elem.upload,
@@ -78,7 +83,9 @@ function dx(VueApp) {
                 f.startTime = +new Date() - dt;
                 const rate = f.status === 0 || dt === 0 ? 0.01 : f.status / dt;
                 const msRemaining = (100 - f.status) / rate;
-                f.timeRemaining = new Date(msRemaining).toISOString().substr(11, 8);
+                f.timeRemaining = new Date(msRemaining)
+                  .toISOString()
+                  .substr(11, 8);
               }
             });
 
@@ -97,7 +104,7 @@ function dx(VueApp) {
           if (VueApp.dataReadyCallback) {
             VueApp.dataReadyCallback();
             delete VueApp.dataReadyCallback;
-          }              
+          }
         })
         .catch(err => console.log(err));
     },
@@ -108,13 +115,11 @@ function dx(VueApp) {
         callback(null, []);
       }
     },
-    describeDXItem(dnanexusId, callback) {
-
-    },
+    describeDXItem(dnanexusId, callback) {},
     logout(callback) {
       callback();
     },
-  }
+  };
 }
 
 function oauth(VueApp) {
@@ -122,15 +127,15 @@ function oauth(VueApp) {
     getToken(internal, callback) {
       return callback(null, 'abcxyz');
     },
-  }
+  };
 }
 
 function state(VueApp) {
-  return { 
+  return {
     getState(callback) {
       callback({});
     },
-  }
+  };
 }
 
 function _utils(VueApp) {
@@ -171,9 +176,7 @@ function _utils(VueApp) {
       return `${number} ${units[u]}`;
     },
     readSJCloudFile: window.utils.readSJCloudFile,
-    saveToSJCloudFile() {
-
-    },
+    saveToSJCloudFile() {},
     resetFileStatus(file) {
       file.status = 0;
       file.waiting = false;
@@ -181,10 +184,8 @@ function _utils(VueApp) {
       file.finished = false;
       file.errored = false;
     },
-    openDirectoryDialog() {
-
-    },
-  }
+    openDirectoryDialog() {},
+  };
 }
 
 function queue(VueApp) {
@@ -211,7 +212,11 @@ function queue(VueApp) {
         numTaskCompleted++;
         clearInterval(i);
         if (numTaskCompleted > numTaskAdded) {
-          console.log(`More tasks completed than added: ${numTaskCompleted} vs ${numTaskAdded}.`);
+          console.log(
+            `More tasks completed than added: ${numTaskCompleted} vs ${
+              numTaskAdded
+            }.`
+          );
         }
         VueApp.$store.commit('removeOperationProcess', {
           filename: file.dx_location,
@@ -234,9 +239,7 @@ function queue(VueApp) {
     addToolInfoTask(task, callback) {
       if (typeof callback === 'function') callback(null, {});
     },
-    removeAllTaskOfType(type) {
-
-    },
+    removeAllTaskOfType(type) {},
     addDownloadTask(task) {
       const file = task._rawFile;
       if (file.started || file.finished) {
@@ -248,18 +251,17 @@ function queue(VueApp) {
         filename: file.dx_location,
       });
     },
-  }
+  };
 }
 
 window.backend = {
-  install(Vue,options) {
-    const ref={}
+  install(Vue, options) {
+    const ref = {};
 
-    Vue.prototype.$setBackend = function () {
+    Vue.prototype.$setBackend = function() {
       if (this.backend) {
-        throw "The $root.backend has already been set.";
-      }
-      else {
+        throw 'The $root.backend has already been set.';
+      } else {
         this.backend = {
           dependency: dependency(this),
           oauth: oauth(this),
@@ -267,8 +269,8 @@ window.backend = {
           state: state(this),
           queue: queue(this),
           utils: _utils(this),
-        }
+        };
       }
-    }
-  }
-}
+    };
+  },
+};

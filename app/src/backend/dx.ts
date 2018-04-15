@@ -7,40 +7,39 @@ import {
   ResultCallback,
   SJDTAFile,
   SJDTAProject,
-  DXDownloadInfo
-} from "./types";
+  DXDownloadInfo,
+} from './types';
 
-import * as fs from "fs";
-import * as os from "os";
-import * as path from "path";
-import * as utils from "./utils";
-import * as logging from "./logging";
-import * as child_process from "child_process";
+import * as fs from 'fs';
+import * as os from 'os';
+import * as path from 'path';
+import * as utils from './utils';
+import * as logging from './logging';
+import * as child_process from 'child_process';
 
-const async = require("async");
-const expandHomeDir = require("expand-home-dir");
-const config = require("../../../config.json");
+const async = require('async');
+const expandHomeDir = require('expand-home-dir');
+const config = require('../../../config.json');
 const platform = os.platform();
-
 
 /**********************************************************
  *                DX-Toolkit Functionality                *
  **********************************************************/
 
-/*******************************************************************************
-* Runs a command to determine if we are logged in to DNAnexus.
-* 
-* @param {SuccessCallback} callback
-* @param dryrun Return the command that would have been run as a string.
-* @returns ChildProcess or string depending on the value of 'dryrun'.
-******************************************************************************/
+/**
+ * Runs a command to determine if we are logged in to DNAnexus.
+ *
+ * @param {SuccessCallback} callback
+ * @param dryrun Return the command that would have been run as a string.
+ * @returns ChildProcess or string depending on the value of 'dryrun'.
+ */
 export function loggedIn(
   callback: SuccessCallback,
   dryrun: boolean = false
 ): any {
-  const cmd = "dx whoami";
+  const cmd = 'dx whoami';
   return dryrun ? cmd : utils.runCommand(cmd, callback);
-};
+}
 
 /**
  * Login to DNAnexus using an authentication token
@@ -56,25 +55,27 @@ export function login(
   callback: SuccessCallback,
   dryrun: boolean = false
 ): any {
-  if (!token) { return callback(new Error("Token cannot be null/empty!"), null); }
+  if (!token) {
+    return callback(new Error('Token cannot be null/empty!'), null);
+  }
   const cmd = `dx login --token ${token} --noprojects`;
   return dryrun ? cmd : utils.runCommand(cmd, callback);
-};
+}
 
 /**
  * Logout of DNAnexus via the dx command line utility.
  *
  * @param callback
- * @param dryrun Return the command that would have been run as a string. 
+ * @param dryrun Return the command that would have been run as a string.
  * @returns {any} ChildProcess or string depending on the value of 'dryrun'.
-*/
+ */
 export function logout(
   callback: SuccessCallback,
   dryrun: boolean = false
 ): any {
-  const cmd = "dx logout";
+  const cmd = 'dx logout';
   return dryrun ? cmd : utils.runCommand(cmd, callback);
-};
+}
 
 /**
  * Describe a 'dx-item' as JSON via the dx command* line utility.
@@ -90,42 +91,45 @@ export function describeDXItem(
   dryrun: boolean = false
 ): any {
   if (!dnanexusId) {
-    const error = new Error("Dx-identifier cannot be null/empty!");
+    const error = new Error('Dx-identifier cannot be null/empty!');
     return callback(error, null);
   }
 
   let cmd = `dx describe ${dnanexusId} --json`;
-  return dryrun ? cmd : utils.runCommand(cmd, (err: any, stdout: any) => {
-    if (!stdout) { callback(err, stdout); return; }
-    callback(err, JSON.parse(stdout));
-  });
-};
+  return dryrun
+    ? cmd
+    : utils.runCommand(cmd, (err: any, stdout: any) => {
+        if (!stdout) {
+          callback(err, stdout);
+          return;
+        }
+        callback(err, JSON.parse(stdout));
+      });
+}
 
-
-/*******************************************************************************
+/**
  * Checks if there's at least one project the user can upload data to.
  *
  * @param {SuccessCallback} callback
  * @param {boolean} dryrun Return the command that would have been run as a string.
  * @param {string} overridePlatform Override the platform string with this value.
- ******************************************************************************/
+ */
 export function checkProjectAccess(
   callback: SuccessCallback,
   dryrun: boolean = false,
   overridePlatform: string = null
 ): any {
-  let cmd = "";
+  let cmd = '';
   let platformToUse = overridePlatform || platform;
 
-  if (platformToUse === "linux" || platformToUse === "darwin") {
+  if (platformToUse === 'linux' || platformToUse === 'darwin') {
     cmd = "echo '0' | dx select --level UPLOAD";
-  } else if (platformToUse === "win32") {
-    cmd = "\"echo 0 | dx select --level UPLOAD\"";
+  } else if (platformToUse === 'win32') {
+    cmd = '"echo 0 | dx select --level UPLOAD"';
   } else throw new Error(`Unrecognized platform: '${platformToUse}'.`);
 
   return dryrun ? cmd : utils.runCommand(cmd, callback);
-};
-
+}
 
 /**
  * List all of the files available for download in a DNAnexus project.
@@ -133,7 +137,7 @@ export function checkProjectAccess(
  * @param projectId The DNAnexus project identifier (ex: project-XXXX).
  * @param allFiles List all files or just St. Jude Cloud associated ones.
  * @param callback
- * @param dryrun Return the command that would have been run as a string. 
+ * @param dryrun Return the command that would have been run as a string.
  * @returns {any} ChildProcess or string depending on the value of 'dryrun'.
  **/
 export function listDownloadableFiles(
@@ -143,19 +147,23 @@ export function listDownloadableFiles(
   dryrun: boolean = false
 ): any {
   if (!projectId) {
-    const error = new Error("Dx-project cannot be null/empty!");
+    const error = new Error('Dx-project cannot be null/empty!');
     return callback(error, null);
   }
 
-  let cmd = `dx find data --path ${projectId}:/ --json --state closed --class file`;
+  let cmd = `dx find data --path ${
+    projectId
+  }:/ --json --state closed --class file`;
   if (!allFiles) {
     cmd += ` --tag ${config.DOWNLOADABLE_TAG}`;
   }
 
-  return dryrun ? cmd : utils.runCommand(cmd, (err: any, stdout: any) => {
-    callback(err, JSON.parse(stdout));
-  });
-};
+  return dryrun
+    ? cmd
+    : utils.runCommand(cmd, (err: any, stdout: any) => {
+        callback(err, JSON.parse(stdout));
+      });
+}
 
 /**
  * Download a file from DNAnexus.
@@ -168,7 +176,7 @@ export function listDownloadableFiles(
  * @param updateCb To be called on each update to progress.
  * @param finishedCb To be called upon completion.
  * @return ChildProcess
-*/
+ */
 export function downloadDxFile(
   remoteFileId: string,
   fileName: string,
@@ -181,14 +189,14 @@ export function downloadDxFile(
   const outputPath = expandHomeDir(path.join(downloadLocation, fileName));
 
   let command: string = null;
-  if (platform === "darwin" || platform === "linux") {
+  if (platform === 'darwin' || platform === 'linux') {
     command = `touch '${outputPath}'`;
-  } else if (platform === "win32") {
+  } else if (platform === 'win32') {
     command = `New-Item '${outputPath}' -type file -force`;
   }
 
   command = `${command}; dx download -f ${remoteFileId} -o '${outputPath}'`;
-  fs.watchFile(outputPath, { interval: 1000 }, () => {
+  fs.watchFile(outputPath, {interval: 1000}, () => {
     fs.stat(outputPath, (err: any, stats: any) => {
       if (stats !== undefined) {
         let progress = Math.round(stats.size / fileRawSize * 100.0);
@@ -198,14 +206,14 @@ export function downloadDxFile(
   });
 
   return utils.runCommand(command, finishedCb);
-};
+}
 
 /**
  * Creates an interval that watches a remote DX file.
- * 
- * @param file 
- * @param dxRemotePath 
- * @param progressCb 
+ *
+ * @param file
+ * @param dxRemotePath
+ * @param progressCb
  */
 function watchRemoteFile(
   file: SJDTAFile,
@@ -213,12 +221,16 @@ function watchRemoteFile(
   progressCb: ResultCallback
 ) {
   return setInterval(() => {
-    if (file.sizeCheckingLock) { return; }
+    if (file.sizeCheckingLock) {
+      return;
+    }
     file.sizeCheckingLock = true; // acquire file size checking lock
 
     module.exports.describeDXItem(dxRemotePath, (err: any, remoteFile: any) => {
       file.sizeCheckingLock = false; // release file size checking lock
-      if (!remoteFile || !remoteFile.parts) { return; }
+      if (!remoteFile || !remoteFile.parts) {
+        return;
+      }
 
       let remoteObjectSize: number = 0;
       // sum concurrent chunk sizes uploaded so far.
@@ -248,16 +260,16 @@ function watchRemoteFile(
  * @param progressCb
  * @param finishedCb
  * @return ChildProcess
-*/
+ */
 export function uploadFile(
   file: SJDTAFile,
   projectId: string,
   progressCb: ResultCallback,
   finishedCb: SuccessCallback,
-  remoteFolder: string = "/uploads",
+  remoteFolder: string = '/uploads'
 ): child_process.ChildProcess {
-  const basename: string = path.basename(file.path.trim())
-  const dxRemotePath: string = `${projectId}: ${remoteFolder} /${basename}`
+  const basename: string = path.basename(file.path.trim());
+  const dxRemotePath: string = `${projectId}: ${remoteFolder} /${basename}`;
 
   // keep track of the largest reported progress to ensure that if callbacks
   // get out of order, the progress meter isn't jumping all around.
@@ -273,28 +285,30 @@ export function uploadFile(
 
   const uploadCmd = `dx upload -p --path '${dxRemotePath}' '${file.path}'`;
   return utils.runCommand(uploadCmd, (err: any, stdout: any) => {
-    if (err) { return finishedCbWrapper(err, null); }
+    if (err) {
+      return finishedCbWrapper(err, null);
+    }
 
     const tagCmd = `dx tag '${dxRemotePath}' ${config.NEEDS_ANALYSIS_TAG}`;
     utils.runCommand(tagCmd, (err: any, stdout: any) => {
-      if (err) { finishedCbWrapper(err, null); }
+      if (err) {
+        finishedCbWrapper(err, null);
+      }
       finishedCbWrapper(null, stdout);
     });
   });
-};
+}
 
 /**
  * Utility method to parse out projects from a 'dx find projects' command.
- * 
+ *
  * @param stdout STDOUT from a 'dx find projects' command.
  */
-function parseDxProjects(
-  stdout: string
-): SJDTAProject[] {
+function parseDxProjects(stdout: string): SJDTAProject[] {
   let results: SJDTAProject[] = [];
 
   // forEach is synchronous
-  stdout.split("\n").forEach((el: string) => {
+  stdout.split('\n').forEach((el: string) => {
     if (el.trim().length <= 0) return;
 
     let _: string;
@@ -302,7 +316,7 @@ function parseDxProjects(
     let dxLocation: string;
     let accessLevel: string;
 
-    [dxLocation, name, accessLevel, _] = el.split("\t");
+    [dxLocation, name, accessLevel, _] = el.split('\t');
     if (accessLevel) {
       results.push({
         project_name: name,
@@ -322,7 +336,7 @@ function parseDxProjects(
  * @param callback
  * @param dryrun Return a list of commands that would be run as string.
  * @returns List of projects or list of strings based on 'dryrun'.
-*/
+ */
 export function listProjects(
   allProjects: boolean,
   callback: SuccessCallback,
@@ -335,10 +349,7 @@ export function listProjects(
   let tabliteral = utils.getTabLiteral();
 
   if (!allProjects) {
-    tagsToCheck = [
-      config.TOOL_PROJECT_TAG,
-      config.DATA_PROJECT_TAG
-    ];
+    tagsToCheck = [config.TOOL_PROJECT_TAG, config.DATA_PROJECT_TAG];
   }
 
   async.map(
@@ -352,15 +363,19 @@ export function listProjects(
       }
 
       utils.runCommand(iterCmd, (err: any, stdout: string) => {
-        if (err) { return iteratorCallback(err, []); }
+        if (err) {
+          return iteratorCallback(err, []);
+        }
         return iteratorCallback(null, parseDxProjects(stdout));
       });
     },
     (err: any, results: string[][]) => {
-      if (err) { return callback(err, []); }
+      if (err) {
+        return callback(err, []);
+      }
 
       // flatten 2d 'results' array to 1d.
       return callback(null, [].concat.apply([], results));
     }
-  )
-};
+  );
+}

@@ -1,11 +1,11 @@
 /**
- * @file Customized queue functionality to multiplex tasks across the 
+ * @file Customized queue functionality to multiplex tasks across the
  * concurrency level specified by the user and rank them based on priority.
- * 
+ *
  * @author Clay McLeod
  */
 
-const async = require("async");
+const async = require('async');
 const PRIORITY = {
   UPLOAD: 1,
   DOWNLOAD: 2,
@@ -27,18 +27,13 @@ function log(...message: any[]): void {
 
 /**
  * Cleanup after failure or success of a file upload/download.
- * 
+ *
  * @param error error object from upload/download request.
  * @param result result object from upload/download request.
  * @param task task object which links to UI element.
  * @param callback
  */
-function handleFileFinish(
-  error: any,
-  result: any,
-  task: any,
-  callback: any
-) {
+function handleFileFinish(error: any, result: any, task: any, callback: any) {
   if (error) {
     // On failure
     console.error(error);
@@ -61,7 +56,6 @@ function handleFileFinish(
   }
 }
 
-
 /**
  * Handles processing for download tasks.
  *
@@ -70,7 +64,7 @@ function handleFileFinish(
  * @param callback
  */
 function downloadTask(task: any, callback: any) {
-  log("Starting download task: ", task);
+  log('Starting download task: ', task);
 
   task._rawFile.started = true;
   let process = (window as any).dx.downloadDxFile(
@@ -82,7 +76,7 @@ function downloadTask(task: any, callback: any) {
       task._rawFile.status = progress;
     },
     (error: any, result: any) => {
-      (window as any).VueApp.$store.commit("removeOperationProcess", {
+      (window as any).VueApp.$store.commit('removeOperationProcess', {
         filename: task.remote_location,
       });
 
@@ -90,12 +84,11 @@ function downloadTask(task: any, callback: any) {
     }
   );
 
-  (window as any).VueApp.$store.commit("addOperationProcess", {
+  (window as any).VueApp.$store.commit('addOperationProcess', {
     filename: task.remote_location,
     process,
   });
-};
-
+}
 
 /**
  * Handles processing for upload tasks.
@@ -105,7 +98,7 @@ function downloadTask(task: any, callback: any) {
  * @param callback
  */
 function uploadTask(task: any, callback: any) {
-  log("Starting upload task: ", task);
+  log('Starting upload task: ', task);
 
   task._rawFile.started = true;
   let process = (window as any).dx.uploadFile(
@@ -117,7 +110,7 @@ function uploadTask(task: any, callback: any) {
       }
     },
     (error: any, result: any) => {
-      (window as any).VueApp.$store.commit("removeOperationProcess", {
+      (window as any).VueApp.$store.commit('removeOperationProcess', {
         filename: task.local_location,
       });
 
@@ -125,7 +118,7 @@ function uploadTask(task: any, callback: any) {
     }
   );
 
-  (window as any).VueApp.$store.commit("addOperationProcess", {
+  (window as any).VueApp.$store.commit('addOperationProcess', {
     filename: task.local_location,
     process,
   });
@@ -139,7 +132,7 @@ function uploadTask(task: any, callback: any) {
  * @param callback
  */
 function toolInfoTask(task: any, callback: any) {
-  log("Tool info task: ", task);
+  log('Tool info task: ', task);
 
   (window as any).dx.describeDXItem(
     task._rawTool.dx_location,
@@ -149,41 +142,51 @@ function toolInfoTask(task: any, callback: any) {
         return callback(err, describe);
       }
 
-      if (describe && describe.properties && describe.properties["sjcp-tool-url"]) {
+      if (
+        describe &&
+        describe.properties &&
+        describe.properties['sjcp-tool-url']
+      ) {
         task._rawTool.isSJCPTool = true;
-        task._rawTool.SJCPToolURL = describe.properties["sjcp-tool-url"];
-      } else if (describe && describe.tags && describe.tags.includes("sjcp-project-data")) {
+        task._rawTool.SJCPToolURL = describe.properties['sjcp-tool-url'];
+      } else if (
+        describe &&
+        describe.tags &&
+        describe.tags.includes('sjcp-project-data')
+      ) {
         task._rawTool.isSJCPDataRequest = true;
       }
 
       let dataUsage = 0;
-      if (describe && "dataUsage" in describe) {
+      if (describe && 'dataUsage' in describe) {
         dataUsage += describe.dataUsage * 1e9;
       }
 
-      if ("sponsoredDataUsage" in describe) {
+      if ('sponsoredDataUsage' in describe) {
         dataUsage += describe.sponsoredDataUsage * 1e9;
       }
 
-      task._rawTool.size = (window as any).utils.readableFileSize(dataUsage, true);
+      task._rawTool.size = (window as any).utils.readableFileSize(
+        dataUsage,
+        true
+      );
       return callback(null, describe);
-    });
+    }
+  );
 }
 
-let workQueue = async.priorityQueue(
-  (task: any, callback: any) => {
-    if (task.type === "download") {
-      downloadTask(task, callback);
-    } else if (task.type === "upload") {
-      uploadTask(task, callback);
-    } else {
-      toolInfoTask(task, callback);
-    }
-  }, 2
-);
+let workQueue = async.priorityQueue((task: any, callback: any) => {
+  if (task.type === 'download') {
+    downloadTask(task, callback);
+  } else if (task.type === 'upload') {
+    uploadTask(task, callback);
+  } else {
+    toolInfoTask(task, callback);
+  }
+}, 2);
 
-workQueue.drain = function () {
-  log("The queue is now empty and awaiting more tasks.");
+workQueue.drain = function() {
+  log('The queue is now empty and awaiting more tasks.');
 };
 
 /**
@@ -197,18 +200,17 @@ workQueue.drain = function () {
  * @param task The task to be added to the queue.
  */
 function add(task: any) {
-  log("Adding task to queue: ", task);
-  if (task.type == "upload") {
+  log('Adding task to queue: ', task);
+  if (task.type == 'upload') {
     workQueue.push(task, PRIORITY.UPLOAD);
-  } else if (task.type == "download") {
+  } else if (task.type == 'download') {
     workQueue.push(task, PRIORITY.DOWNLOAD);
-  } else if (task.type == "toolInfo") {
+  } else if (task.type == 'toolInfo') {
     workQueue.push(task, PRIORITY.TOOL_INFO);
   } else {
-    throw new Error("Invalid task type: " + task.type);
+    throw new Error('Invalid task type: ' + task.type);
   }
 }
-
 
 /**
  * Adds an upload task to the queue.
@@ -216,10 +218,9 @@ function add(task: any) {
  * @param task Upload task to add to the queue.
  */
 export function addUploadTask(task: any) {
-  task.type = "upload";
+  task.type = 'upload';
   add(task);
 }
-
 
 /**
  * Adds a download task to the queue.
@@ -227,7 +228,7 @@ export function addUploadTask(task: any) {
  * @param task Download task to add to the queue.
  */
 export function addDownloadTask(task: any) {
-  task.type = "download";
+  task.type = 'download';
   add(task);
 }
 
@@ -237,7 +238,7 @@ export function addDownloadTask(task: any) {
  * @param task Tool info task to add to the queue.
  */
 export function addToolInfoTask(task: any) {
-  task.type = "toolInfo";
+  task.type = 'toolInfo';
   add(task);
 }
 
@@ -247,8 +248,8 @@ export function addToolInfoTask(task: any) {
  * @param type Type of tasks to remove
  */
 export function removeAllTaskOfType(type: string) {
-  log("Removing all tasks of type", type);
-  workQueue.remove(function (task: any) {
+  log('Removing all tasks of type', type);
+  workQueue.remove(function(task: any) {
     return task.data.type === type;
   });
 }

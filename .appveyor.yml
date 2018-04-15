@@ -7,7 +7,6 @@ install:
       $ENV:CI=true
       $ENV:PATH=$ENV:APPDATA + "\npm;" + $ENV:PATH
       yarn install
-      yarn compile
 skip_tags: true
 shallow_clone: true
 test_script:

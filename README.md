@@ -34,12 +34,18 @@ cd sjcloud-data-transfer-app
 yarn install
 
 # copy the example configuration
+# if you're on Mac or Linux use
+cp config-example.json config.json
+# if you're on Windows use
+copy config-example.json config.json 
 # edit as necessary
-cp config-example.json config.json 
 
 # NODE_ENV takes on values of 'production' or 'development'.
 # Unspecified defaults to production.
+# if you're on Mac or Linux use
 export NODE_ENV=production
+# if you're on Windows use
+set NODE_ENV=production
 
 # compile the frontend/backend code.
 gulp compile
@@ -65,13 +71,23 @@ cd sjcloud-data-transfer-app
 yarn install
 
 # copy the example configuration
-cp config-example.json config.json 
+# if you're on Mac or Linux use
+cp config-example.json config.json
+# if you're on Windows use
+copy config-example.json config.json 
 
 # edit the config.json file
+# if you're on Mac or Linux you can use
 vim config.json
+# if you're on Windows you can use
+notepad config.json
 
 # NODE_ENV takes on values of 'production' or 'development'.
+# Unspecified defaults to production.
+# if you're on Mac or Linux use
 export NODE_ENV=development
+# if you're on Windows use
+set NODE_ENV=development
 
 # compile the frontend/backend code.
 gulp compile
