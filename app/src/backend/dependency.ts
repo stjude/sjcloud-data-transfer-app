@@ -18,10 +18,10 @@ let platform = os.platform();
 if (!platform)
   throw new Error(`Unrecognized platform. Must be Windows, Mac, or Ubuntu.`);
 
-let startInitSJCloud;
-let startInstallAnaconda;
-let startSeedAnaconda;
-let startDXToolkit;
+let startInitSJCloud: any;
+let startInstallAnaconda: any;
+let startSeedAnaconda: any;
+let startDXToolkit: any;
 
 /**
  * Get download information from config.json based on package name.
