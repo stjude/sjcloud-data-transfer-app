@@ -10,6 +10,7 @@ export default function(ref) {
       tourHint: false,
       modals: {
         toolkit: 0,
+        beta: 1,
       },
     },
     getters: {

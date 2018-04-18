@@ -1,5 +1,8 @@
 <template>
 	<div class="row">
+    <custom-alert>
+      Hello!
+    </custom-alert>
 		<div class='col-xs-12 main'>
 			<div class="theater-heading">
 				<h1>Install</h1> 
@@ -38,6 +41,7 @@
 			</div>
 		</div>
 		<toolkit-modal v-show='toolkitModalVisibility'></toolkit-modal>
+    <beta-modal v-show='betaModalVisibility'></beta-modal>
 	</div>
 </template>
 
@@ -45,12 +49,16 @@
 import StepOutcome from './StepOutcome.vue';
 import SpinKit from './SpinKit.vue';
 import ToolkitModal from './ToolkitModal.vue';
+import BetaModal from './BetaModal.vue';
+import CustomAlert from './CustomAlert.vue';
 
 export default {
   components: {
     StepOutcome,
     ToolkitModal,
+    BetaModal,
     SpinKit,
+    CustomAlert,
   },
   data() {
     return {
@@ -70,6 +78,9 @@ export default {
     },
     toolkitModalVisibility() {
       return this.$store.getters.modalVisibility('toolkit');
+    },
+    betaModalVisibility() {
+      return this.$store.getters.modalVisibility('beta');
     },
   },
   mounted() {

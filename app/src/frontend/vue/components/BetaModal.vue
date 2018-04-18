@@ -10,26 +10,14 @@
 		      <div class="modal-body">
 		        <slot name="body">
               <p>
-		            The St. Jude Cloud Platform is powered by the genomics
-                processing company
-                <a href='' target='_blank' @click.prevent='open("https://www.dnanexus.com/", $event)'>DNAnexus</a>,
-                which provides a suite of tools to upload/download files to their
-                platform. We use
-                <a href='' target='_blank' @click.prevent='open("https://anaconde.org/", $event)'>Anaconda</a>
-                to orchestrate the installation of Python 2.7.13+ and other 
-                dependencies. You accept the respective licenses when you use 
-                this application.
+                Thank you for using the St. Jude Cloud data transfer application!
+                We are aware that some users (especially those using Windows)
+                are experiencing issues with the app. If you get stuck, please
+                follow <a href='' target='_blank' @click.prevent='open("https://stjude.github.io/sjcloud-docs/guides/data/upload-data.html",$event)'>this guide</a>
+                for how to upload/download data using the command line. You 
+                can also <a href='' target='_blank' @click.prevent='open("https://github.com/stjude/sjcloud-data-transfer-app/issues",$event)'>file an issue</a>
+                or <a href='' target='_blank' @click.prevent='open("https://stjude.cloud/contact/",$event)'>contact us</a>.
               </p>
-		          <h3>Learn more</h3>
-		          <ul>
-		          	<li><a href='' target='_blank' @click.prevent='open("https://wiki.dnanexus.com/Home",$event)'>About DNAnexus</a></li>
-                <li><a href='' target='_blank' @click.prevent='open("https://docs.anaconda.com/anaconda/",$event)'>About Anaconda</a></li>
-		          </ul>
-		          <h3>Licenses</h3>
-		          <ul>
-		          	<li><a href='' target='_blank' @click.prevent='open("https://github.com/dnanexus/dx-toolkit/blob/master/COPYING",$event)'>dx-toolkit</a></li>
-                <li><a href='' target='_blank' @click.prevent='open("https://conda.io/docs/license.html",$event)'>Anaconda</a></li>
-		          </ul>
 		        </slot>
 		      </div>
 		    </div>
@@ -42,7 +30,7 @@
 export default {
   methods: {
     hide() {
-      this.$store.commit('hideModal', 'toolkit');
+      this.$store.commit('hideModal', 'beta');
     },
     open(url, event) {
       event.preventDefault();
@@ -87,7 +75,6 @@ p {
   border-radius: 2px;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
   transition: all 0.3s ease;
-  font-family: Helvetica, Arial, sans-serif;
 }
 
 .modal-header h3 {
@@ -97,7 +84,7 @@ p {
 
 .modal-body {
   margin: 20px 0;
-  font-size: 18px;
+  font-size: 24px;
 }
 
 .modal-default-button {
