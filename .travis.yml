@@ -1,20 +1,30 @@
-os: osx
-osx_image: xcode9.2
+sudo: required
+os: 
+  - osx
+  - linux
 language: node_js
 node_js:
-  - "node"
+  - "9"
+addons:
+  chrome: stable
+  apt:
+    packages:
+    - python2.7
+    - python2.7-dev
 before_install:
   - cp config-example.json config.json
-  - brew update
-  - brew outdated google-chrome || brew cask install google-chrome
-  - brew outdated rpm || brew install rpm
+  - echo "$TRAVIS_OS_NAME"
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      brew update;
+      brew outdated rpm || brew install rpm;
+      brew outdated python2 || brew install python2;
+    fi;
 install:
   - yarn install
 after_success: 
-  - yarn coverage
-  - if [[ $TRAVIS_BRANCH == "development" ]] || [[ $TRAVIS_BRANCH == "master" ]]; then
-      yarn dist:publish-unix;
-    fi
-cache:
-  directories:
-    - "node_modules"
+  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      yarn coverage;
+      if [[ $TRAVIS_BRANCH == "development" ]] || [[ $TRAVIS_BRANCH == "master" ]]; then
+          yarn dist:publish-unix;
+      fi;
+    fi;

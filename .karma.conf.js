@@ -1,6 +1,6 @@
 const webpackConfig = require('./.webpack.conf.js');
 
-module.exports = function (config) {
+module.exports = function(config) {
   // no need to extract css into a file, so
   // to take out ExtractTextPlugin rule for .less,
   // assumed to be the LAST rule in the rules array
@@ -12,7 +12,13 @@ module.exports = function (config) {
   webpackConfig.plugins = [];
 
   config.set({
-    browsers: ['Chrome'],
+    browsers: ['ChromeHeadlessNoSandbox'],
+    customLaunchers: {
+      ChromeHeadlessNoSandbox: {
+        base: 'ChromeHeadless',
+        flags: ['--no-sandbox'],
+      },
+    },
     frameworks: ['jasmine'],
     files: [
       './app/bin/frontend/app.bundle.css',
