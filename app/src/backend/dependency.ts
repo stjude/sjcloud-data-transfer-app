@@ -1,3 +1,5 @@
+/** @module */
+
 const os = require('os');
 const path = require('path');
 const fs = require('fs-extra');
@@ -17,11 +19,6 @@ let arch = os.arch();
 let platform = os.platform();
 if (!platform)
   throw new Error(`Unrecognized platform. Must be Windows, Mac, or Ubuntu.`);
-
-let startInitSJCloud: any;
-let startInstallAnaconda: any;
-let startSeedAnaconda: any;
-let startDXToolkit: any;
 
 /**
  * Get download information from config.json based on package name.
@@ -91,6 +88,11 @@ export function installAnaconda(
   finishedCb: SuccessCallback,
   removeAnacondaIfExists: boolean = true
 ) {
+  let startInitSJCloud: [number, number];
+  let startInstallAnaconda: [number, number];
+  let startSeedAnaconda: [number, number];
+  let startDXToolkit: [number, number];
+
   if (existsSync(utils.lookupPath('ANACONDA_HOME'))) {
     logging.debug('');
     logging.debug('== Installing Dependencies ==');
