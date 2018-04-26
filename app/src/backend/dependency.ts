@@ -1,3 +1,5 @@
+/** @module */
+
 const os = require('os');
 const path = require('path');
 const fs = require('fs-extra');
@@ -118,6 +120,11 @@ export function installAnaconda(
   finishedCb: SuccessCallback,
   removeAnacondaIfExists: boolean = true
 ) {
+  let startInitSJCloud: [number, number];
+  let startInstallAnaconda: [number, number];
+  let startSeedAnaconda: [number, number];
+  let startDXToolkit: [number, number];
+
   if (existsSync(utils.lookupPath('ANACONDA_HOME'))) {
     logging.debug('');
     logging.debug('== Installing Dependencies ==');
@@ -150,6 +157,7 @@ export function installAnaconda(
   let destination = path.join(tmpdir, basename);
 
   let initSJCloudHome = () => {
+    startInitSJCloud = process.hrtime();
     progressCb(25, 'Installing...');
     return new Promise((resolve, reject) => {
       utils.initSJCloudHome((error, result) => {
@@ -162,6 +170,13 @@ export function installAnaconda(
   let installAnaconda = () => {
     logging.debug('  [*] Installing anaconda.');
     progressCb(30, 'Installing...');
+    let durationInitSJCloud = process.hrtime(startInitSJCloud);
+    logging.silly(
+      `=== Initializing SJ Cloud took ${
+        durationInitSJCloud[0]
+      }s and ${durationInitSJCloud[1] / 100000}ms to run ===`
+    );
+    startInstallAnaconda = process.hrtime();
     return new Promise((resolve, reject) => {
       const command = getAnacondaInstallCommand(destination);
       logging.silly(
@@ -204,7 +219,13 @@ export function installAnaconda(
   let seedAnaconda = () => {
     logging.debug('  [*] Seeding anaconda environment.');
     progressCb(60, 'Installing...');
-
+    let durationInstallAnaconda = process.hrtime(startInstallAnaconda);
+    logging.silly(
+      `=== Anaconda installation took ${
+        durationInstallAnaconda[0]
+      }s and ${durationInstallAnaconda[1] / 100000}ms to run ===`
+    );
+    startSeedAnaconda = process.hrtime();
     return buildDefaultPackageSpecs().then(
       specs =>
         new Promise((resolve, reject) =>
@@ -219,6 +240,13 @@ export function installAnaconda(
   let installDXToolkit = () => {
     logging.debug('  [*] Installing DX-Toolkit.');
     progressCb(95, 'Installing...');
+    let durationSeedAnaconda = process.hrtime(startSeedAnaconda);
+    logging.silly(
+      `=== Anaconda Seeding took ${
+        durationSeedAnaconda[0]
+      }s and ${durationSeedAnaconda[1] / 100000}ms to run ===`
+    );
+    startDXToolkit = process.hrtime();
     return new Promise((resolve, reject) => {
       utils.runCommand(
         'pip install dxpy',
@@ -235,16 +263,29 @@ export function installAnaconda(
   progressCb(1, 'Downloading...');
   logging.debug('  [*] Downloading anaconda.');
   logging.silly(`      [-] Download location: ${destination}`);
+  let startInstall = process.hrtime();
   downloadFile(downloadURL, destination)
     .then(initSJCloudHome)
     .then(installAnaconda)
     .then(seedAnaconda)
     .then(installDXToolkit)
     .then(() => {
+      let durationInstallDX = process.hrtime(startDXToolkit);
+      logging.silly(
+        `=== DX Installation took ${
+          durationInstallDX[0]
+        }s and ${durationInstallDX[1] / 100000}ms to run ===`
+      );
       return new Promise((resolve, reject) => {
         progressCb(100, 'Finished!');
         finishedCb(null, true);
         resolve(true);
+        let durationInstall = process.hrtime(startInstall);
+        logging.silly(
+          ` === Duration of total Installation process: ${
+            durationInstall[0]
+          }s ${durationInstall[1] / 1000000}ms ===`
+        );
       });
     })
     .catch((error: any) => {
