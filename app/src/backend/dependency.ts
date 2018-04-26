@@ -172,7 +172,7 @@ export function installAnaconda(
     progressCb(30, 'Installing...');
     let durationInitSJCloud = process.hrtime(startInitSJCloud);
     logging.silly(
-      `=== SJ Cloud took ${
+      `=== Initializing SJ Cloud took ${
         durationInitSJCloud[0]
       }s and ${durationInitSJCloud[1] / 100000}ms to run ===`
     );
@@ -219,7 +219,13 @@ export function installAnaconda(
   let seedAnaconda = () => {
     logging.debug('  [*] Seeding anaconda environment.');
     progressCb(60, 'Installing...');
-
+    let durationInstallAnaconda = process.hrtime(startInstallAnaconda);
+    logging.silly(
+      `=== Anaconda installation took ${
+        durationInstallAnaconda[0]
+      }s and ${durationInstallAnaconda[1] / 100000}ms to run ===`
+    );
+    startSeedAnaconda = process.hrtime();
     return buildDefaultPackageSpecs().then(
       specs =>
         new Promise((resolve, reject) =>
