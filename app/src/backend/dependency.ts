@@ -15,6 +15,38 @@ import {
 import {downloadFile} from './utils';
 import * as logging from './logging-remote';
 
+// Package names are from `data.actions.{FETCH, LINK}` in the final object after
+// running `conda create --json --name sjcloud python=2.7.14`.
+const CONDA_ENV_DEFAULT_PACKAGE_NAMES = new Set([
+  'ca-certificates',
+  'certifi',
+  'libcxx',
+  'libcxxabi',
+  'libedit',
+  'libffi',
+  'ncurses',
+  'openssl',
+  'pip',
+  'python',
+  'readline',
+  'setuptools',
+  'sqlite',
+  'tk',
+  'wheel',
+  'zlib',
+]);
+
+interface CondaPackage {
+  base_url: string | null;
+  build_number: number;
+  build_string: string;
+  channel: string;
+  dist_name: string;
+  name: string;
+  platform: string | null;
+  version: string;
+}
+
 let arch = os.arch();
 let platform = os.platform();
 if (!platform)
@@ -163,25 +195,40 @@ export function installAnaconda(
     });
   };
 
+  let buildDefaultPackageSpecs = (): Promise<string[]> => {
+    logging.debug('    [*] Looking up default package specs.');
+
+    return new Promise((resolve, reject) => {
+      const cmd = 'conda list --json';
+
+      utils.runCommand(cmd, (error, result) => {
+        if (error) {
+          reject(error);
+        }
+
+        const list: CondaPackage[] = JSON.parse(result);
+        const specs = list
+          .filter(pkg => CONDA_ENV_DEFAULT_PACKAGE_NAMES.has(pkg.name))
+          .map(pkg => `${pkg.name}=${pkg.version}=${pkg.build_string}`);
+
+        resolve(specs);
+      });
+    });
+  };
+
   let seedAnaconda = () => {
     logging.debug('  [*] Seeding anaconda environment.');
     progressCb(60, 'Installing...');
-    let durationInstallAnaconda = process.hrtime(startInstallAnaconda);
-    logging.silly(
-      `=== Anaconda Installation took ${
-        durationInstallAnaconda[0]
-      }s and ${durationInstallAnaconda[1] / 100000}ms to run ===`
+
+    return buildDefaultPackageSpecs().then(
+      specs =>
+        new Promise((resolve, reject) =>
+          utils.runCommand(
+            `conda create -n sjcloud ${specs.join(' ')} -y`,
+            (error, result) => (error ? reject(error) : resolve(result))
+          )
+        )
     );
-    startSeedAnaconda = process.hrtime();
-    return new Promise((resolve, reject) => {
-      utils.runCommand(
-        `conda create -n sjcloud python=2.7.14 -y`,
-        (error, result) => {
-          if (error) return reject(error);
-          return resolve(result);
-        }
-      );
-    });
   };
 
   let installDXToolkit = () => {
