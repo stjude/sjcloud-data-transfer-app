@@ -3,6 +3,7 @@
  **/
 
 import {ChildProcess} from 'child_process';
+import powershell from './powershell';
 import {
   SuccessCallback,
   CommandCallback,
@@ -17,11 +18,10 @@ const https = require('https');
 const mkdirp = require('mkdirp');
 const _crypto = require('crypto');
 const treeKill = require('tree-kill');
-const powershell = require('node-powershell');
 
 const {logging} = require('./logging');
 const {remote, shell} = require('electron');
-const {exec, spawn, execSync, spawnSync} = require('child_process');
+const {exec} = require('child_process');
 
 /**
  * CONSTANTS
@@ -199,49 +199,20 @@ function runCommandUnix(
  * @param {string} cmd The command to be run.
  * @param {CommandCallback} innerCallback Callback to process the command output.
  */
-function runCommandWindows(cmd: string, innerCallback: CommandCallback) {
+function runCommandWindows(
+  cmd: string,
+  innerCallback: CommandCallback
+): ChildProcess {
   if (platform !== 'win32') {
     throw new Error(`Invalid platform for 'runCommandWindows': ${platform}`);
   }
 
-  let ps = new powershell({
-    executionPolicy: 'Bypass',
-    noProfile: true,
-    debugMsg: false,
-  });
+  const bootstrapCommand = windowsBootstrapCommand() || '';
+  cmd = `${bootstrapCommand}; ${cmd}`;
 
-  let bootstrapCommand = windowsBootstrapCommand();
-  if (bootstrapCommand) {
-    ps.addCommand(bootstrapCommand);
-  }
+  logging.silly(cmd);
 
-  ps.addCommand(cmd);
-  logging.silly(`Running commands: ${ps._cmds}`);
-
-  let stdout = '';
-  let stderr = '';
-
-  ps._proc.stdout.on('data', function(data: any) {
-    stdout += data.toString();
-  });
-
-  ps._proc.stderr.on('data', function(data: any) {
-    stderr += data.toString();
-  });
-
-  ps.on('end', function(code: any) {
-    innerCallback(null, stdout, stderr);
-  });
-
-  ps.on('err', (err: any) => {
-    ps.dispose();
-  });
-  ps.on('output', (err: any) => {
-    ps.dispose();
-  });
-
-  ps.invoke();
-  return ps;
+  return powershell(cmd, innerCallback);
 }
 
 /**
@@ -266,10 +237,6 @@ export function runCommand(
     if (raiseOnStderr && stderr && stderr.length > 0) {
       logging.error(stderr);
       return callback(stderr, null);
-    }
-
-    if (platform === 'win32' && stdout.includes('EOI')) {
-      stdout = stdout.replace('EOI', '');
     }
 
     if (stdout.trim() === 'False') {

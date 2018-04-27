@@ -77,7 +77,6 @@
     "merge-stream": "^1.0.1",
     "mkdirp": "^0.5.1",
     "moment": "^2.19.3",
-    "node-powershell": "^3.3.1",
     "pem": "^1.9.7",
     "quasar-extras": "^0.0.8",
     "quasar-framework": "^0.14.7",
