@@ -133,7 +133,7 @@ function unixBootstrapCommand(): string {
     /* ignore */
   }
 
-  return paths.length != 0 ? `export PATH=${paths.join(':')}:$PATH;` : null;
+  return paths.length != 0 ? `export PATH="${paths.join(':')}:$PATH";` : null;
 }
 
 /**
@@ -188,7 +188,7 @@ function runCommandUnix(
     cmd = `${bootstrapCommand} ${cmd}`;
   }
 
-  cmd = `/usr/bin/env bash -c "${cmd}"`;
+  cmd = `/usr/bin/env bash -c '${cmd}'`;
   logging.silly(cmd);
   return exec(cmd, {maxBuffer: 10000000}, innerCallback);
 }
