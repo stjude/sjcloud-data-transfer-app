@@ -17,9 +17,10 @@ import * as utils from './utils';
 import * as logging from './logging';
 import * as child_process from 'child_process';
 
+import config from './config';
+
 const async = require('async');
 const expandHomeDir = require('expand-home-dir');
-const config = require('../../../config.json');
 const platform = os.platform();
 
 /**********************************************************

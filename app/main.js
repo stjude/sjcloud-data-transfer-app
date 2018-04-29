@@ -10,44 +10,41 @@
 
 /* eslint-disable no-unused-vars */
 
-const os = require("os");
-const electron = require("electron");
+const os = require('os');
+const electron = require('electron');
 
 const app = electron.app;
 const menu = electron.Menu;
 
-const config = require("../config.json");
-const ui = require("./bin/backend/ui");
-const {
-  logging,
-  logLevel,
-} = require("./bin/backend/logging");
-const utils = require("./bin/backend/utils");
+const config = require('./bin/backend/config').default;
+const ui = require('./bin/backend/ui');
+const {logging, logLevel} = require('./bin/backend/logging');
+const utils = require('./bin/backend/utils');
 
 const platform = os.platform();
-const nodeEnvironment = process.env.NODE_ENV || "production";
+const nodeEnvironment = process.env.NODE_ENV || 'production';
 
-if (nodeEnvironment !== "production" && nodeEnvironment !== "development") {
+if (nodeEnvironment !== 'production' && nodeEnvironment !== 'development') {
   logging.error("NODE_ENV must be 'production' or 'development'!");
   process.exit();
 }
 
-logging.info("");
-logging.info(" ###############################################");
-logging.info(" # Starting the SJCP Data Transfer Application #");
-logging.info(" ###############################################");
-logging.info("");
-logging.info(" == Startup Information ==");
-logging.info("   [*] Environment: " + nodeEnvironment);
-logging.info("   [*] Log Level: " + logLevel);
-logging.info("   [*] Process arguments:");
+logging.info('');
+logging.info(' ###############################################');
+logging.info(' # Starting the SJCP Data Transfer Application #');
+logging.info(' ###############################################');
+logging.info('');
+logging.info(' == Startup Information ==');
+logging.info('   [*] Environment: ' + nodeEnvironment);
+logging.info('   [*] Log Level: ' + logLevel);
+logging.info('   [*] Process arguments:');
 process.argv.forEach((elem, index) => {
-  logging.info("       [-] " + index + ": " + elem);
+  logging.info('       [-] ' + index + ': ' + elem);
 });
-logging.info("");
-logging.info(" == Bootstrapping Environment ==");
-const ipc = require("./bin/backend/ipc");
-const protocol = require("./bin/backend/protocol");
+logging.info('');
+logging.info(' == Bootstrapping Environment ==');
+const ipc = require('./bin/backend/ipc');
+const protocol = require('./bin/backend/protocol');
 
 /**
  * START PROGRAM.
@@ -65,7 +62,6 @@ const protocol = require("./bin/backend/protocol");
 let mainWindow;
 let startupOptions = {};
 
-
 /**
  * Performs commands to bootstrap the main window.
  * @param {*} mainWindow The window.
@@ -74,21 +70,19 @@ function bootstrapWindow(mainWindow) {
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
   if (!config.CHROMIUM_MENU) {
-    logging.debug("Production menu enabled (chromium menu disabled).");
-    const {
-      menuConfig,
-    } = require("./bin/backend/menu.js");
+    logging.debug('Production menu enabled (chromium menu disabled).');
+    const {menuConfig} = require('./bin/backend/menu.js');
     menu.setApplicationMenu(menu.buildFromTemplate(menuConfig));
   } else {
-    logging.debug("Chromium menu enabled (production menu disabled).");
+    logging.debug('Chromium menu enabled (production menu disabled).');
   }
 
-  if (nodeEnvironment === "production" && config.AUTOUPDATE_ENABLED === true) {
-    const autoupdater = require("./bin/backend/autoupdate");
+  if (nodeEnvironment === 'production' && config.AUTOUPDATE_ENABLED === true) {
+    const autoupdater = require('./bin/backend/autoupdate');
     autoupdater.startUpdateClient();
   }
 
-  logging.info("");
+  logging.info('');
 }
 
 /**
@@ -102,10 +96,12 @@ function ensureWindow(callback = undefined) {
     return;
   }
 
-  if (mainWindow === null ||
+  if (
+    mainWindow === null ||
     mainWindow === undefined ||
-    mainWindow.isDestroyed()) {
-    ui.createWindow((mw) => {
+    mainWindow.isDestroyed()
+  ) {
+    ui.createWindow(mw => {
       mainWindow = mw;
       bootstrapWindow(mainWindow);
       if (callback !== undefined) {
@@ -115,12 +111,12 @@ function ensureWindow(callback = undefined) {
   }
 }
 
-app.on("ready", () => {
+app.on('ready', () => {
   ensureWindow(() => {
     // Handle open-url event.
-    let uriCommand = "";
+    let uriCommand = '';
 
-    if (platform === "win32") {
+    if (platform === 'win32') {
       uriCommand = protocol.handleURIWindows();
     } else if (startupOptions.open_url_event_occurred) {
       uriCommand = protocol.handleURIMac(
@@ -131,17 +127,19 @@ app.on("ready", () => {
 
     if (uriCommand) {
       logging.silly(`Running JS command: ${uriCommand}`);
-      mainWindow.webContents.executeJavaScript("window.setCurrPath = 'upload';");
+      mainWindow.webContents.executeJavaScript(
+        "window.setCurrPath = 'upload';"
+      );
       mainWindow.webContents.executeJavaScript(uriCommand);
     }
   });
 });
 
-app.on("activate", () => {
+app.on('activate', () => {
   ensureWindow();
 });
 
-app.on("open-url", (event, url) => {
+app.on('open-url', (event, url) => {
   if (!app.isReady()) {
     // this will execute if the application is not open.
     startupOptions.open_url_event_occurred = true;
@@ -150,28 +148,33 @@ app.on("open-url", (event, url) => {
   } else {
     uriCommand = protocol.handleURIMac(event, url);
 
-    if (uriCommand !== "") {
+    if (uriCommand !== '') {
       ensureWindow(() => {
         logging.silly(`Running JS command: ${uriCommand}`);
         mainWindow.webContents.executeJavaScript("window.currPath = 'upload';");
         mainWindow.webContents.executeJavaScript(uriCommand);
-        mainWindow.webContents.executeJavaScript("window.VueApp.$store.dispatch('updateToolsFromRemote', true);");
+        mainWindow.webContents.executeJavaScript(
+          "window.VueApp.$store.dispatch('updateToolsFromRemote', true);"
+        );
       });
     }
   }
 });
 
-app.on("window-all-closed", () => {
-  if (process.platform !== "darwin") {
+app.on('window-all-closed', () => {
+  if (process.platform !== 'darwin') {
     app.quit();
   }
 });
 
-app.on("certificate-error", (event, webContents, url, error, certificate, callback) => {
-  if (url.startsWith("https://localhost:4433/authcb?code=")) {
-    event.preventDefault();
-    callback(true);
-  } else {
-    callback(false);
+app.on(
+  'certificate-error',
+  (event, webContents, url, error, certificate, callback) => {
+    if (url.startsWith('https://localhost:4433/authcb?code=')) {
+      event.preventDefault();
+      callback(true);
+    } else {
+      callback(false);
+    }
   }
-});
+);

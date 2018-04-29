@@ -1,5 +1,5 @@
 const dx = require('../../../app/bin/backend/dx');
-const config = require('../../../config.json');
+import config from '../../../app/bin/backend/config';
 
 const sampleToken = 'XXXXXXXXXXX';
 const sampleDxFile = 'file-XXXXXXXXXXX';

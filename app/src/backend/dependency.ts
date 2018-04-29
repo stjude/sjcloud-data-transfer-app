@@ -1,7 +1,7 @@
 const os = require('os');
 const path = require('path');
 const fs = require('fs-extra');
-const config = require('../../../config.json');
+import config from './config';
 import * as utils from './utils';
 import {existsSync} from 'fs';
 import {
