@@ -88,7 +88,7 @@ export interface SJDTAProject {
   access_level: string;
 }
 
-export interface DXDownloadInfo {
+export interface DownloadInfo {
   URL: string;
   SHA256SUM: string;
 }

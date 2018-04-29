@@ -16,7 +16,7 @@ const electron = require('electron');
 const app = electron.app;
 const menu = electron.Menu;
 
-const config = require('../config.json');
+const config = require('./bin/backend/config').default;
 const ui = require('./bin/backend/ui');
 const {logging, logLevel} = require('./bin/backend/logging');
 const utils = require('./bin/backend/utils');
@@ -37,9 +37,13 @@ logging.info('');
 logging.info(' == Startup Information ==');
 logging.info('   [*] Environment: ' + nodeEnvironment);
 logging.info('   [*] Log Level: ' + logLevel);
-logging.info('   [*] Process arguments:');
+logging.debug('   [*] Configuration:');
+for (let elem in config) {
+  logging.debug(`       [-] ${elem}: ${config[elem]}`);
+}
+logging.debug('   [*] Process arguments:');
 process.argv.forEach((elem, index) => {
-  logging.info('       [-] ' + index + ': ' + elem);
+  logging.debug('       [-] ' + index + ': ' + elem);
 });
 logging.info('');
 logging.info(' == Bootstrapping Environment ==');
@@ -70,9 +74,7 @@ function bootstrapWindow(mainWindow) {
   mainWindow.loadURL(`file://${__dirname}/index.html`);
 
   if (!config.CHROMIUM_MENU) {
-    logging.debug(
-      '       [-] Production menu enabled (chromium menu disabled).'
-    );
+    logging.debug('Production menu enabled (chromium menu disabled).');
     const {menuConfig} = require('./bin/backend/menu.js');
     menu.setApplicationMenu(menu.buildFromTemplate(menuConfig));
   } else {
