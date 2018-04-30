@@ -3,17 +3,14 @@
   "editor.detectIndentation": false,
   "editor.insertSpaces": true,
   "editor.formatOnSave": true,
-  "editor.rulers": [
-    80,
-    120
-  ],
+  "editor.rulers": [80, 120],
   "search.exclude": {
     "**/node_modules": true,
     "**/app/bin/": true,
     "**/app/src/frontend/css/bootstrap/": true,
     "**/dist/": true,
     "**/.tmp/": true,
-    "**/.nyc_output/": true,
+    "**/.nyc_output/": true
   },
   "files.exclude": {
     "**/.git": true,
@@ -23,6 +20,7 @@
     "**/.nyc_output/": true,
     "**/CVS": true,
     "**/.DS_Store": true,
-    "**/node_modules": true,
-  }
+    "**/node_modules": true
+  },
+  "standard.enable": false
 }
