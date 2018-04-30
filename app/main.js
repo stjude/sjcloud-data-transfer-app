@@ -37,9 +37,13 @@ logging.info('');
 logging.info(' == Startup Information ==');
 logging.info('   [*] Environment: ' + nodeEnvironment);
 logging.info('   [*] Log Level: ' + logLevel);
-logging.info('   [*] Process arguments:');
+logging.debug('   [*] Configuration:');
+for (let elem in config) {
+  logging.debug(`       [-] ${elem}: ${config[elem]}`);
+}
+logging.debug('   [*] Process arguments:');
 process.argv.forEach((elem, index) => {
-  logging.info('       [-] ' + index + ': ' + elem);
+  logging.debug('       [-] ' + index + ': ' + elem);
 });
 logging.info('');
 logging.info(' == Bootstrapping Environment ==');
