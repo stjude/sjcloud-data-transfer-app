@@ -10,7 +10,7 @@ import {
   ErrorCallback,
   ProgressCallback,
 } from './types';
-import {downloadFile} from './utils';
+import {downloadFile, Timer} from './utils';
 import * as logging from './logging-remote';
 
 // Package names are from `data.actions.{FETCH, LINK}` in the final object after
@@ -123,7 +123,7 @@ export function installAnaconda(
     logging.debug('== Installing Dependencies ==');
 
     if (removeAnacondaIfExists) {
-      logging.debug('  [*] Removing existing anaconda installation.');
+      logging.debug('   [*] Removing existing anaconda installation.');
       fs.remove(utils.lookupPath('ANACONDA_HOME')).catch((error: any) => {
         throw error;
       });
@@ -160,7 +160,9 @@ export function installAnaconda(
   };
 
   let installAnaconda = () => {
-    logging.debug('  [*] Installing anaconda.');
+    let timer = new Timer();
+    timer.start();
+    logging.debug('   [*] Installing anaconda.');
     progressCb(30, 'Installing...');
     return new Promise((resolve, reject) => {
       const command = getAnacondaInstallCommand(destination);
@@ -172,6 +174,8 @@ export function installAnaconda(
       utils.runCommand(
         command,
         (error, result) => {
+          timer.stop();
+          logging.debug(`       [-] Took ${timer.duration()} ms.`);
           if (error) return reject(error);
           return resolve(result);
         },
@@ -181,7 +185,7 @@ export function installAnaconda(
   };
 
   let buildDefaultPackageSpecs = (): Promise<string[]> => {
-    logging.debug('    [*] Looking up default package specs.');
+    logging.debug('       [-] Looking up default package specs.');
 
     return new Promise((resolve, reject) => {
       const cmd = 'conda list --json';
@@ -202,7 +206,10 @@ export function installAnaconda(
   };
 
   let seedAnaconda = () => {
-    logging.debug('  [*] Seeding anaconda environment.');
+    let timer = new Timer();
+    timer.start();
+    logging.info('   [*] Installing anaconda.');
+    logging.debug('       [-] Seeding environment.');
     progressCb(60, 'Installing...');
 
     return buildDefaultPackageSpecs().then(
@@ -210,14 +217,18 @@ export function installAnaconda(
         new Promise((resolve, reject) =>
           utils.runCommand(
             `conda create -n sjcloud ${specs.join(' ')} -y`,
-            (error, result) => (error ? reject(error) : resolve(result))
+            (error, result) => {
+              timer.stop();
+              logging.debug(`       [-] Took ${timer.duration()} ms.`);
+              error ? reject(error) : resolve(result);
+            }
           )
         )
     );
   };
 
   let installDXToolkit = () => {
-    logging.debug('  [*] Installing DX-Toolkit.');
+    logging.debug('   [*] Installing DX-Toolkit.');
     progressCb(95, 'Installing...');
     return new Promise((resolve, reject) => {
       utils.runCommand(
@@ -232,15 +243,25 @@ export function installAnaconda(
     });
   };
 
+  let totalTimer = new Timer();
+  totalTimer.start();
   progressCb(1, 'Downloading...');
-  logging.debug('  [*] Downloading anaconda.');
-  logging.silly(`      [-] Download location: ${destination}`);
+  logging.debug('   [*] Downloading anaconda.');
+  logging.debug(`       [-] Download location: ${destination}`);
+  let downloadTimer = new Timer();
+  downloadTimer.start();
   downloadFile(downloadURL, destination)
+    .then(() => {
+      downloadTimer.stop();
+      logging.debug(`       [-] Took ${downloadTimer.duration()} ms.`);
+    })
     .then(initSJCloudHome)
     .then(installAnaconda)
     .then(seedAnaconda)
     .then(installDXToolkit)
     .then(() => {
+      totalTimer.stop();
+      logging.debug(`   [*] Full install took ${totalTimer.duration()} ms. `);
       return new Promise((resolve, reject) => {
         progressCb(100, 'Finished!');
         finishedCb(null, true);
