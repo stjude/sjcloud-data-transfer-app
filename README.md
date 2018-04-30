@@ -54,7 +54,7 @@ yarn install                # install dependencies
 export NODE_ENV=development # set the Node environment. Can be 'production' or 'development'.
 # set NODE_ENV=development  # if you're on Windows use.
 gulp compile                # compile the frontend/backend code.
-yarn start                  # start the application
+yarn start:dev              # start the application
 ```
 
 Note that we recommend that you use the following command line arguments when developing:

@@ -1,4 +1,5 @@
 interface Config {
+  [index: string]: string | boolean | object;
   TOOL_PROJECT_TAG: string;
   DATA_PROJECT_TAG: string;
   DOWNLOADABLE_TAG: string;
@@ -6,7 +7,43 @@ interface Config {
   AUTOUPDATE_ENABLED: boolean;
   CHROMIUM_MENU: boolean;
   UPDATE_SERVER: string;
-  DOWNLOAD_INFO: object;
+  DOWNLOAD_INFO: {
+    [index: string]: object;
+    ANACONDA: {
+      [index: string]: object;
+      WIN32: {
+        [index: string]: object;
+        IA32: {
+          [index: string]: string;
+          URL: string;
+          SHA256SUM: string;
+        };
+        X64: {
+          [index: string]: string;
+          URL: string;
+          SHA256SUM: string;
+        };
+      };
+      DARWIN: {
+        [index: string]: string;
+        URL: string;
+        SHA256SUM: string;
+      };
+      LINUX: {
+        [index: string]: object;
+        IA32: {
+          [index: string]: string;
+          URL: string;
+          SHA256SUM: string;
+        };
+        X64: {
+          [index: string]: string;
+          URL: string;
+          SHA256SUM: string;
+        };
+      };
+    };
+  };
 }
 
 let config: Config = {

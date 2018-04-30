@@ -53,32 +53,27 @@ if (!platform)
 /**
  * Get download information from config based on package name.
  *
- * @param packagename Name of the package
+ * @param package_name Name of the package
  * @returns Relevant URL and SHA256 sum.
  */
-export function getDownloadInfo(packagename: string): DXDownloadInfo {
+export function getDownloadInfo(package_name: string): DXDownloadInfo {
   let platformUpper = platform.toUpperCase();
   let archUpper = arch.toUpperCase();
-  packagename = packagename.toUpperCase();
+  let result = null;
+  package_name = package_name.toUpperCase();
 
-  // Combining these made the code unreadable.
-  if (!('DOWNLOAD_INFO' in config)) {
-    return null;
-  }
-  if (!(packagename in config['DOWNLOAD_INFO'])) {
-    return null;
-  }
-  if (!(platformUpper in config['DOWNLOAD_INFO'][packagename])) {
-    return null;
-  }
-
-  let dlInfo = config['DOWNLOAD_INFO'][packagename][platformUpper];
-  if ('IA32' in dlInfo || 'X64' in dlInfo) {
-    if (!(archUpper in dlInfo)) return null;
-    dlInfo = dlInfo[archUpper];
+  if (package_name in config['DOWNLOAD_INFO']) {
+    const package_info = config['DOWNLOAD_INFO'][package_name];
+    if (platformUpper in package_info) {
+      let download_info = package_info[platformUpper];
+      if (archUpper in download_info) {
+        download_info = download_info[archUpper];
+      }
+      result = download_info;
+    }
   }
 
-  return dlInfo;
+  return result;
 }
 
 /**
