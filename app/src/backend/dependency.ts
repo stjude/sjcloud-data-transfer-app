@@ -150,6 +150,7 @@ export function installAnaconda(
   let destination = path.join(tmpdir, basename);
 
   let initSJCloudHome = () => {
+    startInitSJCloud = performance.now();
     progressCb(25, 'Installing...');
     return new Promise((resolve, reject) => {
       utils.initSJCloudHome((error, result) => {
@@ -160,6 +161,12 @@ export function installAnaconda(
   };
 
   let installAnaconda = () => {
+    startInstallAnaconda = performance.now();
+    logging.info(
+      `  [*] Initializing SJ Cloud Home took ${Math.round(
+        startInstallAnaconda - startInitSJCloud
+      )} milliseconds. `
+    );
     logging.debug('  [*] Installing anaconda.');
     progressCb(30, 'Installing...');
     return new Promise((resolve, reject) => {
@@ -202,6 +209,12 @@ export function installAnaconda(
   };
 
   let seedAnaconda = () => {
+    startSeedAnaconda = performance.now();
+    logging.info(
+      `  [*] Installing anaconda took ${Math.round(
+        startSeedAnaconda - startInstallAnaconda
+      )} milliseconds. `
+    );
     logging.debug('  [*] Seeding anaconda environment.');
     progressCb(60, 'Installing...');
 
@@ -217,6 +230,12 @@ export function installAnaconda(
   };
 
   let installDXToolkit = () => {
+    startInstallDX = performance.now();
+    logging.info(
+      `  [*] Seeding anaconda took ${Math.round(
+        startInstallDX - startSeedAnaconda
+      )} milliseconds. `
+    );
     logging.debug('  [*] Installing DX-Toolkit.');
     progressCb(95, 'Installing...');
     return new Promise((resolve, reject) => {
@@ -232,6 +251,14 @@ export function installAnaconda(
     });
   };
 
+  // Installation timers
+  let startInitSJCloud: number;
+  let startInstallAnaconda: number;
+  let startSeedAnaconda: number;
+  let startInstallDX: number;
+  let endInstallDX: number;
+  let startInstall = performance.now();
+
   progressCb(1, 'Downloading...');
   logging.debug('  [*] Downloading anaconda.');
   logging.silly(`      [-] Download location: ${destination}`);
@@ -241,6 +268,17 @@ export function installAnaconda(
     .then(seedAnaconda)
     .then(installDXToolkit)
     .then(() => {
+      endInstallDX = performance.now();
+      logging.info(
+        `  [*] Installing DX-Toolkit took ${Math.round(
+          endInstallDX - startInstallDX
+        )} milliseconds. `
+      );
+      logging.info(
+        `  [*] Total installation took ${Math.round(
+          endInstallDX - startInstall
+        )} milliseconds. `
+      );
       return new Promise((resolve, reject) => {
         progressCb(100, 'Finished!');
         finishedCb(null, true);
