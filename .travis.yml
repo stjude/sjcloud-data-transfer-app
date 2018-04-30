@@ -24,7 +24,7 @@ install:
 after_success: 
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       yarn coverage;
-      if [[ $TRAVIS_BRANCH == "development" ]] || [[ $TRAVIS_BRANCH == "master" ]]; then
+      if [[ $TRAVIS_BRANCH == "development" ]] || [[ $TRAVIS_BRANCH == "master" ]] && [[ "$TRAVIS_PULL_REQUEST" = "false"]]; then
           yarn dist:publish-unix;
       fi;
     fi;
