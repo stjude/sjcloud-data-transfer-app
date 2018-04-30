@@ -603,3 +603,22 @@ export function selfSigned(callback: SuccessCallback) {
   const selfsigned = require('selfsigned');
   return selfsigned.generate({}, {days: 1}, callback);
 }
+
+export class Timer {
+  start_time: number;
+  stop_time: number;
+
+  constructor() {}
+  start() {
+    this.start_time = performance.now();
+  }
+
+  stop() {
+    this.stop_time = performance.now();
+  }
+
+  duration() {
+    if (this.start_time == null && this.stop_time == null) return -1;
+    return Math.round(this.stop_time - this.start_time);
+  }
+}
