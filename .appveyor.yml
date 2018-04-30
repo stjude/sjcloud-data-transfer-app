@@ -13,7 +13,6 @@ test_script:
   - ps: |
       node --version
       yarn --version
-      Copy-Item config-example.json config.json
       yarn test
 platform: x64
 on_success:
