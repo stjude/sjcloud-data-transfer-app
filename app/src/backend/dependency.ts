@@ -51,7 +51,7 @@ if (!platform)
   throw new Error(`Unrecognized platform. Must be Windows, Mac, or Ubuntu.`);
 
 /**
- * Get download information from config.json based on package name.
+ * Get download information from config based on package name.
  *
  * @param packagename Name of the package
  * @returns Relevant URL and SHA256 sum.
