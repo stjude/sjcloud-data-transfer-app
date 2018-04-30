@@ -593,7 +593,7 @@ export function readSJCloudFile(
  */
 export function getTabLiteral() {
   if (platform === 'darwin' || platform === 'linux') {
-    return "$'\t'";
+    return "$'\\t'";
   } else if (platform === 'win32') {
     return '`t';
   } else throw new Error('Unrecognized platform: ${platform}.');
