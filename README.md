@@ -21,9 +21,10 @@ You can find the latest built version of the tools on the [releases page](https:
 
 If you'd like to build yourself, you'll also need the following prerequisites installed:
 
-| **Name** | **Install Link**                                                                                                  | **Notes** |
-| -------- | ----------------------------------------------------------------------------------------------------------------- | --------- |
-| NodeJS   | [Using NVM](https://github.com/creationix/nvm#install-script) or [Official Site](https://nodejs.org/en/download/) |           |
+| **Name** | **Install Link**                                                                                                  |
+| -------- | ----------------------------------------------------------------------------------------------------------------- |
+| NodeJS   | [Using NVM](https://github.com/creationix/nvm#install-script) or [Official Site](https://nodejs.org/en/download/) |
+| Yarn     | [Official Site](https://yarnpkg.com/en/docs/install)                                                              |
 
 ### Process
 
@@ -34,11 +35,12 @@ The process for installing the software in production mode:
 git clone git@github.com:stjude/sjcloud-data-transfer-app.git --depth 1
 cd sjcloud-data-transfer-app
 
-yarn install                # install dependencies
-export NODE_ENV=production  # set the Node environment. Can be 'production' or 'development'.
-# set NODE_ENV=production   # if you're on Windows use.
-gulp compile                # compile the frontend/backend code.
-yarn start                  # start the application
+yarn install                    # install dependencies
+export NODE_ENV=production      # set the Node environment. Can be 'production' or 'development'.
+# set NODE_ENV=production       # if you're on Windows cmd.exe.
+# $Env:NODE_ENV = "production"  # if you're on Windows powershell.
+npx gulp compile                # compile the frontend/backend code.
+yarn start                      # start the application
 ```
 
 ## Development
@@ -50,14 +52,15 @@ Running the tool in development mode requires a few changes to the config:
 git clone -b development git@github.com:stjude/sjcloud-data-transfer-app.git
 cd sjcloud-data-transfer-app
 
-yarn install                # install dependencies
-export NODE_ENV=development # set the Node environment. Can be 'production' or 'development'.
-# set NODE_ENV=development  # if you're on Windows use.
-gulp compile                # compile the frontend/backend code.
-yarn start:dev              # start the application
+yarn install                     # install dependencies
+export NODE_ENV=development      # set the Node environment. Can be 'production' or 'development'.
+# set NODE_ENV=development       # if you're on Windows cmd.exe.
+# $Env:NODE_ENV = "development"  # if you're on Windows powershell.
+npx gulp compile                 # compile the frontend/backend code.
+yarn start:dev                   # start the application
 ```
 
-Note that we recommend that you use the following command line arguments when developing:
+Note that we recommend that you use the following environment variables when developing:
 
 ```bash
 export AUTOUPDATE_ENABLED="false"
