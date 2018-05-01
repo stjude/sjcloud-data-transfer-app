@@ -2,7 +2,7 @@ const gulp = require('gulp');
 const serve = require('gulp-webserver');
 const jsdoc = require('gulp-jsdoc3');
 
-gulp.task('docs:build', ['compile-backend'], (callback) => {
+gulp.task('docs:build', ['compile:backend'], (callback) => {
   gulp.src(
     ['README.md', 'app/bin/backend/**/*.js'],
     { read: false },
