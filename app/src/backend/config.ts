@@ -1,5 +1,8 @@
+export interface DownloadInfo {
+  URL: string;
+  SHA256SUM: string;
+}
 interface Config {
-  [index: string]: string | boolean | object;
   TOOL_PROJECT_TAG: string;
   DATA_PROJECT_TAG: string;
   DOWNLOADABLE_TAG: string;
@@ -8,39 +11,18 @@ interface Config {
   CHROMIUM_MENU: boolean;
   UPDATE_SERVER: string;
   DOWNLOAD_INFO: {
-    [index: string]: object;
     ANACONDA: {
-      [index: string]: object;
       WIN32: {
-        [index: string]: object;
-        IA32: {
-          [index: string]: string;
-          URL: string;
-          SHA256SUM: string;
-        };
-        X64: {
-          [index: string]: string;
-          URL: string;
-          SHA256SUM: string;
-        };
+        IA32: DownloadInfo;
+        X64: DownloadInfo;
       };
       DARWIN: {
-        [index: string]: string;
-        URL: string;
-        SHA256SUM: string;
+        IA32: null;
+        X64: DownloadInfo;
       };
       LINUX: {
-        [index: string]: object;
-        IA32: {
-          [index: string]: string;
-          URL: string;
-          SHA256SUM: string;
-        };
-        X64: {
-          [index: string]: string;
-          URL: string;
-          SHA256SUM: string;
-        };
+        IA32: DownloadInfo;
+        X64: DownloadInfo;
       };
     };
   };
@@ -75,10 +57,13 @@ let config: Config = {
         },
       },
       DARWIN: {
-        URL:
-          'https://repo.continuum.io/miniconda/Miniconda2-4.3.30-MacOSX-x86_64.sh',
-        SHA256SUM:
-          '1fa6f0ae3b65fc09ba5156c43a3901c4aad0510735c31f58d1be2a71009416f9',
+        IA32: null,
+        X64: {
+          URL:
+            'https://repo.continuum.io/miniconda/Miniconda2-4.3.30-MacOSX-x86_64.sh',
+          SHA256SUM:
+            '1fa6f0ae3b65fc09ba5156c43a3901c4aad0510735c31f58d1be2a71009416f9',
+        },
       },
       LINUX: {
         IA32: {

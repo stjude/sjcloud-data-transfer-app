@@ -4,12 +4,8 @@ const fs = require('fs-extra');
 import config from './config';
 import * as utils from './utils';
 import {existsSync} from 'fs';
-import {
-  DXDownloadInfo,
-  SuccessCallback,
-  ErrorCallback,
-  ProgressCallback,
-} from './types';
+import {SuccessCallback, ErrorCallback, ProgressCallback} from './types';
+import {DownloadInfo} from './config';
 import {downloadFile} from './utils';
 import * as logging from './logging-remote';
 
@@ -50,31 +46,49 @@ let platform = os.platform();
 if (!platform)
   throw new Error(`Unrecognized platform. Must be Windows, Mac, or Ubuntu.`);
 
+type Package = 'ANACONDA';
+type Platform = 'DARWIN' | 'LINUX' | 'WIN32';
+type Architecture = 'IA32' | 'X64';
+
+const parsePlatform = (s: string): Platform => {
+  switch (s.toLowerCase()) {
+    case 'darwin':
+      return 'DARWIN';
+    case 'linux':
+      return 'LINUX';
+    case 'win32':
+      return 'WIN32';
+    default:
+      throw new Error('Invalid platform. Must be Linux, Darwin, or Win32.');
+  }
+};
+
+const parseArchitecture = (s: string): Architecture => {
+  switch (s.toLowerCase()) {
+    case 'ia32':
+      return 'IA32';
+    case 'x64':
+      return 'X64';
+    default:
+      throw new Error('Invalid architecture. Must be IA32 or X64.');
+  }
+};
+
 /**
  * Get download information from config based on package name.
  *
  * @param package_name Name of the package
  * @returns Relevant URL and SHA256 sum.
  */
-export function getDownloadInfo(package_name: string): DXDownloadInfo {
-  let platformUpper = platform.toUpperCase();
-  let archUpper = arch.toUpperCase();
-  let result = null;
-  package_name = package_name.toUpperCase();
-
-  if (package_name in config['DOWNLOAD_INFO']) {
-    const package_info = config['DOWNLOAD_INFO'][package_name];
-    if (platformUpper in package_info) {
-      let download_info = package_info[platformUpper];
-      if (archUpper in download_info) {
-        download_info = download_info[archUpper];
-      }
-      result = download_info;
-    }
+export const getDownloadInfo = (name: Package): DownloadInfo | null => {
+  try {
+    const platformUpper = parsePlatform(platform);
+    const archUpper = parseArchitecture(arch);
+    return config.DOWNLOAD_INFO[name][platformUpper][archUpper];
+  } catch (_e) {
+    return null;
   }
-
-  return result;
-}
+};
 
 /**
  * Returns the install command for anaconda given a destination directory.

@@ -7,7 +7,6 @@ import {
   ResultCallback,
   SJDTAFile,
   SJDTAProject,
-  DXDownloadInfo,
 } from './types';
 
 import * as fs from 'fs';
