@@ -1,3 +1,8 @@
+/**
+ * @module autoupdate
+ * @description Checks and updates the application to the latest version.
+ */
+
 const os = require('os');
 const electron = require('electron');
 const {logging} = require('./logging');

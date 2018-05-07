@@ -1,3 +1,8 @@
+/**
+ * @module ipc
+ * @description Handles the IPC listeners.
+ */
+
 import * as utils from './utils';
 import {ipcMain} from 'electron';
 import {logging} from './logging';

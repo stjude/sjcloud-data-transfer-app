@@ -1,5 +1,6 @@
 /**
- * @file Contains all OAuth functionality for the application.
+ * @module oauth
+ * @description Contains all OAuth functionality for the application.
  *
  */
 
@@ -58,7 +59,6 @@ function waitForCode(
     server.listen(4433);
     console.log('Running OAuth listener on port 4433.');
   });
-  // });
 }
 
 /**

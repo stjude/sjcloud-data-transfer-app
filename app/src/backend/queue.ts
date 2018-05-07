@@ -1,5 +1,6 @@
 /**
- * @file Customized queue functionality to multiplex tasks across the
+ * @module queue
+ * @description Customized queue functionality to multiplex tasks across the
  * concurrency level specified by the user and rank them based on priority.
  *
  * @author Clay McLeod
@@ -19,6 +20,7 @@ const enableDebug = false;
 
 /**
  * Log a message to the console if configured.
+ *
  * @param message Message to be output
  */
 function log(...message: any[]): void {
