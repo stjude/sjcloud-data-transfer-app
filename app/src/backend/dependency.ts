@@ -1,3 +1,8 @@
+/**
+ * @module dependency
+ * @description Installs the various dependencies required to run the application.
+ */
+
 const os = require('os');
 const path = require('path');
 const fs = require('fs-extra');
@@ -83,6 +88,7 @@ export function getDownloadInfo(packagename: string): DXDownloadInfo {
 
 /**
  * Returns the install command for anaconda given a destination directory.
+ *
  * @param destination Directory to install anaconda to.
  * @returns Anaconda install command to be run.
  */

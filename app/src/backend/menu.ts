@@ -1,5 +1,6 @@
 /**
- * @file Menu configuration for the Electron application.
+ * @module menu
+ * @description Menu configuration for the Electron application.
  *
  */
 

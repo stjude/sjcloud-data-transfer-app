@@ -1,5 +1,6 @@
 /**
- * @file Determines state of the application and the appropriate HTML files to
+ * @module state
+ * @description Determines state of the application and the appropriate HTML files to
  * show based on that state.
  **/
 
@@ -10,6 +11,7 @@ import {} from './types';
 
 /**
  * Enum for possible states of the application.
+ *
  * @readonly
  * @enum {any}
  */

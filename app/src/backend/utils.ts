@@ -1,5 +1,6 @@
 /**
- * @file Utility functions.
+ * @module utils
+ * @description Contains the various utility functions used in the application.
  **/
 
 import {ChildProcess} from 'child_process';
@@ -38,6 +39,12 @@ interface StJudeCloudPaths {
   ANACONDA_SJCLOUD_BIN?: string;
 }
 
+/**
+ * Returns the various paths for SJ Cloud and Anaconda.
+ *
+ * @param sjcloudHomeDirectory SJ Cloud home path saved in the application, if any
+ * @param thePlatform Platform the application is running on
+ */
 export function getSJCloudPaths(
   sjcloudHomeDirectory: string = null,
   thePlatform: string = platform
@@ -65,9 +72,10 @@ export function getSJCloudPaths(
 }
 
 /**
+ * Checks if given path exists in the list of SJ Cloud paths.
  *
- * @param pathProperName
- * @param sjcloudHomeDirectory
+ * @param pathProperName The path to lookup
+ * @param sjcloudHomeDirectory The SJ Cloud paths
  */
 export function lookupPath(
   pathProperName: string,
@@ -604,10 +612,16 @@ export function selfSigned(callback: SuccessCallback) {
   return selfsigned.generate({}, {days: 1}, callback);
 }
 
+/**
+ * Utility timer class to time different parts of the application.
+ */
 export class Timer {
   start_time: number;
   stop_time: number;
 
+  /**
+   * @constructor
+   */
   constructor() {}
   start() {
     this.start_time = performance.now();

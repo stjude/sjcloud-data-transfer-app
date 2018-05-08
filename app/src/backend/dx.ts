@@ -1,6 +1,7 @@
 /**
- * @fileOverview Methods for installing dx-toolkit and interacting with DNAnexus.
- **/
+ * @module dx
+ * @description Methods for installing dx-toolkit and interacting with DNAnexus.
+ */
 
 import {
   SuccessCallback,

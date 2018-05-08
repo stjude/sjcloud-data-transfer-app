@@ -1,5 +1,6 @@
 /**
- * @file All functionality pertaining to creating the windows.
+ * @module ui
+ * @description All functionality pertaining to creating the windows.
  */
 
 const os = require('os');
