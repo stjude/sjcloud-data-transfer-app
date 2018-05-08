@@ -117,7 +117,13 @@ export default function(ref) {
           }
 
           if (process) {
-            ref.backend.utils.killProcess(process.pid);
+            Promise.resolve(process).then(p => {
+              if ('abort' in p && typeof p.abort === 'function') {
+                p.abort();
+              } else {
+                ref.backend.utils.killProcess(p.pid);
+              }
+            });
           } else {
             console.error('Process does not exist!');
           }

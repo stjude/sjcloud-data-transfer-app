@@ -3,6 +3,8 @@
  * @description Methods for installing dx-toolkit and interacting with DNAnexus.
  */
 
+import {Request} from 'request';
+
 import {Client} from '../../../vendor/dxjs';
 import {
   SuccessCallback,
@@ -19,6 +21,8 @@ import * as utils from './utils';
 import * as logging from './logging';
 import * as child_process from 'child_process';
 
+const request = require('request');
+const progress = require('request-progress');
 const async = require('async');
 const expandHomeDir = require('expand-home-dir');
 const config = require('../../../config.json');
@@ -193,34 +197,42 @@ export function listDownloadableFiles(
  * @return ChildProcess
  */
 export function downloadDxFile(
+  token: string,
   remoteFileId: string,
   fileName: string,
-  fileRawSize: number,
+  _fileRawSize: number,
   downloadLocation: string,
   updateCb: ResultCallback,
   finishedCb: SuccessCallback
-): child_process.ChildProcess {
-  const platform = os.platform();
+): Promise<Request> {
   const outputPath = expandHomeDir(path.join(downloadLocation, fileName));
+  const fileId = remoteFileId.split(':')[1];
 
-  let command: string = null;
-  if (platform === 'darwin' || platform === 'linux') {
-    command = `touch '${outputPath}'`;
-  } else if (platform === 'win32') {
-    command = `New-Item '${outputPath}' -type file -force`;
-  }
+  const client = new Client(token);
+  const writer = fs.createWriteStream(outputPath);
 
-  command = `${command}; dx download -f ${remoteFileId} -o '${outputPath}'`;
-  fs.watchFile(outputPath, {interval: 1000}, () => {
-    fs.stat(outputPath, (err: any, stats: any) => {
-      if (stats !== undefined) {
-        let progress = Math.round(stats.size / fileRawSize * 100.0);
-        updateCb(progress);
-      }
+  return client.file
+    .download(fileId)
+    .then(({url, headers}: {url: string; headers: any}) => {
+      const req = request(url, {headers}, (error: any, response: any) => {
+        if (error) {
+          finishedCb(error, null);
+        } else {
+          finishedCb(null, response);
+        }
+      });
+
+      progress(req).on('progress', (state: any) => {
+        updateCb(state.percent * 100);
+      });
+
+      req.pipe(writer);
+
+      return req;
+    })
+    .catch((err: any) => {
+      finishedCb(err, null);
     });
-  });
-
-  return utils.runCommand(command, finishedCb);
 }
 
 /**
