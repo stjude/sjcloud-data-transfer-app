@@ -180,6 +180,7 @@ export default function(ref) {
         const tool = tools[0];
         if (!tool.download.length) {
           ref.backend.dx.listDownloadableFiles(
+            state.token,
             tool.dx_location,
             state.showAllFiles,
             // this is not called in browser testing mode
