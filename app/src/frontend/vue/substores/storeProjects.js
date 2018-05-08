@@ -217,26 +217,30 @@ export default function(ref) {
         if (!state.tools.length) {
           const uploadMap = getUploadMap(state.tools);
 
-          ref.backend.dx.listProjects(state.showAllProjects, (err, results) => {
-            if (results.length > 0) {
-              commit('setNoProjectsFound', false);
-              const tools = results.map(elem => getToolItem(elem, uploadMap));
-              commit('setTools', tools);
-              resetCurrToolName(tools, previousTool, commit);
-              tools.forEach(elem => {
-                ref.backend.queue.addToolInfoTask({
-                  _rawTool: elem,
+          ref.backend.dx.listProjects(
+            state.token,
+            state.showAllProjects,
+            (err, results) => {
+              if (results.length > 0) {
+                commit('setNoProjectsFound', false);
+                const tools = results.map(elem => getToolItem(elem, uploadMap));
+                commit('setTools', tools);
+                resetCurrToolName(tools, previousTool, commit);
+                tools.forEach(elem => {
+                  ref.backend.queue.addToolInfoTask({
+                    _rawTool: elem,
+                  });
                 });
-              });
 
-              if (ref.VueApp && ref.VueApp.readyCallback) {
-                ref.VueApp.readyCallback();
-                delete ref.VueApp.readyCallback;
+                if (ref.VueApp && ref.VueApp.readyCallback) {
+                  ref.VueApp.readyCallback();
+                  delete ref.VueApp.readyCallback;
+                }
+              } else {
+                commit('setNoProjectsFound', true);
               }
-            } else {
-              commit('setNoProjectsFound', true);
             }
-          });
+          );
         }
       },
     },
