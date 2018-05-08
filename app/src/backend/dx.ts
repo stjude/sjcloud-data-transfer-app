@@ -143,6 +143,7 @@ export function checkProjectAccess(
  * @returns {any} ChildProcess or string depending on the value of 'dryrun'.
  **/
 export function listDownloadableFiles(
+  token: string,
   projectId: string,
   allFiles: boolean,
   callback: SuccessCallback,
@@ -153,18 +154,30 @@ export function listDownloadableFiles(
     return callback(error, null);
   }
 
-  let cmd = `dx find data --path ${
-    projectId
-  }:/ --json --state closed --class file`;
-  if (!allFiles) {
-    cmd += ` --tag ${config.DOWNLOADABLE_TAG}`;
-  }
+  const client = new Client(token);
 
-  return dryrun
-    ? cmd
-    : utils.runCommand(cmd, (err: any, stdout: any) => {
-        callback(err, JSON.parse(stdout));
-      });
+  const options = {
+    describe: {
+      fields: {
+        name: true,
+        size: true,
+      },
+    },
+    scope: {
+      project: projectId,
+    },
+    state: 'closed',
+    tags: !allFiles ? config.DOWNLOADABLE_TAG : undefined,
+  };
+
+  client.system
+    .findDataObjects(options)
+    .then(({results}: {results: any}) => {
+      callback(null, results);
+    })
+    .catch((err: any) => {
+      callback(err, null);
+    });
 }
 
 /**
