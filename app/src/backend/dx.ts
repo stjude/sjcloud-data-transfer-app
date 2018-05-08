@@ -3,6 +3,7 @@
  * @description Methods for installing dx-toolkit and interacting with DNAnexus.
  */
 
+import {Client} from '../../../vendor/dxjs';
 import {
   SuccessCallback,
   ResultCallback,
@@ -342,44 +343,47 @@ function parseDxProjects(stdout: string): SJDTAProject[] {
  * @returns List of projects or list of strings based on 'dryrun'.
  */
 export function listProjects(
+  token: string,
   allProjects: boolean,
   callback: SuccessCallback,
   dryrun: boolean = false
 ): void {
   // Setting tagsToCheck = [''] will run one command that does not filter any
   // tags. This is equivalent to checking all projects, not just SJCloud ones.
-  let tagsToCheck = [''];
+  let tagsToCheck = [];
   let projects: SJDTAProject[] = [];
-  let tabliteral = utils.getTabLiteral();
 
   if (!allProjects) {
     tagsToCheck = [config.TOOL_PROJECT_TAG, config.DATA_PROJECT_TAG];
   }
 
-  async.map(
-    tagsToCheck,
-    (tag: string, iteratorCallback: SuccessCallback) => {
-      let iterCmd = `dx find projects --level UPLOAD --delim ${tabliteral}`;
-      if (tag !== '') iterCmd += ` --tag ${tag}`;
+  const client = new Client(token);
 
-      if (dryrun) {
-        return iteratorCallback(null, iterCmd);
-      }
-
-      utils.runCommand(iterCmd, (err: any, stdout: string) => {
-        if (err) {
-          return iteratorCallback(err, []);
-        }
-        return iteratorCallback(null, parseDxProjects(stdout));
-      });
+  const options = {
+    describe: {
+      name: true,
+      level: true,
     },
-    (err: any, results: string[][]) => {
-      if (err) {
-        return callback(err, []);
-      }
+    level: 'UPLOAD',
+    tags: tagsToCheck.length > 0 ? tagsToCheck : undefined,
+  };
 
-      // flatten 2d 'results' array to 1d.
-      return callback(null, [].concat.apply([], results));
-    }
-  );
+  client.system
+    .findProjects(options)
+    .then(({results}: {results: any}) => {
+      const resultsCompat = results.map((project: any) => {
+        const {describe} = project;
+
+        return {
+          project_name: describe.name,
+          dx_location: project.id,
+          access_level: describe.level,
+        };
+      });
+
+      callback(null, resultsCompat);
+    })
+    .catch((err: any) => {
+      callback(err, []);
+    });
 }
