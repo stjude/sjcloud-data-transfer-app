@@ -70,6 +70,7 @@ function downloadTask(task: any, callback: any) {
 
   task._rawFile.started = true;
   let process = (window as any).dx.downloadDxFile(
+    task.token,
     task.remote_location,
     task.name,
     task.raw_size,
