@@ -229,6 +229,7 @@ export default function(ref) {
                 resetCurrToolName(tools, previousTool, commit);
                 tools.forEach(elem => {
                   ref.backend.queue.addToolInfoTask({
+                    token: state.token,
                     _rawTool: elem,
                   });
                 });
