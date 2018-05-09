@@ -105,6 +105,7 @@ function uploadTask(task: any, callback: any) {
 
   task._rawFile.started = true;
   let process = (window as any).dx.uploadFile(
+    task.token,
     task._rawFile,
     task.remote_location,
     (progress: any) => {

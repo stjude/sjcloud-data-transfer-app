@@ -3,6 +3,8 @@
  * @description Methods for installing dx-toolkit and interacting with DNAnexus.
  */
 
+import {execSync} from 'child_process';
+
 import {Request} from 'request';
 
 import {Client} from '../../../vendor/dxjs';
@@ -18,7 +20,6 @@ import * as os from 'os';
 import * as path from 'path';
 import * as utils from './utils';
 import * as logging from './logging';
-import * as child_process from 'child_process';
 
 import config from './config';
 
@@ -31,6 +32,11 @@ const platform = os.platform();
 /**********************************************************
  *                DX-Toolkit Functionality                *
  **********************************************************/
+
+interface IMetadata {
+  size: number;
+  md5: string;
+}
 
 /**
  * Runs a command to determine if we are logged in to DNAnexus.
@@ -235,49 +241,11 @@ export function downloadDxFile(
     });
 }
 
-/**
- * Creates an interval that watches a remote DX file.
- *
- * @param file
- * @param dxRemotePath
- * @param progressCb
- */
-function watchRemoteFile(
-  file: SJDTAFile,
-  dxRemotePath: string,
-  progressCb: ResultCallback
-) {
-  return setInterval(() => {
-    if (file.sizeCheckingLock) {
-      return;
-    }
-    file.sizeCheckingLock = true; // acquire file size checking lock
-
-    module.exports.describeDXItem(dxRemotePath, (err: any, remoteFile: any) => {
-      file.sizeCheckingLock = false; // release file size checking lock
-      if (!remoteFile || !remoteFile.parts) {
-        return;
-      }
-
-      let remoteObjectSize: number = 0;
-      // sum concurrent chunk sizes uploaded so far.
-      for (let chunk in remoteFile.parts) {
-        if (remoteFile.parts[chunk].size) {
-          remoteObjectSize += remoteFile.parts[chunk].size;
-        }
-      }
-
-      if (file.largestReportedProgress < remoteObjectSize) {
-        remoteObjectSize = file.largestReportedProgress;
-      } else {
-        file.largestReportedProgress = remoteObjectSize;
-      }
-
-      let progress = remoteObjectSize / file.raw_size * 100.0;
-      progressCb(progress);
-    });
-  }, utils.randomInt(500, 750)); // randomized interval for jitter.
-}
+const metadata = async (pathname: string): Promise<IMetadata> => {
+  const {size} = fs.statSync(pathname);
+  const md5 = await utils.computeMd5(pathname);
+  return {md5, size};
+};
 
 /**
  * Uploads a file to a DNAnexus project via the dx command line utility.
@@ -288,42 +256,46 @@ function watchRemoteFile(
  * @param finishedCb
  * @return ChildProcess
  */
-export function uploadFile(
+export async function uploadFile(
+  token: string,
   file: SJDTAFile,
   projectId: string,
   progressCb: ResultCallback,
   finishedCb: SuccessCallback,
   remoteFolder: string = '/uploads'
-): child_process.ChildProcess {
+): Promise<Request> {
   const basename: string = path.basename(file.path.trim());
   const dxRemotePath: string = `${projectId}:${remoteFolder}/${basename}`;
 
-  // keep track of the largest reported progress to ensure that if callbacks
-  // get out of order, the progress meter isn't jumping all around.
-  file.largestReportedProgress = -1;
-  let sizeCheckerInterval = watchRemoteFile(file, dxRemotePath, progressCb);
+  const client = new Client(token);
 
-  // We wrap the last callback to ensure the file watcher interval is cleared
-  // out before moving on.
-  let finishedCbWrapper = (err: any, result: any) => {
-    clearInterval(sizeCheckerInterval);
-    finishedCb(err, result);
-  };
-
-  const uploadCmd = `dx upload -p --path '${dxRemotePath}' '${file.path}'`;
-  return utils.runCommand(uploadCmd, (err: any, stdout: any) => {
-    if (err) {
-      return finishedCbWrapper(err, null);
-    }
-
-    const tagCmd = `dx tag '${dxRemotePath}' ${config.NEEDS_ANALYSIS_TAG}`;
-    utils.runCommand(tagCmd, (err: any, stdout: any) => {
-      if (err) {
-        finishedCbWrapper(err, null);
-      }
-      finishedCbWrapper(null, stdout);
-    });
+  const {id} = await client.file.new({
+    folder: remoteFolder,
+    name: basename,
+    parents: true,
+    project: projectId,
+    // tags: [config.NEEDS_ANALYSIS_TAG],
   });
+
+  const reader = fs.createReadStream(file.path);
+  const attributes = await metadata(file.path);
+
+  const {url, headers} = await client.file.upload(id, attributes);
+
+  const req = request(
+    url,
+    {body: reader, headers, method: 'PUT'},
+    async (error: any, response: any) => {
+      if (error) {
+        finishedCb(error, response);
+      } else {
+        await client.file.close(id);
+        finishedCb(error, response);
+      }
+    }
+  );
+
+  return req;
 }
 
 /**
