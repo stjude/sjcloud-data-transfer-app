@@ -98,6 +98,7 @@ export function logout(
  * @returns {any} ChildProcess or string depending on the value of 'dryrun'.
  **/
 export function describeDXItem(
+  token: string,
   dnanexusId: string,
   callback: SuccessCallback,
   dryrun: boolean = false
@@ -107,16 +108,24 @@ export function describeDXItem(
     return callback(error, null);
   }
 
-  let cmd = `dx describe ${dnanexusId} --json`;
-  return dryrun
-    ? cmd
-    : utils.runCommand(cmd, (err: any, stdout: any) => {
-        if (!stdout) {
-          callback(err, stdout);
-          return;
-        }
-        callback(err, JSON.parse(stdout));
-      });
+  const client = new Client(token);
+
+  const options = {
+    fields: {
+      dataUsage: true,
+      properties: true,
+      tags: true,
+    },
+  };
+
+  client.file
+    .describe(dnanexusId, options)
+    .then((result: any) => {
+      callback(null, result);
+    })
+    .catch((err: any) => {
+      callback(err, null);
+    });
 }
 
 /**
