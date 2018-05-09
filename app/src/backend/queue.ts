@@ -139,6 +139,7 @@ function toolInfoTask(task: any, callback: any) {
   log('Tool info task: ', task);
 
   (window as any).dx.describeDXItem(
+    task.token,
     task._rawTool.dx_location,
     (err: any, describe: any) => {
       if (err || !describe) {

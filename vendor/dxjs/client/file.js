@@ -7,6 +7,7 @@ var __importDefault =
 Object.defineProperty(exports, '__esModule', {value: true});
 var addTags_1 = __importDefault(require('../methods/file/addTags'));
 var close_1 = __importDefault(require('../methods/file/close'));
+var describe_1 = __importDefault(require('../methods/file/describe'));
 var download_1 = __importDefault(require('../methods/file/download'));
 var new_1 = __importDefault(require('../methods/file/new'));
 var upload_1 = __importDefault(require('../methods/file/upload'));
@@ -19,6 +20,9 @@ var FileClient = /** @class */ (function() {
   };
   FileClient.prototype.close = function(fileId) {
     return close_1.default(this.client, fileId);
+  };
+  FileClient.prototype.describe = function(fileId, options) {
+    return describe_1.default(this.client, fileId, options);
   };
   FileClient.prototype.download = function(fileId, options) {
     if (options === void 0) {
