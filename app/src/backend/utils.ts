@@ -349,6 +349,22 @@ export function untarTo(
   runCommand(`tar - C ${destParentDir} -zxf ${filepath} `, callback);
 }
 
+export const computeMd5 = (pathname: string): Promise<string> => {
+  return new Promise(resolve => {
+    const hash = _crypto.createHash('md5');
+    const reader = fs.ReadStream(pathname);
+
+    reader.on('data', (chunk: any) => {
+      hash.update(chunk);
+    });
+
+    reader.on('end', () => {
+      const hexDigest = hash.digest('hex');
+      resolve(hexDigest);
+    });
+  });
+};
+
 /**
  * Computes the SHA256 sum of a given file.
  *
