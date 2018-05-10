@@ -88,12 +88,9 @@ export function login(
  * @param dryrun Return the command that would have been run as a string.
  * @returns {any} ChildProcess or string depending on the value of 'dryrun'.
  */
-export function logout(
-  callback: SuccessCallback,
-  dryrun: boolean = false
-): any {
-  const cmd = 'dx logout';
-  return dryrun ? cmd : utils.runCommand(cmd, callback);
+export function logout(callback: SuccessCallback, dryrun: boolean = false) {
+  // @FIXME
+  callback(null, true);
 }
 
 /**
