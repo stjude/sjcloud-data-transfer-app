@@ -131,8 +131,10 @@ function oauth(VueApp) {
 }
 
 function state(VueApp) {
+  const token = VueApp.$store.getters.token;
+
   return {
-    getState(callback) {
+    getState(token, callback) {
       callback({});
     },
   };
