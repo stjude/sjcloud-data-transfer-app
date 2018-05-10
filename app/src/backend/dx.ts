@@ -319,7 +319,7 @@ export function listProjects(
       level: true,
     },
     level: 'UPLOAD',
-    tags: tagsToCheck.length > 0 ? tagsToCheck : undefined,
+    tags: tagsToCheck.length > 0 ? {$or: tagsToCheck} : undefined,
   };
 
   client.system
