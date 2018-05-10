@@ -315,34 +315,6 @@ export function parsePythonVersion(versionString: string) {
 }
 
 /**
- * Determines if Python 2.7.13+ is accessible on the PATH.
- *
- * @todo Change callback to SuccessCallback
- * @param {ResultCallback} callback
- */
-export function pythonOnPath(callback: ResultCallback): void {
-  runCommand('python --version', (err, res) => {
-    let majorNum: number, minorNum: number, patchNum: number;
-    [majorNum, minorNum, patchNum] = parsePythonVersion(err);
-    return callback(majorNum === 2 && minorNum === 7 && patchNum >= 13);
-  });
-}
-
-/**
- * Determines if dx-toolkit is accessible on the PATH.
- *
- * @param {SuccessCallback} callback
- */
-export function dxToolkitInstalled(callback: SuccessCallback): void {
-  const dxLocation = path.join(lookupPath('ANACONDA_SJCLOUD_BIN'), 'dx');
-  if (platform === 'linux' || platform === 'darwin') {
-    runCommand(`[ -f ${dxLocation} ]`, callback);
-  } else if (platform === 'win32') {
-    runCommand(`[System.IO.File]::Exists("${dxLocation}") `, callback);
-  }
-}
-
-/**
  * Downloads a normal file. Downloading of a DXFile is in dx.js
  *
  * @param {string} url URL of download.

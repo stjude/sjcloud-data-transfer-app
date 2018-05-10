@@ -30,7 +30,7 @@ export {states};
  * @param callback
  * @return The state object containing the HTML file to show.
  */
-export function getState(callback: (state: object) => void) {
+export function getState(token: string, callback: (state: object) => void) {
   self = this;
   const platform = os.platform();
   logging.debug('');
@@ -52,23 +52,14 @@ export function getState(callback: (state: object) => void) {
     }
 
     logging.debug('  [*] SJCloud home directory initialized.');
-    utils.dxToolkitInstalled((err: object, res: object) => {
+    (window as any).dx.loggedIn(token, (err: object, res: object) => {
       if (err) {
-        console.error(err);
-        logging.debug('  --> State is NEED_INSTALL.');
-        return callback(states.NEED_INSTALL);
+        logging.debug('  --> State is NEED_LOGIN.');
+        return callback(states.NEED_LOGIN);
       }
 
-      logging.debug('  [*] DXToolkit is installed.');
-      dx.loggedIn((err: object, res: object) => {
-        if (err) {
-          logging.debug('  --> State is NEED_LOGIN.');
-          return callback(states.NEED_LOGIN);
-        }
-
-        logging.debug('  [*] We are logged into DNAnexus.');
-        return callback(states.UPLOAD);
-      });
+      logging.debug('  [*] We are logged into DNAnexus.');
+      return callback(states.UPLOAD);
     });
   });
 }

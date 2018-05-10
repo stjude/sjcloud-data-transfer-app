@@ -1,19 +1,10 @@
 <template>
 	<div class='q-stepper-wrapper'>
-		<div class="dev-box" v-show="currPath=='install' && environment == 'development'">
-			<select @change="setInstallingDependencies($event.target.value)">
-				<option>waiting</option>
-				<option>installing</option>
-				<option>completed</option>
-				<option>failed</option>
-			</select>
-		</div>
-
 		<q-stepper v-if='stepper==1' ref='stepper'>
 			<q-step title="Install" name='install' key='initSteps' active-icon='file download'>
-				<install></install>
+				Nothing to do.
 			</q-step>
-		
+
 			<q-step title="Login" name='login' key='initSteps' active-icon='vpn key'>
 				<log-in></log-in>
 			</q-step>
@@ -21,10 +12,9 @@
 				You are ready to upload.
 			</q-step>
 		</q-stepper>
-		
-		<install v-if="currPath=='install' && !stepper"></install>
-		<log-in v-else="currPath=='login' && !stepper"></log-in>
-		
+
+		<log-in v-if="currPath=='login' && !stepper"></log-in>
+
 		<div v-if='!stepper' class='col-xs-12 footer'>
 			<div class='progress'>
 				<div class='progress-bar progress-bar-div'></div>
@@ -42,58 +32,46 @@
 </template>
 
 <script>
-import {QStepper, QStep, QTransition} from "quasar";
-import Install from './Install.vue';
+import {QStepper, QStep, QTransition} from 'quasar';
 import LogIn from './LogIn.vue';
 
 export default {
-	components: {
-		QStepper,
-		QStep,
-		Install,
-		LogIn,
-		QTransition
-	},
-	computed: {
-	    environment() {
-	      return this.$store.getters.environment;
-	    },
-	    currPath() {
-	    	if (this.$store.getters.currPath=='login' && this.stepper) {
-				this.$refs.stepper.goToStep('login')
-			}
-	    	return this.$store.getters.currPath;
-	    },
-	    step2IconCls() {
-	    	return this.$store.getters.currPath=="install" ? "progress-node progress-node-nonactive" : "progress-node progress-node-active"
-	    },
-	    stepper() {
-	    	return window.location.search.includes('stepper=1') //&& this.$refs.stepper
-	    }
-	},
-	updated() {
-		if (this.$store.getters.currPath=='login' && this.stepper) {
-			this.$refs.stepper.goToStep('login')
-		}
-	}, 
-	methods: {
-		setInstallingDependencies(installing) {
-	      this.$store.commit("setInstallingDependencies", installing);
-	    },
-	}
-}
+  components: {
+    QStepper,
+    QStep,
+    LogIn,
+    QTransition,
+  },
+  computed: {
+    environment() {
+      return this.$store.getters.environment;
+    },
+    currPath() {
+      if (this.$store.getters.currPath == 'login' && this.stepper) {
+        this.$refs.stepper.goToStep('login');
+      }
+      return this.$store.getters.currPath;
+    },
+    step2IconCls() {
+      return this.$store.getters.currPath == 'install'
+        ? 'progress-node progress-node-nonactive'
+        : 'progress-node progress-node-active';
+    },
+    stepper() {
+      return window.location.search.includes('stepper=1'); //&& this.$refs.stepper
+    },
+  },
+  updated() {
+    if (this.$store.getters.currPath == 'login' && this.stepper) {
+      this.$refs.stepper.goToStep('login');
+    }
+  },
+};
 </script>
 
 <style>
 .row {
   margin: 0px;
-}
-
-.dev-box {
-  position: absolute;
-  left: 675px;
-  top: 20px;
-  z-index: 1;
 }
 
 .main {
@@ -114,7 +92,7 @@ export default {
 
 .theater-heading > h1 {
   margin-top: 35px;
-  font-style: "Open Sans", "Helvetica Neue";
+  font-style: 'Open Sans', 'Helvetica Neue';
   font-size: 36px;
   color: #000000;
 }
@@ -129,7 +107,7 @@ export default {
 .theater-body {
   margin: 35px 45px 0px 45px;
   text-align: center;
-  font-style: "Open Sans", "Helvetica Neue";
+  font-style: 'Open Sans', 'Helvetica Neue';
   font-size: 24px;
   height: 310px;
 }
@@ -200,15 +178,14 @@ export default {
 }
 
 .q-stepper {
-	box-shadow: none;
+  box-shadow: none;
 }
 
 .q-stepper-header {
-	position: absolute; 
-	bottom: 20px; 
-	width: 50%;
-	margin-left: 25%;
-	text-align: center;
+  position: absolute;
+  bottom: 20px;
+  width: 50%;
+  margin-left: 25%;
+  text-align: center;
 }
-
 </style>
