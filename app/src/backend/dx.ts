@@ -41,15 +41,10 @@ interface IMetadata {
 /**
  * Runs a command to determine if we are logged in to DNAnexus.
  *
- * @param {SuccessCallback} callback
- * @param dryrun Return the command that would have been run as a string.
- * @returns ChildProcess or string depending on the value of 'dryrun'.
+ * @param token
+ * @param callback
  */
-export async function loggedIn(
-  token: string,
-  callback: SuccessCallback,
-  dryrun: boolean = false
-) {
+export async function loggedIn(token: string, callback: SuccessCallback) {
   const client = new Client(token);
 
   try {
@@ -66,14 +61,8 @@ export async function loggedIn(
  *
  * @param token Authentication token
  * @param callback
- * @param dryrun Return the command that would have been run as a string.
- * @returns ChildProcess or string depending on the value of 'dryrun'.
  */
-export function login(
-  token: string,
-  callback: SuccessCallback,
-  dryrun: boolean = false
-) {
+export function login(token: string, callback: SuccessCallback) {
   if (!token) {
     return callback(new Error('Token cannot be null/empty!'), null);
   }
@@ -85,8 +74,6 @@ export function login(
  * Logout of DNAnexus via the dx command line utility.
  *
  * @param callback
- * @param dryrun Return the command that would have been run as a string.
- * @returns {any} ChildProcess or string depending on the value of 'dryrun'.
  */
 export function logout(callback: SuccessCallback, dryrun: boolean = false) {
   // @FIXME
@@ -96,20 +83,18 @@ export function logout(callback: SuccessCallback, dryrun: boolean = false) {
 /**
  * Describe a 'dx-item' as JSON via the dx command* line utility.
  *
+ * @param token
  * @param dnanexusId The DNAnexus object identifier (ex: file-XXXXXX).
  * @param callback
- * @param dryrun Return the command that would have been run as a string.
- * @returns {any} ChildProcess or string depending on the value of 'dryrun'.
  **/
 export function describeDXItem(
   token: string,
   dnanexusId: string,
-  callback: SuccessCallback,
-  dryrun: boolean = false
-): any {
+  callback: SuccessCallback
+) {
   if (!dnanexusId) {
     const error = new Error('Dx-identifier cannot be null/empty!');
-    return callback(error, null);
+    callback(error, null);
   }
 
   const client = new Client(token);
@@ -135,22 +120,20 @@ export function describeDXItem(
 /**
  * List all of the files available for download in a DNAnexus project.
  *
+ * @param token
  * @param projectId The DNAnexus project identifier (ex: project-XXXX).
  * @param allFiles List all files or just St. Jude Cloud associated ones.
  * @param callback
- * @param dryrun Return the command that would have been run as a string.
- * @returns {any} ChildProcess or string depending on the value of 'dryrun'.
  **/
 export function listDownloadableFiles(
   token: string,
   projectId: string,
   allFiles: boolean,
-  callback: SuccessCallback,
-  dryrun: boolean = false
-): any {
+  callback: SuccessCallback
+) {
   if (!projectId) {
     const error = new Error('Dx-project cannot be null/empty!');
-    return callback(error, null);
+    callback(error, null);
   }
 
   const client = new Client(token);
@@ -182,6 +165,7 @@ export function listDownloadableFiles(
 /**
  * Download a file from DNAnexus.
  *
+ * @param token
  * @param remoteFileId DNAnexus identifier of the file to be downloaded.
  *                     (ex: file-XXXX).
  * @param fileName Name of the downloaded file.
@@ -189,7 +173,7 @@ export function listDownloadableFiles(
  * @param downloadLocation Folder for the downloaded file to reside.
  * @param updateCb To be called on each update to progress.
  * @param finishedCb To be called upon completion.
- * @return ChildProcess
+ * @return the download request
  */
 export function downloadDxFile(
   token: string,
@@ -239,11 +223,12 @@ const metadata = async (pathname: string): Promise<IMetadata> => {
 /**
  * Uploads a file to a DNAnexus project via the dx command line utility.
  *
+ * @param token
  * @param file File object from the Vuex store.
  * @param projectId DNAnexus ID of projectId being uploaded to.
  * @param progressCb
  * @param finishedCb
- * @return ChildProcess
+ * @return the upload request
  */
 export async function uploadFile(
   token: string,
@@ -288,51 +273,19 @@ export async function uploadFile(
 }
 
 /**
- * Utility method to parse out projects from a 'dx find projects' command.
- *
- * @param stdout STDOUT from a 'dx find projects' command.
- */
-function parseDxProjects(stdout: string): SJDTAProject[] {
-  let results: SJDTAProject[] = [];
-
-  // forEach is synchronous
-  stdout.split('\n').forEach((el: string) => {
-    if (el.trim().length <= 0) return;
-
-    let _: string;
-    let name: string;
-    let dxLocation: string;
-    let accessLevel: string;
-
-    [dxLocation, name, accessLevel, _] = el.split('\t');
-    if (accessLevel) {
-      results.push({
-        project_name: name,
-        dx_location: dxLocation,
-        access_level: accessLevel,
-      });
-    }
-  });
-
-  return results;
-}
-/**
  * Find and return projects the user can upload data to.
  *
+ * @param token
  * @param allProjects should we limit to St. Jude Cloud
  *                    projects or list all projects?
  * @param callback
- * @param dryrun Return a list of commands that would be run as string.
- * @returns List of projects or list of strings based on 'dryrun'.
  */
 export function listProjects(
   token: string,
   allProjects: boolean,
   callback: SuccessCallback,
   dryrun: boolean = false
-): void {
-  // Setting tagsToCheck = [''] will run one command that does not filter any
-  // tags. This is equivalent to checking all projects, not just SJCloud ones.
+) {
   let tagsToCheck = [];
   let projects: SJDTAProject[] = [];
 
