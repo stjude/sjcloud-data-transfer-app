@@ -73,12 +73,12 @@ export function login(
   token: string,
   callback: SuccessCallback,
   dryrun: boolean = false
-): any {
+) {
   if (!token) {
     return callback(new Error('Token cannot be null/empty!'), null);
   }
-  const cmd = `dx login --token ${token} --noprojects`;
-  return dryrun ? cmd : utils.runCommand(cmd, callback);
+
+  loggedIn(token, callback);
 }
 
 /**
