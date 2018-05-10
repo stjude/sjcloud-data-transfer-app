@@ -9,7 +9,6 @@
 
 A desktop application written on top of the [Electron Framework](https://electron.atom.io/) facilitating easy uploading and downloading of genomic data to the St. Jude Cloud. Functionality includes:
 
-* Automatically installing and configuring the [dx-toolkit](https://github.com/dnanexus/dx-toolkit).
 * Logging in using OAuth for both internal and external St. Jude users.
 * Reliably uploading and downloading genomic data files to/from the platform.
 

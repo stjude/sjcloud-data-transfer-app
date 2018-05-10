@@ -1,6 +1,6 @@
 /**
  * @module dx
- * @description Methods for installing dx-toolkit and interacting with DNAnexus.
+ * @description Methods for interacting with DNAnexus.
  */
 
 import {execSync} from 'child_process';

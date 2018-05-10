@@ -3,13 +3,12 @@
  */
 
 /*
-	Todo: 
+	Todo:
 	- transition away from window globals and towards using VueApp backend plugin
 	- the various window.* objects below may be deleted, pending review
 	- only window.utils is called outside of this file
 */
 window.dx = require('./bin/backend/dx');
-window.dependency = require('./bin/backend/dependency');
 window.queue = require('./bin/backend/queue');
 window.logging = require('./bin/backend/logging-remote');
 window.oauth = require('./bin/backend/oauth');
@@ -18,9 +17,9 @@ window.ui = require('./bin/backend/ui');
 window.utils = require('./bin/backend/utils');
 
 /*
-*	Transition to using backend 
+*	Transition to using backend
 * 	methods specifically to a VueApp instance,
-*	by defining the Vue plugin below 
+*	by defining the Vue plugin below
 */
 
 window.backend = {
@@ -31,7 +30,6 @@ window.backend = {
       } else {
         this.backend = {
           dx: require('./bin/backend/dx'),
-          dependency: require('./bin/backend/dependency'),
           queue: require('./bin/backend/queue'),
           logging: require('./bin/backend/logging-remote'),
           oauth: require('./bin/backend/oauth'),

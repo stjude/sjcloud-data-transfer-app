@@ -58,12 +58,12 @@ export default function _App(
   } else {
     VueApp.$router.replace('/');
 
-    const token = this.$store.getters.token;
+    const token = VueApp.$store.getters.token;
 
     VueApp.backend.state.getState(token, state => {
       VueApp.$router.replace(state.path);
       if (state.path === 'login') {
-        checkDependencies(VueApp);
+        // noop
       } else if (state.path === 'upload') {
         VueApp.$store.dispatch('updateToolsFromRemote', true);
       }
@@ -71,32 +71,6 @@ export default function _App(
   }
 
   return VueApp;
-}
-
-/**
- *
- * @param {*} VueApp
- */
-function checkDependencies(VueApp) {
-  VueApp.backend.utils.pythonOnPath(onPath => {
-    VueApp.$store.commit('setPythonOnPath', onPath);
-    const contactUrl = 'https://stjude.cloud/contact';
-
-    if (onPath === false) {
-      Alert.create({
-        html: `${'Something has gone wrong during your installation process.' +
-          ' Please contact us at '}${contactUrl}.`,
-        actions: [
-          {
-            label: 'Open Link',
-            handler: () => {
-              VueApp.backend.utils.openExternal(contactUrl);
-            },
-          },
-        ],
-      });
-    }
-  });
 }
 
 // if this code was bundled and included in index.html,
