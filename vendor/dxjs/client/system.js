@@ -9,6 +9,7 @@ var findDataObjects_1 = __importDefault(
   require('../methods/system/findDataObjects')
 );
 var findProjects_1 = __importDefault(require('../methods/system/findProjects'));
+var whoami_1 = __importDefault(require('../methods/system/whoami'));
 var SystemClient = /** @class */ (function() {
   function SystemClient(client) {
     this.client = client;
@@ -28,6 +29,9 @@ var SystemClient = /** @class */ (function() {
       options = {};
     }
     return findProjects_1.default(this.client, options);
+  };
+  SystemClient.prototype.whoami = function() {
+    return whoami_1.default(this.client);
   };
   return SystemClient;
 })();
