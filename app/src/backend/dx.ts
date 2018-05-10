@@ -251,8 +251,12 @@ export async function uploadFile(
     // tags: [config.NEEDS_ANALYSIS_TAG],
   });
 
-  const reader = fs.createReadStream(file.path);
   const attributes = await metadata(file.path);
+
+  let bytesRead = 0;
+  const {size} = attributes;
+
+  const reader = fs.createReadStream(file.path);
 
   const {url, headers} = await client.file.upload(id, attributes);
 
@@ -268,6 +272,16 @@ export async function uploadFile(
       }
     }
   );
+
+  req.on('drain', () => {
+    const {bytesWritten} = req.req.connection;
+    const percent = bytesWritten / size * 100;
+    progressCb(percent);
+  });
+
+  req.on('abort', () => {
+    finishedCb(new Error('upload aborted'), null);
+  });
 
   return req;
 }
