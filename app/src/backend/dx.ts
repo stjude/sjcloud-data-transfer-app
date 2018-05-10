@@ -45,12 +45,19 @@ interface IMetadata {
  * @param dryrun Return the command that would have been run as a string.
  * @returns ChildProcess or string depending on the value of 'dryrun'.
  */
-export function loggedIn(
+export async function loggedIn(
+  token: string,
   callback: SuccessCallback,
   dryrun: boolean = false
-): any {
-  const cmd = 'dx whoami';
-  return dryrun ? cmd : utils.runCommand(cmd, callback);
+) {
+  const client = new Client(token);
+
+  try {
+    await client.system.whoami();
+    callback(null, true);
+  } catch (e) {
+    callback(e, false);
+  }
 }
 
 /**

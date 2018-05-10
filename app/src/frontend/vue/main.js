@@ -57,7 +57,10 @@ export default function _App(
     VueApp.$router.replace('home');
   } else {
     VueApp.$router.replace('/');
-    VueApp.backend.state.getState(state => {
+
+    const token = this.$store.getters.token;
+
+    VueApp.backend.state.getState(token, state => {
       VueApp.$router.replace(state.path);
       if (state.path === 'login') {
         checkDependencies(VueApp);
