@@ -136,30 +136,6 @@ export function describeDXItem(
 }
 
 /**
- * Checks if there's at least one project the user can upload data to.
- *
- * @param {SuccessCallback} callback
- * @param {boolean} dryrun Return the command that would have been run as a string.
- * @param {string} overridePlatform Override the platform string with this value.
- */
-export function checkProjectAccess(
-  callback: SuccessCallback,
-  dryrun: boolean = false,
-  overridePlatform: string = null
-): any {
-  let cmd = '';
-  let platformToUse = overridePlatform || platform;
-
-  if (platformToUse === 'linux' || platformToUse === 'darwin') {
-    cmd = "echo '0' | dx select --level UPLOAD";
-  } else if (platformToUse === 'win32') {
-    cmd = '"echo 0 | dx select --level UPLOAD"';
-  } else throw new Error(`Unrecognized platform: '${platformToUse}'.`);
-
-  return dryrun ? cmd : utils.runCommand(cmd, callback);
-}
-
-/**
  * List all of the files available for download in a DNAnexus project.
  *
  * @param projectId The DNAnexus project identifier (ex: project-XXXX).
