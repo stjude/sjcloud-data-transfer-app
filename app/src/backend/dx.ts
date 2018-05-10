@@ -201,6 +201,10 @@ export function downloadDxFile(
         }
       });
 
+      req.on('abort', () => {
+        finishedCb(new Error('upload aborted'), null);
+      });
+
       progress(req).on('progress', (state: any) => {
         updateCb(state.percent * 100);
       });
