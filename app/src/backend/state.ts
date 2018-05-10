@@ -67,18 +67,7 @@ export function getState(callback: (state: object) => void) {
         }
 
         logging.debug('  [*] We are logged into DNAnexus.');
-        dx.checkProjectAccess((err: object, res: object) => {
-          if (err) {
-            console.error(err);
-            logging.debug(
-              '  --> State is UNKNOWN (error checking project access).'
-            );
-            return callback(states.UNKNOWN);
-          }
-
-          logging.debug('  [*] We have project access.');
-          return callback(states.UPLOAD);
-        });
+        return callback(states.UPLOAD);
       });
     });
   });
