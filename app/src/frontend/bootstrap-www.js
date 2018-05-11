@@ -9,6 +9,7 @@ window.utils = {
   readSJCloudFile(filename, callback) {
     callback(
       JSON.stringify({
+        token: '',
         showAllFiles: true,
         showAllProjects: true,
         concurrentOperations: 2,
