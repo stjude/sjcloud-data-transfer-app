@@ -63,6 +63,10 @@ export default function getVuexStore(cachedState = {}) {
         cacheState(state);
       }
 
+      if (mutation.type === 'setToken') {
+        cacheState(state);
+      }
+
       if (mutation.type === 'setURIProject') {
         store.commit('setCurrToolName', state.uriProject, true);
       }
@@ -82,6 +86,7 @@ export default function getVuexStore(cachedState = {}) {
     ref.backend.utils.saveToSJCloudFile(
       'state.json',
       JSON.stringify({
+        token: state.token,
         showAllFiles: state.showAllFiles,
         showAllProjects: state.showAllProjects,
         concurrentOperations: state.concurrentOperations,
