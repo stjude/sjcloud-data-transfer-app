@@ -262,65 +262,6 @@ export function runCommand(
   } else throw new Error(`Unrecognized platform: ${platform}.`);
 }
 
-/**
- * Parse Python version from a string. Presumably, output from 'python --version'.
- * @param versionString String to parse Python version from
- * @returns A tuple containing [majorNum, minorNum, patchNum]
- */
-export function parsePythonVersion(versionString: string) {
-  const regex = /Python ([0-9]+).([0-9]+).([0-9]+)/;
-  let match = regex.exec(versionString);
-
-  if (!match) {
-    throw new Error(
-      `Could not parse Python version from string '${versionString}'`
-    );
-  }
-
-  let [full, major, minor, patch] = match;
-  return [parseInt(major), parseInt(minor), parseInt(patch)];
-}
-
-/**
- * Downloads a normal file. Downloading of a DXFile is in dx.js
- *
- * @param {string} url URL of download.
- * @param {string} dest Path for newly downloaded file.
- * @see dx:downloadDxFile
- */
-export function downloadFile(url: string, dest: string): Promise<boolean> {
-  return new Promise((resolve, reject) => {
-    let file = fs.createWriteStream(dest);
-    file.on('error', (error: any) => {
-      reject(error);
-    });
-
-    file.on('finish', () => {
-      file.close();
-      resolve(true);
-    });
-
-    https.get(url, (res: any) => {
-      res.pipe(file);
-    });
-  });
-}
-
-/**
- * Untars a file to the specified location.
- *
- * @param {string} filepath Path to TAR file.
- * @param {string} destParentDir Path to the parent directory of TAR content.
- * @param {SuccessCallback} callback
- */
-export function untarTo(
-  filepath: string,
-  destParentDir: string,
-  callback: SuccessCallback
-): void {
-  runCommand(`tar - C ${destParentDir} -zxf ${filepath} `, callback);
-}
-
 export const computeMd5 = (pathname: string): Promise<string> => {
   return new Promise(resolve => {
     const hash = _crypto.createHash('md5');
@@ -336,38 +277,6 @@ export const computeMd5 = (pathname: string): Promise<string> => {
     });
   });
 };
-
-/**
- * Computes the SHA256 sum of a given file.
- *
- * @todo No error possible in callback, the calculation needs to be checked
- *       for success.
- * @param {string} filepath Path to file being checksummed
- * @param {SuccessCallback} callback
- */
-export function computeSHA256(
-  filepath: string,
-  callback: SuccessCallback
-): void {
-  let shasum = _crypto.createHash('SHA256');
-
-  if (!fs.existsSync(filepath)) {
-    throw new Error(`${filepath} does not exist!`);
-  }
-
-  if (!fs.lstatSync(filepath).isFile()) {
-    throw new Error(`${filepath} is not a file!`);
-  }
-
-  let s = fs.ReadStream(filepath);
-  s.on('data', (chunk: object) => {
-    shasum.update(chunk);
-  });
-  s.on('end', () => {
-    const result = shasum.digest('hex');
-    return callback(null, result);
-  });
-}
 
 /**
  * Opens a URL in the default, external browser (in other words, not inside
@@ -479,19 +388,6 @@ export function fileInfoFromPath(
 }
 
 /**
- * Generate a random number between min and max.
- *
- * @param {number} min minimum number
- * @param {number} max maximum number
- * @return {number} random integer.
- */
-export function randomInt(min: number, max: number) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-
-/**
  * Kills an entire process tree using a 3rd party package.
  *
  * @param {number} pid PID of the process to kill.
@@ -549,17 +445,6 @@ export function readSJCloudFile(
     }
     callback(data ? data.toString() : defaultContent);
   });
-}
-
-/**
- * Gets the appropriate tab literal character based on the platform.
- */
-export function getTabLiteral() {
-  if (platform === 'darwin' || platform === 'linux') {
-    return "$'\\t'";
-  } else if (platform === 'win32') {
-    return '`t';
-  } else throw new Error('Unrecognized platform: ${platform}.');
 }
 
 export function selfSigned(callback: SuccessCallback) {
