@@ -95,7 +95,7 @@ const tour = new window.Tour({
     }),
     getStep({
       element: '#upload-panel',
-      title: 'Step 3a: Upload files',
+      title: 'Step 3: Upload files',
       content: `After selecting the 'Upload' tab, you can click
                 or drag files over the highlighted area to send
                 input files to the cloud for processing.`,
@@ -103,7 +103,7 @@ const tour = new window.Tour({
     }),
     getStep({
       element: '#download-panel',
-      title: 'Step 3b: Download files',
+      title: 'Step 4: Download files',
       content: `After selecting the 'Download' tab, you can select 
                 results files from tools or data included in your
                 data requests. Note: if you do not see any files 
