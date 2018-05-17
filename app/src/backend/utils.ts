@@ -643,20 +643,24 @@ export class Timer {
  * @param {Error} err
  */
 export function reportBug(err: Error) {
+  console.log(err);
   remote.dialog.showMessageBox(
     {
       type: 'error',
       buttons: ['Report Bug', 'Cancel'],
-      title: 'Error',
+      title: err.name,
       message:
-        "We've run into an error. If you'd like to contact us and report the bug please do so.",
+        "We've encountered an error. If you'd like to help us resolve it, " +
+        'file a report with a brief description of the problem ' +
+        'and the following text.',
       detail: err.stack,
     },
     response => {
-      if (response === 1) {
-        console.log('cancelled');
+      if (response === 0) {
+        // 'Report Bug' selected
+        openExternal('https://stjude.cloud/contact');
       } else {
-        console.log('Not cancelled');
+        // 'Cancel' selected
       }
     }
   );
