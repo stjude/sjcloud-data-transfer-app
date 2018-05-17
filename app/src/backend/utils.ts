@@ -636,3 +636,28 @@ export class Timer {
     return Math.round(this.stop_time - this.start_time);
   }
 }
+
+/**
+ * Creates a native dialog box asking if the user wants to send a bug report.
+ *
+ * @param {Error} err
+ */
+export function reportBug(err: Error) {
+  remote.dialog.showMessageBox(
+    {
+      type: 'error',
+      buttons: ['Report Bug', 'Cancel'],
+      title: 'Error',
+      message:
+        "We've run into an error. If you'd like to contact us and report the bug please do so.",
+      detail: err.stack,
+    },
+    response => {
+      if (response === 1) {
+        console.log('cancelled');
+      } else {
+        console.log('Not cancelled');
+      }
+    }
+  );
+}
