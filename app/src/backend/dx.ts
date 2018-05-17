@@ -152,9 +152,7 @@ export function listDownloadableFiles(
     return callback(error, null);
   }
 
-  let cmd = `dx find data --path ${
-    projectId
-  }:/ --json --state closed --class file`;
+  let cmd = `dx find data --path ${projectId}:/ --json --state closed --class file`;
   if (!allFiles) {
     cmd += ` --tag ${config.DOWNLOADABLE_TAG}`;
   }
@@ -203,6 +201,7 @@ export function downloadDxFile(
         let progress = Math.round(stats.size / fileRawSize * 100.0);
         updateCb(progress);
       }
+      utils.reportBug(err);
     });
   });
 
@@ -228,6 +227,10 @@ function watchRemoteFile(
     file.sizeCheckingLock = true; // acquire file size checking lock
 
     module.exports.describeDXItem(dxRemotePath, (err: any, remoteFile: any) => {
+      if (err) {
+        utils.reportBug(err);
+      }
+
       file.sizeCheckingLock = false; // release file size checking lock
       if (!remoteFile || !remoteFile.parts) {
         return;

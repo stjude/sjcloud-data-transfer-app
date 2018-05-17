@@ -11,6 +11,9 @@ logging.info('   [*] Registering IPC Listeners...');
 
 ipcMain.on('sync/generate-selfsigned', (event: any, arg: any) => {
   utils.selfSigned((err: any, certs: any) => {
+    if (err) {
+      utils.reportBug(err);
+    }
     event.returnValue = certs;
   });
 });

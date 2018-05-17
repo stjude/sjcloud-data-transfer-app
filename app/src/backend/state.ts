@@ -48,6 +48,7 @@ export function getState(callback: (state: object) => void) {
       logging.debug(
         '  --> State is UNKNOWN (error initializing SJCloud home).'
       );
+      utils.reportBug(err);
       return callback(states.UNKNOWN);
     }
 
@@ -73,6 +74,7 @@ export function getState(callback: (state: object) => void) {
             logging.debug(
               '  --> State is UNKNOWN (error checking project access).'
             );
+            utils.reportBug(err);
             return callback(states.UNKNOWN);
           }
 
