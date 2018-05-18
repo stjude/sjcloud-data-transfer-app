@@ -11,7 +11,7 @@ import * as utils from './utils';
 import {existsSync} from 'fs';
 import {SuccessCallback, ErrorCallback, ProgressCallback} from './types';
 import {DownloadInfo} from './config';
-import {downloadFile} from './utils';
+import {downloadFile, Timer} from './utils';
 import * as logging from './logging-remote';
 
 // Package names are from `data.actions.{FETCH, LINK}` in the final object after
