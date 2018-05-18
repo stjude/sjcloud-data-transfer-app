@@ -7,7 +7,7 @@ const os = require('os');
 const electron = require('electron');
 const {logging} = require('./logging');
 const {reportBug} = require('./utils');
-const config = require('../../../config.json');
+import config from './config';
 const platform = os.platform();
 
 export const server = config.UPDATE_SERVER;

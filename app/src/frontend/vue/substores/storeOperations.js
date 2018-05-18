@@ -1,5 +1,3 @@
-import Config from '../../../../../config.json';
-
 /*
   To-Do: convert to a Vuex.module for use in store.js
 */
@@ -7,7 +5,7 @@ export default function(ref) {
   return {
     state: {
       operationProcesses: {},
-      concurrentOperations: Config.DEFAULT_CONCURRENT_OPERATIONS,
+      concurrentOperations: 3,
     },
     getters: {
       concurrentOperations(state, getters) {

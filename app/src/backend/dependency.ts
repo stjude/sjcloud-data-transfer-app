@@ -6,16 +6,12 @@
 const os = require('os');
 const path = require('path');
 const fs = require('fs-extra');
-const config = require('../../../config.json');
+import config from './config';
 import * as utils from './utils';
 import {existsSync} from 'fs';
-import {
-  DXDownloadInfo,
-  SuccessCallback,
-  ErrorCallback,
-  ProgressCallback,
-} from './types';
-import {downloadFile, Timer} from './utils';
+import {SuccessCallback, ErrorCallback, ProgressCallback} from './types';
+import {DownloadInfo} from './config';
+import {downloadFile} from './utils';
 import * as logging from './logging-remote';
 
 // Package names are from `data.actions.{FETCH, LINK}` in the final object after
@@ -55,36 +51,49 @@ let platform = os.platform();
 if (!platform)
   throw new Error(`Unrecognized platform. Must be Windows, Mac, or Ubuntu.`);
 
+type Package = 'ANACONDA';
+type Platform = 'DARWIN' | 'LINUX' | 'WIN32';
+type Architecture = 'IA32' | 'X64';
+
+const parsePlatform = (s: string): Platform => {
+  switch (s.toLowerCase()) {
+    case 'darwin':
+      return 'DARWIN';
+    case 'linux':
+      return 'LINUX';
+    case 'win32':
+      return 'WIN32';
+    default:
+      throw new Error('Invalid platform. Must be Linux, Darwin, or Win32.');
+  }
+};
+
+const parseArchitecture = (s: string): Architecture => {
+  switch (s.toLowerCase()) {
+    case 'ia32':
+      return 'IA32';
+    case 'x64':
+      return 'X64';
+    default:
+      throw new Error('Invalid architecture. Must be IA32 or X64.');
+  }
+};
+
 /**
- * Get download information from config.json based on package name.
+ * Get download information from config based on package name.
  *
- * @param packagename Name of the package
+ * @param package_name Name of the package
  * @returns Relevant URL and SHA256 sum.
  */
-export function getDownloadInfo(packagename: string): DXDownloadInfo {
-  let platformUpper = platform.toUpperCase();
-  let archUpper = arch.toUpperCase();
-  packagename = packagename.toUpperCase();
-
-  // Combining these made the code unreadable.
-  if (!('DOWNLOAD_INFO' in config)) {
+export const getDownloadInfo = (name: Package): DownloadInfo | null => {
+  try {
+    const platformUpper = parsePlatform(platform);
+    const archUpper = parseArchitecture(arch);
+    return config.DOWNLOAD_INFO[name][platformUpper][archUpper];
+  } catch (_e) {
     return null;
   }
-  if (!(packagename in config['DOWNLOAD_INFO'])) {
-    return null;
-  }
-  if (!(platformUpper in config['DOWNLOAD_INFO'][packagename])) {
-    return null;
-  }
-
-  let dlInfo = config['DOWNLOAD_INFO'][packagename][platformUpper];
-  if ('IA32' in dlInfo || 'X64' in dlInfo) {
-    if (!(archUpper in dlInfo)) return null;
-    dlInfo = dlInfo[archUpper];
-  }
-
-  return dlInfo;
-}
+};
 
 /**
  * Returns the install command for anaconda given a destination directory.

@@ -12,7 +12,6 @@ addons:
     - python2.7
     - python2.7-dev
 before_install:
-  - cp config-example.json config.json
   - echo "$TRAVIS_OS_NAME"
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       brew update;

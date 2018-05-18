@@ -13,45 +13,34 @@ A desktop application written on top of the [Electron Framework](https://electro
 * Logging in using OAuth for both internal and external St. Jude users.
 * Reliably uploading and downloading genomic data files to/from the platform.
 
-You'll need the following prerequsites installed. We are working on adding support for installing and configuring these automatically.
+You can find the latest built version of the tools on the [releases page](https://github.com/stjude/sjcloud-data-transfer-app/releases).
 
 ## Building
 
-You can find the latest built version of the tools on the [releases page](https://github.com/stjude/sjcloud-data-transfer-app/releases). If you'd like to build yourself, you'll also need the following prerequisites installed:
+### Prerequisites
 
-* NodeJS
-  * [Install](https://nodejs.org/en/download/)
+If you'd like to build yourself, you'll also need the following prerequisites installed:
+
+| **Name** | **Install Link**                                                                                                  |
+| -------- | ----------------------------------------------------------------------------------------------------------------- |
+| NodeJS   | [Using NVM](https://github.com/creationix/nvm#install-script) or [Official Site](https://nodejs.org/en/download/) |
+| Yarn     | [Official Site](https://yarnpkg.com/en/docs/install)                                                              |
+
+### Process
 
 The process for installing the software in production mode:
 
 ```bash
 # download repository
 git clone git@github.com:stjude/sjcloud-data-transfer-app.git --depth 1
-
 cd sjcloud-data-transfer-app
 
-# install dependencies
-yarn install
-
-# copy the example configuration
-# if you're on Mac or Linux use
-cp config-example.json config.json
-# if you're on Windows use
-copy config-example.json config.json
-# edit as necessary
-
-# NODE_ENV takes on values of 'production' or 'development'.
-# Unspecified defaults to production.
-# if you're on Mac or Linux use
-export NODE_ENV=production
-# if you're on Windows use
-set NODE_ENV=production
-
-# compile the frontend/backend code.
-gulp compile
-
-# start the application
-yarn start
+yarn install                    # install dependencies
+export NODE_ENV=production      # set the Node environment. Can be 'production' or 'development'.
+# set NODE_ENV=production       # if you're on Windows cmd.exe.
+# $Env:NODE_ENV = "production"  # if you're on Windows powershell.
+npx gulp compile                # compile the frontend/backend code.
+yarn start                      # start the application
 ```
 
 ## Development
@@ -60,52 +49,27 @@ Running the tool in development mode requires a few changes to the config:
 
 ```bash
 # download repository
-git clone git@github.com:stjude/sjcloud-data-transfer-app.git
-
+git clone -b development git@github.com:stjude/sjcloud-data-transfer-app.git
 cd sjcloud-data-transfer-app
 
-# install dependencies
-yarn install
-
-# copy the example configuration
-# if you're on Mac or Linux use
-cp config-example.json config.json
-# if you're on Windows use
-copy config-example.json config.json
-
-# edit the config.json file
-# if you're on Mac or Linux you can use
-vim config.json
-# if you're on Windows you can use
-notepad config.json
-
-# NODE_ENV takes on values of 'production' or 'development'.
-# Unspecified defaults to production.
-# if you're on Mac or Linux use
-export NODE_ENV=development
-# if you're on Windows use
-set NODE_ENV=development
-
-# compile the frontend/backend code.
-gulp compile
-
-# start the application
-yarn start
+yarn install                     # install dependencies
+export NODE_ENV=development      # set the Node environment. Can be 'production' or 'development'.
+# set NODE_ENV=development       # if you're on Windows cmd.exe.
+# $Env:NODE_ENV = "development"  # if you're on Windows powershell.
+npx gulp compile                 # compile the frontend/backend code.
+yarn start:dev                   # start the application
 ```
 
-We recommend that you change the following keys in the config
-file.
+Note that we recommend that you use the following environment variables when developing:
 
-```javascript
-{
-    ...
-    "AUTOUPDATE_ENABLED": false,
-    "CHROMIUM_MENU": true,
-    ...
-}
+```bash
+export AUTOUPDATE_ENABLED="false"
+export CHROMIUM_MENU="true"
+# set AUTOUPDATE_ENABLED="false"
+# set CHROMIUM_MENU="true"
 ```
 
-After making these changes, you are good to go! We recommend that in practice, you use the following command in a separate tab to recompile the code as you make changes:
+We recommend that in practice, you use the following command in a separate tab to recompile the code as you make changes:
 
 ```bash
 # continuously recompile frontend/backend code
