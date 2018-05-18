@@ -6018,13 +6018,6 @@ node-notifier@^4.1.0:
     shellwords "^0.1.0"
     which "^1.0.5"
 
-node-powershell@^3.3.1:
-  version "3.3.1"
-  resolved "https://registry.yarnpkg.com/node-powershell/-/node-powershell-3.3.1.tgz#bbf76b29f091ed83eae16ad9e7a180a13f36d113"
-  dependencies:
-    bluebird "^3.5.1"
-    chalk "^2.1.0"
-
 node-pre-gyp@^0.6.36:
   version "0.6.39"
   resolved "https://registry.yarnpkg.com/node-pre-gyp/-/node-pre-gyp-0.6.39.tgz#c00e96860b23c0e1420ac7befc5044e1d78d8649"

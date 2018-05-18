@@ -80,7 +80,7 @@ describe('Running', () => {
   let command: string;
 
   if (platform === 'win32') {
-    command = 'Write-Debug "Bleep Blop Bloop" -Debug';
+    command = 'Write-Output "Bleep Blop Bloop"';
   } else {
     command = "echo 'Bleep Blop Bloop'";
   }
