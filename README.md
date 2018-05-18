@@ -52,12 +52,12 @@ Running the tool in development mode requires a few changes to the config:
 git clone -b development git@github.com:stjude/sjcloud-data-transfer-app.git
 cd sjcloud-data-transfer-app
 
-yarn install                     # install dependencies
-export NODE_ENV=development      # set the Node environment. Can be 'production' or 'development'.
-# set NODE_ENV=development       # if you're on Windows cmd.exe.
-# $Env:NODE_ENV = "development"  # if you're on Windows powershell.
-npx gulp compile                 # compile the frontend/backend code.
-yarn start:dev                   # start the application
+yarn install                       # install dependencies
+export NODE_ENV=development        # set the Node environment. Can be 'production' or 'development'.
+# set NODE_ENV=development         # if you're on Windows cmd.exe.
+# $Env:NODE_ENV="development"      # if you're on Windows powershell.
+npx gulp compile                   # compile the frontend/backend code.
+yarn start:dev                     # start the application
 ```
 
 Note that we recommend that you use the following environment variables when developing:
@@ -65,8 +65,10 @@ Note that we recommend that you use the following environment variables when dev
 ```bash
 export AUTOUPDATE_ENABLED="false"
 export CHROMIUM_MENU="true"
-# set AUTOUPDATE_ENABLED="false"
-# set CHROMIUM_MENU="true"
+# set AUTOUPDATE_ENABLED="false"   # cmd.exe
+# set CHROMIUM_MENU="true"         # cmd.exe
+# $Env:AUTOUPDATE_ENABLED="false"  # PowerShell
+# $Env:CHROMIOM_MENU="true"        # PowerShell
 ```
 
 We recommend that in practice, you use the following command in a separate tab to recompile the code as you make changes:
