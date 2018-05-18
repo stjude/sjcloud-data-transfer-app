@@ -643,7 +643,7 @@ export class Timer {
  * @param {Error} err
  */
 export function reportBug(err: Error) {
-  console.log(err);
+  logging.debug(err);
   remote.dialog.showMessageBox(
     {
       type: 'error',
