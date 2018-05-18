@@ -636,3 +636,32 @@ export class Timer {
     return Math.round(this.stop_time - this.start_time);
   }
 }
+
+/**
+ * Creates a native dialog box asking if the user wants to send a bug report.
+ *
+ * @param {Error} err
+ */
+export function reportBug(err: Error) {
+  logging.debug(err);
+  remote.dialog.showMessageBox(
+    {
+      type: 'error',
+      buttons: ['Report Bug', 'Cancel'],
+      title: err.name,
+      message:
+        "We've encountered an error. If you'd like to help us resolve it, " +
+        'file a report with a brief description of the problem ' +
+        'and the following text.',
+      detail: err.stack,
+    },
+    response => {
+      if (response === 0) {
+        // 'Report Bug' selected
+        openExternal('https://stjude.cloud/contact');
+      } else {
+        // 'Cancel' selected
+      }
+    }
+  );
+}

@@ -6,6 +6,7 @@
 const os = require('os');
 const electron = require('electron');
 const {logging} = require('./logging');
+const {reportBug} = require('./utils');
 import config from './config';
 const platform = os.platform();
 
@@ -36,6 +37,7 @@ export function startUpdateClient() {
 
     electron.autoUpdater.on('error', (error: any) => {
       logging.error(error);
+      reportBug(error);
     });
 
     electron.autoUpdater.on('checking-for-update', () => {
