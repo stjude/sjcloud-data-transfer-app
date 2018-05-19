@@ -11,19 +11,25 @@ addons:
     packages:
     - python2.7
     - python2.7-dev
+    - icnsutils
+    - graphicsmagick
+    - rpm
 before_install:
   - echo "$TRAVIS_OS_NAME"
   - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
       brew update;
-      brew outdated rpm || brew install rpm;
       brew outdated python2 || brew install python2;
     fi;
 install:
   - yarn install
 after_success: 
-  - if [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+  - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       yarn coverage;
-      if [[ $TRAVIS_BRANCH == "development" ]] || [[ $TRAVIS_BRANCH == "master" ]] && [[ "$TRAVIS_PULL_REQUEST" = "false"]]; then
-          yarn dist:publish-unix;
+      if [[ $TRAVIS_BRANCH == "development" ]] || [[ $TRAVIS_BRANCH == "master" ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then
+          yarn dist:release-linux;
+      fi;
+    elif [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
+      if [[ $TRAVIS_BRANCH == "development" ]] || [[ $TRAVIS_BRANCH == "master" ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then
+          yarn dist:release-mac;
       fi;
     fi;

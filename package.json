@@ -16,13 +16,15 @@
     "compile": "cross-env gulp compile",
     "develop":
       "cross-env NODE_ENV=development AUTOUPDATE_ENABLED='false' CHROMIUM_MENU='true' gulp develop",
-    "dist:mac": "cross-env NODE_ENV=production build -m --x64 --ia32",
-    "dist:linux":
+    "dist:build-mac": "cross-env NODE_ENV=production build -m --x64 --ia32",
+    "dist:build-linux":
       "cross-env NODE_ENV=production build -l deb rpm zip --x64 --ia32",
-    "dist:win": "cross-env NODE_ENV=production build -w --x64 --ia32",
-    "dist:publish-unix":
-      "cross-env NODE_ENV=production build -l deb rpm zip -m --x64 --ia32 -p always",
-    "dist:publish-win":
+    "dist:build-win": "cross-env NODE_ENV=production build -w --x64 --ia32",
+    "dist:release-mac":
+      "cross-env NODE_ENV=production build -m --x64 --ia32 -p always",
+    "dist:release-linux":
+      "cross-env NODE_ENV=production build -l deb rpm zip --x64 --ia32 -p always",
+    "dist:release-win":
       "cross-env NODE_ENV=production build -w --x64 --ia32 -p always",
     "pretty": "prettier --write --tab-width 2 \"app/src/**/*.{js,ts}\"",
     "test": "nyc gulp test",
