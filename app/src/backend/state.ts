@@ -1,5 +1,6 @@
 /**
- * @file Determines state of the application and the appropriate HTML files to
+ * @module state
+ * @description Determines state of the application and the appropriate HTML files to
  * show based on that state.
  **/
 
@@ -10,6 +11,7 @@ import {} from './types';
 
 /**
  * Enum for possible states of the application.
+ *
  * @readonly
  * @enum {any}
  */
@@ -46,6 +48,7 @@ export function getState(callback: (state: object) => void) {
       logging.debug(
         '  --> State is UNKNOWN (error initializing SJCloud home).'
       );
+      utils.reportBug(err);
       return callback(states.UNKNOWN);
     }
 
@@ -71,6 +74,7 @@ export function getState(callback: (state: object) => void) {
             logging.debug(
               '  --> State is UNKNOWN (error checking project access).'
             );
+            utils.reportBug(err);
             return callback(states.UNKNOWN);
           }
 

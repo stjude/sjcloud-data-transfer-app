@@ -13,13 +13,12 @@ test_script:
   - ps: |
       node --version
       yarn --version
-      Copy-Item config-example.json config.json
       yarn test
 platform: x64
 on_success:
   - ps: |
       if ($ENV:APPVEYOR_REPO_BRANCH -eq "master" -Or $ENV:APPVEYOR_REPO_BRANCH -eq "development") {
-        yarn dist:publish-win
+        yarn dist:release-win
       }
 build: off
 matrix:

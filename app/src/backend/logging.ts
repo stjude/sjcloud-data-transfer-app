@@ -1,3 +1,8 @@
+/**
+ * @module logging
+ * @description Logger module using winston to provide logging functionality.
+ */
+
 const os = require('os');
 const path = require('path');
 const winston = require('winston');

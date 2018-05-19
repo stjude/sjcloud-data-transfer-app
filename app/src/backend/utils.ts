@@ -1,8 +1,10 @@
 /**
- * @file Utility functions.
+ * @module utils
+ * @description Contains the various utility functions used in the application.
  **/
 
 import {ChildProcess} from 'child_process';
+import powershell from './powershell';
 import {
   SuccessCallback,
   CommandCallback,
@@ -17,11 +19,10 @@ const https = require('https');
 const mkdirp = require('mkdirp');
 const _crypto = require('crypto');
 const treeKill = require('tree-kill');
-const powershell = require('node-powershell');
 
 const {logging} = require('./logging');
 const {remote, shell} = require('electron');
-const {exec, spawn, execSync, spawnSync} = require('child_process');
+const {exec} = require('child_process');
 
 /**
  * CONSTANTS
@@ -38,6 +39,12 @@ interface StJudeCloudPaths {
   ANACONDA_SJCLOUD_BIN?: string;
 }
 
+/**
+ * Returns the various paths for SJ Cloud and Anaconda.
+ *
+ * @param sjcloudHomeDirectory SJ Cloud home path saved in the application, if any
+ * @param thePlatform Platform the application is running on
+ */
 export function getSJCloudPaths(
   sjcloudHomeDirectory: string = null,
   thePlatform: string = platform
@@ -65,9 +72,10 @@ export function getSJCloudPaths(
 }
 
 /**
+ * Checks if given path exists in the list of SJ Cloud paths.
  *
- * @param pathProperName
- * @param sjcloudHomeDirectory
+ * @param pathProperName The path to lookup
+ * @param sjcloudHomeDirectory The SJ Cloud paths
  */
 export function lookupPath(
   pathProperName: string,
@@ -133,7 +141,7 @@ function unixBootstrapCommand(): string {
     /* ignore */
   }
 
-  return paths.length != 0 ? `export PATH=${paths.join(':')}:$PATH;` : null;
+  return paths.length != 0 ? `export PATH="${paths.join(':')}:$PATH";` : null;
 }
 
 /**
@@ -188,7 +196,7 @@ function runCommandUnix(
     cmd = `${bootstrapCommand} ${cmd}`;
   }
 
-  cmd = `/usr/bin/env bash -c "${cmd}"`;
+  cmd = `/usr/bin/env bash -c '${cmd}'`;
   logging.silly(cmd);
   return exec(cmd, {maxBuffer: 10000000}, innerCallback);
 }
@@ -199,49 +207,20 @@ function runCommandUnix(
  * @param {string} cmd The command to be run.
  * @param {CommandCallback} innerCallback Callback to process the command output.
  */
-function runCommandWindows(cmd: string, innerCallback: CommandCallback) {
+function runCommandWindows(
+  cmd: string,
+  innerCallback: CommandCallback
+): ChildProcess {
   if (platform !== 'win32') {
     throw new Error(`Invalid platform for 'runCommandWindows': ${platform}`);
   }
 
-  let ps = new powershell({
-    executionPolicy: 'Bypass',
-    noProfile: true,
-    debugMsg: false,
-  });
+  const bootstrapCommand = windowsBootstrapCommand() || '';
+  cmd = `${bootstrapCommand}; ${cmd}`;
 
-  let bootstrapCommand = windowsBootstrapCommand();
-  if (bootstrapCommand) {
-    ps.addCommand(bootstrapCommand);
-  }
+  logging.silly(cmd);
 
-  ps.addCommand(cmd);
-  logging.silly(`Running commands: ${ps._cmds}`);
-
-  let stdout = '';
-  let stderr = '';
-
-  ps._proc.stdout.on('data', function(data: any) {
-    stdout += data.toString();
-  });
-
-  ps._proc.stderr.on('data', function(data: any) {
-    stderr += data.toString();
-  });
-
-  ps.on('end', function(code: any) {
-    innerCallback(null, stdout, stderr);
-  });
-
-  ps.on('err', (err: any) => {
-    ps.dispose();
-  });
-  ps.on('output', (err: any) => {
-    ps.dispose();
-  });
-
-  ps.invoke();
-  return ps;
+  return powershell(cmd, innerCallback);
 }
 
 /**
@@ -266,10 +245,6 @@ export function runCommand(
     if (raiseOnStderr && stderr && stderr.length > 0) {
       logging.error(stderr);
       return callback(stderr, null);
-    }
-
-    if (platform === 'win32' && stdout.includes('EOI')) {
-      stdout = stdout.replace('EOI', '');
     }
 
     if (stdout.trim() === 'False') {
@@ -593,7 +568,7 @@ export function readSJCloudFile(
  */
 export function getTabLiteral() {
   if (platform === 'darwin' || platform === 'linux') {
-    return "$'\t'";
+    return "$'\\t'";
   } else if (platform === 'win32') {
     return '`t';
   } else throw new Error('Unrecognized platform: ${platform}.');
@@ -602,4 +577,58 @@ export function getTabLiteral() {
 export function selfSigned(callback: SuccessCallback) {
   const selfsigned = require('selfsigned');
   return selfsigned.generate({}, {days: 1}, callback);
+}
+
+/**
+ * Utility timer class to time different parts of the application.
+ */
+export class Timer {
+  start_time: number;
+  stop_time: number;
+
+  /**
+   * @constructor
+   */
+  constructor() {}
+  start() {
+    this.start_time = performance.now();
+  }
+
+  stop() {
+    this.stop_time = performance.now();
+  }
+
+  duration() {
+    if (this.start_time == null && this.stop_time == null) return -1;
+    return Math.round(this.stop_time - this.start_time);
+  }
+}
+
+/**
+ * Creates a native dialog box asking if the user wants to send a bug report.
+ *
+ * @param {Error} err
+ */
+export function reportBug(err: Error) {
+  logging.debug(err);
+  remote.dialog.showMessageBox(
+    {
+      type: 'error',
+      buttons: ['Report Bug', 'Cancel'],
+      title: err.name,
+      message:
+        "We've encountered an error. If you'd like to help us resolve it, " +
+        'file a report with a brief description of the problem ' +
+        'and the following text.',
+      detail: err.stack,
+    },
+    response => {
+      if (response === 0) {
+        // 'Report Bug' selected
+        openExternal('https://stjude.cloud/contact');
+      } else {
+        // 'Cancel' selected
+      }
+    }
+  );
 }

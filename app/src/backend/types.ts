@@ -1,4 +1,9 @@
 /**
+ * @module types
+ * @description Contains the different types being used in the application.
+ */
+
+/**
  * Callback used when we are reporting the result of some
  * task that cannot error.
  *
@@ -83,7 +88,7 @@ export interface SJDTAProject {
   access_level: string;
 }
 
-export interface DXDownloadInfo {
+export interface DownloadInfo {
   URL: string;
   SHA256SUM: string;
 }

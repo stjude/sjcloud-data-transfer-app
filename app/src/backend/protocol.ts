@@ -1,5 +1,6 @@
 /**
- * @file Handles the custom sjcloud:// URI protocol. The only systems this is
+ * @module protocol
+ * @description Handles the custom sjcloud:// URI protocol. The only systems this is
  * supported on are Windows and Mac.
  */
 

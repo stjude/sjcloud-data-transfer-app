@@ -1,6 +1,5 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import Config from '../../../../config.json';
 import storeGlobal from './substores/storeGlobal';
 import storeStart from './substores/storeStart';
 import storeModals from './substores/storeModals';

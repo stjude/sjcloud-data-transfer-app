@@ -1,7 +1,13 @@
+/**
+ * @module autoupdate
+ * @description Checks and updates the application to the latest version.
+ */
+
 const os = require('os');
 const electron = require('electron');
 const {logging} = require('./logging');
-const config = require('../../../config.json');
+const {reportBug} = require('./utils');
+import config from './config';
 const platform = os.platform();
 
 export const server = config.UPDATE_SERVER;
@@ -31,6 +37,7 @@ export function startUpdateClient() {
 
     electron.autoUpdater.on('error', (error: any) => {
       logging.error(error);
+      reportBug(error);
     });
 
     electron.autoUpdater.on('checking-for-update', () => {

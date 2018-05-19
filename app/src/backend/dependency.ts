@@ -1,56 +1,103 @@
+/**
+ * @module dependency
+ * @description Installs the various dependencies required to run the application.
+ */
+
 const os = require('os');
 const path = require('path');
 const fs = require('fs-extra');
-const config = require('../../../config.json');
+import config from './config';
 import * as utils from './utils';
 import {existsSync} from 'fs';
-import {
-  DXDownloadInfo,
-  SuccessCallback,
-  ErrorCallback,
-  ProgressCallback,
-} from './types';
-import {downloadFile} from './utils';
+import {SuccessCallback, ErrorCallback, ProgressCallback} from './types';
+import {DownloadInfo} from './config';
+import {downloadFile, Timer} from './utils';
 import * as logging from './logging-remote';
+
+// Package names are from `data.actions.{FETCH, LINK}` in the final object after
+// running `conda create --json --name sjcloud python=2.7.14`.
+const CONDA_ENV_DEFAULT_PACKAGE_NAMES = new Set([
+  'ca-certificates',
+  'certifi',
+  'libcxx',
+  'libcxxabi',
+  'libedit',
+  'libffi',
+  'ncurses',
+  'openssl',
+  'pip',
+  'python',
+  'readline',
+  'setuptools',
+  'sqlite',
+  'tk',
+  'wheel',
+  'zlib',
+]);
+
+interface CondaPackage {
+  base_url: string | null;
+  build_number: number;
+  build_string: string;
+  channel: string;
+  dist_name: string;
+  name: string;
+  platform: string | null;
+  version: string;
+}
 
 let arch = os.arch();
 let platform = os.platform();
 if (!platform)
   throw new Error(`Unrecognized platform. Must be Windows, Mac, or Ubuntu.`);
 
+type Package = 'ANACONDA';
+type Platform = 'DARWIN' | 'LINUX' | 'WIN32';
+type Architecture = 'IA32' | 'X64';
+
+const parsePlatform = (s: string): Platform => {
+  switch (s.toLowerCase()) {
+    case 'darwin':
+      return 'DARWIN';
+    case 'linux':
+      return 'LINUX';
+    case 'win32':
+      return 'WIN32';
+    default:
+      throw new Error('Invalid platform. Must be Linux, Darwin, or Win32.');
+  }
+};
+
+const parseArchitecture = (s: string): Architecture => {
+  switch (s.toLowerCase()) {
+    case 'ia32':
+      return 'IA32';
+    case 'x64':
+      return 'X64';
+    default:
+      throw new Error('Invalid architecture. Must be IA32 or X64.');
+  }
+};
+
 /**
- * Get download information from config.json based on package name.
+ * Get download information from config based on package name.
  *
- * @param packagename Name of the package
+ * @param package_name Name of the package
  * @returns Relevant URL and SHA256 sum.
  */
-export function getDownloadInfo(packagename: string): DXDownloadInfo {
-  let platformUpper = platform.toUpperCase();
-  let archUpper = arch.toUpperCase();
-  packagename = packagename.toUpperCase();
-
-  // Combining these made the code unreadable.
-  if (!('DOWNLOAD_INFO' in config)) {
+export const getDownloadInfo = (name: Package): DownloadInfo | null => {
+  try {
+    const platformUpper = parsePlatform(platform);
+    const archUpper = parseArchitecture(arch);
+    return config.DOWNLOAD_INFO[name][platformUpper][archUpper];
+  } catch (_e) {
     return null;
   }
-  if (!(packagename in config['DOWNLOAD_INFO'])) {
-    return null;
-  }
-  if (!(platformUpper in config['DOWNLOAD_INFO'][packagename])) {
-    return null;
-  }
-
-  let dlInfo = config['DOWNLOAD_INFO'][packagename][platformUpper];
-  if ('IA32' in dlInfo || 'X64' in dlInfo) {
-    if (!(archUpper in dlInfo)) return null;
-    dlInfo = dlInfo[archUpper];
-  }
-
-  return dlInfo;
-}
+};
 
 /**
  * Returns the install command for anaconda given a destination directory.
+ *
  * @param destination Directory to install anaconda to.
  * @returns Anaconda install command to be run.
  */
@@ -91,7 +138,7 @@ export function installAnaconda(
     logging.debug('== Installing Dependencies ==');
 
     if (removeAnacondaIfExists) {
-      logging.debug('  [*] Removing existing anaconda installation.');
+      logging.debug('   [*] Removing existing anaconda installation.');
       fs.remove(utils.lookupPath('ANACONDA_HOME')).catch((error: any) => {
         throw error;
       });
@@ -128,7 +175,9 @@ export function installAnaconda(
   };
 
   let installAnaconda = () => {
-    logging.debug('  [*] Installing anaconda.');
+    let timer = new Timer();
+    timer.start();
+    logging.debug('   [*] Installing anaconda.');
     progressCb(30, 'Installing...');
     return new Promise((resolve, reject) => {
       const command = getAnacondaInstallCommand(destination);
@@ -140,6 +189,8 @@ export function installAnaconda(
       utils.runCommand(
         command,
         (error, result) => {
+          timer.stop();
+          logging.debug(`       [-] Took ${timer.duration()} ms.`);
           if (error) return reject(error);
           return resolve(result);
         },
@@ -148,22 +199,51 @@ export function installAnaconda(
     });
   };
 
-  let seedAnaconda = () => {
-    logging.debug('  [*] Seeding anaconda environment.');
-    progressCb(60, 'Installing...');
+  let buildDefaultPackageSpecs = (): Promise<string[]> => {
+    logging.debug('       [-] Looking up default package specs.');
+
     return new Promise((resolve, reject) => {
-      utils.runCommand(
-        `conda create -n sjcloud python=2.7.14 -y`,
-        (error, result) => {
-          if (error) return reject(error);
-          return resolve(result);
+      const cmd = 'conda list --json';
+
+      utils.runCommand(cmd, (error, result) => {
+        if (error) {
+          reject(error);
         }
-      );
+
+        const list: CondaPackage[] = JSON.parse(result);
+        const specs = list
+          .filter(pkg => CONDA_ENV_DEFAULT_PACKAGE_NAMES.has(pkg.name))
+          .map(pkg => `${pkg.name}=${pkg.version}=${pkg.build_string}`);
+
+        resolve(specs);
+      });
     });
   };
 
+  let seedAnaconda = () => {
+    let timer = new Timer();
+    timer.start();
+    logging.info('   [*] Installing anaconda.');
+    logging.debug('       [-] Seeding environment.');
+    progressCb(60, 'Installing...');
+
+    return buildDefaultPackageSpecs().then(
+      specs =>
+        new Promise((resolve, reject) =>
+          utils.runCommand(
+            `conda create -n sjcloud ${specs.join(' ')} -y`,
+            (error, result) => {
+              timer.stop();
+              logging.debug(`       [-] Took ${timer.duration()} ms.`);
+              error ? reject(error) : resolve(result);
+            }
+          )
+        )
+    );
+  };
+
   let installDXToolkit = () => {
-    logging.debug('  [*] Installing DX-Toolkit.');
+    logging.debug('   [*] Installing DX-Toolkit.');
     progressCb(95, 'Installing...');
     return new Promise((resolve, reject) => {
       utils.runCommand(
@@ -178,15 +258,25 @@ export function installAnaconda(
     });
   };
 
+  let totalTimer = new Timer();
+  totalTimer.start();
   progressCb(1, 'Downloading...');
-  logging.debug('  [*] Downloading anaconda.');
-  logging.silly(`      [-] Download location: ${destination}`);
+  logging.debug('   [*] Downloading anaconda.');
+  logging.debug(`       [-] Download location: ${destination}`);
+  let downloadTimer = new Timer();
+  downloadTimer.start();
   downloadFile(downloadURL, destination)
+    .then(() => {
+      downloadTimer.stop();
+      logging.debug(`       [-] Took ${downloadTimer.duration()} ms.`);
+    })
     .then(initSJCloudHome)
     .then(installAnaconda)
     .then(seedAnaconda)
     .then(installDXToolkit)
     .then(() => {
+      totalTimer.stop();
+      logging.debug(`   [*] Full install took ${totalTimer.duration()} ms. `);
       return new Promise((resolve, reject) => {
         progressCb(100, 'Finished!');
         finishedCb(null, true);
