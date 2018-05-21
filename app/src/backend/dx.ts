@@ -107,8 +107,9 @@ export function describeDXItem(
 
   const options = {
     fields: {
-      // This is also used to get project sizes.
+      // Both data usages add up for project sizes.
       dataUsage: true,
+      sponsoredDataUsage: true,
       size: true,
       properties: true,
       tags: true,
