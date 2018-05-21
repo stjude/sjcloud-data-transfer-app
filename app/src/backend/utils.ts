@@ -17,7 +17,7 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 const mkdirp = require('mkdirp');
-const _crypto = require('crypto');
+const crypto = require('crypto');
 const treeKill = require('tree-kill');
 
 const {logging} = require('./logging');
@@ -262,22 +262,6 @@ export function runCommand(
   } else throw new Error(`Unrecognized platform: ${platform}.`);
 }
 
-export const computeMd5 = (pathname: string): Promise<string> => {
-  return new Promise(resolve => {
-    const hash = _crypto.createHash('md5');
-    const reader = fs.ReadStream(pathname);
-
-    reader.on('data', (chunk: any) => {
-      hash.update(chunk);
-    });
-
-    reader.on('end', () => {
-      const hexDigest = hash.digest('hex');
-      resolve(hexDigest);
-    });
-  });
-};
-
 /**
  * Opens a URL in the default, external browser (in other words, not inside
  * of the electron window).
@@ -505,3 +489,49 @@ export function reportBug(err: Error) {
     }
   );
 }
+
+export interface IByteRange {
+  start: number;
+  end: number;
+}
+
+export const byteRanges = (
+  totalSize: number,
+  chunkSize: number
+): IByteRange[] => {
+  const n = Math.ceil(totalSize / chunkSize);
+  const pieces = [];
+
+  let i = 0;
+
+  while (i < n - 1) {
+    const start = chunkSize * i;
+    const end = start + chunkSize - 1;
+    pieces.push({end, start});
+    i++;
+  }
+
+  const lastStart = chunkSize * i;
+  pieces.push({end: totalSize - 1, start: lastStart});
+
+  return pieces;
+};
+
+export const md5Sum = (
+  pathname: string,
+  start: number = 0,
+  end: number = Infinity
+): Promise<string> => {
+  return new Promise(resolve => {
+    const hash = crypto.createHash('md5');
+    const reader = fs.createReadStream(pathname, {start, end});
+
+    reader.on('data', (chunk: Buffer | string | any) => {
+      hash.update(chunk);
+    });
+
+    reader.on('end', () => {
+      resolve(hash.digest('hex'));
+    });
+  });
+};
