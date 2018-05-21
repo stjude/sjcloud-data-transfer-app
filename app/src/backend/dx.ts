@@ -8,6 +8,9 @@ import {execSync} from 'child_process';
 import {Request} from 'request';
 
 import {Client} from '../../../vendor/dxjs';
+import {IDescribeOptions} from '../../../vendor/dxjs/methods/file/describe';
+import {DataObjectState} from '../../../vendor/dxjs/methods/system/findDataObjects';
+import {ProjectLevel} from '../../../vendor/dxjs/methods/system/findProjects';
 import {
   SuccessCallback,
   ResultCallback,
@@ -101,7 +104,9 @@ export function describeDXItem(
 
   const options = {
     fields: {
+      // This is also used to get project sizes.
       dataUsage: true,
+      size: true,
       properties: true,
       tags: true,
     },
@@ -148,7 +153,7 @@ export function listDownloadableFiles(
     scope: {
       project: projectId,
     },
-    state: 'closed',
+    state: DataObjectState.Closed,
     tags: !allFiles ? config.DOWNLOADABLE_TAG : undefined,
   };
 
@@ -315,10 +320,12 @@ export function listProjects(
 
   const options = {
     describe: {
-      name: true,
-      level: true,
+      fields: {
+        name: true,
+        level: true,
+      },
     },
-    level: 'UPLOAD',
+    level: ProjectLevel.Upload,
     tags: tagsToCheck.length > 0 ? {$or: tagsToCheck} : undefined,
   };
 
