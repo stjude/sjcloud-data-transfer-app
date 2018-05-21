@@ -309,7 +309,7 @@ export function listProjects(
   callback: SuccessCallback,
   dryrun: boolean = false
 ) {
-  let tagsToCheck = [];
+  let tagsToCheck: string[] = [];
   let projects: SJDTAProject[] = [];
 
   if (!allProjects) {
