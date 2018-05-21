@@ -152,7 +152,9 @@ export function listDownloadableFiles(
     return callback(error, null);
   }
 
-  let cmd = `dx find data --path ${projectId}:/ --json --state closed --class file`;
+  let cmd = `dx find data --path ${
+    projectId
+  }:/ --json --state closed --class file`;
   if (!allFiles) {
     cmd += ` --tag ${config.DOWNLOADABLE_TAG}`;
   }
@@ -201,7 +203,6 @@ export function downloadDxFile(
         let progress = Math.round(stats.size / fileRawSize * 100.0);
         updateCb(progress);
       }
-      utils.reportBug(err);
     });
   });
 
