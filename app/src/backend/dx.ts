@@ -274,7 +274,7 @@ export function uploadFile(
   remoteFolder: string = '/uploads'
 ): child_process.ChildProcess {
   const basename: string = path.basename(file.path.trim());
-  const dxRemotePath: string = `${projectId}: ${remoteFolder} /${basename}`;
+  const dxRemotePath: string = `${projectId}:${remoteFolder}/${basename}`;
 
   // keep track of the largest reported progress to ensure that if callbacks
   // get out of order, the progress meter isn't jumping all around.
