@@ -185,7 +185,7 @@ let workQueue = async.priorityQueue((task: any, callback: any) => {
   } else {
     toolInfoTask(task, callback);
   }
-}, 2);
+});
 
 workQueue.drain = function() {
   log('The queue is now empty and awaiting more tasks.');
@@ -201,8 +201,9 @@ workQueue.drain = function() {
  *
  * @param task The task to be added to the queue.
  */
-function add(task: any) {
+function add(task: any, concurrency: number) {
   log('Adding task to queue: ', task);
+  workQueue.concurrency = concurrency;
   if (task.type == 'upload') {
     workQueue.push(task, PRIORITY.UPLOAD);
   } else if (task.type == 'download') {
@@ -219,9 +220,9 @@ function add(task: any) {
  *
  * @param task Upload task to add to the queue.
  */
-export function addUploadTask(task: any) {
+export function addUploadTask(task: any, concurrency: number) {
   task.type = 'upload';
-  add(task);
+  add(task, concurrency);
 }
 
 /**
@@ -229,9 +230,9 @@ export function addUploadTask(task: any) {
  *
  * @param task Download task to add to the queue.
  */
-export function addDownloadTask(task: any) {
+export function addDownloadTask(task: any, concurrency: number) {
   task.type = 'download';
-  add(task);
+  add(task, concurrency);
 }
 
 /**
@@ -239,9 +240,9 @@ export function addDownloadTask(task: any) {
  *
  * @param task Tool info task to add to the queue.
  */
-export function addToolInfoTask(task: any) {
+export function addToolInfoTask(task: any, concurrency: number) {
   task.type = 'toolInfo';
-  add(task);
+  add(task, concurrency);
 }
 
 /**

@@ -137,15 +137,15 @@ export default {
 	            name: file.name,
 	            raw_size: file.raw_size,
 	            local_location: downloadLocation,
-	            remote_location: file.dx_location,
-	          };
+            remote_location: file.dx_location,
+          };
 
-	          this.$root.backend.queue.addDownloadTask(task);
-	        });
-	      }, 0);
-		},
-		cancelFiles() {
-			this.$store.commit('cancelCheckedFiles');
+          this.$root.backend.queue.addDownloadTask(task, concurrency);
+        });
+      }, 0);
+    },
+    cancelFiles() {
+      this.$store.commit('cancelCheckedFiles');
 		}
 	}
 }
@@ -154,7 +154,7 @@ export default {
 <style>
 
 .left-panel-container {
-	font-family: 'Open Sans';
+  font-family: 'Open Sans';
 }
 
 .right-panel-container {
