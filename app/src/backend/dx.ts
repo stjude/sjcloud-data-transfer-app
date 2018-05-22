@@ -228,10 +228,6 @@ function watchRemoteFile(
     file.sizeCheckingLock = true; // acquire file size checking lock
 
     module.exports.describeDXItem(dxRemotePath, (err: any, remoteFile: any) => {
-      if (err) {
-        utils.reportBug(err);
-      }
-
       file.sizeCheckingLock = false; // release file size checking lock
       if (!remoteFile || !remoteFile.parts) {
         return;
