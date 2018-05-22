@@ -1,8 +1,7 @@
 {
   "name": "SJCPDataTransferApp",
-  "version": "1.4.0",
-  "description":
-    "The St. Jude Cloud Data Transfer App, designed for getting data in the St. Jude Cloud easily and reliably.",
+  "version": "1.4.1",
+  "description": "The St. Jude Cloud Data Transfer App, designed for getting data in the St. Jude Cloud easily and reliably.",
   "homepage": "https://github.com/stjude/sjcloud-data-transfer",
   "repository": {
     "type": "git",
@@ -11,21 +10,15 @@
   "main": "app/main.js",
   "scripts": {
     "start": "electron app/main.js",
-    "start:dev":
-      "cross-env NODE_ENV=development AUTOUPDATE_ENABLED='false' CHROMIUM_MENU='true' electron app/main.js",
+    "start:dev": "cross-env NODE_ENV=development AUTOUPDATE_ENABLED='false' CHROMIUM_MENU='true' electron app/main.js",
     "compile": "cross-env gulp compile",
-    "develop":
-      "cross-env NODE_ENV=development AUTOUPDATE_ENABLED='false' CHROMIUM_MENU='true' gulp develop",
+    "develop": "cross-env NODE_ENV=development AUTOUPDATE_ENABLED='false' CHROMIUM_MENU='true' gulp develop",
     "dist:build-mac": "cross-env NODE_ENV=production build -m --x64 --ia32",
-    "dist:build-linux":
-      "cross-env NODE_ENV=production build -l deb rpm zip --x64 --ia32",
+    "dist:build-linux": "cross-env NODE_ENV=production build -l deb rpm zip --x64 --ia32",
     "dist:build-win": "cross-env NODE_ENV=production build -w --x64 --ia32",
-    "dist:release-mac":
-      "cross-env NODE_ENV=production build -m --x64 --ia32 -p always",
-    "dist:release-linux":
-      "cross-env NODE_ENV=production build -l deb rpm zip --x64 --ia32 -p always",
-    "dist:release-win":
-      "cross-env NODE_ENV=production build -w --x64 --ia32 -p always",
+    "dist:release-mac": "cross-env NODE_ENV=production build -m --x64 --ia32 -p always",
+    "dist:release-linux": "cross-env NODE_ENV=production build -l deb rpm zip --x64 --ia32 -p always",
+    "dist:release-win": "cross-env NODE_ENV=production build -w --x64 --ia32 -p always",
     "pretty": "prettier --write --tab-width 2 \"app/src/**/*.{js,ts}\"",
     "test": "nyc gulp test",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
