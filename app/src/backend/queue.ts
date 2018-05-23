@@ -255,3 +255,7 @@ export function removeAllTaskOfType(type: string) {
     return task.data.type === type;
   });
 }
+
+export function setConcurrentOperations(concurrency: number) {
+  workQueue.concurrency = concurrency;
+}
