@@ -185,7 +185,7 @@ let workQueue = async.priorityQueue((task: any, callback: any) => {
   } else {
     toolInfoTask(task, callback);
   }
-}, 2);
+});
 
 workQueue.drain = function() {
   log('The queue is now empty and awaiting more tasks.');

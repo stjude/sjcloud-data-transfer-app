@@ -70,67 +70,69 @@ export default {
 			return this.$store.getters.hasFilesInStaging;
 		},
 		hasFilesInTransit() {
-			return this.$store.getters.hasFilesInTransit;
-		},
-		hasTools() {
+      return this.$store.getters.hasFilesInTransit;
+    },
+    hasTools() {
 			return this.$store.getters.tools.length
-		},
-		checkedFiles() {
+    },
+    checkedFiles() {
 			return this.$store.getters.checkedFiles
-		},
-		downloadLocation() {
+    },
+    downloadLocation() {
 			return this.$store.getters.downloadLocation
-		},
-		filesVisible() {
+    },
+    filesVisible() {
 			return !this.$store.getters.noProjectsFound &&
 			(
 				this.$store.getters.searchTerm || 
-				(this.$store.getters.tools.length &&
+          (this.$store.getters.tools.length &&
 					(this.$store.getters.currFiles.length)
 				)
 			)
-		},
-		filesLoading() {
+    },
+    filesLoading() {
 			return !this.$store.getters.noProjectsFound && (!this.$store.getters.currTool || !this.$store.getters.currTool.loadedAvailableDownloads);
-		}, 
-		noFilesVisible() {
+    },
+    noFilesVisible() {
 			return !this.$store.getters.noProjectsFound &&
 			(
 				!this.$store.getters.searchTerm &&
-				(!this.$store.getters.tools.length ||
+          (!this.$store.getters.tools.length ||
 					(!this.$store.getters.currFiles.length && this.$store.getters.currTool && this.$store.getters.currTool.loadedAvailableDownloads)
 				)
 			)
 		}
-	},
-	mounted() {
+  },
+  mounted() {
 		this.$store.commit('setInfoTipText',"If you'd like to see all files, please toggle the 'Show all files' option in the settings.");
-	},
-	methods: {
-		selectDownloadLocation() {
+    const concurrency = this.$store.getters.concurrentOperations;
+    this.$root.backend.queue.setConcurrentOperations(concurrency);
+  },
+  methods: {
+    selectDownloadLocation() {
 			const defaultLocation = this.$store.getters.downloadLocation
 			this.$root.backend.utils.openDirectoryDialog(
 				(files) => {
-					if (files && files.length > 0) {
-						this.$store.commit('setDownloadLocation', files[0]);
-					}
+        if (files && files.length > 0) {
+          this.$store.commit('setDownloadLocation', files[0]);
+        }
 				}, 
 				defaultLocation
 			);
-		},
-		downloadFiles() {
-	      // Using setTimeout(..., 0) for async functionality.
-	      setTimeout(() => {
+    },
+    downloadFiles() {
+      // Using setTimeout(..., 0) for async functionality.
+      setTimeout(() => {
 	        const files = this.$store.getters.currTool.download
 	            .filter((f) => f.checked && f.status<=0 && !f.waiting && !f.started && !f.finished);
-	        const downloadLocation = this.$store.getters.downloadLocation;
-	        const concurrency = this.$store.getters.concurrentOperations;
+        const downloadLocation = this.$store.getters.downloadLocation;
+        const concurrency = this.$store.getters.concurrentOperations;
 	        console.log("Adding", files.length, "files to the task queue.");
 
-	        // Reset the status of all files.
+        // Reset the status of all files.
 	        files.forEach((file) => {
-	          this.$root.backend.utils.resetFileStatus(file);
-	          file.waiting = true;
+          this.$root.backend.utils.resetFileStatus(file);
+          file.waiting = true;
 
 	          let task = {
 	            _rawFile: file,
