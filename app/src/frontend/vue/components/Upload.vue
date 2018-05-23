@@ -136,7 +136,7 @@ export default {
           remote_location: dnanexusProjectId
         };
 
-        this.$root.backend.queue.addUploadTask(task, concurrency);
+        this.$root.backend.queue.addUploadTask(task);
       });
     },
     removeCheckedFiles() {
