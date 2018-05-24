@@ -62,12 +62,12 @@
 </template>
 
 <script>
-import LeftPanel from "./LeftPanel.vue";
-import NavBar from "./NavBar.vue";
-import FileStatus from "./FileStatus.vue";
-import UploadTarget from "./UploadTarget.vue";
-import Dropzone from "./Dropzone.vue";
-import StepOutcome from "./StepOutcome.vue";
+import LeftPanel from './LeftPanel.vue';
+import NavBar from './NavBar.vue';
+import FileStatus from './FileStatus.vue';
+import UploadTarget from './UploadTarget.vue';
+import Dropzone from './Dropzone.vue';
+import StepOutcome from './StepOutcome.vue';
 
 export default {
   components: {
@@ -76,7 +76,7 @@ export default {
     FileStatus,
     UploadTarget,
     Dropzone,
-    StepOutcome
+    StepOutcome,
   },
   data() {
     return {};
@@ -105,10 +105,10 @@ export default {
     },
     transferComplete() {
       return this.$store.getters.transferComplete;
-    }
+    },
   },
   mounted() {
-    this.$store.commit("setInfoTipText", "");
+    this.$store.commit('setInfoTipText', '');
     const concurrency = this.$store.getters.concurrentOperations;
     this.$root.backend.queue.setConcurrentOperations(concurrency);
   },
@@ -120,11 +120,11 @@ export default {
       const files = this.$store.getters.currTool.upload.filter(f => f.checked);
       const dnanexusProjectId = this.$store.getters.currTool.dx_location;
       const concurrency = this.$store.getters.concurrentOperations;
-      
+
       console.log(
-        "Uploading",
+        'Uploading',
         files.length,
-        "files with a concurrency of",
+        'files with a concurrency of',
         concurrency
       );
 
@@ -135,34 +135,34 @@ export default {
         let task = {
           _rawFile: file,
           local_location: file.path,
-          remote_location: dnanexusProjectId
+          remote_location: dnanexusProjectId,
         };
 
         this.$root.backend.queue.addUploadTask(task);
       });
     },
     removeCheckedFiles() {
-      this.$store.commit("removeCheckedFiles");
+      this.$store.commit('removeCheckedFiles');
     },
     removeAllFiles() {
-      this.$store.commit("removeAllFiles");
-      this.$store.dispatch("updateToolsFromRemote", true);
+      this.$store.commit('removeAllFiles');
+      this.$store.dispatch('updateToolsFromRemote', true);
     },
     cancelCheckedFiles() {
-      this.$store.commit("cancelCheckedFiles");
-    }
-  }
+      this.$store.commit('cancelCheckedFiles');
+    },
+  },
 };
 </script>
 
 <style scoped>
 .left-panel-container {
-  font-family: "Open Sans";
+  font-family: 'Open Sans';
 }
 
 .right-panel-container {
   height: 570px;
-  font-family: "Lato";
+  font-family: 'Lato';
 }
 
 .alert-container {
