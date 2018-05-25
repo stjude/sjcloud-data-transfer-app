@@ -62,6 +62,10 @@ export default function getVuexStore(cachedState = {}) {
         cacheState(state);
       }
 
+      if (mutation.type === 'setConcurrentOperations') {
+        cacheState(state);
+      }
+
       if (mutation.type === 'setURIProject') {
         store.commit('setCurrToolName', state.uriProject, true);
       }
