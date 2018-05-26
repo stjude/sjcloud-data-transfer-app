@@ -31,7 +31,10 @@
     "dmg": {},
     "linux": {
       "category": "Utility",
-      "target": ["AppImage", "deb"]
+      "target": [
+        "AppImage",
+        "deb"
+      ]
     },
     "win": {
       "target": "NSIS",
@@ -39,8 +42,14 @@
     }
   },
   "lint-staged": {
-    "*.js": ["npm run pretty", "git add"],
-    "*.ts": ["npm run pretty", "git add"]
+    "*.js": [
+      "npm run pretty",
+      "git add"
+    ],
+    "*.ts": [
+      "npm run pretty",
+      "git add"
+    ]
   },
   "dependencies": {
     "async": "^2.4.1",
@@ -101,7 +110,7 @@
     "cross-env": "^5.1.1",
     "css-loader": "^0.28.4",
     "d3-selection": "^1.1.0",
-    "electron": "~1.8.4",
+    "electron": "~2.0.2",
     "electron-builder": "^19.37.1",
     "electron-packager": "^9.1.0",
     "eslint": "^4.0.0",
@@ -136,7 +145,14 @@
     "webpack-notifier": "^1.5.0"
   },
   "nyc": {
-    "include": ["app/bin/backend/**/*.js", "app/bin/frontend/**/*.js"],
-    "exclude": ["gulpfile.js", "*.conf.js", "*.config.js"]
+    "include": [
+      "app/bin/backend/**/*.js",
+      "app/bin/frontend/**/*.js"
+    ],
+    "exclude": [
+      "gulpfile.js",
+      "*.conf.js",
+      "*.config.js"
+    ]
   }
 }
