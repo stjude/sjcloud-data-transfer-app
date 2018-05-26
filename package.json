@@ -125,7 +125,7 @@
     "gulp-bump": "^2.9.0",
     "husky": "^0.14.3",
     "jasmine": "^2.8.0",
-    "jasmine-core": "*",
+    "jasmine-core": "^3.1.0",
     "jasmine-ts": "^0.2.1",
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
