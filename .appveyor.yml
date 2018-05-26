@@ -15,11 +15,6 @@ test_script:
       yarn --version
       yarn test
 platform: x64
-on_success:
-  - ps: |
-      if ($ENV:APPVEYOR_REPO_BRANCH -eq "master" -Or $ENV:APPVEYOR_REPO_BRANCH -eq "development") {
-        yarn dist:release-win
-      }
 build: off
 matrix:
   fast_finish: true
