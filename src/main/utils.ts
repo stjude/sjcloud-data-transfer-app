@@ -3,6 +3,8 @@
  * @description Contains the various utility functions used in the application.
  **/
 
+import {performance} from 'perf_hooks';
+
 import {ChildProcess} from 'child_process';
 import powershell from './powershell';
 import {

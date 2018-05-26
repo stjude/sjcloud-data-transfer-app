@@ -8,6 +8,7 @@ const os = require('os');
 const utils = require('./utils');
 import * as logging from './logging-remote';
 import {} from './types';
+import * as dx from './dx';
 
 /**
  * Enum for possible states of the application.
@@ -31,7 +32,7 @@ export {states};
  * @return The state object containing the HTML file to show.
  */
 export function getState(callback: (state: object) => void) {
-  self = this;
+  let self = this;
   const platform = os.platform();
   logging.debug('');
   logging.debug('== Determining state ==');

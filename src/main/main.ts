@@ -1,24 +1,27 @@
-'use strict';
 /**
  * @file Main entrypoint for the SJCP Data Upload tool.
  *       This file includes all functionality for bootstrapping
  *       the application, handling events, and logging.
  */
-Object.defineProperty(exports, '__esModule', {value: true});
+
 /* eslint-disable no-unused-vars */
-require('os');
-require('./config');
-const electron_1 = require('electron');
-const config = require('./bin/backend/config').default;
-const ui = require('./bin/backend/ui');
-const {logging, logLevel} = require('./bin/backend/logging');
-const utils = require('./bin/backend/utils');
+
+import * as os from 'os';
+import {app, Menu as menu, BrowserWindow} from 'electron';
+
+import './ui';
+import './utils';
+import './config';
+import {logging, logLevel} from './logging';
+
 const platform = os.platform();
 const nodeEnvironment = process.env.NODE_ENV || 'production';
+
 if (nodeEnvironment !== 'production' && nodeEnvironment !== 'development') {
   logging.error("NODE_ENV must be 'production' or 'development'!");
   process.exit();
 }
+
 logging.info('');
 logging.info(' ###############################################');
 logging.info(' # Starting the SJCP Data Transfer Application #');
@@ -39,6 +42,7 @@ logging.info('');
 logging.info(' == Bootstrapping Environment ==');
 const ipc = require('./bin/backend/ipc');
 const protocol = require('./bin/backend/protocol');
+
 /**
  * START PROGRAM.
  *
@@ -51,29 +55,33 @@ const protocol = require('./bin/backend/protocol');
  *                   in the event based methods below for parsing by the 'ready'
  *                   event.
  */
-let mainWindow;
+
+let mainWindow: BrowserWindow;
 let startupOptions = {};
+
 /**
  * Performs commands to bootstrap the main window.
  * @param {*} mainWindow The window.
  */
-function bootstrapWindow(mainWindow) {
+function bootstrapWindow(mainWindow: BrowserWindow) {
   mainWindow.loadURL(`file://${__dirname}/index.html`);
+
   if (!config.CHROMIUM_MENU) {
     logging.debug('Production menu enabled (chromium menu disabled).');
     const {menuConfig} = require('./bin/backend/menu.js');
-    electron_1.Menu.setApplicationMenu(
-      electron_1.Menu.buildFromTemplate(menuConfig)
-    );
+    menu.setApplicationMenu(menu.buildFromTemplate(menuConfig));
   } else {
     logging.debug('Chromium menu enabled (production menu disabled).');
   }
+
   if (nodeEnvironment === 'production' && config.AUTOUPDATE_ENABLED === true) {
     const autoupdater = require('./bin/backend/autoupdate');
     autoupdater.startUpdateClient();
   }
+
   logging.info('');
 }
+
 /**
  * Ensure that a main window exists.
  *
@@ -81,9 +89,10 @@ function bootstrapWindow(mainWindow) {
  */
 function ensureWindow(callback = undefined) {
   // If the app isn't 'ready', we can't create a window.
-  if (!electron_1.app.isReady()) {
+  if (!app.isReady()) {
     return;
   }
+
   if (
     mainWindow === null ||
     mainWindow === undefined ||
@@ -98,10 +107,12 @@ function ensureWindow(callback = undefined) {
     });
   }
 }
-electron_1.app.on('ready', () => {
+
+app.on('ready', () => {
   ensureWindow(() => {
     // Handle open-url event.
     let uriCommand = '';
+
     if (platform === 'win32') {
       uriCommand = protocol.handleURIWindows();
     } else if (startupOptions.open_url_event_occurred) {
@@ -110,6 +121,7 @@ electron_1.app.on('ready', () => {
         startupOptions.open_url_url
       );
     }
+
     if (uriCommand) {
       logging.silly(`Running JS command: ${uriCommand}`);
       mainWindow.webContents.executeJavaScript(
@@ -119,17 +131,20 @@ electron_1.app.on('ready', () => {
     }
   });
 });
-electron_1.app.on('activate', () => {
+
+app.on('activate', () => {
   ensureWindow();
 });
-electron_1.app.on('open-url', (event, url) => {
-  if (!electron_1.app.isReady()) {
+
+app.on('open-url', (event, url) => {
+  if (!app.isReady()) {
     // this will execute if the application is not open.
     startupOptions.open_url_event_occurred = true;
     startupOptions.open_url_event = event;
     startupOptions.open_url_url = url;
   } else {
     uriCommand = protocol.handleURIMac(event, url);
+
     if (uriCommand !== '') {
       ensureWindow(() => {
         logging.silly(`Running JS command: ${uriCommand}`);
@@ -142,12 +157,14 @@ electron_1.app.on('open-url', (event, url) => {
     }
   }
 });
-electron_1.app.on('window-all-closed', () => {
+
+app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
-    electron_1.app.quit();
+    app.quit();
   }
 });
-electron_1.app.on(
+
+app.on(
   'certificate-error',
   (event, webContents, url, error, certificate, callback) => {
     if (url.startsWith('https://localhost:4433/authcb?code=')) {

@@ -1,0 +1,17 @@
+{
+  "compilerOptions": {
+    "lib": ["es6"],
+    "moduleResolution": "node",
+    "pretty": true,
+    "noImplicitAny": true,
+    "module": "commonjs",
+    "target": "es6",
+    "allowJs": true
+  },
+  "files": [
+    "./node_modules/@types/jasmine/index.d.ts",
+    "./node_modules/@types/node/index.d.ts"
+  ],
+  "include": ["src/**/*.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts", "src/bk/**/*"]
+}
