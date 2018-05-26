@@ -1,14 +1,21 @@
 node_modules/
-dist/*
-app/bin/*
-docs/*
-coverage/*
 .nyc_output/*
+
+dist/**
+!dist/web/
+!dist/web/.gitkeep
+!dist/electron
+!dist/electron/.gitkeep
+
+app/bin/*
+
+docs/*
+
+coverage/*
+
 !app/bin/.gitkeep
 **/.DS_Store
 .tmp/*
-
-package-lock.json
 
 # developer specific symlink to [project-path/]test/testdata 
 
