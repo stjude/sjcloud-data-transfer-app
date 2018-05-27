@@ -20,7 +20,8 @@
     "dist:release-linux": "cross-env NODE_ENV=production build -l deb rpm zip --x64 --ia32 -p always",
     "dist:release-win": "cross-env NODE_ENV=production build -w --x64 --ia32 -p always",
     "pretty": "prettier --write --tab-width 2 \"app/src/**/*.{js,ts}\"",
-    "test": "nyc gulp test",
+    "test": "gulp test",
+    "nyc": "nyc gulp test",
     "coverage": "nyc report --reporter=text-lcov | coveralls",
     "precommit": "lint-staged"
   },
@@ -93,6 +94,7 @@
     "winston": "^2.3.1"
   },
   "devDependencies": {
+    "@types/async": "^2.0.49",
     "@types/jasmine": "^2.6.3",
     "@types/node": "^10.1.2",
     "babel-core": "^6.25.0",
