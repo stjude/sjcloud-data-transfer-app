@@ -19,7 +19,7 @@ const fs = require('fs');
 const path = require('path');
 const https = require('https');
 const mkdirp = require('mkdirp');
-const _crypto = require('crypto');
+const crypto = require('crypto');
 const treeKill = require('tree-kill');
 
 const {logging} = require('./logging');
@@ -265,125 +265,6 @@ export function runCommand(
 }
 
 /**
- * Parse Python version from a string. Presumably, output from 'python --version'.
- * @param versionString String to parse Python version from
- * @returns A tuple containing [majorNum, minorNum, patchNum]
- */
-export function parsePythonVersion(versionString: string) {
-  const regex = /Python ([0-9]+).([0-9]+).([0-9]+)/;
-  let match = regex.exec(versionString);
-
-  if (!match) {
-    throw new Error(
-      `Could not parse Python version from string '${versionString}'`
-    );
-  }
-
-  let [full, major, minor, patch] = match;
-  return [parseInt(major), parseInt(minor), parseInt(patch)];
-}
-
-/**
- * Determines if Python 2.7.13+ is accessible on the PATH.
- *
- * @todo Change callback to SuccessCallback
- * @param {ResultCallback} callback
- */
-export function pythonOnPath(callback: ResultCallback): void {
-  runCommand('python --version', (err, res) => {
-    let majorNum: number, minorNum: number, patchNum: number;
-    [majorNum, minorNum, patchNum] = parsePythonVersion(err);
-    return callback(majorNum === 2 && minorNum === 7 && patchNum >= 13);
-  });
-}
-
-/**
- * Determines if dx-toolkit is accessible on the PATH.
- *
- * @param {SuccessCallback} callback
- */
-export function dxToolkitInstalled(callback: SuccessCallback): void {
-  const dxLocation = path.join(lookupPath('ANACONDA_SJCLOUD_BIN'), 'dx');
-  if (platform === 'linux' || platform === 'darwin') {
-    runCommand(`[ -f ${dxLocation} ]`, callback);
-  } else if (platform === 'win32') {
-    runCommand(`[System.IO.File]::Exists("${dxLocation}") `, callback);
-  }
-}
-
-/**
- * Downloads a normal file. Downloading of a DXFile is in dx.js
- *
- * @param {string} url URL of download.
- * @param {string} dest Path for newly downloaded file.
- * @see dx:downloadDxFile
- */
-export function downloadFile(url: string, dest: string): Promise<boolean> {
-  return new Promise((resolve, reject) => {
-    let file = fs.createWriteStream(dest);
-    file.on('error', (error: any) => {
-      reject(error);
-    });
-
-    file.on('finish', () => {
-      file.close();
-      resolve(true);
-    });
-
-    https.get(url, (res: any) => {
-      res.pipe(file);
-    });
-  });
-}
-
-/**
- * Untars a file to the specified location.
- *
- * @param {string} filepath Path to TAR file.
- * @param {string} destParentDir Path to the parent directory of TAR content.
- * @param {SuccessCallback} callback
- */
-export function untarTo(
-  filepath: string,
-  destParentDir: string,
-  callback: SuccessCallback
-): void {
-  runCommand(`tar - C ${destParentDir} -zxf ${filepath} `, callback);
-}
-
-/**
- * Computes the SHA256 sum of a given file.
- *
- * @todo No error possible in callback, the calculation needs to be checked
- *       for success.
- * @param {string} filepath Path to file being checksummed
- * @param {SuccessCallback} callback
- */
-export function computeSHA256(
-  filepath: string,
-  callback: SuccessCallback
-): void {
-  let shasum = _crypto.createHash('SHA256');
-
-  if (!fs.existsSync(filepath)) {
-    throw new Error(`${filepath} does not exist!`);
-  }
-
-  if (!fs.lstatSync(filepath).isFile()) {
-    throw new Error(`${filepath} is not a file!`);
-  }
-
-  let s = fs.ReadStream(filepath);
-  s.on('data', (chunk: object) => {
-    shasum.update(chunk);
-  });
-  s.on('end', () => {
-    const result = shasum.digest('hex');
-    return callback(null, result);
-  });
-}
-
-/**
  * Opens a URL in the default, external browser (in other words, not inside
  * of the electron window).
  *
@@ -493,19 +374,6 @@ export function fileInfoFromPath(
 }
 
 /**
- * Generate a random number between min and max.
- *
- * @param {number} min minimum number
- * @param {number} max maximum number
- * @return {number} random integer.
- */
-export function randomInt(min: number, max: number) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-
-/**
  * Kills an entire process tree using a 3rd party package.
  *
  * @param {number} pid PID of the process to kill.
@@ -563,17 +431,6 @@ export function readSJCloudFile(
     }
     callback(data ? data.toString() : defaultContent);
   });
-}
-
-/**
- * Gets the appropriate tab literal character based on the platform.
- */
-export function getTabLiteral() {
-  if (platform === 'darwin' || platform === 'linux') {
-    return "$'\\t'";
-  } else if (platform === 'win32') {
-    return '`t';
-  } else throw new Error('Unrecognized platform: ${platform}.');
 }
 
 export function selfSigned(callback: SuccessCallback) {
@@ -634,3 +491,49 @@ export function reportBug(err: Error) {
     }
   );
 }
+
+export interface IByteRange {
+  start: number;
+  end: number;
+}
+
+export const byteRanges = (
+  totalSize: number,
+  chunkSize: number
+): IByteRange[] => {
+  const n = Math.ceil(totalSize / chunkSize);
+  const pieces = [];
+
+  let i = 0;
+
+  while (i < n - 1) {
+    const start = chunkSize * i;
+    const end = start + chunkSize - 1;
+    pieces.push({end, start});
+    i++;
+  }
+
+  const lastStart = chunkSize * i;
+  pieces.push({end: totalSize - 1, start: lastStart});
+
+  return pieces;
+};
+
+export const md5Sum = (
+  pathname: string,
+  start: number = 0,
+  end: number = Infinity
+): Promise<string> => {
+  return new Promise(resolve => {
+    const hash = crypto.createHash('md5');
+    const reader = fs.createReadStream(pathname, {start, end});
+
+    reader.on('data', (chunk: Buffer | string | any) => {
+      hash.update(chunk);
+    });
+
+    reader.on('end', () => {
+      resolve(hash.digest('hex'));
+    });
+  });
+};
