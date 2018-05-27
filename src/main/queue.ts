@@ -6,6 +6,7 @@
  * @author Clay McLeod
  */
 
+import * as _async from 'async';
 const async = require('async');
 const PRIORITY = {
   UPLOAD: 1,
