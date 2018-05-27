@@ -2,8 +2,6 @@
  * @module queue
  * @description Customized queue functionality to multiplex tasks across the
  * concurrency level specified by the user and rank them based on priority.
- *
- * @author Clay McLeod
  */
 
 import * as _async from 'async';
@@ -23,123 +21,141 @@ export enum QueueTaskType {
  **/
 
 export interface RemoteFile {
-  local_file: string;
-  remote_file: string;
+  localFile: string;
+  remoteFile: string;
 }
 
 export interface QueueTask extends RemoteFile {
   taskType: QueueTaskType;
 }
 
-// The static queue option which is created upon
-// module loading.
-export let main_queue = _async.priorityQueue(
-  (t: QueueTask, e: _async.ErrorCallback<Error>) => {
-    switch (t.taskType) {
-      case QueueTaskType.Upload: {
-        handleUploadTask(t);
-        break;
-      }
-      case QueueTaskType.Download: {
-        handleDownloadTask(t);
-        break;
-      }
-      case QueueTaskType.Info: {
-        handleInfoTask(t);
-        break;
-      }
+export class FileQueue {
+  private static instance: FileQueue;
+  public _queue: _async.AsyncPriorityQueue<QueueTask>;
+
+  private constructor() {
+    this._queue = _async.priorityQueue(
+      (t: QueueTask, cb: _async.ErrorCallback<Error>) => {
+        switch (t.taskType) {
+          case QueueTaskType.Upload: {
+            FileQueue.handleUploadTask(t, cb);
+            break;
+          }
+          case QueueTaskType.Download: {
+            FileQueue.handleDownloadTask(t, cb);
+            break;
+          }
+          case QueueTaskType.Info: {
+            FileQueue.handleInfoTask(t, cb);
+            break;
+          }
+        }
+      },
+      2
+    );
+  }
+
+  /**
+   * Static method to get the singleton instance.
+   */
+  static getInstance(): FileQueue {
+    if (!FileQueue.instance) {
+      FileQueue.instance = new FileQueue();
     }
-  },
-  2
-);
 
-/**
- * Adds a QueueTask to the queue for execution.
- *
- * @param t {QueueTask} The task to add to the main_queue.
- */
-export function addTask(t: QueueTask) {
-  main_queue.push(t, t.taskType);
-}
+    return FileQueue.instance;
+  }
 
-/**
- * Add an upload task to the queue.
- *
- * @param r {RemoteFile} Local/remote file mapping.
- **/
-export function addUploadTask(r: RemoteFile) {
-  addTask({
-    taskType: QueueTaskType.Upload,
-    ...r,
-  });
-}
+  /**
+   * Adds a QueueTask to the queue for execution.
+   *
+   * @param t {QueueTask} The task to add to the main_queue.
+   */
+  addTask(t: QueueTask) {
+    this._queue.push(t, t.taskType);
+  }
 
-/**
- * Add a download task to the queue.
- *
- * @param r {RemoteFile} Local/remote file mapping.
- **/
-export function addDownloadTask(r: RemoteFile) {
-  addTask({
-    taskType: QueueTaskType.Upload,
-    ...r,
-  });
-}
+  /**
+   * Add an upload task to the queue.
+   *
+   * @param r {RemoteFile} Local/remote file mapping.
+   **/
+  addUploadTask(r: RemoteFile) {
+    this.addTask({
+      taskType: QueueTaskType.Upload,
+      ...r,
+    });
+  }
 
-/**
- * Add an info task to the queue.
- *
- * @param r {RemoteFile} Local/remote file mapping.
- **/
-export function addInfoTask(r: RemoteFile) {
-  addTask({
-    taskType: QueueTaskType.Info,
-    ...r,
-  });
-}
+  /**
+   * Add a download task to the queue.
+   *
+   * @param r {RemoteFile} Local/remote file mapping.
+   **/
+  addDownloadTask(r: RemoteFile) {
+    this.addTask({
+      taskType: QueueTaskType.Download,
+      ...r,
+    });
+  }
 
-/**
- * Upload a local file to DNAnexus.
- * @param t {RemoteFile} Remote/local file mapping.
- */
-export function handleUploadTask(t: RemoteFile) {
-  // @TODO
-}
+  /**
+   * Add an info task to the queue.
+   *
+   * @param r {RemoteFile} Local/remote file mapping.
+   **/
+  addInfoTask(r: RemoteFile) {
+    this.addTask({
+      taskType: QueueTaskType.Info,
+      ...r,
+    });
+  }
 
-/**
- * Download a remote file from DNAnexus.
- * @param t {RemoteFile} Remote/local file mapping.
- */
-export function handleDownloadTask(t: RemoteFile) {
-  // @TODO
-}
+  /**
+   * Upload a local file to DNAnexus.
+   * @param t {RemoteFile} Remote/local file mapping.
+   * @TODO
+   */
+  static handleUploadTask(t: RemoteFile, cb: _async.ErrorCallback<Error>) {
+    cb();
+  }
 
-/**
- * Retrieve info about a remote asset in DNAnexus.
- * @param t {RemoteFile} Remote/local file mapping.
- */
-export function handleInfoTask(t: RemoteFile) {
-  // @TODO
-}
+  /**
+   * Download a remote file from DNAnexus.
+   * @param t {RemoteFile} Remote/local file mapping.
+   * @TODO
+   */
+  static handleDownloadTask(t: RemoteFile, cb: _async.ErrorCallback<Error>) {
+    cb();
+  }
 
-/**
- * Remove certain types of tasks from the queue.
- *
- * @param type Type of tasks to remove
- */
-export function removeAllTaskOfType(t: QueueTaskType) {
-  // @NOTE: Currently, the types for async do not include
-  // the most updated declarations. Thus the need for any
-  // here.
-  (main_queue as any).remove((u: QueueTask) => {
-    return u.taskType === t;
-  });
-}
+  /**
+   * Retrieve info about a remote asset in DNAnexus.
+   * @param t {RemoteFile} Remote/local file mapping.
+   * @TODO
+   */
+  static handleInfoTask(t: RemoteFile, cb: _async.ErrorCallback<Error>) {
+    cb();
+  }
 
-/**
- * Update the concurrency of the queue.
- * @param concurrency {number} New concurrency level.
- */
-export function setConcurrentOperations(concurrency: number) {
-  main_queue.concurrency = concurrency;
+  /**
+   * Remove certain types of tasks from the queue.
+   *
+   * @param type Type of tasks to remove
+   */
+  removeAllTaskOfType(t: QueueTaskType) {
+    // @NOTE: Currently, the types for async do not include the most up to
+    //        date declarations. Thus the need to cast to `any` here.
+    (this._queue as any).remove((u: QueueTask) => {
+      return u.taskType === t;
+    });
+  }
+
+  /**
+   * Update the concurrency of the queue.
+   * @param concurrency {number} New concurrency level.
+   */
+  setConcurrentOperations(concurrency: number) {
+    this._queue.concurrency = concurrency;
+  }
 }
