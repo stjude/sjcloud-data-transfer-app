@@ -28,6 +28,7 @@ import * as utils from './utils';
 import * as logging from './logging';
 
 import config from './config';
+import {RemoteFile} from './queue';
 
 const request = require('request');
 const progress = require('request-progress');
@@ -353,22 +354,28 @@ class UploadTransfer {
 /**
  * Uploads a file to a DNAnexus project via the dx command line utility.
  *
- * @param token
- * @param file File object from the Vuex store.
- * @param projectId DNAnexus ID of projectId being uploaded to.
- * @param progressCb
- * @param finishedCb
- * @return the upload request
+ * @param token {string} Token to identify ourselves to the API.
+ * @param projectId {string} DNAnexus ID of projectId being uploaded to.
+ * @param file {RemoteFile} Local and remote file name pair.
+ * @param progressCb {ResultCallback} Periodically called with updates on the
+ *                                    upload progress.
+ * @param finishedCb {SuccessCallback} Called on successful upload or failure.
+ * @returns {UploadTransfer} The upload transfer request.
  */
 export function uploadFile(
   token: string,
-  file: SJDTAFile,
   projectId: string,
+  file: RemoteFile,
   progressCb: ResultCallback,
   finishedCb: SuccessCallback,
   remoteFolder: string = '/uploads'
 ): UploadTransfer {
-  const transfer = new UploadTransfer(token, file.path, progressCb, finishedCb);
+  const transfer = new UploadTransfer(
+    token,
+    file.local_file,
+    progressCb,
+    finishedCb
+  );
   transfer.start(projectId, remoteFolder);
   return transfer;
 }
