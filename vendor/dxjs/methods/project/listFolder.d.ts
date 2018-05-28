@@ -1,3 +1,4 @@
+import {Timestamp} from '../..';
 import Client from '../../client';
 export declare enum ListType {
   Folders = 'folders',
@@ -34,6 +35,7 @@ export interface IFileDescription {
   project: string;
   class: string;
   types: string[];
+  created: Timestamp;
   state: FileState;
   hidden: boolean;
   links: string[];
@@ -41,7 +43,7 @@ export interface IFileDescription {
   folder: string;
   sponsored: boolean;
   tags: string[];
-  modified: string;
+  modified: Timestamp;
   media: string;
   createdBy: {
     user: string;
@@ -50,7 +52,7 @@ export interface IFileDescription {
   };
   parts: IFileParts;
   size: number;
-  sponsoredUntil: string;
+  sponsoredUntil: Timestamp;
   properties: object;
   details: any;
 }

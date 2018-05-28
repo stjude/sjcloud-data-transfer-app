@@ -165,7 +165,7 @@ var DxError = /** @class */ (function(_super) {
   }
   DxError.okOrThrow = function(response) {
     return __awaiter(this, void 0, void 0, function() {
-      var _a, message, type;
+      var data, _a, message, type;
       return __generator(this, function(_b) {
         switch (_b.label) {
           case 0:
@@ -174,7 +174,8 @@ var DxError = /** @class */ (function(_super) {
             }
             return [4 /*yield*/, response.json()];
           case 1:
-            (_a = _b.sent().error), (message = _a.message), (type = _a.type);
+            data = _b.sent();
+            (_a = data.error), (message = _a.message), (type = _a.type);
             throw new DxError(type, message);
         }
       });
