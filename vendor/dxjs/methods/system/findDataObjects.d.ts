@@ -1,3 +1,4 @@
+import {Timestamp} from '../..';
 import Client from '../../client';
 import {IFileDescription} from '../project/listFolder';
 export declare enum DataObjectState {
@@ -44,12 +45,12 @@ export interface IFindDataObjectsOptions {
   scope?: IFindDataObjectsScopeOptions;
   level?: DataObjectLevel;
   modified?: {
-    after?: string;
-    before?: string;
+    after?: Timestamp;
+    before?: Timestamp;
   };
   created?: {
-    after?: string;
-    before?: string;
+    after?: Timestamp;
+    before?: Timestamp;
   };
   describe?: boolean | IFindDataObjectsDescribeOptions;
   starting?: object;

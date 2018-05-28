@@ -128,7 +128,7 @@ var __importDefault =
     return mod && mod.__esModule ? mod : {default: mod};
   };
 Object.defineProperty(exports, '__esModule', {value: true});
-var node_fetch_1 = __importDefault(require('node-fetch'));
+var cross_fetch_1 = __importDefault(require('cross-fetch'));
 var file_1 = __importDefault(require('./file'));
 var project_1 = __importDefault(require('./project'));
 var system_1 = __importDefault(require('./system'));
@@ -162,7 +162,7 @@ var Client = /** @class */ (function() {
       return __generator(this, function(_a) {
         endpoint = this.buildEndpoint(path);
         options = this.buildOptions(body);
-        return [2 /*return*/, node_fetch_1.default(endpoint, options)];
+        return [2 /*return*/, cross_fetch_1.default(endpoint, options)];
       });
     });
   };
