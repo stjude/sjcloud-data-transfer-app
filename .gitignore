@@ -8,6 +8,7 @@ dist/**/*
 !dist/electron/.gitkeep
 
 app/bin/*
+app/src/main/**/*.js
 
 docs/*
 
