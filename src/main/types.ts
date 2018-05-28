@@ -32,7 +32,10 @@ export type ProgressCallback = (percent: number, status: string) => void;
  *    - results: any = null on failure, object on success.
  */
 
-export type SuccessCallback = (error: any, result: any) => void;
+export type SuccessCallback<T> = (
+  error: Error | null,
+  result: T | null
+) => void;
 
 /**
  * Callback that is the common interface used by NodeJS command

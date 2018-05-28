@@ -1,15 +1,15 @@
-import {FileQueue, QueueTaskType} from './queue';
+import {FileTransferQueue, QueueTaskType} from './queue';
 
 describe('Async queue library', () => {
-  let file_queue = FileQueue.getInstance();
+  let file_queue = FileTransferQueue.getInstance();
 
   beforeEach(() => {
-    spyOn(FileQueue, 'handleUploadTask').and.callThrough();
-    spyOn(FileQueue, 'handleDownloadTask').and.callThrough();
-    spyOn(FileQueue, 'handleInfoTask').and.callThrough();
+    spyOn(FileTransferQueue, 'handleUploadTask').and.callThrough();
+    spyOn(FileTransferQueue, 'handleDownloadTask').and.callThrough();
+    spyOn(FileTransferQueue, 'handleInfoTask').and.callThrough();
   });
 
-  it('should create and export a singleton FileQueue.', () => {
+  it('should create and export a singleton FileTransferQueue.', () => {
     expect(file_queue).not.toBeNull();
   });
 
@@ -18,27 +18,27 @@ describe('Async queue library', () => {
   });
 
   it('should handle an upload task without erroring.', done => {
+    file_queue._queue.drain = function() {
+      expect(FileTransferQueue.handleUploadTask).toHaveBeenCalledTimes(1);
+      done();
+    };
+
     file_queue.addUploadTask({
       localFile: '/foo',
       remoteFile: '/bar',
     });
-
-    file_queue._queue.drain = function() {
-      expect(FileQueue.handleUploadTask).toHaveBeenCalledTimes(1);
-      done();
-    };
   });
 
   it('should handle a download task without erroring.', done => {
+    file_queue._queue.drain = function() {
+      expect(FileTransferQueue.handleDownloadTask).toHaveBeenCalledTimes(1);
+      done();
+    };
+
     file_queue.addDownloadTask({
       localFile: '/foo',
       remoteFile: '/bar',
     });
-
-    file_queue._queue.drain = function() {
-      expect(FileQueue.handleDownloadTask).toHaveBeenCalledTimes(1);
-      done();
-    };
   });
 
   it('should handle an info task without erroring.');
