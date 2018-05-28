@@ -3,7 +3,6 @@
 		<div class='col-xs-12 home-container' >
 			<h1>Homepage under contruction ...</h1>
 			<div class="home-container-text">
-				<div><router-link to='/install'>Install</router-link></div>
 				<div><router-link to='/login'>Log In</router-link></div>
 				<div><router-link to='/upload'>Upload</router-link></div>
 				<div><router-link to='/download'>Download</router-link></div>
@@ -14,16 +13,16 @@
 
 <script>
 export default {
-	data() {
-		return {}
-	},
-}
+  data() {
+    return {};
+  },
+};
 </script>
 
 <style>
 .home-container {
-	text-align: center;
-	padding-top: 20%;
+  text-align: center;
+  padding-top: 20%;
 }
 
 .home-container-text {

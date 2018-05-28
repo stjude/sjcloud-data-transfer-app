@@ -1,8 +1,19 @@
 /**
  * @module dx
- * @description Methods for installing dx-toolkit and interacting with DNAnexus.
+ * @description Methods for interacting with DNAnexus.
  */
 
+import {execSync} from 'child_process';
+
+import {Request} from 'request';
+
+import {Client} from '../../../vendor/dxjs';
+import {IDescribeOptions} from '../../../vendor/dxjs/methods/file/describe';
+import {DataObjectState} from '../../../vendor/dxjs/methods/system/findDataObjects';
+import {
+  ProjectLevel,
+  IFileUploadParameters,
+} from '../../../vendor/dxjs/methods/system/findProjects';
 import {
   SuccessCallback,
   ResultCallback,
@@ -15,10 +26,11 @@ import * as os from 'os';
 import * as path from 'path';
 import * as utils from './utils';
 import * as logging from './logging';
-import * as child_process from 'child_process';
 
 import config from './config';
 
+const request = require('request');
+const progress = require('request-progress');
 const async = require('async');
 const expandHomeDir = require('expand-home-dir');
 const platform = os.platform();
@@ -27,19 +39,26 @@ const platform = os.platform();
  *                DX-Toolkit Functionality                *
  **********************************************************/
 
+interface IMetadata {
+  size: number;
+  md5: string;
+}
+
 /**
  * Runs a command to determine if we are logged in to DNAnexus.
  *
- * @param {SuccessCallback} callback
- * @param dryrun Return the command that would have been run as a string.
- * @returns ChildProcess or string depending on the value of 'dryrun'.
+ * @param token
+ * @param callback
  */
-export function loggedIn(
-  callback: SuccessCallback,
-  dryrun: boolean = false
-): any {
-  const cmd = 'dx whoami';
-  return dryrun ? cmd : utils.runCommand(cmd, callback);
+export async function loggedIn(token: string, callback: SuccessCallback) {
+  const client = new Client(token);
+
+  try {
+    await client.system.whoami();
+    callback(null, true);
+  } catch (e) {
+    callback(e, false);
+  }
 }
 
 /**
@@ -48,127 +67,114 @@ export function loggedIn(
  *
  * @param token Authentication token
  * @param callback
- * @param dryrun Return the command that would have been run as a string.
- * @returns ChildProcess or string depending on the value of 'dryrun'.
  */
-export function login(
-  token: string,
-  callback: SuccessCallback,
-  dryrun: boolean = false
-): any {
+export function login(token: string, callback: SuccessCallback) {
   if (!token) {
     return callback(new Error('Token cannot be null/empty!'), null);
   }
-  const cmd = `dx login --token ${token} --noprojects`;
-  return dryrun ? cmd : utils.runCommand(cmd, callback);
+
+  loggedIn(token, callback);
 }
 
 /**
  * Logout of DNAnexus via the dx command line utility.
  *
  * @param callback
- * @param dryrun Return the command that would have been run as a string.
- * @returns {any} ChildProcess or string depending on the value of 'dryrun'.
  */
-export function logout(
-  callback: SuccessCallback,
-  dryrun: boolean = false
-): any {
-  const cmd = 'dx logout';
-  return dryrun ? cmd : utils.runCommand(cmd, callback);
+export function logout(callback: SuccessCallback, dryrun: boolean = false) {
+  // @FIXME
+  callback(null, true);
 }
 
 /**
  * Describe a 'dx-item' as JSON via the dx command* line utility.
  *
+ * @param token
  * @param dnanexusId The DNAnexus object identifier (ex: file-XXXXXX).
  * @param callback
- * @param dryrun Return the command that would have been run as a string.
- * @returns {any} ChildProcess or string depending on the value of 'dryrun'.
  **/
 export function describeDXItem(
+  token: string,
   dnanexusId: string,
-  callback: SuccessCallback,
-  dryrun: boolean = false
-): any {
+  callback: SuccessCallback
+) {
   if (!dnanexusId) {
     const error = new Error('Dx-identifier cannot be null/empty!');
-    return callback(error, null);
+    callback(error, null);
   }
 
-  let cmd = `dx describe ${dnanexusId} --json`;
-  return dryrun
-    ? cmd
-    : utils.runCommand(cmd, (err: any, stdout: any) => {
-        if (!stdout) {
-          callback(err, stdout);
-          return;
-        }
-        callback(err, JSON.parse(stdout));
-      });
-}
+  const client = new Client(token);
 
-/**
- * Checks if there's at least one project the user can upload data to.
- *
- * @param {SuccessCallback} callback
- * @param {boolean} dryrun Return the command that would have been run as a string.
- * @param {string} overridePlatform Override the platform string with this value.
- */
-export function checkProjectAccess(
-  callback: SuccessCallback,
-  dryrun: boolean = false,
-  overridePlatform: string = null
-): any {
-  let cmd = '';
-  let platformToUse = overridePlatform || platform;
+  const options = {
+    fields: {
+      // Both data usages add up for project sizes.
+      dataUsage: true,
+      sponsoredDataUsage: true,
+      size: true,
+      properties: true,
+      tags: true,
+    },
+  };
 
-  if (platformToUse === 'linux' || platformToUse === 'darwin') {
-    cmd = "echo '0' | dx select --level UPLOAD";
-  } else if (platformToUse === 'win32') {
-    cmd = '"echo 0 | dx select --level UPLOAD"';
-  } else throw new Error(`Unrecognized platform: '${platformToUse}'.`);
-
-  return dryrun ? cmd : utils.runCommand(cmd, callback);
+  client.file
+    .describe(dnanexusId, options)
+    .then((result: any) => {
+      callback(null, result);
+    })
+    .catch((err: any) => {
+      callback(err, null);
+    });
 }
 
 /**
  * List all of the files available for download in a DNAnexus project.
  *
+ * @param token
  * @param projectId The DNAnexus project identifier (ex: project-XXXX).
  * @param allFiles List all files or just St. Jude Cloud associated ones.
  * @param callback
- * @param dryrun Return the command that would have been run as a string.
- * @returns {any} ChildProcess or string depending on the value of 'dryrun'.
  **/
 export function listDownloadableFiles(
+  token: string,
   projectId: string,
   allFiles: boolean,
-  callback: SuccessCallback,
-  dryrun: boolean = false
-): any {
+  callback: SuccessCallback
+) {
   if (!projectId) {
     const error = new Error('Dx-project cannot be null/empty!');
-    return callback(error, null);
+    callback(error, null);
   }
 
-  let cmd = `dx find data --path ${
-    projectId
-  }:/ --json --state closed --class file`;
-  if (!allFiles) {
-    cmd += ` --tag ${config.DOWNLOADABLE_TAG}`;
-  }
+  const client = new Client(token);
 
-  return dryrun
-    ? cmd
-    : utils.runCommand(cmd, (err: any, stdout: any) => {
-        callback(err, JSON.parse(stdout));
-      });
+  const options = {
+    describe: {
+      fields: {
+        name: true,
+        size: true,
+      },
+    },
+    scope: {
+      project: projectId,
+    },
+    state: DataObjectState.Closed,
+    tags: !allFiles ? config.DOWNLOADABLE_TAG : undefined,
+  };
+
+  client.system
+    .findDataObjects(options)
+    .then(({results}: {results: any}) => {
+      callback(null, results);
+    })
+    .catch((err: any) => {
+      callback(err, null);
+    });
 }
 
 /**
  * Download a file from DNAnexus.
  *
+ * @param token
  * @param remoteFileId DNAnexus identifier of the file to be downloaded.
  *                     (ex: file-XXXX).
  * @param fileName Name of the downloaded file.
@@ -176,207 +182,247 @@ export function listDownloadableFiles(
  * @param downloadLocation Folder for the downloaded file to reside.
  * @param updateCb To be called on each update to progress.
  * @param finishedCb To be called upon completion.
- * @return ChildProcess
+ * @return the download request
  */
 export function downloadDxFile(
+  token: string,
   remoteFileId: string,
   fileName: string,
-  fileRawSize: number,
+  _fileRawSize: number,
   downloadLocation: string,
   updateCb: ResultCallback,
   finishedCb: SuccessCallback
-): child_process.ChildProcess {
-  const platform = os.platform();
+): Promise<Request> {
   const outputPath = expandHomeDir(path.join(downloadLocation, fileName));
+  const fileId = remoteFileId.split(':')[1];
 
-  let command: string = null;
-  if (platform === 'darwin' || platform === 'linux') {
-    command = `touch '${outputPath}'`;
-  } else if (platform === 'win32') {
-    command = `New-Item '${outputPath}' -type file -force`;
-  }
+  const client = new Client(token);
+  const writer = fs.createWriteStream(outputPath);
 
-  command = `${command}; dx download -f ${remoteFileId} -o '${outputPath}'`;
-  fs.watchFile(outputPath, {interval: 1000}, () => {
-    fs.stat(outputPath, (err: any, stats: any) => {
-      if (stats !== undefined) {
-        let progress = Math.round(stats.size / fileRawSize * 100.0);
-        updateCb(progress);
-      }
+  return client.file
+    .download(fileId)
+    .then(({url, headers}: {url: string; headers: any}) => {
+      const req = request(url, {headers}, (error: any, response: any) => {
+        if (error) {
+          finishedCb(error, null);
+        } else {
+          finishedCb(null, response);
+        }
+      });
+
+      req.on('abort', () => {
+        finishedCb(new Error('upload aborted'), null);
+      });
+
+      progress(req).on('progress', (state: any) => {
+        updateCb(state.percent * 100);
+      });
+
+      req.pipe(writer);
+
+      return req;
+    })
+    .catch((err: any) => {
+      finishedCb(err, null);
     });
-  });
-
-  return utils.runCommand(command, finishedCb);
 }
 
-/**
- * Creates an interval that watches a remote DX file.
- *
- * @param file
- * @param dxRemotePath
- * @param progressCb
- */
-function watchRemoteFile(
-  file: SJDTAFile,
-  dxRemotePath: string,
-  progressCb: ResultCallback
-) {
-  return setInterval(() => {
-    if (file.sizeCheckingLock) {
-      return;
-    }
-    file.sizeCheckingLock = true; // acquire file size checking lock
+const fileUploadParameters = async (
+  client: Client,
+  projectId: string
+): Promise<IFileUploadParameters> => {
+  const result = await client.project.describe(projectId, {
+    fields: {fileUploadParameters: true},
+  });
 
-    module.exports.describeDXItem(dxRemotePath, (err: any, remoteFile: any) => {
-      file.sizeCheckingLock = false; // release file size checking lock
-      if (!remoteFile || !remoteFile.parts) {
-        return;
-      }
+  const {fileUploadParameters: params} = result;
 
-      let remoteObjectSize: number = 0;
-      // sum concurrent chunk sizes uploaded so far.
-      for (let chunk in remoteFile.parts) {
-        if (remoteFile.parts[chunk].size) {
-          remoteObjectSize += remoteFile.parts[chunk].size;
-        }
-      }
+  if (!params) {
+    throw new Error('missing file upload parameters');
+  }
 
-      if (file.largestReportedProgress < remoteObjectSize) {
-        remoteObjectSize = file.largestReportedProgress;
-      } else {
-        file.largestReportedProgress = remoteObjectSize;
-      }
+  return params;
+};
 
-      let progress = remoteObjectSize / file.raw_size * 100.0;
-      progressCb(progress);
+class UploadTransfer {
+  private client: Client;
+  private src: string;
+  private size: number;
+  private progressCb: ResultCallback;
+  private finishedCb: SuccessCallback;
+
+  private request: Request | null = null;
+  private bytesRead = 0;
+
+  public constructor(
+    token: string,
+    src: string,
+    progressCb: ResultCallback,
+    finishedCb: SuccessCallback
+  ) {
+    this.client = new Client(token);
+    this.src = src;
+    this.size = fs.statSync(this.src).size;
+    this.progressCb = progressCb;
+    this.finishedCb = finishedCb;
+  }
+
+  public async prepare(projectId: string): Promise<utils.IByteRange[]> {
+    const {maximumPartSize} = await fileUploadParameters(
+      this.client,
+      projectId
+    );
+
+    return utils.byteRanges(this.size, maximumPartSize);
+  }
+
+  public async start(projectId: string, dst: string) {
+    const ranges = await this.prepare(projectId);
+
+    const name = path.basename(this.src);
+
+    const {id} = await this.client.file.new({
+      folder: dst,
+      name,
+      parents: true,
+      project: projectId,
+      // tags: [config.NEEDS_ANALYSIS_TAG],
     });
-  }, utils.randomInt(500, 750)); // randomized interval for jitter.
+
+    for (let i = 0; i < ranges.length; i++) {
+      const {start, end} = ranges[i];
+      await this.transfer(id, i + 1, start, end);
+    }
+
+    await this.client.file.close(id);
+
+    this.finishedCb(null, {});
+  }
+
+  public abort() {
+    if (request) {
+      request.abort();
+    }
+  }
+
+  private async transfer(
+    id: string,
+    i: number,
+    start: number,
+    end: number
+  ): Promise<{}> {
+    const reader = fs.createReadStream(this.src, {start, end});
+
+    const size = end - start + 1;
+    const md5 = await utils.md5Sum(this.src, start, end);
+
+    const {url, headers} = await this.client.file.upload(id, {
+      index: i,
+      md5,
+      size,
+    });
+
+    return new Promise(resolve => {
+      this.request = request(
+        url,
+        {body: reader, headers, method: 'PUT'},
+        async (error: any, response: any) => {
+          if (error) {
+            this.finishedCb(error, null);
+          } else {
+            this.bytesRead += size;
+            resolve();
+          }
+        }
+      );
+
+      this.request.on('drain', () => {
+        const r: any = this.request;
+        const {bytesWritten} = r.req.connection;
+        const percent = (this.bytesRead + bytesWritten) / this.size * 100;
+        this.progressCb(percent);
+      });
+
+      this.request.on('abort', () => {
+        this.finishedCb(new Error('upload aborted'), null);
+      });
+    });
+  }
 }
 
 /**
  * Uploads a file to a DNAnexus project via the dx command line utility.
  *
+ * @param token
  * @param file File object from the Vuex store.
  * @param projectId DNAnexus ID of projectId being uploaded to.
  * @param progressCb
  * @param finishedCb
- * @return ChildProcess
+ * @return the upload request
  */
 export function uploadFile(
+  token: string,
   file: SJDTAFile,
   projectId: string,
   progressCb: ResultCallback,
   finishedCb: SuccessCallback,
   remoteFolder: string = '/uploads'
-): child_process.ChildProcess {
-  const basename: string = path.basename(file.path.trim());
-  const dxRemotePath: string = `${projectId}:${remoteFolder}/${basename}`;
-
-  // keep track of the largest reported progress to ensure that if callbacks
-  // get out of order, the progress meter isn't jumping all around.
-  file.largestReportedProgress = -1;
-  let sizeCheckerInterval = watchRemoteFile(file, dxRemotePath, progressCb);
-
-  // We wrap the last callback to ensure the file watcher interval is cleared
-  // out before moving on.
-  let finishedCbWrapper = (err: any, result: any) => {
-    clearInterval(sizeCheckerInterval);
-    finishedCb(err, result);
-  };
-
-  const uploadCmd = `dx upload -p --path '${dxRemotePath}' '${file.path}'`;
-  return utils.runCommand(uploadCmd, (err: any, stdout: any) => {
-    if (err) {
-      return finishedCbWrapper(err, null);
-    }
-
-    const tagCmd = `dx tag '${dxRemotePath}' ${config.NEEDS_ANALYSIS_TAG}`;
-    utils.runCommand(tagCmd, (err: any, stdout: any) => {
-      if (err) {
-        finishedCbWrapper(err, null);
-      }
-      finishedCbWrapper(null, stdout);
-    });
-  });
+): UploadTransfer {
+  const transfer = new UploadTransfer(token, file.path, progressCb, finishedCb);
+  transfer.start(projectId, remoteFolder);
+  return transfer;
 }
 
-/**
- * Utility method to parse out projects from a 'dx find projects' command.
- *
- * @param stdout STDOUT from a 'dx find projects' command.
- */
-function parseDxProjects(stdout: string): SJDTAProject[] {
-  let results: SJDTAProject[] = [];
-
-  // forEach is synchronous
-  stdout.split('\n').forEach((el: string) => {
-    if (el.trim().length <= 0) return;
-
-    let _: string;
-    let name: string;
-    let dxLocation: string;
-    let accessLevel: string;
-
-    [dxLocation, name, accessLevel, _] = el.split('\t');
-    if (accessLevel) {
-      results.push({
-        project_name: name,
-        dx_location: dxLocation,
-        access_level: accessLevel,
-      });
-    }
-  });
-
-  return results;
-}
 /**
  * Find and return projects the user can upload data to.
  *
+ * @param token
  * @param allProjects should we limit to St. Jude Cloud
  *                    projects or list all projects?
  * @param callback
- * @param dryrun Return a list of commands that would be run as string.
- * @returns List of projects or list of strings based on 'dryrun'.
  */
 export function listProjects(
+  token: string,
   allProjects: boolean,
   callback: SuccessCallback,
   dryrun: boolean = false
-): void {
-  // Setting tagsToCheck = [''] will run one command that does not filter any
-  // tags. This is equivalent to checking all projects, not just SJCloud ones.
-  let tagsToCheck = [''];
+) {
+  let tagsToCheck: string[] = [];
   let projects: SJDTAProject[] = [];
-  let tabliteral = utils.getTabLiteral();
 
   if (!allProjects) {
     tagsToCheck = [config.TOOL_PROJECT_TAG, config.DATA_PROJECT_TAG];
   }
 
-  async.map(
-    tagsToCheck,
-    (tag: string, iteratorCallback: SuccessCallback) => {
-      let iterCmd = `dx find projects --level UPLOAD --delim ${tabliteral}`;
-      if (tag !== '') iterCmd += ` --tag ${tag}`;
+  const client = new Client(token);
 
-      if (dryrun) {
-        return iteratorCallback(null, iterCmd);
-      }
-
-      utils.runCommand(iterCmd, (err: any, stdout: string) => {
-        if (err) {
-          return iteratorCallback(err, []);
-        }
-        return iteratorCallback(null, parseDxProjects(stdout));
-      });
+  const options = {
+    describe: {
+      fields: {
+        name: true,
+        level: true,
+      },
     },
-    (err: any, results: string[][]) => {
-      if (err) {
-        return callback(err, []);
-      }
+    level: ProjectLevel.Upload,
+    tags: tagsToCheck.length > 0 ? {$or: tagsToCheck} : undefined,
+  };
 
-      // flatten 2d 'results' array to 1d.
-      return callback(null, [].concat.apply([], results));
-    }
-  );
+  client.system
+    .findProjects(options)
+    .then(({results}: {results: any}) => {
+      const resultsCompat = results.map((project: any) => {
+        const {describe} = project;
+
+        return {
+          project_name: describe.name,
+          dx_location: project.id,
+          access_level: describe.level,
+        };
+      });
+
+      callback(null, resultsCompat);
+    })
+    .catch((err: any) => {
+      callback(err, []);
+    });
 }

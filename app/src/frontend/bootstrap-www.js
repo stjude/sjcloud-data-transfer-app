@@ -9,6 +9,7 @@ window.utils = {
   readSJCloudFile(filename, callback) {
     callback(
       JSON.stringify({
+        token: '',
         showAllFiles: true,
         showAllProjects: true,
         concurrentOperations: 2,
@@ -16,27 +17,6 @@ window.utils = {
     );
   },
 };
-
-function dependency(VueApp) {
-  return {
-    installAnaconda(updateProgress, finishedCb, removeAnacondaIfExists = true) {
-      updateProgress(30, 'Downloading...');
-
-      setTimeout(() => {
-        updateProgress(60, 'Verifying...');
-
-        setTimeout(() => {
-          updateProgress(90, 'Extracting...');
-
-          setTimeout(() => {
-            updateProgress(100, 'Completed!');
-            return finishedCb(null, true);
-          }, 2000);
-        }, 1500);
-      }, 1500);
-    },
-  };
-}
 
 function dx(VueApp) {
   return {
@@ -131,8 +111,10 @@ function oauth(VueApp) {
 }
 
 function state(VueApp) {
+  const token = VueApp.$store.getters.token;
+
   return {
-    getState(callback) {
+    getState(token, callback) {
       callback({});
     },
   };
@@ -140,9 +122,6 @@ function state(VueApp) {
 
 function _utils(VueApp) {
   return {
-    pythonOnPath(callback) {
-      callback();
-    },
     openExternal(url) {
       window.open(url, '_blank');
     },
@@ -263,7 +242,6 @@ window.backend = {
         throw 'The $root.backend has already been set.';
       } else {
         this.backend = {
-          dependency: dependency(this),
           oauth: oauth(this),
           dx: dx(this),
           state: state(this),

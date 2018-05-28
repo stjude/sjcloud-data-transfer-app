@@ -70,6 +70,7 @@ function downloadTask(task: any, callback: any) {
 
   task._rawFile.started = true;
   let process = (window as any).dx.downloadDxFile(
+    task.token,
     task.remote_location,
     task.name,
     task.raw_size,
@@ -104,6 +105,7 @@ function uploadTask(task: any, callback: any) {
 
   task._rawFile.started = true;
   let process = (window as any).dx.uploadFile(
+    task.token,
     task._rawFile,
     task.remote_location,
     (progress: any) => {
@@ -137,6 +139,7 @@ function toolInfoTask(task: any, callback: any) {
   log('Tool info task: ', task);
 
   (window as any).dx.describeDXItem(
+    task.token,
     task._rawTool.dx_location,
     (err: any, describe: any) => {
       if (err || !describe) {
