@@ -9,7 +9,7 @@
  *
  *    - result: any = result of the task.
  */
-export type ResultCallback = (result: any) => void;
+export type ResultCallback<T> = (result: T) => void;
 
 /**
  * Callback used when we are reporting only an error.

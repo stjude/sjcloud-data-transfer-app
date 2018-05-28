@@ -1,3 +1,11 @@
+/**
+ * The following environment variables are required to run these tests.
+ *
+ *   - DXTOKEN:   a valid DX token to login with.
+ *   - DXFILE:    a representative file which we have access to.
+ *   - DXPROJECT: a project Id that contains at least one file (preferably the
+ *       one pointed to by DXFILE).
+ **/
 import * as dx from './dx';
 
 if (process.env.DXTOKEN) {
@@ -72,6 +80,43 @@ if (process.env.DXTOKEN) {
           if (error) {
             expect(error.message).toEqual(
               '"file-notarealfile" is not a recognized ID'
+            );
+          }
+          done();
+        });
+      });
+
+      it('should be able to download a small file correctly.');
+      it("should error when trying to download a file which doesn't exist.");
+    }
+
+    if (process.env.DXPROJECT) {
+      const project = process.env.DXPROJECT;
+
+      it('should list downloadable files in a valid dx-project', done => {
+        dx.listFiles(token, project, true, (error, resp) => {
+          expect(error).toBeNull();
+          expect(resp).not.toBeNull();
+
+          if (resp) {
+            expect(resp.length).toBeGreaterThanOrEqual(1);
+            const firstResult = resp[0];
+            const firstResultKeys = Object.keys(firstResult);
+            expect(firstResultKeys).toContain('project');
+            expect(firstResultKeys).toContain('id');
+            // @TODO: describe is option, so ignore for now.
+          }
+          done();
+        });
+      });
+
+      it('should throw an error for an invalid project.', done => {
+        dx.listFiles(token, 'project-notarealproject', true, (error, resp) => {
+          expect(error).not.toBeNull();
+          expect(resp).toBeNull();
+          if (error) {
+            expect(error.message).toEqual(
+              '"project-notarealproject" is not a recognized ID'
             );
           }
           done();

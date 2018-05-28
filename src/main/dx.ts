@@ -3,13 +3,28 @@
  * @description Methods for interacting with DNAnexus.
  */
 
+import * as fs from 'fs';
+import * as request from 'request';
+import * as progress from 'request-progress';
+
+import DOWNLOADABLE_TAG from './config';
+
 import {Client} from '../../vendor/dxjs';
-import {SuccessCallback} from './types';
+import {ResultCallback, SuccessCallback} from './types';
 import {IDescribeResult} from '../../vendor/dxjs/methods/file/describe';
+import {
+  IFindDataObjectsResult,
+  DataObjectState,
+  IDataObject,
+} from '../../vendor/dxjs/methods/system/findDataObjects';
+import {Request} from 'request';
 
 export interface RemoteLocalFilePair {
-  localFile: string;
-  remoteFile: string;
+  localFilePath: string;
+  remoteFilePath: {
+    projectId?: string;
+    fileId: string;
+  };
 }
 
 interface IMetadata {
@@ -56,7 +71,8 @@ export function login(token: string, callback: SuccessCallback<boolean>) {
  *
  * @param token {string} API token for DNAnexus API authentication.
  * @param dxId {string} The DNAnexus object identifier (ex: file-XXXXXX).
- * @param cb {SuccessCallback<any>} Callback function with remote object on success.
+ * @param cb {SuccessCallback<IDescribeResult>} Callback function with remote
+ *   object on success.
  **/
 
 export function describe(
@@ -87,5 +103,100 @@ export function describe(
     })
     .catch((err: Error) => {
       cb(err, null);
+    });
+}
+
+/**
+ * List all of the files available in a DNAnexus project.
+ *
+ * @param token {string} API token for DNAnexus API authentication.
+ * @param projectId {string} The DNAnexus project identifier (ex: project-XXXX).
+ * @param allFiles {boolean} List all files or just St. Jude Cloud associated ones.
+ * @param cb {SuccessCallback<IDataObject[]>} Callback function with remote
+ *   object on success.
+ **/
+export function listFiles(
+  token: string,
+  projectId: string,
+  allFiles: boolean,
+  cb: SuccessCallback<IDataObject[]>
+) {
+  if (!projectId) {
+    return cb(new Error('dx-project cannot be null/empty!'), null);
+  }
+
+  const client = new Client(token);
+
+  const options = {
+    describe: {
+      fields: {
+        name: true,
+        size: true,
+      },
+    },
+    scope: {
+      project: projectId,
+    },
+    state: DataObjectState.Closed,
+    tags: !allFiles ? DOWNLOADABLE_TAG : undefined,
+  };
+
+  client.system
+    .findDataObjects(options)
+    .then(({results}: {results: any}) => {
+      cb(null, results);
+    })
+    .catch((err: any) => {
+      cb(err, null);
+    });
+}
+
+/**
+ * Download a file from DNAnexus.
+ *
+ * @param token {string} API token for DNAnexus API authentication.
+ * @param file {RemoteLocalFilePair} remote and local file paths.
+ * @param updateCb {ResultCallback<number>} Used to periodically update file progress.
+ * @param finishedCb {SuccessCallback<boolean>} Called at completion, true if successful,
+ *   false if not.
+ * @returns The download request.
+ */
+export function downloadFile(
+  token: string,
+  file: RemoteLocalFilePair,
+  updateCb: ResultCallback<number>,
+  finishedCb: SuccessCallback<boolean>
+): Promise<Request | void> {
+  const client = new Client(token);
+  const writer = fs.createWriteStream(file.localFilePath);
+
+  return client.file
+    .download(file.remoteFilePath.fileId)
+    .then(({url, headers}: {url: string; headers: any}) => {
+      const req = request(url, {headers}, (error: any, response: any) => {
+        if (error) {
+          finishedCb(error, null);
+        } else {
+          finishedCb(null, response);
+        }
+      });
+
+      req.on('abort', () => {
+        finishedCb(
+          new Error(`Upload of file ${file.localFilePath} aborted!`),
+          null
+        );
+      });
+
+      progress(req).on('progress', (state: any) => {
+        updateCb(state.percent * 100);
+      });
+
+      req.pipe(writer);
+
+      return req;
+    })
+    .catch((err: any) => {
+      finishedCb(err, null);
     });
 }
