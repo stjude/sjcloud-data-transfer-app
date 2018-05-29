@@ -3,7 +3,7 @@ environment:
     secure: IOg+qGyyMMk72bZMBUn60Nbshg0k7doVDKQzb1bsGsvyd6R3R7XIRmTJH/CAN4mm
 install:
   - ps: |
-      npm i npm@5.8.0 -g
+      npm i npm@latest -g
       Install-Product node 9
       $ENV:CI=true
       $ENV:PATH=$ENV:APPDATA + "\npm;" + $ENV:PATH
