@@ -11,7 +11,9 @@ import config from './config';
 const platform = os.platform();
 
 export const server = config.UPDATE_SERVER;
-export const feed = `${server}/update/${platform}/${electron.app.getVersion()}`;
+export const feed = {
+  url: `${server}/update/${platform}/${electron.app.getVersion()}`,
+};
 
 /**
  * Start the update client pulling from the update server.
