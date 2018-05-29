@@ -38,7 +38,9 @@
 					</button>
 					<button class='btn btn-danger btn-stjude-warning cancel-btn'
 						    v-bind:disabled='!hasFilesInTransit'
-						    @click='cancelFiles'>Cancel</button>
+						    @click='cancelCheckedFiles'>
+            Cancel
+          </button>
 				</div>
 			</div>
 		</div>
@@ -156,7 +158,7 @@ export default {
         });
       }, 0);
     },
-    cancelFiles() {
+    cancelCheckedFiles() {
       this.$store.commit('cancelCheckedFiles');
     },
   },
