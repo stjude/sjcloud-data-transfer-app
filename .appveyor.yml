@@ -1,10 +1,9 @@
 environment:
   GH_TOKEN:
     secure: IOg+qGyyMMk72bZMBUn60Nbshg0k7doVDKQzb1bsGsvyd6R3R7XIRmTJH/CAN4mm
-before_install:
-  - ps: npm i npm@latest -g
 install:
   - ps: |
+      npm i npm@latest -g
       Install-Product node 9
       $ENV:CI=true
       $ENV:PATH=$ENV:APPDATA + "\npm;" + $ENV:PATH
