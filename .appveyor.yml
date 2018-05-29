@@ -7,8 +7,19 @@ install:
       Install-Product node 9
       $ENV:CI=true
       $ENV:PATH=$ENV:APPDATA + "\npm;" + $ENV:PATH
-      try {npm i --no-optional}
-      catch {Write-Output "npm install threw an exception"}
+      Write-Output "Before try catch"
+      try
+      {
+        Write-Output "Before npm i"
+        npm i --no-optional
+        Write-Output "After npm i"
+      }
+      catch
+      {
+        Write-Output "Inside catch"
+        Write-Output "npm install threw exception $PSItem"
+      }
+      Write-Output "Outside try catch"
 skip_tags: true
 shallow_clone: true
 test_script:
