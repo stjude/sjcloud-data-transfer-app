@@ -20,66 +20,66 @@
 </template>
 
 <script>
+const active = {
+  color: '#000',
+  'border-bottom': '2px solid #1381b3',
+};
 
-const active={
-	color:'#000', 
-	'border-bottom':'2px solid #1381b3'
-}
-
-const inactive={
-	color:'#aaa',
-	'border-bottom': 'none'
-}
+const inactive = {
+  color: '#aaa',
+  'border-bottom': 'none',
+};
 
 export default {
-	data() {
-		return {}
-	},
-	mounted() {
-		const d=document.querySelector('#sjcda-nav-search-bar');
-		if (d) {
-			d.value=this.$store.getters.searchTerm;
-		}
-	},
-	computed: {
-		uploadLinkStyle() {
-			return this.$store.getters.currPath=='upload' ? active : inactive   
-		},
-		downloadLinkStyle() {
-			return this.$store.getters.currPath=='download' ? active : inactive
-		},
-		searchVisible() {
-			return this.$store.getters.currPath=='download' && (
-				this.$store.getters.searchTerm ||
-				(this.$store.getters.tools.length &&
-				this.$store.getters.currFiles.length &&
-				!this.$store.getters.noProjectsFound)
-			)
-		}
-	},
-	methods: {
-		setSearchTerm(event) {
-			this.$store.commit('setSearchTerm',event.target.value)
-		},
-	}
-}
+  data() {
+    return {};
+  },
+  mounted() {
+    const d = document.querySelector('#sjcda-nav-search-bar');
+    if (d) {
+      d.value = this.$store.getters.searchTerm;
+    }
+  },
+  computed: {
+    uploadLinkStyle() {
+      return this.$store.getters.currPath == 'upload' ? active : inactive;
+    },
+    downloadLinkStyle() {
+      return this.$store.getters.currPath == 'download' ? active : inactive;
+    },
+    searchVisible() {
+      return (
+        this.$store.getters.currPath == 'download' &&
+        (this.$store.getters.searchTerm ||
+          (this.$store.getters.tools.length &&
+            this.$store.getters.currFiles.length &&
+            !this.$store.getters.noProjectsFound))
+      );
+    },
+  },
+  methods: {
+    setSearchTerm(event) {
+      this.$store.commit('setSearchTerm', event.target.value);
+    },
+  },
+};
 </script>
 
 <style>
 .nav-bar {
-	display: inline-block;
-	margin-top: 16px;
-	padding-top: 0.5rem;
-	vertical-align: top;
-	font-size: 18pt;
-} 
+  display: inline-block;
+  margin-top: 16px;
+  padding-top: 0.5rem;
+  vertical-align: top;
+  font-size: 18pt;
+}
 
 .nav-span {
-	display: inline-block;
-	padding: 5px;
-	height: 33px;
-	font-size: 18px;
-	color:#000;
+  display: inline-block;
+  padding: 5px;
+  height: 33px;
+  font-size: 18px;
+  color: #000;
 }
 
 .nav-bar-div {
@@ -87,8 +87,8 @@ export default {
 }
 
 .upload-download-btn-container {
-	display: inline-block;
-	background-color: #fff;
+  display: inline-block;
+  background-color: #fff;
 }
 
 #sjcda-nav-search-bar {

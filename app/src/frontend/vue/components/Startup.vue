@@ -5,20 +5,20 @@
 </template>
 
 <script>
-import SpinKit from './SpinKit.vue'
+import SpinKit from './SpinKit.vue';
 
 export default {
   components: {
-    SpinKit
+    SpinKit,
   },
   mounted() {
-  	if (process.env.NODE_ENV === "development") {
-  		setTimeout(()=>{
-  			VueApp.$router.replace("home");
-  		},1000);
-  	}
-  }
-}
+    if (process.env.NODE_ENV === 'development') {
+      setTimeout(() => {
+        VueApp.$router.replace('home');
+      }, 1000);
+    }
+  },
+};
 </script>
 
 <style>

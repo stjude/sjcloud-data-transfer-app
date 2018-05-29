@@ -14,16 +14,16 @@
 
 <script>
 export default {
-	data() {
-		return {}
-	},
-}
+  data() {
+    return {};
+  },
+};
 </script>
 
 <style>
 .home-container {
-	text-align: center;
-	padding-top: 20%;
+  text-align: center;
+  padding-top: 20%;
 }
 
 .home-container-text {

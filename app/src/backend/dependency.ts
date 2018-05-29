@@ -106,9 +106,7 @@ function getAnacondaInstallCommand(destination: string): string {
   platform = platform.toUpperCase();
 
   if (platform === 'WIN32') {
-    command = `Start-Process ${
-      destination
-    } -ArgumentList '/S','/AddToPath=0','RegisterPython=0','/D=${utils.lookupPath(
+    command = `Start-Process ${destination} -ArgumentList '/S','/AddToPath=0','RegisterPython=0','/D=${utils.lookupPath(
       'ANACONDA_HOME'
     )}' -Wait`;
   } else {
@@ -152,9 +150,7 @@ export function installAnaconda(
   const downloadInfo = getDownloadInfo('ANACONDA');
   if (!downloadInfo)
     throw new Error(
-      `Could not get download info for Anaconda based on your platform!\nPlatform: ${
-        platform
-      }, Arch: ${arch}.`
+      `Could not get download info for Anaconda based on your platform!\nPlatform: ${platform}, Arch: ${arch}.`
     );
 
   const downloadURL: string = downloadInfo.URL;

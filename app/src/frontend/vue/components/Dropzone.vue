@@ -26,38 +26,44 @@ export default {
     return {
       dragging: false,
       nondraggingDropzoneStyle: {
-        border: "3pt dashed #dedede",
+        border: '3pt dashed #dedede',
       },
       draggingDropzoneStyle: {
-        border: "3pt dashed #2A8BB6",
+        border: '3pt dashed #2A8BB6',
       },
       nondraggingColorStyle: {
-        color: "#dedede"
+        color: '#dedede',
       },
       draggingColorStyle: {
-        color: "#2A8BB6"
-      }
-    }
+        color: '#2A8BB6',
+      },
+    };
   },
   created() {
     this.dragging = false;
   },
   methods: {
     clicked(e) {
-      this.$root.backend.utils.openFileDialog((files) => {
+      this.$root.backend.utils.openFileDialog(files => {
         for (let f of files) {
-          this.$store.commit('addFile', this.$root.backend.utils.fileInfoFromPath(f, true));
+          this.$store.commit(
+            'addFile',
+            this.$root.backend.utils.fileInfoFromPath(f, true)
+          );
         }
-      })
+      });
     },
     dropped(e) {
       this.dragging = false;
       for (let f of e.dataTransfer.files) {
-        this.$store.commit('addFile', this.$root.backend.utils.fileInfoFromPath(f.path, true));
+        this.$store.commit(
+          'addFile',
+          this.$root.backend.utils.fileInfoFromPath(f.path, true)
+        );
       }
-    }
-  }
-}
+    },
+  },
+};
 </script>
 
 <style>
@@ -68,8 +74,8 @@ export default {
   width: 540px;
   border-radius: 15px;
   font-size: 30px;
-  -webkit-transition: border .5s;
-  transition: border .5s;
+  -webkit-transition: border 0.5s;
+  transition: border 0.5s;
 }
 
 .dropzone-content-container {
@@ -77,8 +83,8 @@ export default {
   left: 75px;
   top: 275px;
   height: 60px;
-  -webkit-transition: color .5s;
-  transition: color .5s;
+  -webkit-transition: color 0.5s;
+  transition: color 0.5s;
 }
 
 .dropzone-container-text {

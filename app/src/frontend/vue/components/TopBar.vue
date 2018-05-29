@@ -23,67 +23,68 @@
 </template>
 
 <script>
-import { QBtn } from 'quasar';
+import {QBtn} from 'quasar';
 import tour from '../../tour.js';
 
 export default {
-	components: {
-		QBtn
-	},
-	computed: {
-		showTourBtn() {
-			return this.$route.path=='/download' || this.$route.path=='/upload';
-		}
-	},
-	methods: {
-		goHome() {
-			if (this.$store.getters.environment === "development") {
-				this.$router.replace('/home');
-			} else {
-				console.error("Tried to go home, but we are not in 'dev' mode!");
-			}
-		},
-		toggleMenu() {
-			this.$store.commit('toggleMenu');
-		},
-    	tour() {
-    		this.$store.commit('closeMenu');
-			tour.__start();
-		}
-	}
-}
+  components: {
+    QBtn,
+  },
+  computed: {
+    showTourBtn() {
+      return this.$route.path == '/download' || this.$route.path == '/upload';
+    },
+  },
+  methods: {
+    goHome() {
+      if (this.$store.getters.environment === 'development') {
+        this.$router.replace('/home');
+      } else {
+        console.error("Tried to go home, but we are not in 'dev' mode!");
+      }
+    },
+    toggleMenu() {
+      this.$store.commit('toggleMenu');
+    },
+    tour() {
+      this.$store.commit('closeMenu');
+      tour.__start();
+    },
+  },
+};
 </script>
 
 <style scoped>
 .sjcda-top-bar {
-	/* background-color: #2A8BB6; */
-	background-color: #1381B3;
-	border-width: 3px;
-	border-style: solid;
-	border-color: #1381B3;
-	color: #FFFFFF;
-	cursor: default;
-	display: inline-block; 
-	font-family: "Open Sans", "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
-	font-size: 22px; 
-	height: 60px;
-	padding-top: 0.3rem; 
-	vertical-align: top; 
-	width: 100%;
-	vertical-align: middle;
+  /* background-color: #2A8BB6; */
+  background-color: #1381b3;
+  border-width: 3px;
+  border-style: solid;
+  border-color: #1381b3;
+  color: #ffffff;
+  cursor: default;
+  display: inline-block;
+  font-family: 'Open Sans', 'Lato', 'Helvetica Neue', Helvetica, Arial,
+    sans-serif;
+  font-size: 22px;
+  height: 60px;
+  padding-top: 0.3rem;
+  vertical-align: top;
+  width: 100%;
+  vertical-align: middle;
 }
 
 .sjcda-top-bar__logo_container {
-	display: inline-block;
-	margin-left: 2px;
+  display: inline-block;
+  margin-left: 2px;
 }
 
 .sjcda-top-bar__logo {
   margin-top: 2px;
   padding: 5px;
   padding-right: 8px;
-	height: 47px;
-  border-right: 1px solid #7DBAD5;
+  height: 47px;
+  border-right: 1px solid #7dbad5;
 }
 
 .sjcda-title-container {
@@ -98,7 +99,7 @@ export default {
 
 .title-font-thin {
   font-weight: 300;
-  color: #A1CDE1;
+  color: #a1cde1;
 }
 
 .tour-prompt {
@@ -107,12 +108,12 @@ export default {
 }
 
 .q-btn-small {
-	min-height: 18px;
-	font-weight: 600;
+  min-height: 18px;
+  font-weight: 600;
 }
 
 /* override color for the tour button */
 .bg-secondary {
-	background: #00BE19 !important;
+  background: #00be19 !important;
 }
 </style>

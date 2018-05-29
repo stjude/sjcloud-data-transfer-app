@@ -8,37 +8,37 @@
 </template>
 
 <script>
-import Dropzone from 'vue2-dropzone'
+import Dropzone from 'vue2-dropzone';
 
 export default {
-	components:{
-		Dropzone
-	},
-	props: [
-		'currTool'
-	],
-	methods: {
-		showSuccess($event) { console.log($event)
-			//$event.stopPropagation()
-			const files=this.$refs.dz.getAcceptedFiles(); console.log(files)
-			this.$store.commit('addFiles',{files})
-		}
-	}
-}
+  components: {
+    Dropzone,
+  },
+  props: ['currTool'],
+  methods: {
+    showSuccess($event) {
+      console.log($event);
+      //$event.stopPropagation()
+      const files = this.$refs.dz.getAcceptedFiles();
+      console.log(files);
+      this.$store.commit('addFiles', {files});
+    },
+  },
+};
 </script>
 
 <style scoped>
 p {
-	width: 100%;
-	text-align: center;
+  width: 100%;
+  text-align: center;
 }
 
 .dropzone {
-	min-height: 0px;
-	padding: 0px;
+  min-height: 0px;
+  padding: 0px;
 }
 
 .dropzone-container {
-	margin-top: 50px;
+  margin-top: 50px;
 }
 </style>

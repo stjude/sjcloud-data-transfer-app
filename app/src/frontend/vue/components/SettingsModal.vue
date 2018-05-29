@@ -33,20 +33,20 @@
 import ProjectFilters from './ProjectFilters.vue';
 
 export default {
-	computed: {
-		modalIsVisible() {
-			return this.$store.getters.modalIsVisible
-		}
-	},
-	components: {
-		ProjectFilters
-	},
-	methods: {
-		closeModal() {
-			this.$store.commit('closeModal');
-		}
-	}
-}
+  computed: {
+    modalIsVisible() {
+      return this.$store.getters.modalIsVisible;
+    },
+  },
+  components: {
+    ProjectFilters,
+  },
+  methods: {
+    closeModal() {
+      this.$store.commit('closeModal');
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -59,9 +59,9 @@ export default {
   max-width: 1000px;
   height: 100%;
   max-height: 700px;
-  background-color: rgba(0, 0, 0, .5);
+  background-color: rgba(0, 0, 0, 0.5);
   display: table;
-  transition: opacity .3s ease;
+  transition: opacity 0.3s ease;
 }
 
 .modal-wrapper {
@@ -76,8 +76,8 @@ export default {
   padding: 20px 30px;
   background-color: #fff;
   border-radius: 2px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, .33);
-  transition: all .3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.33);
+  transition: all 0.3s ease;
   font-family: Helvetica, Arial, sans-serif;
 }
 

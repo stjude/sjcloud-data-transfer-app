@@ -42,46 +42,48 @@
 </template>
 
 <script>
-import {QStepper, QStep, QTransition} from "quasar";
+import {QStepper, QStep, QTransition} from 'quasar';
 import Install from './Install.vue';
 import LogIn from './LogIn.vue';
 
 export default {
-	components: {
-		QStepper,
-		QStep,
-		Install,
-		LogIn,
-		QTransition
-	},
-	computed: {
-	    environment() {
-	      return this.$store.getters.environment;
-	    },
-	    currPath() {
-	    	if (this.$store.getters.currPath=='login' && this.stepper) {
-				this.$refs.stepper.goToStep('login')
-			}
-	    	return this.$store.getters.currPath;
-	    },
-	    step2IconCls() {
-	    	return this.$store.getters.currPath=="install" ? "progress-node progress-node-nonactive" : "progress-node progress-node-active"
-	    },
-	    stepper() {
-	    	return window.location.search.includes('stepper=1') //&& this.$refs.stepper
-	    }
-	},
-	updated() {
-		if (this.$store.getters.currPath=='login' && this.stepper) {
-			this.$refs.stepper.goToStep('login')
-		}
-	}, 
-	methods: {
-		setInstallingDependencies(installing) {
-	      this.$store.commit("setInstallingDependencies", installing);
-	    },
-	}
-}
+  components: {
+    QStepper,
+    QStep,
+    Install,
+    LogIn,
+    QTransition,
+  },
+  computed: {
+    environment() {
+      return this.$store.getters.environment;
+    },
+    currPath() {
+      if (this.$store.getters.currPath == 'login' && this.stepper) {
+        this.$refs.stepper.goToStep('login');
+      }
+      return this.$store.getters.currPath;
+    },
+    step2IconCls() {
+      return this.$store.getters.currPath == 'install'
+        ? 'progress-node progress-node-nonactive'
+        : 'progress-node progress-node-active';
+    },
+    stepper() {
+      return window.location.search.includes('stepper=1'); //&& this.$refs.stepper
+    },
+  },
+  updated() {
+    if (this.$store.getters.currPath == 'login' && this.stepper) {
+      this.$refs.stepper.goToStep('login');
+    }
+  },
+  methods: {
+    setInstallingDependencies(installing) {
+      this.$store.commit('setInstallingDependencies', installing);
+    },
+  },
+};
 </script>
 
 <style>
@@ -114,7 +116,7 @@ export default {
 
 .theater-heading > h1 {
   margin-top: 35px;
-  font-style: "Open Sans", "Helvetica Neue";
+  font-style: 'Open Sans', 'Helvetica Neue';
   font-size: 36px;
   color: #000000;
 }
@@ -129,7 +131,7 @@ export default {
 .theater-body {
   margin: 35px 45px 0px 45px;
   text-align: center;
-  font-style: "Open Sans", "Helvetica Neue";
+  font-style: 'Open Sans', 'Helvetica Neue';
   font-size: 24px;
   height: 310px;
 }
@@ -200,15 +202,14 @@ export default {
 }
 
 .q-stepper {
-	box-shadow: none;
+  box-shadow: none;
 }
 
 .q-stepper-header {
-	position: absolute; 
-	bottom: 20px; 
-	width: 50%;
-	margin-left: 25%;
-	text-align: center;
+  position: absolute;
+  bottom: 20px;
+  width: 50%;
+  margin-left: 25%;
+  text-align: center;
 }
-
 </style>

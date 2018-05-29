@@ -20,46 +20,44 @@ function of setFileSorting that expects key and direction
 values
 */
 
-const sortTracker={}
+const sortTracker = {};
 export default {
-	data() {
-		return {
-			direction: 0
-		}
-	},
-	props: [
-		"sortkey"
-	],
-	computed: {
-		isCurrSortKey() {
-			return this.sortkey==this.$store.getters.currFileSortKey
-		}
-	},
-	methods: {
-		toggleSortDirection() {
-			if (!(this.sortkey in sortTracker)) {
-				sortTracker[this.sortkey]=1
-			}
+  data() {
+    return {
+      direction: 0,
+    };
+  },
+  props: ['sortkey'],
+  computed: {
+    isCurrSortKey() {
+      return this.sortkey == this.$store.getters.currFileSortKey;
+    },
+  },
+  methods: {
+    toggleSortDirection() {
+      if (!(this.sortkey in sortTracker)) {
+        sortTracker[this.sortkey] = 1;
+      }
 
-			sortTracker[this.sortkey] = -1*sortTracker[this.sortkey];  
-			this.direction=sortTracker[this.sortkey];
+      sortTracker[this.sortkey] = -1 * sortTracker[this.sortkey];
+      this.direction = sortTracker[this.sortkey];
 
-			this.$store.commit('setFileSorting',{
-				key: this.sortkey,
-				direction: this.direction
-			})
-		}
-	}
-}
+      this.$store.commit('setFileSorting', {
+        key: this.sortkey,
+        direction: this.direction,
+      });
+    },
+  },
+};
 </script>
 
 <style>
 .sjcda-sort-arrow {
-	font-size:24px; 
-	vertical-align:top !important;
-	cursor:default;
-	position: absolute;
-	color:#aaa;
+  font-size: 24px;
+  vertical-align: top !important;
+  cursor: default;
+  position: absolute;
+  color: #aaa;
 }
 
 .sort-arrow-div {

@@ -27,17 +27,17 @@ export default {
     },
     alertType() {
       return this.$store.getters.alertType;
-    }
+    },
   },
   methods: {
     close() {
-      this.$store.commit("byKey", { alertType: "" });
+      this.$store.commit('byKey', {alertType: ''});
     },
     clickHandler(event) {
-      if (event.target.className!='alert-link') return;
+      if (event.target.className != 'alert-link') return;
       this.$root.backend.utils.openExternal(event.target.innerHTML);
-    }
-  }
+    },
+  },
 };
 </script>
 
