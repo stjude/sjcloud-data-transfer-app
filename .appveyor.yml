@@ -7,9 +7,7 @@ install:
       Install-Product node 9
       $ENV:CI=true
       $ENV:PATH=$ENV:APPDATA + "\npm;" + $ENV:PATH
-      Write-Output "Before npm i"
       npm i --no-optional
-      Write-Output "After npm i"
 skip_tags: true
 shallow_clone: true
 test_script:
