@@ -135,9 +135,7 @@ describe('Computing the SHA256 sum', () => {
     });
   });
 
-  it(`should return the following output for a file containing '${
-    contents
-  }'`, done => {
+  it(`should return the following output for a file containing '${contents}'`, done => {
     utils.computeSHA256(file, (error: any, result: any) => {
       expect(error).toBeNull();
       expect(result).toBe(

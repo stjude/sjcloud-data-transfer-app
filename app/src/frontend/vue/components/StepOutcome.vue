@@ -25,34 +25,33 @@
 import InfoTip from './InfoTip.vue';
 
 export default {
-	components: {
-		InfoTip,
-	},
-	props: {
-		'outcome': {
-			default: ''
-		},
-		'successMessage': {
-			default: ''
-		},
-		'failureMessage': {
-			default: ''
-		},
-		'textStyle': {
-			default: () => {
-				return {
-					'font-size': '32pt',
-				}
-			}	
-		}
-	},
-	computed: {
-		infoTipText() {
-			return this.$store.getters.infoTipText
-		}
-	}
-
-}
+  components: {
+    InfoTip,
+  },
+  props: {
+    outcome: {
+      default: '',
+    },
+    successMessage: {
+      default: '',
+    },
+    failureMessage: {
+      default: '',
+    },
+    textStyle: {
+      default: () => {
+        return {
+          'font-size': '32pt',
+        };
+      },
+    },
+  },
+  computed: {
+    infoTipText() {
+      return this.$store.getters.infoTipText;
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -63,7 +62,7 @@ export default {
 .done-icon {
   font-size: 110pt;
   font-weight: 700;
-  color: #4F8A10;
+  color: #4f8a10;
 }
 
 .error-icon {

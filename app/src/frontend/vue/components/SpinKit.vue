@@ -23,41 +23,43 @@
 </template>
 
 <script>
-import { QSpinnerOval, QProgress} from 'quasar';
+import {QSpinnerOval, QProgress} from 'quasar';
 
 export default {
   components: {
     QSpinnerOval,
-    QProgress
+    QProgress,
   },
-	props: {
+  props: {
     topLabel: {
-      default:''
+      default: '',
     },
     btmLabel: {
-      default:''
+      default: '',
     },
     percentage: {
-      default: ""
+      default: '',
     },
     textStyle: {
       default: () => {
         return {
-        'font-size': '32pt',
-        'text-align': 'center',
-        }
-      }
-    }
-	},
+          'font-size': '32pt',
+          'text-align': 'center',
+        };
+      },
+    },
+  },
   computed: {
     percentText() {
-      return this.percentage || this.percentage===0 ? this.percentage+"%" : ""
+      return this.percentage || this.percentage === 0
+        ? this.percentage + '%'
+        : '';
     },
     spinnerSize() {
-      return this.percentage || this.percentage===0 ? 110 : 55
-    }
-  }
-}
+      return this.percentage || this.percentage === 0 ? 110 : 55;
+    },
+  },
+};
 </script>
 
 <style scoped>
@@ -80,8 +82,8 @@ export default {
 
 .spinner-pct-container {
   position: absolute;
-  width: 100%; 
-  height: 110px; 
+  width: 100%;
+  height: 110px;
   text-align: center;
 }
 
@@ -89,6 +91,6 @@ export default {
   font-size: 30px;
   line-height: 110px;
   vertical-align: middle;
-  color: #1381B3;
+  color: #1381b3;
 }
 </style>

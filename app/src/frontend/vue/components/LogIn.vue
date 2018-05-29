@@ -44,17 +44,17 @@
 </template>
 
 <script>
-import StepOutcome from "./StepOutcome.vue";
-import SpinKit from "./SpinKit.vue";
+import StepOutcome from './StepOutcome.vue';
+import SpinKit from './SpinKit.vue';
 
 export default {
   components: {
     StepOutcome,
-    SpinKit
+    SpinKit,
   },
   data: () => {
     return {
-      validating: "Validating..."
+      validating: 'Validating...',
     };
   },
   computed: {
@@ -69,28 +69,28 @@ export default {
         return this.$store.getters.token;
       },
       set(value) {
-        this.$store.commit("setToken", value);
-      }
-    }
+        this.$store.commit('setToken', value);
+      },
+    },
   },
   mounted() {
-    this.$store.commit('setInfoTipText',"");
+    this.$store.commit('setInfoTipText', '');
   },
   methods: {
     setLoginState(state) {
-      this.$store.commit("setLoginState", state);
+      this.$store.commit('setLoginState', state);
     },
     setToken(token) {
-      this.$store.commit("setToken", token);
+      this.$store.commit('setToken', token);
     },
     internal() {
       this.$root.backend.oauth.getToken(true, (err, token) => {
-        this.$store.commit("setToken", token);
-        this.$store.commit("setLoginState", "validating");
+        this.$store.commit('setToken', token);
+        this.$store.commit('setLoginState', 'validating');
 
         if (err) {
-          console.error("Error retrieving token:".token);
-          this.$store.commit("setLoginState", "failed");
+          console.error('Error retrieving token:'.token);
+          this.$store.commit('setLoginState', 'failed');
           return;
         }
 
@@ -100,13 +100,13 @@ export default {
           if (err) {
             // TODO(clay): alert login error.
             console.error(err);
-            that.$store.commit("setLoginState", "failed");
+            that.$store.commit('setLoginState', 'failed');
           } else {
-            that.$store.commit("setLoginState", "completed");
+            that.$store.commit('setLoginState', 'completed');
             setTimeout(() => {
-              that.$store.dispatch("updateToolsFromRemote", true);
+              that.$store.dispatch('updateToolsFromRemote', true);
               setTimeout(() => {
-                that.$router.push("upload");
+                that.$router.push('upload');
               }, 2500);
             }, 1000);
           }
@@ -115,27 +115,27 @@ export default {
     },
     external(openURL = true) {
       this.$root.backend.oauth.getToken(false, (err, token) => {
-        this.$store.commit("setToken", token);
-        this.$store.commit("setLoginState", "validating");
+        this.$store.commit('setToken', token);
+        this.$store.commit('setLoginState', 'validating');
 
         const that = this;
 
         this.$root.backend.dx.login(token, function(err, result) {
           if (err) {
-            that.$store.commit("setLoginState", "failed");
+            that.$store.commit('setLoginState', 'failed');
           } else {
-            that.$store.commit("setLoginState", "completed");
+            that.$store.commit('setLoginState', 'completed');
             setTimeout(() => {
-              that.$store.dispatch("updateToolsFromRemote", true);
+              that.$store.dispatch('updateToolsFromRemote', true);
               setTimeout(() => {
-                that.$router.push("upload");
+                that.$router.push('upload');
               }, 2500);
             }, 1000);
           }
         });
       });
-    }
-  }
+    },
+  },
 };
 </script>
 

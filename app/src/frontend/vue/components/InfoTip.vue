@@ -12,17 +12,17 @@
 export default {
   computed: {
     infoTipText() {
-      return this.$store.getters.infoTipText
-    }
+      return this.$store.getters.infoTipText;
+    },
   },
   data: () => {
     return {
       tippyOptions: {
-        size: 'big'
-      }
-    }
-  }
-}
+        size: 'big',
+      },
+    };
+  },
+};
 </script>
 
 <style scoped>

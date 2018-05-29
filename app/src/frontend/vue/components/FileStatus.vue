@@ -66,62 +66,65 @@
 import SortArrows from './SortArrows.vue';
 import globToRegExp from 'glob-to-regexp';
 
-let i = "0";
+let i = '0';
 let prevTool = {};
 let prevPath = 'upload';
 
 export default {
-	components: {
-		SortArrows
-	},
-	props: {
-		showSelectionTotals: {
-			default: 0
-		}
-	},
-	data() {
-		return {
-			checkedAll: false,
-			rootDivStyle: {  
-				'border-bottom': 'none'
-			}
-		}
-	},
-	computed: {
-		files() {
-			this.$store.getters.currFiles.forEach((file)=>{
-				if (!file.started && !file.waiting) {
-					file.timeRemaining='Waiting...'
-				}
-				else if (file.waiting && !file.started) {
-					file.timeRemaining='Waiting...'
-				}
-				else if (!file.finished && file.started && file.status==0) {
-					file.timeRemaining='Started'
-				}
-			});
-			return this.$store.getters.currFiles
-		},
-		noFilesMatched() {
-			return !this.$store.getters.noProjectsFound &&
-				this.$store.getters.searchTerm && 
-				!this.$store.getters.currFiles.length
-		},
-		numSelectedFiles() {
-			return this.$store.getters.checkedFiles.length
-		},
-		sizeSelectedFiles() {
-			return this.$root.backend.utils.readableFileSize(this.$store.getters.checkedFiles
-					.reduce((a,b)=>a + b.raw_size, 0))
-		},
-		tBodyDivStyle() {
-			return this.showSelectionTotals==1 ? {'max-height':'352px'} : {'max-height':'380px'}
-		}
-	},
-	methods: {
-		matchedStr(str="") {
-			return str
-			/* 
+  components: {
+    SortArrows,
+  },
+  props: {
+    showSelectionTotals: {
+      default: 0,
+    },
+  },
+  data() {
+    return {
+      checkedAll: false,
+      rootDivStyle: {
+        'border-bottom': 'none',
+      },
+    };
+  },
+  computed: {
+    files() {
+      this.$store.getters.currFiles.forEach(file => {
+        if (!file.started && !file.waiting) {
+          file.timeRemaining = 'Waiting...';
+        } else if (file.waiting && !file.started) {
+          file.timeRemaining = 'Waiting...';
+        } else if (!file.finished && file.started && file.status == 0) {
+          file.timeRemaining = 'Started';
+        }
+      });
+      return this.$store.getters.currFiles;
+    },
+    noFilesMatched() {
+      return (
+        !this.$store.getters.noProjectsFound &&
+        this.$store.getters.searchTerm &&
+        !this.$store.getters.currFiles.length
+      );
+    },
+    numSelectedFiles() {
+      return this.$store.getters.checkedFiles.length;
+    },
+    sizeSelectedFiles() {
+      return this.$root.backend.utils.readableFileSize(
+        this.$store.getters.checkedFiles.reduce((a, b) => a + b.raw_size, 0)
+      );
+    },
+    tBodyDivStyle() {
+      return this.showSelectionTotals == 1
+        ? {'max-height': '352px'}
+        : {'max-height': '380px'};
+    },
+  },
+  methods: {
+    matchedStr(str = '') {
+      return str;
+      /* 
 			// harder to highlight matching substr against glob pattern 
 			if (!str) return str;
 			const term=this.$store.getters.searchTerm;
@@ -130,59 +133,58 @@ export default {
 			const s=str.substr(str.search(rgx),term.length);
 			return str.replace(rgx, "<span style='background-color:#ff0'>"+s+"</span>")
 			*/
-		},
-		toggleFileChecked(file) {
-			file.checked=!file.checked;
-		},
-		toggleCheckBoxes() {
-			this.checkedAll=!this.checkedAll; 
-			this.files.forEach((f) => {
-       if (!f.finished) {
-         f.checked = this.checkedAll;
-       } 
+    },
+    toggleFileChecked(file) {
+      file.checked = !file.checked;
+    },
+    toggleCheckBoxes() {
+      this.checkedAll = !this.checkedAll;
+      this.files.forEach(f => {
+        if (!f.finished) {
+          f.checked = this.checkedAll;
+        }
       });
-		},
-		progressStyle(file) {
-			if (file.started) {
-				if (!file.finished && !('startTime' in file)) {
-					file.startTime=+new Date();
-					file.timeRemaining="Started";
-				}
-				else {
-					const dt=(+new Date()-file.startTime);
-					const rate= file.status==0 || dt==0 ? 0.01 : file.status/dt;
-					const msRemaining=(100-file.status)/rate;
-					file.timeRemaining=new Date(msRemaining).toISOString().substr(11, 8)
-				}
-			}
-			else if (!file.finished) {
-				file.timeRemaining='Waiting...'
-			}
+    },
+    progressStyle(file) {
+      if (file.started) {
+        if (!file.finished && !('startTime' in file)) {
+          file.startTime = +new Date();
+          file.timeRemaining = 'Started';
+        } else {
+          const dt = +new Date() - file.startTime;
+          const rate = file.status == 0 || dt == 0 ? 0.01 : file.status / dt;
+          const msRemaining = (100 - file.status) / rate;
+          file.timeRemaining = new Date(msRemaining)
+            .toISOString()
+            .substr(11, 8);
+        }
+      } else if (!file.finished) {
+        file.timeRemaining = 'Waiting...';
+      }
 
-			return {
-				width:file.status+'%'
-			}
-		}
-	}
-}
-
+      return {
+        width: file.status + '%',
+      };
+    },
+  },
+};
 </script>
 
 <style scoped>
 #file-status-div {
-	margin-top:18px;
-	height: 412px;
-	overflow: hidden;
-	font-family: 'Lato';
-	color: #222222;
-	/* border-bottom: 1px solid #ccc; */
-	position:fixed; 
-	width:571px;  
-	z-index:1;
+  margin-top: 18px;
+  height: 412px;
+  overflow: hidden;
+  font-family: 'Lato';
+  color: #222222;
+  /* border-bottom: 1px solid #ccc; */
+  position: fixed;
+  width: 571px;
+  z-index: 1;
 }
 
 #file-status-div:hover {
-	overflow: auto;
+  overflow: auto;
 }
 
 #file-status-div .material-icons {
@@ -190,108 +192,108 @@ export default {
 }
 
 #file-status-table {
-	position:fixed; 
-	width:571px; 
-	border:1px solid #eeeeee; 
-	z-index:1
+  position: fixed;
+  width: 571px;
+  border: 1px solid #eeeeee;
+  z-index: 1;
 }
 
-
 .file-status-thead-tr {
-  color:#000; 
-  background-color:#eeeeee;
+  color: #000;
+  background-color: #eeeeee;
 }
 
 #file-status-table-body-div {
-	overflow: auto;
-	margin:28px 0 0 0; 
-	padding:0; 
-	overflow-y:auto;
+  overflow: auto;
+  margin: 28px 0 0 0;
+  padding: 0;
+  overflow-y: auto;
 }
 
 #file-status-table-body {
-	width: 570px;
+  width: 570px;
 }
 
 table {
-	max-height: 500px;
-	table-layout: fixed;
+  max-height: 500px;
+  table-layout: fixed;
 }
 
 th {
-	padding: 3px 0 3px 0px;
-	font-weight: 300;
-	text-align: center;
-	height: 20px;
-	overflow: hidden;
+  padding: 3px 0 3px 0px;
+  font-weight: 300;
+  text-align: center;
+  height: 20px;
+  overflow: hidden;
 }
 
 td {
-	padding: 7px 0 7px 0px;
-	border: 1px solid #eeeeee;
-	text-align: center;
-	align-items: center;
-	height: 20px;
-	overflow: hidden;
+  padding: 7px 0 7px 0px;
+  border: 1px solid #eeeeee;
+  text-align: center;
+  align-items: center;
+  height: 20px;
+  overflow: hidden;
 }
 
 .file-status-cell-checkbox {
-	width: 25px;
+  width: 25px;
 }
 
 .file-status-cell-filename {
-	width: 340px;
-	overflow: auto;
-  text-align: left; 
+  width: 340px;
+  overflow: auto;
+  text-align: left;
   padding-left: 10px;
 }
 
 .file-status-cell-filesize {
-	width: 60px;
+  width: 60px;
   overflow: hidden;
 }
 
 .file-status-cell-status {
-	width: 80px;
-	overflow: hidden;
+  width: 80px;
+  overflow: hidden;
 }
 
 #file-status-table {
-	position:fixed; 
-	width:571px; 
-	border:1px solid #eeeeee; 
-	z-index:1
+  position: fixed;
+  width: 571px;
+  border: 1px solid #eeeeee;
+  z-index: 1;
 }
 
 .file-status-cell-status-progress-started {
-	position:relative; 
-	height:20px; 
-	width:80%; 
-	background-color:#fff; 
-	border: 1px solid #ececec; 
-	margin: 0 auto;
+  position: relative;
+  height: 20px;
+  width: 80%;
+  background-color: #fff;
+  border: 1px solid #ececec;
+  margin: 0 auto;
 }
 
 .file-status-cell-status-progress-bar {
-	position: relative;
-	height: 5px;
-	background-color: #4F8A10;
-	width: 0%;
-	top: -1px;
-	left: -1px;
-	border: 1px solid #000000;
+  position: relative;
+  height: 5px;
+  background-color: #4f8a10;
+  width: 0%;
+  top: -1px;
+  left: -1px;
+  border: 1px solid #000000;
   margin-left: 5px;
   margin-right: 5px;
 }
 
 .file-status-cell-status-progress-text {
-	position: relative;
-	text-align: center;
-	font-size: 12px;
+  position: relative;
+  text-align: center;
+  font-size: 12px;
 }
 
 .file-status-thead-tr {
-  color:#000; background-color:#eeeeee;
+  color: #000;
+  background-color: #eeeeee;
 }
 
 .file-status-cell-status-finished {
@@ -300,13 +302,13 @@ td {
 }
 
 .file-status-cell-status-finished {
-  color: #4F8A10;
+  color: #4f8a10;
   font-size: 20px;
-  line-height: 20px
+  line-height: 20px;
 }
 
 .file-status-cell-status-finished-icon {
-  color: #4F8A10;
+  color: #4f8a10;
   font-size: 20px;
   line-height: 20px;
 }
@@ -317,7 +319,7 @@ td {
 }
 
 .file-status-cell-status-errored-icon {
-  color: #DD0000;
+  color: #dd0000;
   font-size: 20px;
   line-height: 20px;
 }
@@ -347,5 +349,4 @@ td {
     cursor:pointer;
     margin-left:4px;
 }*/
-
 </style>

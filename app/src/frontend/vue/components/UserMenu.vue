@@ -27,32 +27,32 @@
 export default {
   computed: {
     showLogoutBtn() {
-      return this.$route.path == "/download" || this.$route.path == "/upload";
+      return this.$route.path == '/download' || this.$route.path == '/upload';
     },
     showSettingsBtn() {
-      return this.$route.path == "/download" || this.$route.path == "/upload";
+      return this.$route.path == '/download' || this.$route.path == '/upload';
     },
     isVisible() {
       return this.$store.getters.menuIsVisible;
-    }
+    },
   },
   methods: {
     logout() {
-      this.$store.commit("closeMenu");
+      this.$store.commit('closeMenu');
       this.$root.backend.dx.logout((err, result) => {
-        this.$store.commit("setLoginState", "waiting");
-        this.$router.replace("/login");
+        this.$store.commit('setLoginState', 'waiting');
+        this.$router.replace('/login');
       });
     },
     fileAnIssue() {
-      this.$store.commit("closeMenu");
-      this.$root.backend.utils.openExternal("https://stjude.cloud/contact");
+      this.$store.commit('closeMenu');
+      this.$root.backend.utils.openExternal('https://stjude.cloud/contact');
     },
     openSettings() {
-      this.$store.commit("closeMenu");
-      this.$store.commit("toggleModal");
-    }
-  }
+      this.$store.commit('closeMenu');
+      this.$store.commit('toggleModal');
+    },
+  },
 };
 </script>
 

@@ -8,19 +8,19 @@
 </template>
 
 <script>
-import jQueryGlobalizer from "../helpers/jQueryGlobalizer";
-import TopBar from "./components/TopBar.vue";
-import UserMenu from "./components/UserMenu.vue";
-import SettingsModal from "./components/SettingsModal.vue";
-import "quasar-extras/material-icons";
-import "quasar-extras/roboto-font";
-import "quasar/dist/quasar.mat.css";
+import jQueryGlobalizer from '../helpers/jQueryGlobalizer';
+import TopBar from './components/TopBar.vue';
+import UserMenu from './components/UserMenu.vue';
+import SettingsModal from './components/SettingsModal.vue';
+import 'quasar-extras/material-icons';
+import 'quasar-extras/roboto-font';
+import 'quasar/dist/quasar.mat.css';
 
 export default {
   components: {
     TopBar,
     UserMenu,
-    SettingsModal
+    SettingsModal,
   },
   data() {
     return {};
@@ -31,14 +31,14 @@ export default {
     },
     tools() {
       return this.$store.getters.tools;
-    }
+    },
   },
   created() {
-    window.addEventListener("keydown", this.toggleToolPath);
-    this.$store.commit("setCurrPath", this.$route.path.slice(1));
+    window.addEventListener('keydown', this.toggleToolPath);
+    this.$store.commit('setCurrPath', this.$route.path.slice(1));
   },
   updated() {
-    this.$store.commit("setCurrPath", this.$route.path.slice(1));
+    this.$store.commit('setCurrPath', this.$route.path.slice(1));
   },
   mounted() {
     window.VueApp = this;
@@ -47,8 +47,8 @@ export default {
   methods: {
     toggleToolPath() {
       if (
-        this.$store.getters.currPath != "upload" &&
-        this.$store.getters.currPath != "download"
+        this.$store.getters.currPath != 'upload' &&
+        this.$store.getters.currPath != 'download'
       ) {
         return;
       }
@@ -68,7 +68,7 @@ export default {
             : i + incr >= names.length
               ? names[names.length - 1]
               : names[i + incr];
-        this.$store.commit("setCurrToolName", toolName);
+        this.$store.commit('setCurrToolName', toolName);
       }
       // else if (event.keyCode==37) {
       // 	this.$router.push('/upload')
@@ -76,8 +76,8 @@ export default {
       // else if (event.keyCode==39) {
       // 	this.$router.push('/download')
       // }
-    }
-  }
+    },
+  },
 };
 </script>
 
@@ -87,7 +87,7 @@ body {
   width: 900px;
   height: 600px;
   margin: 0px auto;
-  font-family: "Open Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
 
 .app-route-placement {

@@ -71,9 +71,7 @@ describe('Describing a DX Item', () => {
     });
   });
 
-  it(`should run the following command with dx-identifier '${
-    sampleDxFile
-  }'`, () => {
+  it(`should run the following command with dx-identifier '${sampleDxFile}'`, () => {
     let output = dx.describeDXItem(sampleDxFile, null, true);
     expect(output).toBe(`dx describe ${sampleDxFile} --json`);
   });
@@ -125,9 +123,7 @@ describe('Listing DX files', () => {
     });
   });
 
-  it(`should run the following command with args (${
-    sampleDxProject
-  }, false).`, () => {
+  it(`should run the following command with args (${sampleDxProject}, false).`, () => {
     let output = dx.listDownloadableFiles(sampleDxProject, false, null, true);
     expect(output).toBe(
       `dx find data ` +
@@ -139,9 +135,7 @@ describe('Listing DX files', () => {
     );
   });
 
-  it(`should run the following command with args (${
-    sampleDxProject
-  }, true).`, () => {
+  it(`should run the following command with args (${sampleDxProject}, true).`, () => {
     let output = dx.listDownloadableFiles(sampleDxProject, true, null, true);
     expect(output).toBe(
       `dx find data ` +

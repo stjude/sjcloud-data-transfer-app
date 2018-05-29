@@ -39,58 +39,58 @@
 	</div>
 </template>
 <script>
-import SpinKit from "./SpinKit.vue";
+import SpinKit from './SpinKit.vue';
 
 const activeTool = {
-  color: "#010304",
-  "font-size": "14pt",
-  "background-color": "rgba(19,129,179,0.3)"
+  color: '#010304',
+  'font-size': '14pt',
+  'background-color': 'rgba(19,129,179,0.3)',
 };
 const inactiveTool = {
-  color: "#a3a3a3",
-  "font-size": "14pt",
-  "background-color": "transparent"
+  color: '#a3a3a3',
+  'font-size': '14pt',
+  'background-color': 'transparent',
 };
 
 export default {
   components: {
-    SpinKit
+    SpinKit,
   },
   data() {
     return {
       styles: {
         activeTr: {
-          color: "#010304",
-          "background-color": "rgba(145,202,251,0.3)"
+          color: '#010304',
+          'background-color': 'rgba(145,202,251,0.3)',
         },
         inactiveTr: {
-          color: "#a3a3a3",
-          "background-color": "transparent"
+          color: '#a3a3a3',
+          'background-color': 'transparent',
         },
         activeTd: {
-          width: "30%",
-          "text-align": "right",
-          "border-right": "4px solid #1381B3"
+          width: '30%',
+          'text-align': 'right',
+          'border-right': '4px solid #1381B3',
         },
         inactiveTd: {
-          width: "30%",
-          "text-align": "right",
-          "border-right": "4px solid #fff"
+          width: '30%',
+          'text-align': 'right',
+          'border-right': '4px solid #fff',
         },
         loadingTextStyle: {
-          "font-size": "16pt",
-          "text-align": "center"
-        }
-      }
+          'font-size': '16pt',
+          'text-align': 'center',
+        },
+      },
     };
   },
   created() {},
   updated() {
     if (
-      this.$store.currPath === "upload" ||
-      this.$store.currPath === "download"
+      this.$store.currPath === 'upload' ||
+      this.$store.currPath === 'download'
     ) {
-      this.$store.dispatch("updateCurrentToolFromURI");
+      this.$store.dispatch('updateCurrentToolFromURI');
     }
   },
   computed: {
@@ -114,18 +114,18 @@ export default {
     },
     showAllProjects() {
       return this.$store.getters.showAllProjects;
-    }
+    },
   },
   watch: {
     uriProject: function(val) {
-      this.$store.commit("setCurrToolName", val, true);
-    }
+      this.$store.commit('setCurrToolName', val, true);
+    },
   },
   methods: {
     setCurrTool(toolName) {
-      this.$store.commit("setCurrToolName", toolName);
-    }
-  }
+      this.$store.commit('setCurrToolName', toolName);
+    },
+  },
 };
 </script>
 
@@ -210,4 +210,3 @@ td {
   text-align: right;
 }
 </style>
-

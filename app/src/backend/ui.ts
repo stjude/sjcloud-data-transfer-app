@@ -17,9 +17,7 @@ if (nodeEnvironment === 'production') {
   client_id = 'sjcloud-data-transfer-app';
 }
 
-const oauth_url = `https://platform.dnanexus.com/login?scope=%7B%22full%22%3A+true%7D&redirect_uri=https%3A%2F%2Flocalhost%3A4433%2Fauthcb&client_id=${
-  client_id
-}`;
+const oauth_url = `https://platform.dnanexus.com/login?scope=%7B%22full%22%3A+true%7D&redirect_uri=https%3A%2F%2Flocalhost%3A4433%2Fauthcb&client_id=${client_id}`;
 let width = 900;
 let height = 620;
 
