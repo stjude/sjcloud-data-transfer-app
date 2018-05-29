@@ -7,7 +7,8 @@ install:
       Install-Product node 9
       $ENV:CI=true
       $ENV:PATH=$ENV:APPDATA + "\npm;" + $ENV:PATH
-      npm i --no-optional
+      try {npm i --no-optional}
+      catch {Write-Output "npm install threw an exception"}
 skip_tags: true
 shallow_clone: true
 test_script:
