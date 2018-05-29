@@ -27,18 +27,18 @@
 				<div class="bottom-bar-left">
 					<input id="downloadTextInput" type="text"
 						   v-model="downloadLocation"
-						   v-on:click.prevent="selectDownloadLocation"
+						   @click.prevent="selectDownloadLocation"
 						   readonly />
 				</div>
 				<div class="bottom-bar-right">
 					<button class='btn btn-primary btn-stjude download-btn' 
 						    v-bind:disabled='!hasFilesInStaging'
-						    v-on:click='downloadFiles'>
+						    @click='downloadFiles'>
 						Download
 					</button>
 					<button class='btn btn-danger btn-stjude-warning cancel-btn'
 						    v-bind:disabled='!hasFilesInTransit'
-						    v-on:click='cancelFiles'>Cancel</button>
+						    @click='cancelFiles'>Cancel</button>
 				</div>
 			</div>
 		</div>

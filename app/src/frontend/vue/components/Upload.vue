@@ -45,13 +45,13 @@
 					<button id="ready-to-run-btn" 
                   class='btn btn-stjude'
 					        v-show="currTool && currTool.isSJCPTool"
-					        v-on:click="openExternal(currTool.SJCPToolURL)">
+					        @click="openExternal(currTool.SJCPToolURL)">
 						<i class='material-icons open-in-browser-icon'>open_in_browser</i>
 						READY TO RUN
 					</button>
 					<button id="upload-more-data-btn"
                   class='btn btn-stjude' 
-                  v-on:click='removeAllFiles'>
+                  @click='removeAllFiles'>
 						<i class='material-icons cloud-upload-icon'>cloud_upload</i>
 						UPLOAD MORE DATA
 					</button>

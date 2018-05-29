@@ -3,7 +3,7 @@
 		<table id='file-status-table'>
 			<thead>
 				<tr class="file-status-thead-tr"> 
-					<th class='file-status-cell-checkbox' v-on:click.stop='toggleCheckBoxes'>
+					<th class='file-status-cell-checkbox' @click.stop='toggleCheckBoxes'>
 						<input type="checkbox" :checked='checkedAll' />
 					</th>
 					<th class='file-status-cell-filename' style='overflow: hidden'>
@@ -25,7 +25,7 @@
 			<table id='file-status-table-body'>
 				<tbody>
 					<tr v-for='file in files'>
-						<td class='file-status-cell-checkbox' v-on:click.stop='toggleFileChecked(file)'>
+						<td class='file-status-cell-checkbox' @click.stop='toggleFileChecked(file)'>
 							<input type="checkbox" :checked='file.checked' :disabled='file.finished'/>
 						</td>
 						<td class='file-status-cell-filename' v-html='matchedStr(file.name)'></td>

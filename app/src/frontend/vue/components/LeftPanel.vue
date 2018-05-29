@@ -23,7 +23,7 @@
 					<tbody>
 						<tr v-for='tool in tools'
 								v-bind:style='tool.dx_location == currTool.dx_location ? styles.activeTr : styles.inactiveTr' 
-								v-on:click='setCurrTool(tool.dx_location)'>
+								@click='setCurrTool(tool.dx_location)'>
 							<td class="sjcda-left-panel-table-thead-tr-th-key">{{ tool.name }}
                 <span v-show="tool.isSJCPTool" class="badge badge-tool">TOOL</span>
                 <span v-show="tool.isSJCPDataRequest" class="badge badge-data">DATA</span>
