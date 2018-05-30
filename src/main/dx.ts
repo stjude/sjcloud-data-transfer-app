@@ -5,13 +5,19 @@
 
 import * as fs from 'fs';
 import * as request from 'request';
-import * as progress from 'request-progress';
+// import * as progress from 'request-progress';
+const progress = require('request-progress');
 
-import DOWNLOADABLE_TAG from './config';
+import config from './config';
 
 import {Client} from '../../vendor/dxjs';
-import {ResultCallback, SuccessCallback} from './types';
+import {ResultCallback, SuccessCallback, SJDTAProject} from './types';
 import {IDescribeResult} from '../../vendor/dxjs/methods/file/describe';
+import {
+  ProjectLevel,
+  IFindProjectResult,
+  IProject,
+} from '../../vendor/dxjs/methods/system/findProjects';
 import {
   IFindDataObjectsResult,
   DataObjectState,
@@ -138,7 +144,7 @@ export function listFiles(
       project: projectId,
     },
     state: DataObjectState.Closed,
-    tags: !allFiles ? DOWNLOADABLE_TAG : undefined,
+    tags: !allFiles ? config.DOWNLOADABLE_TAG : undefined,
   };
 
   client.system
@@ -164,7 +170,7 @@ export function listFiles(
 export function downloadFile(
   token: string,
   file: RemoteLocalFilePair,
-  updateCb: ResultCallback<number>,
+  updateCb: ResultCallback<number> | null,
   finishedCb: SuccessCallback<boolean>
 ): Promise<Request | void> {
   const client = new Client(token);
@@ -173,13 +179,17 @@ export function downloadFile(
   return client.file
     .download(file.remoteFilePath.fileId)
     .then(({url, headers}: {url: string; headers: any}) => {
-      const req = request(url, {headers}, (error: any, response: any) => {
-        if (error) {
-          finishedCb(error, null);
-        } else {
-          finishedCb(null, response);
+      const req = request(
+        url,
+        {headers},
+        (error: any, response: request.Response, body: any) => {
+          if (error) {
+            finishedCb(error, null);
+          } else {
+            finishedCb(null, true);
+          }
         }
-      });
+      );
 
       req.on('abort', () => {
         finishedCb(
@@ -189,7 +199,9 @@ export function downloadFile(
       });
 
       progress(req).on('progress', (state: any) => {
-        updateCb(state.percent * 100);
+        if (updateCb) {
+          updateCb(state.percent * 100);
+        }
       });
 
       req.pipe(writer);
@@ -198,5 +210,49 @@ export function downloadFile(
     })
     .catch((err: any) => {
       finishedCb(err, null);
+    });
+}
+
+/**
+ * Find and return projects the user can upload data to.
+ *
+ * @param token {string} API token for DNAnexus API authentication.
+ * @param allProjects {boolean} Should we limit to St. Jude Cloud projects
+ *   or list all projects?
+ * @param cb {SuccessCallback<IProject[]>} If successful, all projects meeting
+ *   the criteria of the options passed in.
+ */
+export function listProjects(
+  token: string,
+  allProjects: boolean,
+  cb: SuccessCallback<IProject[]>
+) {
+  let tagsToCheck: string[] = [];
+  let projects: SJDTAProject[] = [];
+
+  if (!allProjects) {
+    tagsToCheck = [config.TOOL_PROJECT_TAG, config.DATA_PROJECT_TAG];
+  }
+
+  const client = new Client(token);
+
+  const options = {
+    describe: {
+      fields: {
+        name: true,
+        level: true,
+      },
+    },
+    level: ProjectLevel.Upload,
+    tags: tagsToCheck.length > 0 ? {$or: tagsToCheck} : undefined,
+  };
+
+  client.system
+    .findProjects(options)
+    .then(({results}: {results: IProject[]}) => {
+      cb(null, results);
+    })
+    .catch((err: any) => {
+      cb(err, null);
     });
 }

@@ -6,6 +6,14 @@
  *   - DXPROJECT: a project Id that contains at least one file (preferably the
  *       one pointed to by DXFILE).
  **/
+
+import * as path from 'path';
+import {statSync} from 'fs';
+
+import * as tmp from 'tmp';
+import {error} from 'util';
+import * as rimraf from 'rimraf';
+
 import * as dx from './dx';
 
 if (process.env.DXTOKEN) {
@@ -86,8 +94,57 @@ if (process.env.DXTOKEN) {
         });
       });
 
-      it('should be able to download a small file correctly.');
-      it("should error when trying to download a file which doesn't exist.");
+      it('should be able to download a small file correctly.', done => {
+        dx.describe(token, file, (error, result) => {
+          expect(error).toBeNull();
+          expect(result).not.toBeNull();
+
+          if (result) {
+            // File must be 1Mb or less.
+            const remoteFileSize = result.size;
+            expect(remoteFileSize).toBeLessThanOrEqual(1e6);
+            const _tmpdir = tmp.dirSync().name;
+            const mapping: dx.RemoteLocalFilePair = {
+              localFilePath: path.join(_tmpdir, 'file'),
+              remoteFilePath: {
+                projectId: result.project,
+                fileId: result.id,
+              },
+            };
+
+            dx.downloadFile(token, mapping, null, (error, result) => {
+              expect(error).toBeNull();
+              expect(result).not.toBeNull();
+              expect(result).toBe(true);
+              const localFileSize = statSync(mapping.localFilePath).size;
+              expect(localFileSize).toEqual(remoteFileSize);
+              rimraf.sync(_tmpdir);
+              done();
+            });
+          } else {
+            done();
+          }
+        });
+      });
+
+      it("should error when trying to download a file which doesn't exist.", done => {
+        const _tmpdir = tmp.dirSync().name;
+        const mapping: dx.RemoteLocalFilePair = {
+          localFilePath: path.join(_tmpdir, 'file'),
+          remoteFilePath: {fileId: 'file-notarealfile'},
+        };
+
+        dx.downloadFile(token, mapping, null, (error, result) => {
+          expect(error).not.toBeNull();
+          expect(result).toBeNull();
+          if (error) {
+            expect(error.message).toEqual(
+              '"file-notarealfile" is not a recognized ID'
+            );
+          }
+          done();
+        });
+      });
     }
 
     if (process.env.DXPROJECT) {
@@ -104,7 +161,7 @@ if (process.env.DXTOKEN) {
             const firstResultKeys = Object.keys(firstResult);
             expect(firstResultKeys).toContain('project');
             expect(firstResultKeys).toContain('id');
-            // @TODO: describe is option, so ignore for now.
+            // @TODO: describe is optional, so ignore for now.
           }
           done();
         });
