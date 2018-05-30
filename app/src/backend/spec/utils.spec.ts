@@ -17,21 +17,6 @@ describe('Determining SJCloud paths', () => {
       const result = utils.getSJCloudPaths(null, 'linux');
       const expectedResult = {
         SJCLOUD_HOME: tildeDir,
-        ANACONDA_HOME: path.join(tildeDir, 'anaconda'),
-        ANACONDA_BIN: path.join(tildeDir, 'anaconda', 'bin'),
-        ANACONDA_SJCLOUD_ENV: path.join(
-          tildeDir,
-          'anaconda',
-          'envs',
-          'sjcloud'
-        ),
-        ANACONDA_SJCLOUD_BIN: path.join(
-          tildeDir,
-          'anaconda',
-          'envs',
-          'sjcloud',
-          'bin'
-        ),
       };
       expect(result).toEqual(expectedResult);
     });

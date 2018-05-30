@@ -33,14 +33,10 @@ export const defaultDownloadDir = path.join(os.homedir(), 'Downloads');
 
 interface StJudeCloudPaths {
   SJCLOUD_HOME?: string;
-  ANACONDA_HOME?: string;
-  ANACONDA_BIN?: string;
-  ANACONDA_SJCLOUD_ENV?: string;
-  ANACONDA_SJCLOUD_BIN?: string;
 }
 
 /**
- * Returns the various paths for SJ Cloud and Anaconda.
+ * Returns the path for SJ Cloud.
  *
  * @param sjcloudHomeDirectory SJ Cloud home path saved in the application, if any
  * @param thePlatform Platform the application is running on
@@ -56,17 +52,6 @@ export function getSJCloudPaths(
   }
 
   result.SJCLOUD_HOME = sjcloudHomeDirectory;
-  result.ANACONDA_HOME = path.join(sjcloudHomeDirectory, 'anaconda');
-  result.ANACONDA_BIN =
-    thePlatform === 'win32'
-      ? path.join(result.ANACONDA_HOME, 'Scripts')
-      : path.join(result.ANACONDA_HOME, 'bin');
-  result.ANACONDA_SJCLOUD_ENV = path.join(
-    result.ANACONDA_HOME,
-    'envs',
-    'sjcloud'
-  );
-  result.ANACONDA_SJCLOUD_BIN = path.join(result.ANACONDA_SJCLOUD_ENV, 'bin');
 
   return result;
 }
@@ -123,24 +108,6 @@ export function initSJCloudHome(
 function unixBootstrapCommand(): string {
   let paths = [];
 
-  try {
-    let stats = fs.statSync(lookupPath('ANACONDA_SJCLOUD_BIN'));
-    if (stats) {
-      paths.push(lookupPath('ANACONDA_SJCLOUD_BIN'));
-    }
-  } catch (err) {
-    /* ignore */
-  }
-
-  try {
-    let stats = fs.statSync(lookupPath('ANACONDA_BIN'));
-    if (stats) {
-      paths.push(lookupPath('ANACONDA_BIN'));
-    }
-  } catch (err) {
-    /* ignore */
-  }
-
   return paths.length != 0 ? `export PATH="${paths.join(':')}:$PATH";` : null;
 }
 
@@ -153,24 +120,6 @@ function unixBootstrapCommand(): string {
  */
 function windowsBootstrapCommand(): string {
   let paths = [];
-
-  try {
-    let stats = fs.statSync(lookupPath('ANACONDA_BIN'));
-    if (stats) {
-      paths.push(lookupPath('ANACONDA_BIN'));
-    }
-  } catch (err) {
-    /* ignore */
-  }
-
-  try {
-    let stats = fs.statSync(lookupPath('ANACONDA_SJCLOUD_ENV'));
-    if (stats) {
-      paths.push(lookupPath('ANACONDA_SJCLOUD_ENV'));
-    }
-  } catch (err) {
-    /* ignore */
-  }
 
   return paths.length != 0
     ? `$ENV:PATH="${paths.join(';')};"+$ENV:PATH;`

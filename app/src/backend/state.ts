@@ -16,7 +16,6 @@ import {} from './types';
  * @enum {any}
  */
 const states = {
-  NEED_INSTALL: {path: 'install'},
   NEED_LOGIN: {path: 'login'},
   UPLOAD: {path: 'upload'},
   UNKNOWN: {path: 'unknown'},
