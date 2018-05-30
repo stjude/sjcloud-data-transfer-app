@@ -105,6 +105,8 @@ export default {
 	},
 	mounted() {
 		this.$store.commit('setInfoTipText',"If you'd like to see all files, please toggle the 'Show all files' option in the settings.");
+    const concurrency = this.$store.getters.concurrentOperations;
+    this.$root.backend.queue.setConcurrentOperations(concurrency);
 	},
 	methods: {
 		selectDownloadLocation() {

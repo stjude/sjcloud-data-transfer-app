@@ -2,10 +2,10 @@
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fstjude%2Fsjcloud-data-transfer-app.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fstjude%2Fsjcloud-data-transfer-app?ref=badge_shield)
 
-| **Branch**  | **Version** | **Unix CI**                                                              | **Windows CI**                                                             | **Coverage**                                                              | **Maintainability**                                                           |
-| ----------- | ----------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------- | ------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| Master      | v1.3.0      | [![Build Status][travis-master-ci-svg]][travis-master-ci-link]           | [![Build status][windows-master-ci-svg]][windows-master-ci-link]           | [![Coverage Status][coverage-master-svg]][coverage-master-link]           | [![Maintainability][maintainability-master-svg]][maintainability-master-link] |
-| Development | v1.4.0      | [![Build Status][travis-development-ci-svg]][travis-development-ci-link] | [![Build status][windows-development-ci-svg]][windows-development-ci-link] | [![Coverage Status][coverage-development-svg]][coverage-development-link] |                                                                               |
+| **Branch**  | **Version** | **Unix CI**                                                              | **Windows CI**                                                             | **Coverage**                                                              |
+| ----------- | ----------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
+| Master      | v1.3.0      | [![Build Status][travis-master-ci-svg]][travis-master-ci-link]           | [![Build status][windows-master-ci-svg]][windows-master-ci-link]           | [![Coverage Status][coverage-master-svg]][coverage-master-link]           |
+| Development | v1.4.0      | [![Build Status][travis-development-ci-svg]][travis-development-ci-link] | [![Build status][windows-development-ci-svg]][windows-development-ci-link] | [![Coverage Status][coverage-development-svg]][coverage-development-link] |
 
 A desktop application written on top of the [Electron Framework](https://electron.atom.io/) facilitating easy uploading and downloading of genomic data to the St. Jude Cloud. Functionality includes:
 
@@ -24,7 +24,6 @@ If you'd like to build yourself, you'll also need the following prerequisites in
 | **Name** | **Install Link**                                                                                                  |
 | -------- | ----------------------------------------------------------------------------------------------------------------- |
 | NodeJS   | [Using NVM](https://github.com/creationix/nvm#install-script) or [Official Site](https://nodejs.org/en/download/) |
-| Yarn     | [Official Site](https://yarnpkg.com/en/docs/install)                                                              |
 
 ### Process
 
@@ -32,15 +31,15 @@ The process for installing the software in production mode:
 
 ```bash
 # download repository
-git clone git@github.com:stjude/sjcloud-data-transfer-app.git --depth 1
+git clone git@github.com:stjude/sjcloud-data-transfer-app.git
 cd sjcloud-data-transfer-app
 
-yarn install                    # install dependencies
+npm i                           # install dependencies
 export NODE_ENV=production      # set the Node environment. Can be 'production' or 'development'.
 # set NODE_ENV=production       # if you're on Windows cmd.exe.
 # $Env:NODE_ENV = "production"  # if you're on Windows powershell.
 npx gulp compile                # compile the frontend/backend code.
-yarn start                      # start the application
+npm start                       # start the application.
 ```
 
 ## Development
@@ -52,12 +51,12 @@ Running the tool in development mode requires a few changes to the config:
 git clone -b development git@github.com:stjude/sjcloud-data-transfer-app.git
 cd sjcloud-data-transfer-app
 
-yarn install                       # install dependencies
+npm i                              # install dependencies
 export NODE_ENV=development        # set the Node environment. Can be 'production' or 'development'.
 # set NODE_ENV=development         # if you're on Windows cmd.exe.
 # $Env:NODE_ENV="development"      # if you're on Windows powershell.
 npx gulp compile                   # compile the frontend/backend code.
-yarn start:dev                     # start the application
+npm run start:dev                  # start the application.
 ```
 
 Note that we recommend that you use the following environment variables when developing:

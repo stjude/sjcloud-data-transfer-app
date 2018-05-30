@@ -8,8 +8,6 @@ coverage/*
 **/.DS_Store
 .tmp/*
 
-package-lock.json
-
 # developer specific symlink to [project-path/]test/testdata 
 
 *.log
