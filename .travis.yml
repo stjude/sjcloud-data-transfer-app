@@ -25,11 +25,4 @@ install:
 after_success: 
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
       npm run coverage;
-      if [[ $TRAVIS_BRANCH == "development" ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then
-          npm run dist:release-linux;
-      fi;
-    elif [[ "$TRAVIS_OS_NAME" == "osx" ]]; then
-      if [[ $TRAVIS_BRANCH == "development" ]] && [[ "$TRAVIS_PULL_REQUEST" == "false" ]]; then
-          npm run dist:release-mac;
-      fi;
     fi;

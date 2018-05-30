@@ -16,11 +16,6 @@ test_script:
       npm -v
       npm test
 platform: x64
-on_success:
-  - ps: |
-      if ($ENV:APPVEYOR_REPO_BRANCH -eq "master" -Or $ENV:APPVEYOR_REPO_BRANCH -eq "development") {
-        npm run dist:release-win
-      }
 build: off
 matrix:
   fast_finish: true
