@@ -228,7 +228,6 @@ export function listProjects(
   cb: SuccessCallback<IProject[]>
 ) {
   let tagsToCheck: string[] = [];
-  let projects: SJDTAProject[] = [];
 
   if (!allProjects) {
     tagsToCheck = [config.TOOL_PROJECT_TAG, config.DATA_PROJECT_TAG];
