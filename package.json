@@ -26,22 +26,6 @@
     "precommit": "lint-staged"
   },
   "author": "St. Jude Children's Research Hospital <clay.mcleod@stjude.org>",
-  "build": {
-    "appId": "cloud.stjude.dta",
-    "productName": "SJCP Data Transfer",
-    "dmg": {},
-    "linux": {
-      "category": "Utility",
-      "target": [
-        "AppImage",
-        "deb"
-      ]
-    },
-    "win": {
-      "target": "NSIS",
-      "icon": "build/icon.ico"
-    }
-  },
   "lint-staged": {
     "*.js": [
       "npm run pretty",
