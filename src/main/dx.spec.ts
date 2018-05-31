@@ -28,7 +28,7 @@ if (process.env.DXTOKEN) {
       });
     });
 
-    it('should return false when we are loggedIn with a correct API token.', done => {
+    it('should return false when we are loggedIn with an incorrect API token.', done => {
       dx.loggedIn('', (error, result) => {
         expect(error).not.toBeNull();
         expect(result).toBe(false);
