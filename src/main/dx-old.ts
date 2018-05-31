@@ -6,17 +6,17 @@
 import * as fs from 'fs';
 import * as os from 'os';
 import * as path from 'path';
-import {execSync} from 'child_process';
+import { execSync } from 'child_process';
 
-import {Request} from 'request';
+import { Request } from 'request';
 
 import * as utils from './utils';
 import * as logging from './logging';
 import config from './config';
-import {RemoteLocalFilePair} from './queue';
-import {Client} from '../../vendor/dxjs';
-import {IDescribeOptions} from '../../vendor/dxjs/methods/file/describe';
-import {DataObjectState} from '../../vendor/dxjs/methods/system/findDataObjects';
+import { RemoteLocalFilePair } from './queue';
+import { Client } from '../../vendor/dxjs';
+import { IDescribeOptions } from '../../vendor/dxjs/methods/file/describe';
+import { DataObjectState } from '../../vendor/dxjs/methods/system/findDataObjects';
 import {
   ProjectLevel,
   IFileUploadParameters,
@@ -46,13 +46,13 @@ export function logout(callback: SuccessCallback, dryrun: boolean = false) {
 
 const fileUploadParameters = async (
   client: Client,
-  projectId: string
+  projectId: string,
 ): Promise<IFileUploadParameters> => {
   const result = await client.project.describe(projectId, {
-    fields: {fileUploadParameters: true},
+    fields: { fileUploadParameters: true },
   });
 
-  const {fileUploadParameters: params} = result;
+  const { fileUploadParameters: params } = result;
 
   if (!params) {
     throw new Error('missing file upload parameters');
@@ -75,7 +75,7 @@ class UploadTransfer {
     token: string,
     src: string,
     progressCb: ResultCallback,
-    finishedCb: SuccessCallback
+    finishedCb: SuccessCallback,
   ) {
     this.client = new Client(token);
     this.src = src;
@@ -85,9 +85,9 @@ class UploadTransfer {
   }
 
   public async prepare(projectId: string): Promise<utils.IByteRange[]> {
-    const {maximumPartSize} = await fileUploadParameters(
+    const { maximumPartSize } = await fileUploadParameters(
       this.client,
-      projectId
+      projectId,
     );
 
     return utils.byteRanges(this.size, maximumPartSize);
@@ -98,7 +98,7 @@ class UploadTransfer {
 
     const name = path.basename(this.src);
 
-    const {id} = await this.client.file.new({
+    const { id } = await this.client.file.new({
       folder: dst,
       name,
       parents: true,
@@ -107,7 +107,7 @@ class UploadTransfer {
     });
 
     for (let i = 0; i < ranges.length; i++) {
-      const {start, end} = ranges[i];
+      const { start, end } = ranges[i];
       await this.transfer(id, i + 1, start, end);
     }
 
@@ -126,14 +126,14 @@ class UploadTransfer {
     id: string,
     i: number,
     start: number,
-    end: number
+    end: number,
   ): Promise<{}> {
-    const reader = fs.createReadStream(this.src, {start, end});
+    const reader = fs.createReadStream(this.src, { start, end });
 
     const size = end - start + 1;
     const md5 = await utils.md5Sum(this.src, start, end);
 
-    const {url, headers} = await this.client.file.upload(id, {
+    const { url, headers } = await this.client.file.upload(id, {
       index: i,
       md5,
       size,
@@ -142,7 +142,7 @@ class UploadTransfer {
     return new Promise(resolve => {
       this.request = request(
         url,
-        {body: reader, headers, method: 'PUT'},
+        { body: reader, headers, method: 'PUT' },
         async (error: any, response: any) => {
           if (error) {
             this.finishedCb(error, null);
@@ -150,12 +150,12 @@ class UploadTransfer {
             this.bytesRead += size;
             resolve();
           }
-        }
+        },
       );
 
       this.request.on('drain', () => {
         const r: any = this.request;
-        const {bytesWritten} = r.req.connection;
+        const { bytesWritten } = r.req.connection;
         const percent = (this.bytesRead + bytesWritten) / this.size * 100;
         this.progressCb(percent);
       });
@@ -184,13 +184,13 @@ export function uploadFile(
   file: RemoteLocalFilePair,
   progressCb: ResultCallback,
   finishedCb: SuccessCallback,
-  remoteFolder: string = '/uploads'
+  remoteFolder: string = '/uploads',
 ): UploadTransfer {
   const transfer = new UploadTransfer(
     token,
     file.local_file,
     progressCb,
-    finishedCb
+    finishedCb,
   );
   transfer.start(projectId, remoteFolder);
   return transfer;

@@ -1,4 +1,5 @@
-import {FileTransferQueue, QueueTaskType} from './queue';
+import { FileTransferQueue, QueueTaskType } from './queue';
+import { RemoteLocalFilePair } from './dx';
 
 describe('Async queue library', () => {
   let file_queue = FileTransferQueue.getInstance();
@@ -23,10 +24,14 @@ describe('Async queue library', () => {
       done();
     };
 
-    file_queue.addUploadTask({
-      localFile: '/foo',
-      remoteFile: '/bar',
-    });
+    const mapping: RemoteLocalFilePair = {
+      localFilePath: '~/foo.txt',
+      remoteFilePath: {
+        fileId: 'file-notarealfile',
+      },
+    };
+
+    file_queue.addUploadTask(mapping);
   });
 
   it('should handle a download task without erroring.', done => {
@@ -35,10 +40,14 @@ describe('Async queue library', () => {
       done();
     };
 
-    file_queue.addDownloadTask({
-      localFile: '/foo',
-      remoteFile: '/bar',
-    });
+    const mapping: RemoteLocalFilePair = {
+      localFilePath: '~/foo.txt',
+      remoteFilePath: {
+        fileId: 'file-notarealfile',
+      },
+    };
+
+    file_queue.addDownloadTask(mapping);
   });
 
   it('should handle an info task without erroring.');

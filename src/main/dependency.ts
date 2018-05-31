@@ -8,10 +8,10 @@ const path = require('path');
 const fs = require('fs-extra');
 import config from './config';
 import * as utils from './utils';
-import {existsSync} from 'fs';
-import {SuccessCallback, ErrorCallback, ProgressCallback} from './types';
-import {DownloadInfo} from './config';
-import {downloadFile, Timer} from './utils';
+import { existsSync } from 'fs';
+import { SuccessCallback, ErrorCallback, ProgressCallback } from './types';
+import { DownloadInfo } from './config';
+import { downloadFile, Timer } from './utils';
 import * as logging from './logging-remote';
 
 // Package names are from `data.actions.{FETCH, LINK}` in the final object after
@@ -106,10 +106,8 @@ function getAnacondaInstallCommand(destination: string): string {
   platform = platform.toUpperCase();
 
   if (platform === 'WIN32') {
-    command = `Start-Process ${
-      destination
-    } -ArgumentList '/S','/AddToPath=0','RegisterPython=0','/D=${utils.lookupPath(
-      'ANACONDA_HOME'
+    command = `Start-Process ${destination} -ArgumentList '/S','/AddToPath=0','RegisterPython=0','/D=${utils.lookupPath(
+      'ANACONDA_HOME',
     )}' -Wait`;
   } else {
     command = `bash ${destination} -b -p ${utils.lookupPath('ANACONDA_HOME')}`;
@@ -131,7 +129,7 @@ function getAnacondaInstallCommand(destination: string): string {
 export function installAnaconda(
   progressCb: ProgressCallback,
   finishedCb: SuccessCallback,
-  removeAnacondaIfExists: boolean = true
+  removeAnacondaIfExists: boolean = true,
 ) {
   if (existsSync(utils.lookupPath('ANACONDA_HOME'))) {
     logging.debug('');
@@ -144,7 +142,7 @@ export function installAnaconda(
       });
     } else {
       throw new Error(
-        'Anaconda is already installed! This method should not be called.'
+        'Anaconda is already installed! This method should not be called.',
       );
     }
   }
@@ -152,9 +150,7 @@ export function installAnaconda(
   const downloadInfo = getDownloadInfo('ANACONDA');
   if (!downloadInfo)
     throw new Error(
-      `Could not get download info for Anaconda based on your platform!\nPlatform: ${
-        platform
-      }, Arch: ${arch}.`
+      `Could not get download info for Anaconda based on your platform!\nPlatform: ${platform}, Arch: ${arch}.`,
     );
 
   const downloadURL: string = downloadInfo.URL;
@@ -182,7 +178,7 @@ export function installAnaconda(
     return new Promise((resolve, reject) => {
       const command = getAnacondaInstallCommand(destination);
       logging.silly(
-        `      [-] Download location: ${utils.lookupPath('ANACONDA_HOME')}`
+        `      [-] Download location: ${utils.lookupPath('ANACONDA_HOME')}`,
       );
       logging.silly(`      [-] Command: ${command}`);
 
@@ -194,7 +190,7 @@ export function installAnaconda(
           if (error) return reject(error);
           return resolve(result);
         },
-        false
+        false,
       );
     });
   };
@@ -236,9 +232,9 @@ export function installAnaconda(
               timer.stop();
               logging.debug(`       [-] Took ${timer.duration()} ms.`);
               error ? reject(error) : resolve(result);
-            }
-          )
-        )
+            },
+          ),
+        ),
     );
   };
 
@@ -252,7 +248,7 @@ export function installAnaconda(
           if (error) return reject(error);
           return resolve(result);
         },
-        false
+        false,
       ); // sometimes dxtoolkit returns a pip update warning to stderr
       // which causes the command to fail
     });

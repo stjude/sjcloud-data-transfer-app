@@ -1,6 +1,6 @@
 /* eslint-disable max-len */
 
-import {select} from 'd3-selection';
+import { select } from 'd3-selection';
 
 const _App = window._App;
 
@@ -22,7 +22,7 @@ describe('FileStatus table for an empty project', () => {
         setTimeout(() => {
           done();
         }, 500);
-      }
+      },
     );
   });
 
@@ -56,7 +56,7 @@ describe('FileStatus table for a project with pending downloads', () => {
         setTimeout(() => {
           done();
         }, 500);
-      }
+      },
     );
   });
 
@@ -70,7 +70,7 @@ describe('FileStatus table for a project with pending downloads', () => {
       holder
         .select('#file-status-table-body')
         .selectAll('tr')
-        .size()
+        .size(),
     ).toEqual(9);
     done();
   });
@@ -83,7 +83,7 @@ describe('FileStatus table for a project with pending downloads', () => {
         .filter(function(d) {
           return !this.innerHTML || this.innerHTML === '<!---->';
         })
-        .size()
+        .size(),
     ).toEqual(1);
 
     done();
@@ -97,7 +97,7 @@ describe('FileStatus table for a project with pending downloads', () => {
         .filter(function(d) {
           return select(this).html() === 'Started';
         })
-        .size()
+        .size(),
     ).toEqual(1);
 
     done();
@@ -108,7 +108,7 @@ describe('FileStatus table for a project with pending downloads', () => {
       holder
         .select('#file-status-table-body')
         .selectAll('.file-status-cell-status-progress-bar')
-        .size()
+        .size(),
     ).toEqual(6);
 
     done();
@@ -122,7 +122,7 @@ describe('FileStatus table for a project with pending downloads', () => {
         .filter(function(d) {
           return select(this).html() === 'check_circle';
         })
-        .size()
+        .size(),
     ).toEqual(2);
 
     done();
@@ -153,7 +153,7 @@ describe('FileStatus table for a project with completed transfer', () => {
         setTimeout(() => {
           done();
         }, 500);
-      }
+      },
     );
   });
 
@@ -161,7 +161,7 @@ describe('FileStatus table for a project with completed transfer', () => {
     app.$router.push('/upload');
     setTimeout(() => {
       expect(
-        holder.select('#file-status-div').node().parentNode.style.display
+        holder.select('#file-status-div').node().parentNode.style.display,
       ).toEqual('none');
       done();
     }, 100);
@@ -172,7 +172,7 @@ describe('FileStatus table for a project with completed transfer', () => {
       holder
         .select('#file-status-table-body')
         .selectAll('.file-status-cell-status-progress-bar')
-        .size()
+        .size(),
     ).toEqual(0);
 
     done();
@@ -186,7 +186,7 @@ describe('FileStatus table for a project with completed transfer', () => {
         .filter(function(d) {
           return select(this).html() === 'check_circle';
         })
-        .size()
+        .size(),
     ).toEqual(2);
 
     done();

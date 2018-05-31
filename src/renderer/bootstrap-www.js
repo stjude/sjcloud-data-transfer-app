@@ -13,7 +13,7 @@ window.utils = {
         showAllFiles: true,
         showAllProjects: true,
         concurrentOperations: 2,
-      })
+      }),
     );
   },
 };
@@ -192,7 +192,7 @@ function queue(VueApp) {
         clearInterval(i);
         if (numTaskCompleted > numTaskAdded) {
           console.log(
-            `More tasks completed than added: ${numTaskCompleted} vs ${numTaskAdded}.`
+            `More tasks completed than added: ${numTaskCompleted} vs ${numTaskAdded}.`,
           );
         }
         VueApp.$store.commit('removeOperationProcess', {

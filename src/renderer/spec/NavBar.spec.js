@@ -1,4 +1,4 @@
-import {select} from 'd3-selection';
+import { select } from 'd3-selection';
 
 const _App = window._App;
 
@@ -20,7 +20,7 @@ describe('NavBar search', () => {
         setTimeout(() => {
           done();
         }, 500);
-      }
+      },
     );
   });
 

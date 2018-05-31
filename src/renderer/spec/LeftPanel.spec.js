@@ -1,4 +1,4 @@
-import {select} from 'd3-selection';
+import { select } from 'd3-selection';
 
 const _App = window._App;
 
@@ -19,7 +19,7 @@ describe('LeftPanel for a user with no projects', () => {
         setTimeout(() => {
           done();
         }, 500);
-      }
+      },
     );
   });
   /*
@@ -61,7 +61,7 @@ describe('LeftPanel for a user with projects', () => {
           app.$store.commit('setCurrToolName', 'x2');
           done();
         }, 500);
-      }
+      },
     );
   });
 
@@ -71,7 +71,7 @@ describe('LeftPanel for a user with projects', () => {
         holder
           .select('#file-status-div')
           .selectAll('tr')
-          .size()
+          .size(),
       ).toEqual(10);
       done();
     }, 300);
@@ -85,7 +85,7 @@ describe('LeftPanel for a user with projects', () => {
           .filter(function(b) {
             return this.style.display !== 'none';
           })
-          .size()
+          .size(),
       ).toEqual(1);
       done();
     }, 500);

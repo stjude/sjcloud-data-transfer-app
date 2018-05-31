@@ -49,7 +49,7 @@ export default function(ref) {
     mutations: {
       addFile(state, file, checked) {
         const tool = state.tools.filter(
-          t => t.dx_location === state.currToolName
+          t => t.dx_location === state.currToolName,
         )[0];
         if (toolError(tool, state)) {
           return;
@@ -59,7 +59,7 @@ export default function(ref) {
       },
       addFiles(state, files) {
         const tool = state.tools.filter(
-          t => t.dx_location === state.currToolName
+          t => t.dx_location === state.currToolName,
         )[0];
         if (toolError(tool, state)) {
           return;
@@ -78,7 +78,7 @@ export default function(ref) {
       },
       removeCheckedFiles(state) {
         const tool = state.tools.filter(
-          t => t.dx_location === state.currToolName
+          t => t.dx_location === state.currToolName,
         )[0];
         if (toolError(tool, state)) {
           return;
@@ -88,7 +88,7 @@ export default function(ref) {
       },
       removeAllFiles(state) {
         const tool = state.tools.filter(
-          t => t.dx_location === state.currToolName
+          t => t.dx_location === state.currToolName,
         )[0];
         if (toolError(tool, state)) {
           return;
@@ -98,14 +98,14 @@ export default function(ref) {
       },
       cancelCheckedFiles(state) {
         const tool = state.tools.filter(
-          t => t.dx_location === state.currToolName
+          t => t.dx_location === state.currToolName,
         )[0];
         if (toolError(tool, state)) {
           return;
         }
 
         const files = tool[state.currPath].filter(
-          t => t.checked && t.started && !t.finished
+          t => t.checked && t.started && !t.finished,
         );
         files.forEach(elem => {
           elem.cancelled = true;
@@ -138,7 +138,7 @@ export default function(ref) {
       },
     },
     actions: {
-      refreshFiles({commit, state}) {
+      refreshFiles({ commit, state }) {
         state.tools.forEach(tool => {
           tool.upload = [];
           tool.download = [];
@@ -185,7 +185,7 @@ function toolError(tool, state) {
     console.error(
       `Invalid tool name '${state.currToolName}' and/or path='${
         state.currPath
-      }'.`
+      }'.`,
     );
     return true;
   }

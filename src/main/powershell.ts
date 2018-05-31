@@ -4,9 +4,9 @@
  * @module powershell
  */
 
-import {ChildProcess, exec} from 'child_process';
+import { ChildProcess, exec } from 'child_process';
 
-import {CommandCallback} from './types';
+import { CommandCallback } from './types';
 
 const EXE = 'powershell.exe';
 const DEFAULT_ARGS = [

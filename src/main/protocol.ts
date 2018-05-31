@@ -4,7 +4,7 @@
  * supported on are Windows and Mac.
  */
 
-const {logging} = require('./logging');
+const { logging } = require('./logging');
 const env = require('./env');
 
 if (!env.isTesting()) {

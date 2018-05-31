@@ -4,7 +4,7 @@
  * tasks at a concurrency level specified by the user.
  */
 
-import {priorityQueue, AsyncPriorityQueue, ErrorCallback} from 'async';
+import { priorityQueue, AsyncPriorityQueue, ErrorCallback } from 'async';
 
 import {
   RemoteLocalFilePair,

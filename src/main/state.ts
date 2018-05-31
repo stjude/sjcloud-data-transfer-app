@@ -17,13 +17,13 @@ import * as dx from './dx';
  * @enum {any}
  */
 const states = {
-  NEED_INSTALL: {path: 'install'},
-  NEED_LOGIN: {path: 'login'},
-  UPLOAD: {path: 'upload'},
-  UNKNOWN: {path: 'unknown'},
+  NEED_INSTALL: { path: 'install' },
+  NEED_LOGIN: { path: 'login' },
+  UPLOAD: { path: 'upload' },
+  UNKNOWN: { path: 'unknown' },
 };
 
-export {states};
+export { states };
 
 /**
  * Determines what route to use on startup.
@@ -47,7 +47,7 @@ export function getState(callback: (state: object) => void) {
     if (err) {
       console.error(err);
       logging.debug(
-        '  --> State is UNKNOWN (error initializing SJCloud home).'
+        '  --> State is UNKNOWN (error initializing SJCloud home).',
       );
       utils.reportBug(err);
       return callback(states.UNKNOWN);

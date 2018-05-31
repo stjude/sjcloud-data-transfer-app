@@ -184,7 +184,7 @@ export default function(ref) {
             tool.dx_location,
             state.showAllFiles,
             // this is not called in browser testing mode
-            handleDownloadableFiles(tool)
+            handleDownloadableFiles(tool),
           );
         }
 
@@ -194,7 +194,7 @@ export default function(ref) {
       },
     },
     actions: {
-      updateCurrentToolFromURI({commit, state, getters}) {
+      updateCurrentToolFromURI({ commit, state, getters }) {
         const projectToPick = getters.uriProject;
         if (!projectToPick) return false;
 
@@ -209,7 +209,10 @@ export default function(ref) {
         ref.backend.utils.setURIProject(undefined);
         return true;
       },
-      updateToolsFromRemote({commit, state, getters, dispatch}, force = false) {
+      updateToolsFromRemote(
+        { commit, state, getters, dispatch },
+        force = false,
+      ) {
         const previousTool = state.currToolName;
 
         commit('setNoProjectsFound', false);
@@ -241,7 +244,7 @@ export default function(ref) {
               } else {
                 commit('setNoProjectsFound', true);
               }
-            }
+            },
           );
         }
       },

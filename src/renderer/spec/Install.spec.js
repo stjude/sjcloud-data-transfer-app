@@ -1,4 +1,4 @@
-import {select} from 'd3-selection';
+import { select } from 'd3-selection';
 
 const _App = window._App;
 
@@ -19,13 +19,13 @@ describe('Install', () => {
         setTimeout(() => {
           done();
         }, 500);
-      }
+      },
     );
   });
 
   it('should display the initial download screen', done => {
     expect(holder.select('.theater-body-img img').attr('src')).toEqual(
-      'img/screen-download.png'
+      'img/screen-download.png',
     );
     done();
   });

@@ -8,10 +8,10 @@
  **/
 
 import * as path from 'path';
-import {statSync} from 'fs';
+import { statSync } from 'fs';
 
 import * as tmp from 'tmp';
-import {error} from 'util';
+import { error } from 'util';
 import * as rimraf from 'rimraf';
 
 import * as dx from './dx';
@@ -87,7 +87,7 @@ if (process.env.DXTOKEN) {
           expect(result).toBeNull();
           if (error) {
             expect(error.message).toEqual(
-              '"file-notarealfile" is not a recognized ID'
+              '"file-notarealfile" is not a recognized ID',
             );
           }
           done();
@@ -131,7 +131,7 @@ if (process.env.DXTOKEN) {
         const _tmpdir = tmp.dirSync().name;
         const mapping: dx.RemoteLocalFilePair = {
           localFilePath: path.join(_tmpdir, 'file'),
-          remoteFilePath: {fileId: 'file-notarealfile'},
+          remoteFilePath: { fileId: 'file-notarealfile' },
         };
 
         dx.downloadFile(token, mapping, null, (error, result) => {
@@ -139,7 +139,7 @@ if (process.env.DXTOKEN) {
           expect(result).toBeNull();
           if (error) {
             expect(error.message).toEqual(
-              '"file-notarealfile" is not a recognized ID'
+              '"file-notarealfile" is not a recognized ID',
             );
           }
           done();
@@ -173,7 +173,7 @@ if (process.env.DXTOKEN) {
           expect(resp).toBeNull();
           if (error) {
             expect(error.message).toEqual(
-              '"project-notarealproject" is not a recognized ID'
+              '"project-notarealproject" is not a recognized ID',
             );
           }
           done();

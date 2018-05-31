@@ -3,9 +3,9 @@
  * @description Contains the various utility functions used in the application.
  **/
 
-import {performance} from 'perf_hooks';
+import { performance } from 'perf_hooks';
 
-import {ChildProcess} from 'child_process';
+import { ChildProcess } from 'child_process';
 import powershell from './powershell';
 import {
   SuccessCallback,
@@ -22,9 +22,9 @@ const mkdirp = require('mkdirp');
 const crypto = require('crypto');
 const treeKill = require('tree-kill');
 
-const {logging} = require('./logging');
-const {remote, shell} = require('electron');
-const {exec} = require('child_process');
+const { logging } = require('./logging');
+const { remote, shell } = require('electron');
+const { exec } = require('child_process');
 
 /**
  * CONSTANTS
@@ -49,7 +49,7 @@ interface StJudeCloudPaths {
  */
 export function getSJCloudPaths(
   sjcloudHomeDirectory: string = null,
-  thePlatform: string = platform
+  thePlatform: string = platform,
 ): StJudeCloudPaths {
   let result: StJudeCloudPaths = {};
 
@@ -66,7 +66,7 @@ export function getSJCloudPaths(
   result.ANACONDA_SJCLOUD_ENV = path.join(
     result.ANACONDA_HOME,
     'envs',
-    'sjcloud'
+    'sjcloud',
   );
   result.ANACONDA_SJCLOUD_BIN = path.join(result.ANACONDA_SJCLOUD_ENV, 'bin');
 
@@ -81,7 +81,7 @@ export function getSJCloudPaths(
  */
 export function lookupPath(
   pathProperName: string,
-  sjcloudHomeDirectory: string = null
+  sjcloudHomeDirectory: string = null,
 ): string {
   const paths = getSJCloudPaths(sjcloudHomeDirectory);
   return pathProperName in paths ? (paths as any)[pathProperName] : null;
@@ -97,7 +97,7 @@ export function lookupPath(
  */
 export function initSJCloudHome(
   callback: SuccessCallback,
-  sjcloudHomeDirectory: string = null
+  sjcloudHomeDirectory: string = null,
 ): void {
   sjcloudHomeDirectory = lookupPath('SJCLOUD_HOME', sjcloudHomeDirectory);
   fs.stat(sjcloudHomeDirectory, function(statErr: any, stats: any) {
@@ -187,7 +187,7 @@ function windowsBootstrapCommand(): string {
  */
 function runCommandUnix(
   cmd: string,
-  innerCallback: CommandCallback
+  innerCallback: CommandCallback,
 ): ChildProcess {
   if (platform !== 'darwin' && platform !== 'linux') {
     throw new Error(`Invalid platform for 'runCommandUnix': ${platform}`);
@@ -200,7 +200,7 @@ function runCommandUnix(
 
   cmd = `/usr/bin/env bash -c '${cmd}'`;
   logging.silly(cmd);
-  return exec(cmd, {maxBuffer: 10000000}, innerCallback);
+  return exec(cmd, { maxBuffer: 10000000 }, innerCallback);
 }
 
 /**
@@ -211,7 +211,7 @@ function runCommandUnix(
  */
 function runCommandWindows(
   cmd: string,
-  innerCallback: CommandCallback
+  innerCallback: CommandCallback,
 ): ChildProcess {
   if (platform !== 'win32') {
     throw new Error(`Invalid platform for 'runCommandWindows': ${platform}`);
@@ -236,7 +236,7 @@ function runCommandWindows(
 export function runCommand(
   cmd: string,
   callback: SuccessCallback,
-  raiseOnStderr: boolean = true
+  raiseOnStderr: boolean = true,
 ): ChildProcess {
   const innerCallback = function(err: any, stdout: string, stderr: string) {
     if (err) {
@@ -282,14 +282,14 @@ export function openExternal(url: string): void {
  */
 export function openDirectoryDialog(
   callback: ResultCallback,
-  defaultPath: string = null
+  defaultPath: string = null,
 ): void {
   return callback(
     remote.dialog.showOpenDialog({
       buttonLabel: 'Select',
       properties: ['openDirectory', 'createDirectory'],
       defaultPath,
-    })
+    }),
   );
 }
 
@@ -302,7 +302,7 @@ export function openFileDialog(callback: ResultCallback) {
   return callback(
     remote.dialog.showOpenDialog({
       properties: ['openFile', 'multiSelections'],
-    })
+    }),
   );
 }
 
@@ -321,7 +321,7 @@ export function openFileDialog(callback: ResultCallback) {
 export function readableFileSize(
   bytes: number,
   roundNumbers: boolean = false,
-  divisor: number = 1000
+  divisor: number = 1000,
 ): string {
   if (isNaN(bytes) || bytes === 0) {
     return '0 GB';
@@ -356,7 +356,7 @@ export function readableFileSize(
  */
 export function fileInfoFromPath(
   filepath: string,
-  checked: boolean = false
+  checked: boolean = false,
 ): object {
   const name = path.basename(filepath);
   const size = fs.statSync(filepath).size;
@@ -405,7 +405,7 @@ export function resetFileStatus(file: any): void {
 export function saveToSJCloudFile(
   filename: string,
   content: string,
-  callback: ErrorCallback = undefined
+  callback: ErrorCallback = undefined,
 ): void {
   const dest = path.join(lookupPath('SJCLOUD_HOME'), filename);
   fs.writeFile(dest, content, callback);
@@ -422,7 +422,7 @@ export function saveToSJCloudFile(
 export function readSJCloudFile(
   filename: string,
   callback: ResultCallback,
-  defaultContent: any = null
+  defaultContent: any = null,
 ): void {
   const dest = path.join(lookupPath('SJCLOUD_HOME'), filename);
   fs.readFile(dest, (err: any, data: any) => {
@@ -435,7 +435,7 @@ export function readSJCloudFile(
 
 export function selfSigned(callback: SuccessCallback) {
   const selfsigned = require('selfsigned');
-  return selfsigned.generate({}, {days: 1}, callback);
+  return selfsigned.generate({}, { days: 1 }, callback);
 }
 
 /**
@@ -488,7 +488,7 @@ export function reportBug(err: Error) {
       } else {
         // 'Cancel' selected
       }
-    }
+    },
   );
 }
 
@@ -499,7 +499,7 @@ export interface IByteRange {
 
 export const byteRanges = (
   totalSize: number,
-  chunkSize: number
+  chunkSize: number,
 ): IByteRange[] => {
   const n = Math.ceil(totalSize / chunkSize);
   const pieces = [];
@@ -509,12 +509,12 @@ export const byteRanges = (
   while (i < n - 1) {
     const start = chunkSize * i;
     const end = start + chunkSize - 1;
-    pieces.push({end, start});
+    pieces.push({ end, start });
     i++;
   }
 
   const lastStart = chunkSize * i;
-  pieces.push({end: totalSize - 1, start: lastStart});
+  pieces.push({ end: totalSize - 1, start: lastStart });
 
   return pieces;
 };
@@ -522,11 +522,11 @@ export const byteRanges = (
 export const md5Sum = (
   pathname: string,
   start: number = 0,
-  end: number = Infinity
+  end: number = Infinity,
 ): Promise<string> => {
   return new Promise(resolve => {
     const hash = crypto.createHash('md5');
-    const reader = fs.createReadStream(pathname, {start, end});
+    const reader = fs.createReadStream(pathname, { start, end });
 
     reader.on('data', (chunk: Buffer | string | any) => {
       hash.update(chunk);

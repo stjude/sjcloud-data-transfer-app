@@ -34,7 +34,7 @@ export type ProgressCallback = (percent: number, status: string) => void;
 
 export type SuccessCallback<T> = (
   error: Error | null,
-  result: T | null
+  result: T | null,
 ) => void;
 
 /**
@@ -49,7 +49,7 @@ export type SuccessCallback<T> = (
 export type CommandCallback = (
   error: any,
   stdout: string,
-  stderr: string
+  stderr: string,
 ) => void;
 
 /**

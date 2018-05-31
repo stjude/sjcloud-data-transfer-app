@@ -5,8 +5,8 @@
 
 const os = require('os');
 const electron = require('electron');
-const {logging} = require('./logging');
-const {reportBug} = require('./utils');
+const { logging } = require('./logging');
+const { reportBug } = require('./utils');
 import config from './config';
 const platform = os.platform();
 
@@ -73,11 +73,11 @@ export function startUpdateClient() {
             logging.info('User declined update.');
           }
         });
-      }
+      },
     );
   } catch (error) {
     logging.error(
-      'Could not start autoupdate server because the code is not signed.'
+      'Could not start autoupdate server because the code is not signed.',
     );
   }
 }

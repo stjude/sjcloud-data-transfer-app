@@ -1,4 +1,4 @@
-const {ipcRenderer} = require('electron');
+const { ipcRenderer } = require('electron');
 
 export function error(message: any) {
   return ipcRenderer.sendSync('sync/log-error', message);
