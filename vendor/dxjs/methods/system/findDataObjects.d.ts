@@ -1,5 +1,6 @@
+import { Timestamp } from '../..';
 import Client from '../../client';
-import {IFileDescription} from '../project/listFolder';
+import { IFileDescription } from '../project/listFolder';
 export declare enum DataObjectState {
   Open = 'open',
   Closing = 'closing',
@@ -28,7 +29,7 @@ export interface IFindDataObjectsScopeOptions {
   recurse?: boolean;
 }
 export interface IFindDataObjectsDescribeOptions {
-  fields: {[name in keyof IFileDescription]?: boolean};
+  fields: { [name in keyof IFileDescription]?: boolean };
 }
 export interface IFindDataObjectsOptions {
   class?: string;
@@ -44,12 +45,12 @@ export interface IFindDataObjectsOptions {
   scope?: IFindDataObjectsScopeOptions;
   level?: DataObjectLevel;
   modified?: {
-    after?: string;
-    before?: string;
+    after?: Timestamp;
+    before?: Timestamp;
   };
   created?: {
-    after?: string;
-    before?: string;
+    after?: Timestamp;
+    before?: Timestamp;
   };
   describe?: boolean | IFindDataObjectsDescribeOptions;
   starting?: object;
@@ -66,6 +67,6 @@ export interface IFindDataObjectsResult {
 }
 declare const findDataObjects: (
   client: Client,
-  options?: IFindDataObjectsOptions
+  options?: IFindDataObjectsOptions,
 ) => Promise<IFindDataObjectsResult>;
 export default findDataObjects;

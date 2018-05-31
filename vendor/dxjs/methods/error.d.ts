@@ -1,4 +1,3 @@
-import {Response} from 'node-fetch';
 export interface IErrorDetails {
   field: string;
   reason: string;

@@ -1,3 +1,4 @@
+import { Timestamp } from '../..';
 import Client from '../../client';
 export interface IFindProjectNameOptions {
   regexp?: string;
@@ -5,11 +6,11 @@ export interface IFindProjectNameOptions {
   glob?: string;
 }
 export interface IFindProjectCreatedOptions {
-  after?: string;
-  before?: string;
+  after?: Timestamp;
+  before?: Timestamp;
 }
 export interface IFindProjectDescribeOptions {
-  fields: {[name in keyof IProjectDescription]?: boolean};
+  fields: { [name in keyof IProjectDescription]?: boolean };
 }
 export interface IFindProjectOptions {
   name?: string | IFindProjectNameOptions;
@@ -55,18 +56,18 @@ export interface IProjectDescription {
   restricted: boolean;
   downloadRestricted: boolean;
   containsPHI: boolean;
-  created: string;
+  created: Timestamp;
   createdBy: {
     user: string;
     job: string;
     executable: string;
   };
-  modified: string;
+  modified: Timestamp;
   level: ProjectLevel;
   dataUsage: number;
   defaultInstanceType: string;
   sponsoredInstanceType: number;
-  sponsoredUntil: string;
+  sponsoredUntil: Timestamp;
   pendingTransfer: string | null;
   totalSponsoredEgressBytes: number;
   consumedSponsoredEgressBytes: number;
@@ -111,6 +112,6 @@ export interface IFindProjectResult {
 }
 declare const findProjects: (
   client: Client,
-  options?: IFindProjectOptions
+  options?: IFindProjectOptions,
 ) => Promise<IFindProjectResult>;
 export default findProjects;
