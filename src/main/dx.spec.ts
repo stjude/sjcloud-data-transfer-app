@@ -179,6 +179,39 @@ if (process.env.DXTOKEN) {
           done();
         });
       });
+
+      it('should upload a valid text file without erroring.', done => {
+        const file = path.resolve(
+          __dirname,
+          '..',
+          '..',
+          'tests',
+          'fixtures',
+          'sample.txt',
+        );
+
+        const mapping: dx.IFileRemoteProjectMapping = {
+          localFilePath: file,
+          projectId: project,
+        };
+
+        dx.uploadFile(
+          token,
+          mapping,
+          result => {
+            console.log(result);
+          },
+          (error, result) => {
+            expect(error).toBeNull();
+            expect(result).not.toBeNull();
+            // @TODO: improve this once dx.uploadFile returns a better callback result.
+            done();
+          },
+        );
+      });
+
+      it('should error on an invalid text file.');
+      it("should error on if the project doesn't exist.");
     }
   });
 }
