@@ -37,7 +37,10 @@ export default function(ref) {
         }
 
         for (let i = 0; i < checkedFiles.length; i++) {
-          if (checkedFiles[i].status > 0 && checkedFiles[i].status < 100) {
+          if (
+            (checkedFiles[i].waiting || checkedFiles[i].started) &&
+            !checkedFiles[i].finished
+          ) {
             return true;
           }
         }
