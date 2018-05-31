@@ -1,3 +1,3 @@
 singleQuote: true
-trailingComma: es5
-bracketSpacing: false
+trailingComma: all 
+bracketSpacing: true
