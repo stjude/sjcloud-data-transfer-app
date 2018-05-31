@@ -13,7 +13,7 @@ import { Request } from 'request';
 import * as utils from './utils';
 import * as logging from './logging';
 import config from './config';
-import { RemoteLocalFilePair } from './queue';
+import { IRemoteLocalFilePair } from './queue';
 import { Client } from '../../vendor/dxjs';
 import { IDescribeOptions } from '../../vendor/dxjs/methods/file/describe';
 import { DataObjectState } from '../../vendor/dxjs/methods/system/findDataObjects';
@@ -172,7 +172,7 @@ class UploadTransfer {
  *
  * @param token {string} Token to identify ourselves to the API.
  * @param projectId {string} DNAnexus ID of projectId being uploaded to.
- * @param file {RemoteLocalFilePair} Local and remote file name pair.
+ * @param file {IRemoteLocalFilePair} Local and remote file name pair.
  * @param progressCb {ResultCallback} Periodically called with updates on the
  *                                    upload progress.
  * @param finishedCb {SuccessCallback} Called on successful upload or failure.
@@ -181,7 +181,7 @@ class UploadTransfer {
 export function uploadFile(
   token: string,
   projectId: string,
-  file: RemoteLocalFilePair,
+  file: IRemoteLocalFilePair,
   progressCb: ResultCallback,
   finishedCb: SuccessCallback,
   remoteFolder: string = '/uploads',

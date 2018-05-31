@@ -104,7 +104,7 @@ if (process.env.DXTOKEN) {
             const remoteFileSize = result.size;
             expect(remoteFileSize).toBeLessThanOrEqual(1e6);
             const _tmpdir = tmp.dirSync().name;
-            const mapping: dx.RemoteLocalFilePair = {
+            const mapping: dx.IRemoteLocalFilePair = {
               localFilePath: path.join(_tmpdir, 'file'),
               remoteFilePath: {
                 projectId: result.project,
@@ -129,7 +129,7 @@ if (process.env.DXTOKEN) {
 
       it("should error when trying to download a file which doesn't exist.", done => {
         const _tmpdir = tmp.dirSync().name;
-        const mapping: dx.RemoteLocalFilePair = {
+        const mapping: dx.IRemoteLocalFilePair = {
           localFilePath: path.join(_tmpdir, 'file'),
           remoteFilePath: { fileId: 'file-notarealfile' },
         };

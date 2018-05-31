@@ -7,7 +7,7 @@
 import { priorityQueue, AsyncPriorityQueue, ErrorCallback } from 'async';
 
 import {
-  RemoteLocalFilePair,
+  IRemoteLocalFilePair,
   // uploadFile
 } from './dx';
 
@@ -17,7 +17,7 @@ export enum QueueTaskType {
   Info,
 }
 
-export interface QueueTask extends RemoteLocalFilePair {
+export interface QueueTask extends IRemoteLocalFilePair {
   taskType: QueueTaskType;
 }
 
@@ -67,9 +67,9 @@ export class FileTransferQueue {
   /**
    * Add an upload task to the queue.
    *
-   * @param r {RemoteLocalFilePair} Local/remote file mapping.
+   * @param r {IRemoteLocalFilePair} Local/remote file mapping.
    **/
-  addUploadTask(r: RemoteLocalFilePair) {
+  addUploadTask(r: IRemoteLocalFilePair) {
     this.addTask({
       taskType: QueueTaskType.Upload,
       ...r,
@@ -79,9 +79,9 @@ export class FileTransferQueue {
   /**
    * Add a download task to the queue.
    *
-   * @param r {RemoteLocalFilePair} Local/remote file mapping.
+   * @param r {IRemoteLocalFilePair} Local/remote file mapping.
    **/
-  addDownloadTask(r: RemoteLocalFilePair) {
+  addDownloadTask(r: IRemoteLocalFilePair) {
     this.addTask({
       taskType: QueueTaskType.Download,
       ...r,
@@ -91,9 +91,9 @@ export class FileTransferQueue {
   /**
    * Add an info task to the queue.
    *
-   * @param r {RemoteLocalFilePair} Local/remote file mapping.
+   * @param r {IRemoteLocalFilePair} Local/remote file mapping.
    **/
-  addInfoTask(r: RemoteLocalFilePair) {
+  addInfoTask(r: IRemoteLocalFilePair) {
     this.addTask({
       taskType: QueueTaskType.Info,
       ...r,
@@ -102,32 +102,32 @@ export class FileTransferQueue {
 
   /**
    * Upload a local file to DNAnexus.
-   * @param t {RemoteLocalFilePair} Remote/local file mapping.
+   * @param t {IRemoteLocalFilePair} Remote/local file mapping.
    * @param cb {ErrorCallback<Error>} Callback indicating if an error occurred.
    * @TODO
    */
-  static handleUploadTask(t: RemoteLocalFilePair, cb: ErrorCallback<Error>) {
+  static handleUploadTask(t: IRemoteLocalFilePair, cb: ErrorCallback<Error>) {
     // uploadFile()
     cb();
   }
 
   /**
    * Download a remote file from DNAnexus.
-   * @param t {RemoteLocalFilePair} Remote/local file mapping.
+   * @param t {IRemoteLocalFilePair} Remote/local file mapping.
    * @param cb {ErrorCallback<Error>} Callback indicating if an error occurred.
    * @TODO
    */
-  static handleDownloadTask(t: RemoteLocalFilePair, cb: ErrorCallback<Error>) {
+  static handleDownloadTask(t: IRemoteLocalFilePair, cb: ErrorCallback<Error>) {
     cb();
   }
 
   /**
    * Retrieve info about a remote asset in DNAnexus.
-   * @param t {RemoteLocalFilePair} Remote/local file mapping.
+   * @param t {IRemoteLocalFilePair} Remote/local file mapping.
    * @param cb {ErrorCallback<Error>} Callback indicating if an error occurred.
    * @TODO
    */
-  static handleInfoTask(t: RemoteLocalFilePair, cb: ErrorCallback<Error>) {
+  static handleInfoTask(t: IRemoteLocalFilePair, cb: ErrorCallback<Error>) {
     cb();
   }
 

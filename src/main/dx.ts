@@ -4,10 +4,12 @@
  */
 
 import * as fs from 'fs';
+import * as path from 'path';
 import * as request from 'request';
 const progress = require('request-progress');
 
 import config from './config';
+import * as utils from './utils';
 
 import { Client } from '../../vendor/dxjs';
 import { ResultCallback, SuccessCallback, SJDTAProject } from './types';
@@ -25,7 +27,7 @@ import {
 } from '../../vendor/dxjs/methods/system/findDataObjects';
 import { Request } from 'request';
 
-export interface RemoteLocalFilePair {
+export interface IRemoteLocalFilePair {
   localFilePath: string;
   remoteFilePath: {
     projectId?: string;
@@ -33,7 +35,15 @@ export interface RemoteLocalFilePair {
   };
 }
 
-interface IMetadata {
+export interface IRemoteLocalFilePairForUpload {
+  localFilePath: string;
+  remoteFilePath: {
+    projectId: string;
+    folder: string;
+  };
+}
+
+export interface IMetadata {
   size: number;
   md5: string;
 }
@@ -161,7 +171,7 @@ export function listFiles(
  * Download a file from DNAnexus.
  *
  * @param token {string} API token for DNAnexus API authentication.
- * @param file {RemoteLocalFilePair} remote and local file paths.
+ * @param file {IRemoteLocalFilePair} remote and local file paths.
  * @param updateCb {ResultCallback<number>} Used to periodically update file progress.
  * @param finishedCb {SuccessCallback<boolean>} Called at completion, true if successful,
  *   false if not.
@@ -169,7 +179,7 @@ export function listFiles(
  */
 export function downloadFile(
   token: string,
-  file: RemoteLocalFilePair,
+  file: IRemoteLocalFilePair,
   updateCb: ResultCallback<number> | null,
   finishedCb: SuccessCallback<boolean>,
 ): Promise<Request | void> {
@@ -256,6 +266,12 @@ export function listProjects(
     });
 }
 
+/**
+ * @TODO(mmacias)
+ *
+ * @param client {Client} A preexisting Client for interacting with the DNAnexus API.
+ * @param projectId {string} The DNAnexus project identifier (project-XXXXXXX).
+ */
 const fileUploadParameters = async (
   client: Client,
   projectId: string,
@@ -277,7 +293,7 @@ class UploadTransfer {
   private client: Client;
   private src: string;
   private size: number;
-  private progressCb: ResultCallback;
+  private progressCb: ResultCallback<number>;
   private finishedCb: SuccessCallback;
 
   private request: Request | null = null;
@@ -286,7 +302,7 @@ class UploadTransfer {
   public constructor(
     token: string,
     src: string,
-    progressCb: ResultCallback,
+    progressCb: ResultCallback<number>,
     finishedCb: SuccessCallback,
   ) {
     this.client = new Client(token);
@@ -307,7 +323,6 @@ class UploadTransfer {
 
   public async start(projectId: string, dst: string) {
     const ranges = await this.prepare(projectId);
-
     const name = path.basename(this.src);
 
     const { id } = await this.client.file.new({
@@ -384,7 +399,7 @@ class UploadTransfer {
  *
  * @param token {string} Token to identify ourselves to the API.
  * @param projectId {string} DNAnexus ID of projectId being uploaded to.
- * @param file {RemoteLocalFilePair} Local and remote file name pair.
+ * @param file {IRemoteLocalFilePairForUpload} Local and remote file name pair.
  * @param progressCb {ResultCallback} Periodically called with updates on the
  *                                    upload progress.
  * @param finishedCb {SuccessCallback} Called on successful upload or failure.
@@ -392,18 +407,17 @@ class UploadTransfer {
  */
 export function uploadFile(
   token: string,
-  projectId: string,
-  file: RemoteLocalFilePair,
-  progressCb: ResultCallback,
+  file: IRemoteLocalFilePairForUpload,
+  progressCb: ResultCallback<number>,
   finishedCb: SuccessCallback,
   remoteFolder: string = '/uploads',
 ): UploadTransfer {
   const transfer = new UploadTransfer(
     token,
-    file.local_file,
+    file.localFilePath,
     progressCb,
     finishedCb,
   );
-  transfer.start(projectId, remoteFolder);
+  transfer.start(file.remoteFilePath.projectId, file.remoteFilePath.folder);
   return transfer;
 }

@@ -1,5 +1,5 @@
 import { FileTransferQueue, QueueTaskType } from './queue';
-import { RemoteLocalFilePair } from './dx';
+import { IRemoteLocalFilePair } from './dx';
 
 describe('Async queue library', () => {
   let file_queue = FileTransferQueue.getInstance();
@@ -24,7 +24,7 @@ describe('Async queue library', () => {
       done();
     };
 
-    const mapping: RemoteLocalFilePair = {
+    const mapping: IRemoteLocalFilePair = {
       localFilePath: '~/foo.txt',
       remoteFilePath: {
         fileId: 'file-notarealfile',
@@ -40,7 +40,7 @@ describe('Async queue library', () => {
       done();
     };
 
-    const mapping: RemoteLocalFilePair = {
+    const mapping: IRemoteLocalFilePair = {
       localFilePath: '~/foo.txt',
       remoteFilePath: {
         fileId: 'file-notarealfile',
