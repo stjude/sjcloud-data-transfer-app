@@ -4,6 +4,7 @@
  */
 
 import * as fs from 'fs';
+import * as net from 'net';
 import * as path from 'path';
 import * as request from 'request';
 const progress = require('request-progress');
@@ -267,10 +268,23 @@ export function listProjects(
 }
 
 /**
- * @TODO(mmacias)
+ * Returns the limits for the size and number of chunks that can be uploaded to
+ * the given project.
+ *
+ * The object includes
+ *
+ *   * `minimumPartSize`: [number] In bytes, the min size of the chunk. This is
+ *      required for all chunks but the final.
+ *   * `maximumPartSize`: [number] In bytes, the max size of the chunk.
+ *   * `maximumNumParts`: [number] The max number of chunks that can be uploaded.
+ *   * `maximumFileSize`: [number] In bytes, the max size of the file, i.e., the
+ *      sum of the sizes of all chunks.
+ *   * `emptyLastPartAllowed`: [boolean] Whether an empty chunk (0 bytes) is
+ *      allowed for the final chunk.
  *
  * @param client {Client} A preexisting Client for interacting with the DNAnexus API.
  * @param projectId {string} The DNAnexus project identifier (project-XXXXXXX).
+ * @returns file upload parameters for the given project
  */
 const fileUploadParameters = async (
   client: Client,
@@ -289,21 +303,38 @@ const fileUploadParameters = async (
   return params;
 };
 
+/**
+ * A transfer for a file being uploaded to DNAnexus.
+ *
+ * Large file transfers are not supported DNAnexus. This requires any large
+ * files to be uploaded in _chunks_. Given a local file, chunking and endpoint
+ * uploading are handled internally by `UploadTransfer`.
+ */
 class UploadTransfer {
   private client: Client;
   private src: string;
   private size: number;
   private progressCb: ResultCallback<number>;
-  private finishedCb: SuccessCallback;
+  private finishedCb: SuccessCallback<{}>;
 
   private request: Request | null = null;
   private bytesRead = 0;
 
+  /**
+   * Creates a new upload transfer.
+   *
+   * This does not start the upload.
+   *
+   * @param token
+   * @param src
+   * @param progressCb
+   * @param finishedCb
+   */
   public constructor(
     token: string,
     src: string,
     progressCb: ResultCallback<number>,
-    finishedCb: SuccessCallback,
+    finishedCb: SuccessCallback<{}>,
   ) {
     this.client = new Client(token);
     this.src = src;
@@ -312,15 +343,15 @@ class UploadTransfer {
     this.finishedCb = finishedCb;
   }
 
-  public async prepare(projectId: string): Promise<utils.IByteRange[]> {
-    const { maximumPartSize } = await fileUploadParameters(
-      this.client,
-      projectId,
-    );
-
-    return utils.byteRanges(this.size, maximumPartSize);
-  }
-
+  /**
+   * Initiates a file upload transfer.
+   *
+   * The destination can be any path in the project. If it does not exist, it
+   * and its parents will automatically be created.
+   *
+   * @param projectId The ID of the DNAnexus project to upload the file
+   * @param dst The absolute path to upload the file to
+   */
   public async start(projectId: string, dst: string) {
     const ranges = await this.prepare(projectId);
     const name = path.basename(this.src);
@@ -343,10 +374,24 @@ class UploadTransfer {
     this.finishedCb(null, {});
   }
 
+  /**
+   * Aborts a request in progress.
+   *
+   * Any data left in the file stream will be dropped.
+   */
   public abort() {
     if (request) {
       request.abort();
     }
+  }
+
+  private async prepare(projectId: string): Promise<utils.IByteRange[]> {
+    const { maximumPartSize } = await fileUploadParameters(
+      this.client,
+      projectId,
+    );
+
+    return utils.byteRanges(this.size, maximumPartSize);
   }
 
   private async transfer(
@@ -357,6 +402,7 @@ class UploadTransfer {
   ): Promise<{}> {
     const reader = fs.createReadStream(this.src, { start, end });
 
+    // The offsets are 0-indexed.
     const size = end - start + 1;
     const md5 = await utils.md5Sum(this.src, start, end);
 
@@ -380,8 +426,13 @@ class UploadTransfer {
         },
       );
 
+      // Instead of listening to each file stream, use the raw socket to track
+      // how many bytes were sent.
       this.request.on('drain', () => {
+        // `request.req` is technically not public API, but it's guaranteed to
+        // be available if the request successfully started.
         const r: any = this.request;
+        const connection: net.Socket = r.req;
         const { bytesWritten } = r.req.connection;
         const percent = (this.bytesRead + bytesWritten) / this.size * 100;
         this.progressCb(percent);
@@ -409,7 +460,7 @@ export function uploadFile(
   token: string,
   file: IRemoteLocalFilePairForUpload,
   progressCb: ResultCallback<number>,
-  finishedCb: SuccessCallback,
+  finishedCb: SuccessCallback<{}>,
   remoteFolder: string = '/uploads',
 ): UploadTransfer {
   const transfer = new UploadTransfer(
