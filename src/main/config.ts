@@ -1,8 +1,3 @@
-export interface DownloadInfo {
-  URL: string;
-  SHA256SUM: string;
-}
-
 interface Config {
   TOOL_PROJECT_TAG: string;
   DATA_PROJECT_TAG: string;

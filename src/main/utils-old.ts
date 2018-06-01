@@ -35,14 +35,10 @@ export const defaultDownloadDir = path.join(os.homedir(), 'Downloads');
 
 interface StJudeCloudPaths {
   SJCLOUD_HOME?: string;
-  ANACONDA_HOME?: string;
-  ANACONDA_BIN?: string;
-  ANACONDA_SJCLOUD_ENV?: string;
-  ANACONDA_SJCLOUD_BIN?: string;
 }
 
 /**
- * Returns the various paths for SJ Cloud and Anaconda.
+ * Returns the various paths for the SJ Cloud home directory.
  *
  * @param sjcloudHomeDirectory SJ Cloud home path saved in the application, if any
  * @param thePlatform Platform the application is running on
@@ -124,25 +120,6 @@ export function initSJCloudHome(
  */
 function unixBootstrapCommand(): string {
   let paths = [];
-
-  try {
-    let stats = fs.statSync(lookupPath('ANACONDA_SJCLOUD_BIN'));
-    if (stats) {
-      paths.push(lookupPath('ANACONDA_SJCLOUD_BIN'));
-    }
-  } catch (err) {
-    /* ignore */
-  }
-
-  try {
-    let stats = fs.statSync(lookupPath('ANACONDA_BIN'));
-    if (stats) {
-      paths.push(lookupPath('ANACONDA_BIN'));
-    }
-  } catch (err) {
-    /* ignore */
-  }
-
   return paths.length != 0 ? `export PATH="${paths.join(':')}:$PATH";` : null;
 }
 
