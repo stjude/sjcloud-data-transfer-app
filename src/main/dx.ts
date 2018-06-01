@@ -36,12 +36,10 @@ export interface IRemoteLocalFilePair {
   };
 }
 
-export interface IRemoteLocalFilePairForUpload {
+export interface IFileRemoteProjectFolderMapping {
   localFilePath: string;
-  remoteFilePath: {
-    projectId: string;
-    folder: string;
-  };
+  projectId: string;
+  folderName?: string;
 }
 
 export interface IMetadata {
@@ -380,8 +378,8 @@ class UploadTransfer {
    * Any data left in the file stream will be dropped.
    */
   public abort() {
-    if (request) {
-      request.abort();
+    if (this.request) {
+      this.request.abort();
     }
   }
 
@@ -450,7 +448,7 @@ class UploadTransfer {
  *
  * @param token {string} Token to identify ourselves to the API.
  * @param projectId {string} DNAnexus ID of projectId being uploaded to.
- * @param file {IRemoteLocalFilePairForUpload} Local and remote file name pair.
+ * @param file {IFileRemoteProjectFolderMapping} Local file to remote folder pair.
  * @param progressCb {ResultCallback} Periodically called with updates on the
  *                                    upload progress.
  * @param finishedCb {SuccessCallback} Called on successful upload or failure.
@@ -458,10 +456,9 @@ class UploadTransfer {
  */
 export function uploadFile(
   token: string,
-  file: IRemoteLocalFilePairForUpload,
+  file: IFileRemoteProjectFolderMapping,
   progressCb: ResultCallback<number>,
   finishedCb: SuccessCallback<{}>,
-  remoteFolder: string = '/uploads',
 ): UploadTransfer {
   const transfer = new UploadTransfer(
     token,
@@ -469,6 +466,11 @@ export function uploadFile(
     progressCb,
     finishedCb,
   );
-  transfer.start(file.remoteFilePath.projectId, file.remoteFilePath.folder);
+
+  if (!file.folderName) {
+    file.folderName = '/uploads';
+  }
+
+  transfer.start(file.projectId, file.folderName);
   return transfer;
 }

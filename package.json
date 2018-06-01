@@ -1,8 +1,7 @@
 {
   "name": "SJCPDataTransferApp",
   "version": "1.4.0",
-  "description":
-    "The St. Jude Cloud Data Transfer App, designed for getting data in the St. Jude Cloud easily and reliably.",
+  "description": "The St. Jude Cloud Data Transfer App, designed for getting data in the St. Jude Cloud easily and reliably.",
   "homepage": "https://github.com/stjude/sjcloud-data-transfer",
   "repository": {
     "type": "git",
@@ -11,23 +10,16 @@
   "main": "app/main.js",
   "scripts": {
     "start": "electron app/main.js",
-    "start:dev":
-      "cross-env NODE_ENV=development AUTOUPDATE_ENABLED='false' CHROMIUM_MENU='true' electron app/main.js",
+    "start:dev": "cross-env NODE_ENV=development AUTOUPDATE_ENABLED='false' CHROMIUM_MENU='true' electron app/main.js",
     "compile": "cross-env gulp compile",
-    "develop":
-      "cross-env NODE_ENV=development AUTOUPDATE_ENABLED='false' CHROMIUM_MENU='true' gulp develop",
+    "develop": "cross-env NODE_ENV=development AUTOUPDATE_ENABLED='false' CHROMIUM_MENU='true' gulp develop",
     "dist:build-mac": "cross-env NODE_ENV=production build -m --x64 --ia32",
-    "dist:build-linux":
-      "cross-env NODE_ENV=production build -l AppImage deb rpm zip --x64 --ia32",
+    "dist:build-linux": "cross-env NODE_ENV=production build -l AppImage deb rpm zip --x64 --ia32",
     "dist:build-win": "cross-env NODE_ENV=production build -w --x64 --ia32",
-    "dist:release-mac":
-      "cross-env NODE_ENV=production build -m --x64 --ia32 -p always",
-    "dist:release-linux":
-      "cross-env NODE_ENV=production build -l deb rpm zip --x64 --ia32 -p always",
-    "dist:release-win":
-      "cross-env NODE_ENV=production build -w --x64 --ia32 -p always",
-    "pretty":
-      "prettier --write --single-quote --trailing-comma \"all\" --bracket-spacing \"true\" \"src/**/*.{js,ts}\"",
+    "dist:release-mac": "cross-env NODE_ENV=production build -m --x64 --ia32 -p always",
+    "dist:release-linux": "cross-env NODE_ENV=production build -l deb rpm zip --x64 --ia32 -p always",
+    "dist:release-win": "cross-env NODE_ENV=production build -w --x64 --ia32 -p always",
+    "pretty": "prettier --write --single-quote --trailing-comma \"all\" --bracket-spacing \"true\" \"src/**/*.{js,ts}\"",
     "test": "gulp test",
     "test:main": "jasmine-ts src/main/*.spec.ts",
     "nyc": "nyc gulp test",
@@ -36,8 +28,14 @@
   },
   "author": "St. Jude Children's Research Hospital <clay.mcleod@stjude.org>",
   "lint-staged": {
-    "*.js": ["npm run pretty", "git add"],
-    "*.ts": ["npm run pretty", "git add"]
+    "*.js": [
+      "npm run pretty",
+      "git add"
+    ],
+    "*.ts": [
+      "npm run pretty",
+      "git add"
+    ]
   },
   "dependencies": {
     "async": "^2.4.1",
@@ -143,7 +141,14 @@
     "webpack-notifier": "^1.5.0"
   },
   "nyc": {
-    "include": ["app/bin/backend/**/*.js", "app/bin/frontend/**/*.js"],
-    "exclude": ["gulpfile.js", "*.conf.js", "*.config.js"]
+    "include": [
+      "app/bin/backend/**/*.js",
+      "app/bin/frontend/**/*.js"
+    ],
+    "exclude": [
+      "gulpfile.js",
+      "*.conf.js",
+      "*.config.js"
+    ]
   }
 }

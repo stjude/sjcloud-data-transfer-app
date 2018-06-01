@@ -190,7 +190,7 @@ if (process.env.DXTOKEN) {
           'sample.txt',
         );
 
-        const mapping: dx.IFileRemoteProjectMapping = {
+        const mapping: dx.IFileRemoteProjectFolderMapping = {
           localFilePath: file,
           projectId: project,
         };

@@ -1,3 +1,9 @@
+/**
+ * @module config
+ * @description Holds sane defaults for configuration settings that can
+ *   be overwritten by environment variables.
+ */
+
 interface Config {
   TOOL_PROJECT_TAG: string;
   DATA_PROJECT_TAG: string;
