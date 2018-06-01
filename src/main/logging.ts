@@ -3,6 +3,7 @@
  * @description Logger module using winston to provide logging functionality.
  */
 
+import { getEnv } from './env';
 const os = require('os');
 const path = require('path');
 const winston = require('winston');
@@ -11,7 +12,7 @@ const fs = require('fs-extra');
 const env = require('./env');
 
 const platform = os.platform();
-const nodeEnvironment = process.env.NODE_ENV || 'production';
+const nodeEnvironment = getEnv();
 
 let logLevel = '';
 let loggingFile = path.join(

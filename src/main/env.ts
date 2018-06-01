@@ -1,19 +1,19 @@
 /**
  * @module env
- * @description Determines the environment of the application.
+ * @description Utilities relating to the environment of the application.
  */
-
-if (!process.env.NODE_ENV) {
-  process.env.NODE_ENV = 'production';
-}
 
 /**
- * Gets the current Node Environment variable value.
+ * Gets the current Node environment variable value.
  *
- * @returns {string} Node environment as a string.
+ * @returns {string | undefined} If set, the Node environment as a string.
  */
-export function getEnv() {
-  return process.env.NODE_ENV.toString().toLowerCase();
+export function getEnv(): string | undefined {
+  if (process.env.NODE_ENV) {
+    return process.env.NODE_ENV.toString().toLowerCase();
+  }
+
+  return undefined;
 }
 
 /**
@@ -21,7 +21,7 @@ export function getEnv() {
  *
  * @returns {boolean} True if environment is production, false otherwise.
  */
-export function isProduction() {
+export function isProduction(): boolean {
   const env = getEnv();
   return env === 'production' || env === 'prod';
 }
@@ -31,7 +31,7 @@ export function isProduction() {
  *
  * @returns {boolean} True if environment is development, false otherwise.
  */
-export function isDevelopment() {
+export function isDevelopment(): boolean {
   const env = getEnv();
   return env === 'development' || env === 'dev';
 }
@@ -41,15 +41,16 @@ export function isDevelopment() {
  *
  * @returns {boolean} True if environment is testing, false otherwise.
  */
-export function isTesting() {
+export function isTesting(): boolean {
   const env = getEnv();
   return env === 'testing' || env === 'test';
 }
 
 /**
- * Check if environment variable is set to a valid value.
+ * Check if environment variable is set to a valid value. If it is not,
+ * it throws an error.
  */
-export function checkIsValid() {
+export function checkIsValidOrFail() {
   const result = isProduction() || isDevelopment() || isTesting();
   if (!result) {
     throw new Error(`Invalid NODE_ENV: ${process.env.NODE_ENV}!`);

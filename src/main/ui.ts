@@ -3,13 +3,15 @@
  * @description All functionality pertaining to creating the windows.
  */
 
+import { getEnv } from './env';
+
 const os = require('os');
 const path = require('path');
 const electron = require('electron');
 const BrowserWindow = electron.BrowserWindow;
 
 const platform = os.platform();
-const nodeEnvironment = process.env.NODE_ENV || 'production';
+const nodeEnvironment = getEnv();
 
 const internal_url = 'https://cloud.stjude.org';
 let client_id = 'sjcloud-desktop-dev';
