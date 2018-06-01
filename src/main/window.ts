@@ -25,7 +25,7 @@ function getOAuthURL(): string {
 /**
  * Create a new main browser window for the application.
  *
- * @param cb {SuccessCallback<BrowserWindow} if successful, the browser window.
+ * @param cb {SuccessCallback<BrowserWindow>} if successful, the browser window.
  * @param width {number} Width of the window.
  * @param height {number} Height of the window.
  */
@@ -71,7 +71,7 @@ export function createWindow(
  * @param width {number} Width of the window.
  * @param height {number} Height of the window.
  */
-export function createOauthWindow(
+export function createOAuthWindow(
   showInternalURL: boolean,
   cb: SuccessCallback<BrowserWindow>,
   width: number = 1080,

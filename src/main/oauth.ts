@@ -24,7 +24,7 @@ function waitForCode(
   callback: any,
   dryrun: boolean = false,
 ) {
-  ui.createOauthWindow(showInternalURL, (window: any) => {
+  ui.createOAuthWindow(showInternalURL, (window: any) => {
     if (!window) {
       return callback(new Error('Could not create window!'), null);
     }
