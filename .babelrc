@@ -1,0 +1,8 @@
+{
+  "comments": false,
+  "env": {
+    "web": {
+      "presets": ["env", "stage-2"]
+    }
+  }
+}
