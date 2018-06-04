@@ -31,7 +31,7 @@ export function handleURI(uri: string): string {
     return `window.uriProject = '${projectName}';`;
   }
 
-  return null;
+  return '';
 }
 
 /**
