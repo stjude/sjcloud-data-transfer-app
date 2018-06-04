@@ -13,7 +13,12 @@ import { performance } from 'perf_hooks';
 const mkdirp = require('mkdirp');
 
 import { logging } from './logging';
-import { SuccessCallback, ResultCallback, ErrorCallback } from './types';
+import {
+  SuccessCallback,
+  ResultCallback,
+  ErrorCallback,
+  SJDTAFile,
+} from './types';
 
 export interface IByteRange {
   start: number;
@@ -38,7 +43,7 @@ export interface IFileInfo {
 
 export const platform = os.platform();
 export const defaultDownloadDir = path.join(os.homedir(), 'Downloads');
-const sjcloudHomeDirectory = path.join(os.homedir(), '.sjcloud');
+export const sjcloudHomeDirectory = path.join(os.homedir(), '.sjcloud');
 
 export const byteRanges = (
   totalSize: number,
@@ -89,9 +94,9 @@ export const md5Sum = (
  * @param {SuccessCallback<boolean>} callback Returns (error, was directory created?)
  */
 export function initSJCloudHome(callback: SuccessCallback<boolean>): void {
-  fs.stat(sjcloudHomeDirectory, function(statErr: any, stats: any) {
+  fs.stat(sjcloudHomeDirectory, function(statErr: Error, stats: fs.Stats) {
     if (statErr || !stats) {
-      mkdirp(sjcloudHomeDirectory, function(mkdirErr: any) {
+      mkdirp(sjcloudHomeDirectory, function(mkdirErr: Error) {
         if (mkdirErr) {
           return callback(mkdirErr, null);
         }
@@ -134,7 +139,7 @@ export function readSJCloudFile(
   defaultContent?: string,
 ): void {
   const dest = path.join(sjcloudHomeDirectory, filename);
-  fs.readFile(dest, (err: any, data: any) => {
+  fs.readFile(dest, (err: Error, data: any) => {
     if (err) {
       if (!defaultContent) return;
     }
@@ -265,16 +270,20 @@ export function fileInfoFromPath(
 /**
  * Reset a file object's status in Vuex.
  * @todo move to a more appropriate location.
- * @param {any} file File object
+ * @param {SJDTAFile} file File object
  */
-export function resetFileStatus(file: any): void {
+export function resetFileStatus(file: SJDTAFile): void {
   file.status = 0;
   file.waiting = false;
   file.started = false;
   file.finished = false;
-  file.errored = false;
 }
 
+/**
+ * Generate certificates that are valid for one day.
+ *
+ * @param callback Returns a string with the certificates, or error if any
+ */
 export function selfSigned(callback: SuccessCallback<string>): void {
   const selfsigned = require('selfsigned');
   return selfsigned.generate({}, { days: 1 }, callback);
@@ -329,7 +338,7 @@ export class Timer {
   }
 
   duration(): number {
-    if (this.start_time == null && this.stop_time == null) return -1;
+    if (this.start_time == null || this.stop_time == null) return -1;
     return Math.round(this.stop_time - this.start_time);
   }
 }
