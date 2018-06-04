@@ -109,6 +109,9 @@ export default function(ref) {
         );
         files.forEach(elem => {
           elem.cancelled = true;
+          if (elem.status > 0 && elem.status < 100 && !elem.finished) {
+            elem.errored = true;
+          }
           let process = null;
           if (state.currPath === 'upload') {
             process = state.operationProcesses[elem.path];
