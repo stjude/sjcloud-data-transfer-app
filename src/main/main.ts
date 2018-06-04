@@ -11,9 +11,8 @@ env.checkIsValidOrFail();
 import * as os from 'os';
 import { app, Menu as menu, BrowserWindow } from 'electron';
 
-import './ui';
-import './utils';
-import './config';
+import * as ui from './window';
+import config from './config';
 import { logging, logLevel } from './logging';
 
 const platform = os.platform();
@@ -37,8 +36,8 @@ process.argv.forEach((elem, index) => {
 });
 logging.info('');
 logging.info(' == Bootstrapping Environment ==');
-const ipc = require('./bin/backend/ipc');
-const protocol = require('./bin/backend/protocol');
+const ipc = require('./ipc');
+const protocol = require('./protocol');
 
 /**
  * START PROGRAM.
@@ -61,18 +60,18 @@ let startupOptions = {};
  * @param {*} mainWindow The window.
  */
 function bootstrapWindow(mainWindow: BrowserWindow) {
-  mainWindow.loadURL(`file://${__dirname}/index.html`);
+  mainWindow.loadURL(`file://${__dirname}/../index.html`);
 
   if (!config.CHROMIUM_MENU) {
     logging.debug('Production menu enabled (chromium menu disabled).');
-    const { menuConfig } = require('./bin/backend/menu.js');
+    const { menuConfig } = require('./menu');
     menu.setApplicationMenu(menu.buildFromTemplate(menuConfig));
   } else {
     logging.debug('Chromium menu enabled (production menu disabled).');
   }
 
   if (nodeEnvironment === 'production' && config.AUTOUPDATE_ENABLED === true) {
-    const autoupdater = require('./bin/backend/autoupdate');
+    const autoupdater = require('./autoupdate');
     autoupdater.startUpdateClient();
   }
 
@@ -95,7 +94,7 @@ function ensureWindow(callback = undefined) {
     mainWindow === undefined ||
     mainWindow.isDestroyed()
   ) {
-    ui.createWindow(mw => {
+    ui.createWindow((err, mw) => {
       mainWindow = mw;
       bootstrapWindow(mainWindow);
       if (callback !== undefined) {

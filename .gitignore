@@ -7,8 +7,7 @@ dist/**/*
 !dist/electron
 !dist/electron/.gitkeep
 
-app/bin/*
-app/src/main/**/*.js
+app/
 
 docs/*
 
@@ -18,7 +17,7 @@ coverage/*
 **/.DS_Store
 .tmp/*
 
-# developer specific symlink to [project-path/]test/testdata 
+# developer specific symlink to [project-path/]test/testdata
 
 *.log
 test/*

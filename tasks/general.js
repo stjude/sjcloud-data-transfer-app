@@ -8,21 +8,28 @@ const DEFAULT_ENV = process.env.NODE_ENV || 'production';
  *  Temp folder
  */
 
-gulp.task('clean:tmp:test:frontend', () => gulp.src('.tmp/test/frontend', { read: false }).pipe(clean()));
-gulp.task('clean:tmp:test:backend', () => gulp.src('.tmp/test/backend', { read: false }).pipe(clean()));
-gulp.task(
-  'clean:tmp:test',
-  ['clean:tmp:test:backend', 'clean:tmp:test:frontend'],
+gulp.task('clean:tmp:test:frontend', () =>
+  gulp.src('.tmp/test/frontend', { read: false }).pipe(clean()),
 );
+gulp.task('clean:tmp:test:backend', () =>
+  gulp.src('.tmp/test/backend', { read: false }).pipe(clean()),
+);
+gulp.task('clean:tmp:test', [
+  'clean:tmp:test:backend',
+  'clean:tmp:test:frontend',
+]);
 gulp.task('clean:tmp', ['clean:tmp:test']);
-
 
 /**
  *  App folder
  */
 
-gulp.task('clean:app:bin:frontend', () => gulp.src('app/bin/frontend', { read: false }).pipe(clean()));
-gulp.task('clean:app:bin:backend', () => gulp.src('app/bin/backend', { read: false }).pipe(clean()));
+gulp.task('clean:app:bin:frontend', () =>
+  gulp.src('app/frontend', { read: false }).pipe(clean()),
+);
+gulp.task('clean:app:bin:backend', () =>
+  gulp.src('app/backend', { read: false }).pipe(clean()),
+);
 gulp.task('clean:app:bin', ['clean:app:bin:frontend', 'clean:app:bin:backend']);
 gulp.task('clean:app', ['clean:app:bin']);
 

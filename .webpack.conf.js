@@ -59,12 +59,12 @@ module.exports = {
     },
   },
   entry: {
-    app: ['./app/src/frontend/vue/main.js'],
+    app: ['./src/renderer/vue/main.js'],
     vendor: ['vue', 'vue-router', 'jquery', 'tippy.js'],
-    less: ['./app/src/frontend/css/app.less'],
+    less: ['./src/renderer/css/app.less'],
   },
   output: {
-    path: path.join(__dirname, 'app/bin/frontend'),
+    path: path.join(__dirname, 'app/frontend'),
     filename: '[name].bundle.js',
     publicPath: '',
     jsonpFunction: 'sjcdappJsonp',

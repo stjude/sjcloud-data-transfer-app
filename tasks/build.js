@@ -7,13 +7,13 @@ const typescript = require('gulp-typescript');
 
 const TS_CONFIG_PATH = path.resolve(path.join(__dirname, '../tsconfig.json'));
 const WEBPACK_CONFIG_PATH = path.resolve(
-  path.join(__dirname, '../.webpack.conf.js')
+  path.join(__dirname, '../.webpack.conf.js'),
 );
 const webpackConfig = require(WEBPACK_CONFIG_PATH);
 
 const sources = {
-  frontend: ['app/src/frontend/**/*'],
-  backend: ['app/src/backend/**/*'],
+  frontend: ['src/renderer/**/*'],
+  backend: ['src/main/**/*'],
 };
 
 gulp.task('compile:frontend:source', ['clean:app:bin:frontend'], callback => {
@@ -27,7 +27,7 @@ gulp.task('compile:frontend:source', ['clean:app:bin:frontend'], callback => {
 });
 
 gulp.task('compile:frontend:spec', ['clean:tmp:test:frontend'], () =>
-  gulp.src('app/src/frontend/spec/*.js').pipe(gulp.dest('.tmp/test/frontend/'))
+  gulp.src('src/renderer/spec/*.js').pipe(gulp.dest('.tmp/test/frontend/')),
 );
 
 gulp.task('compile:frontend', [
@@ -37,23 +37,38 @@ gulp.task('compile:frontend', [
 
 gulp.task('compile:backend:source', ['clean:app:bin:backend'], () =>
   gulp
-    .src('app/src/backend/**/*.ts')
+    .src('src/main/**/*.ts')
     .pipe(typescript.createProject(TS_CONFIG_PATH)())
-    .pipe(gulp.dest('app/bin/backend'))
+    .pipe(gulp.dest('app/backend')),
 );
 
 gulp.task('compile:backend:spec', ['clean:tmp:test:backend'], () =>
   gulp
-    .src('app/src/backend/spec/*.ts')
+    .src('src/main/spec/*.ts')
     .pipe(typescript.createProject(TS_CONFIG_PATH)())
-    .pipe(gulp.dest('.tmp/test/backend/'))
+    .pipe(gulp.dest('.tmp/test/backend/')),
 );
 
 gulp.task('compile:backend', [
   'compile:backend:source',
   'compile:backend:spec',
 ]);
-gulp.task('compile', ['compile:frontend', 'compile:backend']);
+
+gulp.task('compile:copy-public', () => {
+  gulp
+    .src([
+      'src/renderer/index.html',
+      'src/renderer/bootstrap-backend.js',
+      'src/renderer/assets/**/*',
+    ])
+    .pipe(gulp.dest('app'));
+});
+
+gulp.task('compile', [
+  'compile:frontend',
+  'compile:backend',
+  'compile:copy-public',
+]);
 
 gulp.task('watch', () => {
   gulp.watch(sources.frontend, ['compile:frontend']);

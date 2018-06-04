@@ -7,9 +7,9 @@
     "type": "git",
     "url": "https://github.com/stjude/sjcloud-data-transfer"
   },
-  "main": "app/main.js",
+  "main": "app/backend/main.js",
   "scripts": {
-    "start": "electron app/main.js",
+    "start": "electron app/backend/main.js",
     "start:dev": "cross-env NODE_ENV=development AUTOUPDATE_ENABLED='false' CHROMIUM_MENU='true' electron app/main.js",
     "compile": "cross-env gulp compile",
     "develop": "cross-env NODE_ENV=development AUTOUPDATE_ENABLED='false' CHROMIUM_MENU='true' gulp develop",
@@ -144,8 +144,8 @@
   },
   "nyc": {
     "include": [
-      "app/bin/backend/**/*.js",
-      "app/bin/frontend/**/*.js"
+      "app/backend/**/*.js",
+      "app/frontend/**/*.js"
     ],
     "exclude": [
       "gulpfile.js",

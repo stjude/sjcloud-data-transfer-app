@@ -8,13 +8,13 @@
 	- the various window.* objects below may be deleted, pending review
 	- only window.utils is called outside of this file
 */
-window.dx = require('./bin/backend/dx');
-window.queue = require('./bin/backend/queue');
-window.logging = require('./bin/backend/logging-remote');
-window.oauth = require('./bin/backend/oauth');
-window.state = require('./bin/backend/state');
-window.ui = require('./bin/backend/ui');
-window.utils = require('./bin/backend/utils');
+window.dx = require('./backend/dx');
+window.queue = require('./backend/queue');
+window.logging = require('./backend/logging-remote');
+window.oauth = require('./backend/oauth');
+window.state = require('./backend/state');
+window.ui = require('./backend/window');
+window.utils = require('./backend/utils-old');
 
 /*
 *	Transition to using backend
@@ -29,13 +29,13 @@ window.backend = {
         throw 'The $root.backend has already been set.';
       } else {
         this.backend = {
-          dx: require('./bin/backend/dx'),
-          queue: require('./bin/backend/queue'),
-          logging: require('./bin/backend/logging-remote'),
-          oauth: require('./bin/backend/oauth'),
-          state: require('./bin/backend/state'),
-          ui: require('./bin/backend/ui'),
-          utils: require('./bin/backend/utils'),
+          dx: require('./backend/dx'),
+          queue: require('./backend/queue'),
+          logging: require('./backend/logging-remote'),
+          oauth: require('./backend/oauth'),
+          state: require('./backend/state'),
+          ui: require('./backend/window'),
+          utils: require('./backend/utils-old'),
         };
       }
     };

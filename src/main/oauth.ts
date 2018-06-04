@@ -4,7 +4,7 @@
  *
  */
 
-const ui = require('./ui');
+const ui = require('./window');
 const pem = require('pem');
 const $ = require('jquery');
 const https = require('https');
