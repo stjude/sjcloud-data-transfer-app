@@ -1,6 +1,7 @@
 {
   "recommendations": [
     "esbenp.prettier-vscode",
-    "octref.vetur"
+    "octref.vetur",
+    "dbaeumer.vscode-eslint"
   ]
 }
