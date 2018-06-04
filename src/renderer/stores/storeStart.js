@@ -1,16 +1,10 @@
-/*
-  To-Do: convert to a Vuex.module for use in store.js
-*/
-
 export default function(ref) {
   return {
     state: {
-      /** Login * */
       loginState: 'waiting',
       token: '',
     },
     getters: {
-      /** Login * */
       loginState(state, getters) {
         return state.loginState;
       },
@@ -19,7 +13,6 @@ export default function(ref) {
       },
     },
     mutations: {
-      /** Login * */
       setLoginState(state, status) {
         state.loginState = status;
         if (status === 'waiting') {

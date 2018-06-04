@@ -32,7 +32,7 @@
 </template>
 
 <script>
-import {QStepper, QStep, QTransition} from 'quasar';
+import { QStepper, QStep, QTransition } from 'quasar';
 import LogIn from './LogIn.vue';
 
 export default {
@@ -84,38 +84,6 @@ export default {
   font-weight: bold;
   font-size: 14px;
   /* text-decoration: underline; */
-}
-
-.theater-heading {
-  margin: 0px 45px 0px 45px;
-}
-
-.theater-heading > h1 {
-  margin-top: 35px;
-  font-style: 'Open Sans', 'Helvetica Neue';
-  font-size: 36px;
-  color: #000000;
-}
-
-.theater-heading > hr {
-  margin: 10px 0px 10px 0px;
-  float: center;
-  border-top: 2px solid #dedede;
-  width: 780px;
-}
-
-.theater-body {
-  margin: 35px 45px 0px 45px;
-  text-align: center;
-  font-style: 'Open Sans', 'Helvetica Neue';
-  font-size: 24px;
-  height: 310px;
-}
-
-.theater-body .btn {
-  margin: 10px 0px 50px 0px;
-  width: 145px;
-  font-size: 24px;
 }
 
 .footer {

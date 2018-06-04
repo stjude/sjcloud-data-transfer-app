@@ -3,7 +3,7 @@ import Startup from '../components/Startup.vue';
 import NotFound from '../components/NotFound.vue';
 // import Upload from '../components/Upload.vue';
 // import Download from '../components/Download.vue';
-// import LogIn from '../components/LogIn.vue';
+import LogIn from '../components/LogIn.vue';
 // import InitialSteps from '../components/InitialSteps.vue';
 
 export default function() {
@@ -12,10 +12,10 @@ export default function() {
       path: '/home',
       component: Home,
     },
-    // {
-    //   path: '/login',
-    //   component: InitialSteps,
-    // },
+    {
+      path: '/login',
+      component: LogIn,
+    },
     // {
     //   path: '/upload',
     //   component: Upload,

@@ -5,7 +5,6 @@ export default function(ref) {
       environment: process.env.NODE_ENV || 'development',
       currPath: 'upload',
       downloadLocation: window.utils.defaultDownloadDir,
-      testdata: '',
       infoTipText: '',
     },
     getters: {
