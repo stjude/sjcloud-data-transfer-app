@@ -432,7 +432,7 @@ class UploadTransfer {
         const r: any = this.request;
         const connection: net.Socket = r.req;
         const { bytesWritten } = r.req.connection;
-        const percent = (this.bytesRead + bytesWritten) / this.size * 100;
+        const percent = ((this.bytesRead + bytesWritten) / this.size) * 100;
         this.progressCb(percent);
       });
 

@@ -1,11 +1,11 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
-import storeGlobal from './substores/storeGlobal';
-import storeStart from './substores/storeStart';
-import storeModals from './substores/storeModals';
-import storeProjects from './substores/storeProjects';
-import storeFiles from './substores/storeFiles';
-import storeOperations from './substores/storeOperations';
+import storeGlobal from './storeGlobal';
+import storeStart from './storeStart';
+import storeModals from './storeModals';
+import storeProjects from './storeProjects';
+import storeFiles from './storeFiles';
+import storeOperations from './storeOperations';
 
 Vue.use(Vuex);
 

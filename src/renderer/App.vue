@@ -1,30 +1,27 @@
 <template>
-	<div class='sjcda-container'>
-		<top-bar></top-bar>
-    Hello, world!
+	<div class='sjcdta-container'>
+		<nav-bar></nav-bar>
+		<router-view keep-alive class='app-route-placement'></router-view>
   </div>
 </template>
 
 <script>
-import TopBar from './components/TopBar.vue';
+import NavBar from './components/NavBar.vue';
 
 export default {
   components: {
-    TopBar,
+    NavBar,
   },
 };
 </script>
 
-<style>
-html {
-  background-color: darkgrey;
+<style scoped>
+.sjcdta-container {
+  width: 100%;
+  height: 100%;
 }
 
-body {
-  position: fixed;
-  width: 900px;
-  height: 600px;
-  margin: 0px auto;
-  font-family: 'Open Sans', 'Helvetica Neue', Helvetica, Arial, sans-serif;
+.app-route-placement {
+  margin: 0px;
 }
 </style>
