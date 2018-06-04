@@ -14,7 +14,7 @@ window.logging = require('./backend/logging-remote');
 window.oauth = require('./backend/oauth');
 window.state = require('./backend/state');
 window.ui = require('./backend/window');
-window.utils = require('./backend/utils-old');
+window.utils = require('./backend/utils');
 
 /*
 *	Transition to using backend
@@ -35,7 +35,7 @@ window.backend = {
           oauth: require('./backend/oauth'),
           state: require('./backend/state'),
           ui: require('./backend/window'),
-          utils: require('./backend/utils-old'),
+          utils: require('./backend/utils'),
         };
       }
     };
