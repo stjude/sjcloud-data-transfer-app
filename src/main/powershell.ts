@@ -28,9 +28,10 @@ const escapeCommand = (s: string): string => s.replace(/"/g, '\\"');
  * @returns {ChildProcess} An event emitter of the child process.
  * @
  */
-const powershell = (command: string, cb: CommandCallback): ChildProcess => {
+export const powershell = (
+  command: string,
+  cb: CommandCallback,
+): ChildProcess => {
   const cmd = `${EXE} ${DEFAULT_ARGS.join(' ')} ${escapeCommand(command)}`;
   return exec(cmd, cb);
 };
-
-export default powershell;

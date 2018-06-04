@@ -6,7 +6,7 @@
 import { performance } from 'perf_hooks';
 
 import { ChildProcess } from 'child_process';
-import powershell from './powershell';
+import { powershell } from './powershell';
 import {
   SuccessCallback,
   CommandCallback,
