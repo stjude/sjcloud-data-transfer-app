@@ -47,7 +47,13 @@ export function handleURI(uri: string): string {
  **/
 export function handleURIWindows(): string {
   let args = process.argv.slice(1);
-  return handleURI(args[0]);
+  let i: number;
+  let project_name = '';
+  // Concatenate project names with spaces
+  for (i = 1; i < args.length; i++) {
+    project_name = project_name + ' ' + args[i];
+  }
+  return handleURI(project_name);
 }
 
 /**
