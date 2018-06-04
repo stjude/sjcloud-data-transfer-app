@@ -52,7 +52,9 @@ export default function(ref) {
 
         for (let i = 0; i < currFiles.length; i++) {
           if (
-            (currFiles[i].waiting || currFiles[i].started) && // either waiting or started
+            (currFiles[i].waiting ||
+              currFiles[i].started ||
+              currFiles[i].errored) && // either waiting, started, or errored
             !currFiles[i].finished // and not finished
           ) {
             return false;
