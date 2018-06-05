@@ -4,25 +4,11 @@
  * show based on that state.
  **/
 
-const os = require('os');
-const utils = require('./utils');
+import * as os from 'os';
+
+import * as utils from './utils';
 import * as logging from './logging-remote';
-import {} from './types';
-import * as dx from './dx';
-
-/**
- * Enum for possible states of the application.
- *
- * @readonly
- * @enum {any}
- */
-const states = {
-  NEED_LOGIN: { path: 'login' },
-  UPLOAD: { path: 'upload' },
-  UNKNOWN: { path: 'unknown' },
-};
-
-export { states };
+import * as window from './window';
 
 /**
  * Determines what route to use on startup.
@@ -30,9 +16,14 @@ export { states };
  * @param callback
  * @return The state object containing the HTML file to show.
  */
-export function getState(callback: (state: object) => void) {
-  let self = this;
+export function getState(token: string, callback: (state: object) => void) {
   const platform = os.platform();
+  const states = {
+    NEED_LOGIN: { path: 'login' },
+    UPLOAD: { path: 'upload' },
+    UNKNOWN: { path: 'unknown' },
+  };
+
   logging.debug('');
   logging.debug('== Determining state ==');
 
@@ -42,7 +33,7 @@ export function getState(callback: (state: object) => void) {
   }
 
   logging.debug(`  [*] Platform is ${platform}.`);
-  utils.initSJCloudHome((err: object, res: object) => {
+  utils.initSJCloudHome((err, res) => {
     if (err) {
       console.error(err);
       logging.debug(
