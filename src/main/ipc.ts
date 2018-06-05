@@ -3,20 +3,12 @@
  * @description Handles the IPC listeners.
  */
 
-import * as utils from './utils';
 import { ipcMain } from 'electron';
 import { logging } from './logging';
+import { SuccessCallback } from './types';
+import { waitForCode } from './oauth';
 
 logging.info('   [*] Registering IPC Listeners...');
-
-ipcMain.on('sync/generate-selfsigned', (event: any, arg: any) => {
-  utils.selfSigned((err: any, certs: any) => {
-    if (err) {
-      utils.reportBug(err);
-    }
-    event.returnValue = certs;
-  });
-});
 
 ipcMain.on('sync/log-error', (event: any, arg: any) => {
   logging.error(arg);
@@ -42,3 +34,12 @@ ipcMain.on('sync/log-silly', (event: any, arg: any) => {
   logging.silly(arg);
   event.returnValue = null;
 });
+
+ipcMain.on(
+  'oauth:request-token',
+  (event: Electron.Event, showInternalURL: boolean) => {
+    waitForCode(showInternalURL, (err, code) => {
+      event.sender.send('oauth:receive-token', err, code);
+    });
+  },
+);
