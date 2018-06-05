@@ -52,8 +52,14 @@ const protocol = require('./protocol');
  *                   event.
  */
 
+interface startupOptions {
+  open_url_event_occurred?: boolean;
+  open_url_event: Event;
+  open_url_url: string;
+}
+
 let mainWindow: BrowserWindow;
-let startupOptions = {};
+let startupOptions: startupOptions;
 
 /**
  * Performs commands to bootstrap the main window.
