@@ -4,8 +4,8 @@
  * supported on are Windows and Mac.
  */
 
-const { logging } = require('./logging');
-const env = require('./env');
+import { logging } from './logging';
+import * as env from './env';
 
 if (!env.isTesting()) {
   const app = require('electron').app;
