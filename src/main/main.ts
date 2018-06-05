@@ -118,6 +118,7 @@ app.on('ready', () => {
     if (platform === 'win32') {
       uriCommand = protocol.handleURIWindows();
     } else if (startupOptions.open_url_event_occurred) {
+      // This only executes if the app wasn't ready when the open-url event first occured
       uriCommand = protocol.handleURIMac(
         startupOptions.open_url_event,
         startupOptions.open_url_url,
@@ -145,7 +146,7 @@ app.on('open-url', (event, url) => {
     startupOptions.open_url_event = event;
     startupOptions.open_url_url = url;
   } else {
-    uriCommand = protocol.handleURIMac(event, url);
+    let uriCommand = protocol.handleURIMac(event, url);
 
     if (uriCommand !== '') {
       ensureWindow(() => {
