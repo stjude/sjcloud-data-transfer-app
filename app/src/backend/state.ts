@@ -1,28 +1,23 @@
 /**
  * @module state
  * @description Determines state of the application and the appropriate HTML files to
- * show based on that state.
+ *   show based on that state.
  **/
 
-const os = require('os');
-const utils = require('./utils');
+import * as os from 'os';
+
 import * as logging from './logging-remote';
-import {} from './types';
+import * as window from './ui';
+import * as utils from './utils';
 
 /**
  * Enum for possible states of the application.
- *
- * @readonly
- * @enum {any}
  */
-const states = {
-  NEED_INSTALL: { path: 'install' },
+const STATES = {
   NEED_LOGIN: { path: 'login' },
   UPLOAD: { path: 'upload' },
   UNKNOWN: { path: 'unknown' },
 };
-
-export { states };
 
 /**
  * Determines what route to use on startup.
@@ -31,36 +26,36 @@ export { states };
  * @return The state object containing the HTML file to show.
  */
 export function getState(token: string, callback: (state: object) => void) {
-  self = this;
   const platform = os.platform();
+
   logging.debug('');
   logging.debug('== Determining state ==');
 
   if (platform !== 'darwin' && platform !== 'linux' && platform !== 'win32') {
     console.error(`Invalid platform: ${platform}.`);
-    return callback(states.UNKNOWN);
+    return callback(STATES.UNKNOWN);
   }
 
   logging.debug(`  [*] Platform is ${platform}.`);
-  utils.initSJCloudHome((err: object, res: object) => {
+  utils.initSJCloudHome((err, res) => {
     if (err) {
       console.error(err);
       logging.debug(
         '  --> State is UNKNOWN (error initializing SJCloud home).',
       );
       utils.reportBug(err);
-      return callback(states.UNKNOWN);
+      return callback(STATES.UNKNOWN);
     }
 
     logging.debug('  [*] SJCloud home directory initialized.');
     (window as any).dx.loggedIn(token, (err: object, res: object) => {
       if (err) {
         logging.debug('  --> State is NEED_LOGIN.');
-        return callback(states.NEED_LOGIN);
+        return callback(STATES.NEED_LOGIN);
       }
 
       logging.debug('  [*] We are logged into DNAnexus.');
-      return callback(states.UPLOAD);
+      return callback(STATES.UPLOAD);
     });
   });
 }
