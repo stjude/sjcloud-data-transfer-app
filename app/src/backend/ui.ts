@@ -3,13 +3,15 @@
  * @description All functionality pertaining to creating the windows.
  */
 
+import { getEnv } from './env';
+
 const os = require('os');
 const path = require('path');
 const electron = require('electron');
 const BrowserWindow = electron.BrowserWindow;
 
 const platform = os.platform();
-const nodeEnvironment = process.env.NODE_ENV || 'production';
+const nodeEnvironment = getEnv();
 
 const internal_url = 'https://cloud.stjude.org';
 let client_id = 'sjcloud-desktop-dev';
@@ -60,14 +62,14 @@ export function createWindow(callback: (window: any) => void) {
 }
 
 /**
- * 
+ *
 /**
  * Opens an Oauth window with the appropriate URL then waits for the user
  * to log in. If the user logs in successfully, the code parameter will be
  * passed to the callback.
- * 
+ *
  * @param showInternalURL Show internal (St. Jude) or external URL.
- * @param callback 
+ * @param callback
  */
 export function createOauthWindow(
   showInternalURL: boolean,

@@ -20,9 +20,10 @@ const config = require('./bin/backend/config').default;
 const ui = require('./bin/backend/ui');
 const { logging, logLevel } = require('./bin/backend/logging');
 const utils = require('./bin/backend/utils');
+const env = require('./bin/backend/env');
 
 const platform = os.platform();
-const nodeEnvironment = process.env.NODE_ENV || 'production';
+const nodeEnvironment = env.getEnv();
 
 if (nodeEnvironment !== 'production' && nodeEnvironment !== 'development') {
   logging.error("NODE_ENV must be 'production' or 'development'!");
