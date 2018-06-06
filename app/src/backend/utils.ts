@@ -39,6 +39,12 @@ export interface IFileInfo {
   finished: boolean;
 }
 
+export interface ICertificate {
+  cert: string;
+  private: string;
+  public: string;
+}
+
 /**
  * CONSTANTS
  */
@@ -286,7 +292,7 @@ export function resetFileStatus(file: SJDTAFile): void {
  *
  * @param callback Returns a string with the certificates, or error if any
  */
-export function selfSigned(callback: SuccessCallback<string>): void {
+export function selfSigned(callback: SuccessCallback<ICertificate>): void {
   const selfsigned = require('selfsigned');
   return selfsigned.generate({}, { days: 1 }, callback);
 }
