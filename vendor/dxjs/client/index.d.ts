@@ -1,4 +1,3 @@
-import {Response} from 'node-fetch';
 import FileClient from './file';
 import ProjectClient from './project';
 import SystemClient from './system';

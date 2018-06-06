@@ -15,6 +15,6 @@ export interface IDownloadResult {
 declare const download: (
   client: Client,
   fileId: string,
-  options?: IDownloadOptions
+  options?: IDownloadOptions,
 ) => Promise<IDownloadResult>;
 export default download;

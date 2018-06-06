@@ -44,7 +44,7 @@ var __generator =
       t,
       g;
     return (
-      (g = {next: verb(0), throw: verb(1), return: verb(2)}),
+      (g = { next: verb(0), throw: verb(1), return: verb(2) }),
       typeof Symbol === 'function' &&
         (g[Symbol.iterator] = function() {
           return this;
@@ -75,7 +75,7 @@ var __generator =
               break;
             case 4:
               _.label++;
-              return {value: op[1], done: false};
+              return { value: op[1], done: false };
             case 5:
               _.label++;
               y = op[1];
@@ -119,16 +119,16 @@ var __generator =
           f = t = 0;
         }
       if (op[0] & 5) throw op[1];
-      return {value: op[0] ? op[1] : void 0, done: true};
+      return { value: op[0] ? op[1] : void 0, done: true };
     }
   };
 var __importDefault =
   (this && this.__importDefault) ||
   function(mod) {
-    return mod && mod.__esModule ? mod : {default: mod};
+    return mod && mod.__esModule ? mod : { default: mod };
   };
 var _this = this;
-Object.defineProperty(exports, '__esModule', {value: true});
+Object.defineProperty(exports, '__esModule', { value: true });
 var error_1 = __importDefault(require('../error'));
 var ENDPOINT = '/file/new';
 var dxNew = function(client, options) {

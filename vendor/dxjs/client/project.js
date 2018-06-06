@@ -2,9 +2,9 @@
 var __importDefault =
   (this && this.__importDefault) ||
   function(mod) {
-    return mod && mod.__esModule ? mod : {default: mod};
+    return mod && mod.__esModule ? mod : { default: mod };
   };
-Object.defineProperty(exports, '__esModule', {value: true});
+Object.defineProperty(exports, '__esModule', { value: true });
 var describe_1 = __importDefault(require('../methods/project/describe'));
 var listFolder_1 = __importDefault(require('../methods/project/listFolder'));
 var newFolder_1 = __importDefault(require('../methods/project/newFolder'));

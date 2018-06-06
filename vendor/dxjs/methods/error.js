@@ -4,7 +4,7 @@ var __extends =
   (function() {
     var extendStatics =
       Object.setPrototypeOf ||
-      ({__proto__: []} instanceof Array &&
+      ({ __proto__: [] } instanceof Array &&
         function(d, b) {
           d.__proto__ = b;
         }) ||
@@ -67,7 +67,7 @@ var __generator =
       t,
       g;
     return (
-      (g = {next: verb(0), throw: verb(1), return: verb(2)}),
+      (g = { next: verb(0), throw: verb(1), return: verb(2) }),
       typeof Symbol === 'function' &&
         (g[Symbol.iterator] = function() {
           return this;
@@ -98,7 +98,7 @@ var __generator =
               break;
             case 4:
               _.label++;
-              return {value: op[1], done: false};
+              return { value: op[1], done: false };
             case 5:
               _.label++;
               y = op[1];
@@ -142,10 +142,10 @@ var __generator =
           f = t = 0;
         }
       if (op[0] & 5) throw op[1];
-      return {value: op[0] ? op[1] : void 0, done: true};
+      return { value: op[0] ? op[1] : void 0, done: true };
     }
   };
-Object.defineProperty(exports, '__esModule', {value: true});
+Object.defineProperty(exports, '__esModule', { value: true });
 /**
  * An `Error` class representing an unsuccessful DNAnexus API call.
  *
@@ -165,7 +165,7 @@ var DxError = /** @class */ (function(_super) {
   }
   DxError.okOrThrow = function(response) {
     return __awaiter(this, void 0, void 0, function() {
-      var _a, message, type;
+      var data, _a, message, type;
       return __generator(this, function(_b) {
         switch (_b.label) {
           case 0:
@@ -174,7 +174,8 @@ var DxError = /** @class */ (function(_super) {
             }
             return [4 /*yield*/, response.json()];
           case 1:
-            (_a = _b.sent().error), (message = _a.message), (type = _a.type);
+            data = _b.sent();
+            (_a = data.error), (message = _a.message), (type = _a.type);
             throw new DxError(type, message);
         }
       });

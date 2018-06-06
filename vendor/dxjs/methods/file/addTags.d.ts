@@ -9,6 +9,6 @@ export interface IAddTagsResult {
 declare const addTags: (
   client: Client,
   fileId: string,
-  options: IAddTagsOptions
+  options: IAddTagsOptions,
 ) => Promise<IAddTagsResult>;
 export default addTags;

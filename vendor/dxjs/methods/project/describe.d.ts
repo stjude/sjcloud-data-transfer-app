@@ -1,7 +1,7 @@
 import Client from '../../client';
-import {IProjectDescription} from '../system/findProjects';
+import { IProjectDescription } from '../system/findProjects';
 export interface IDescribeOptions {
-  fields?: {[name in keyof IProjectDescription]?: boolean};
+  fields?: { [name in keyof IProjectDescription]?: boolean };
 }
 export interface IDescribeResult extends Partial<IProjectDescription> {
   id: string;
@@ -9,6 +9,6 @@ export interface IDescribeResult extends Partial<IProjectDescription> {
 declare const describe: (
   client: Client,
   projectId: string,
-  options?: IDescribeOptions
+  options?: IDescribeOptions,
 ) => Promise<IDescribeResult>;
 export default describe;

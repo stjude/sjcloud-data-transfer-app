@@ -19,6 +19,6 @@ export interface INewResult {
 }
 declare const dxNew: (
   client: Client,
-  options: INewOptions
+  options: INewOptions,
 ) => Promise<INewResult>;
 export default dxNew;

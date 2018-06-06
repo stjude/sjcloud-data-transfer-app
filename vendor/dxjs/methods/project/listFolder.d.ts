@@ -1,3 +1,4 @@
+import { Timestamp } from '../..';
 import Client from '../../client';
 export declare enum ListType {
   Folders = 'folders',
@@ -5,7 +6,7 @@ export declare enum ListType {
   All = 'all',
 }
 export interface IListFolderDescribeOptions {
-  fields: {[name in keyof IFileDescription]?: boolean};
+  fields: { [name in keyof IFileDescription]?: boolean };
 }
 export interface IListFolderOptions {
   folder?: string;
@@ -34,6 +35,7 @@ export interface IFileDescription {
   project: string;
   class: string;
   types: string[];
+  created: Timestamp;
   state: FileState;
   hidden: boolean;
   links: string[];
@@ -41,7 +43,7 @@ export interface IFileDescription {
   folder: string;
   sponsored: boolean;
   tags: string[];
-  modified: string;
+  modified: Timestamp;
   media: string;
   createdBy: {
     user: string;
@@ -50,7 +52,7 @@ export interface IFileDescription {
   };
   parts: IFileParts;
   size: number;
-  sponsoredUntil: string;
+  sponsoredUntil: Timestamp;
   properties: object;
   details: any;
 }
@@ -65,6 +67,6 @@ export interface IListFolderResult {
 declare const listFolder: (
   client: Client,
   projectId: string,
-  options?: IListFolderOptions
+  options?: IListFolderOptions,
 ) => Promise<IListFolderResult>;
 export default listFolder;

@@ -1,5 +1,5 @@
 import Client from '.';
-import {IDescribeOptions, IDescribeResult} from '../methods/project/describe';
+import { IDescribeOptions, IDescribeResult } from '../methods/project/describe';
 import {
   IListFolderOptions,
   IListFolderResult,
@@ -13,15 +13,15 @@ declare class ProjectClient {
   constructor(client: Client);
   describe(
     projectId: string,
-    options?: IDescribeOptions
+    options?: IDescribeOptions,
   ): Promise<IDescribeResult>;
   listFolder(
     projectId: string,
-    options?: IListFolderOptions
+    options?: IListFolderOptions,
   ): Promise<IListFolderResult>;
   newFolder(
     projectId: string,
-    options: INewFolderOptions
+    options: INewFolderOptions,
   ): Promise<INewFolderResult>;
 }
 export default ProjectClient;

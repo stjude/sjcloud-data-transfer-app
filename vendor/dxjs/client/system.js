@@ -2,11 +2,11 @@
 var __importDefault =
   (this && this.__importDefault) ||
   function(mod) {
-    return mod && mod.__esModule ? mod : {default: mod};
+    return mod && mod.__esModule ? mod : { default: mod };
   };
-Object.defineProperty(exports, '__esModule', {value: true});
+Object.defineProperty(exports, '__esModule', { value: true });
 var findDataObjects_1 = __importDefault(
-  require('../methods/system/findDataObjects')
+  require('../methods/system/findDataObjects'),
 );
 var findProjects_1 = __importDefault(require('../methods/system/findProjects'));
 var whoami_1 = __importDefault(require('../methods/system/whoami'));

@@ -9,6 +9,6 @@ export interface INewFolderResult {
 declare const newFolder: (
   client: Client,
   projectId: string,
-  options: INewFolderOptions
+  options: INewFolderOptions,
 ) => Promise<INewFolderResult>;
 export default newFolder;

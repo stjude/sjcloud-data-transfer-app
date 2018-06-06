@@ -7,12 +7,12 @@ import {
   IFindProjectOptions,
   IFindProjectResult,
 } from '../methods/system/findProjects';
-import {IWhoAmIResult} from '../methods/system/whoami';
+import { IWhoAmIResult } from '../methods/system/whoami';
 declare class SystemClient {
   private client;
   constructor(client: Client);
   findDataObjects(
-    options?: IFindDataObjectsOptions
+    options?: IFindDataObjectsOptions,
   ): Promise<IFindDataObjectsResult>;
   /**
    * @param options inputs to the /system/findProjects method

@@ -1,3 +1,4 @@
+import { Timestamp } from '../..';
 import Client from '../../client';
 export interface IUploadOptions {
   size: number;
@@ -6,7 +7,7 @@ export interface IUploadOptions {
 }
 export interface IUploadResult {
   url: string;
-  expires: string;
+  expires: Timestamp;
   headers: {
     [key: string]: string;
   };
@@ -14,6 +15,6 @@ export interface IUploadResult {
 declare const upload: (
   client: Client,
   fileId: string,
-  options: IUploadOptions
+  options: IUploadOptions,
 ) => Promise<IUploadResult>;
 export default upload;
