@@ -79,6 +79,7 @@ export default function(ref) {
       files.forEach(elem => {
         if (isNaN(elem.describe.size)) {
           console.error('Handle this NaN case:', elem);
+          return;
         }
 
         const dl_file = {
