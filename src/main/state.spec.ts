@@ -10,23 +10,19 @@ import * as dx from './dx';
 describe('Get state', () => {
   let loggingDebugStub: SinonStub;
   let reportBugStub: SinonStub;
-  let platformStub: SinonStub;
-  let initSJCloudHomeStub: SinonStub;
-  let loggedInStub: SinonStub;
 
-  beforeAll(() => {
+  beforeEach(() => {
     loggingDebugStub = sinon.stub(logging, 'debug');
     reportBugStub = sinon.stub(utils, 'reportBug');
   });
 
-  afterAll(() => {
+  afterEach(() => {
     loggingDebugStub.restore();
     reportBugStub.restore();
-    initSJCloudHomeStub.restore();
   });
 
   it('should return unknown for invalid platform', () => {
-    platformStub = sinon.stub(os, 'platform').returns('testPlatform');
+    let platformStub = sinon.stub(os, 'platform').returns('testPlatform');
 
     state.getState('invalidToken', result => {
       expect(result).toEqual({ path: 'unknown' });
@@ -36,17 +32,22 @@ describe('Get state', () => {
   });
 
   it('should return unknown when it cannot initialize SJCloud home', () => {
-    initSJCloudHomeStub = sinon
+    let initSJCloudHomeStub = sinon
       .stub(utils, 'initSJCloudHome')
       .returns('Error', null);
 
     state.getState('invalidToken', result => {
       expect(result).toEqual({ path: 'unknown' });
     });
+
+    initSJCloudHomeStub.restore();
   });
 
   it('should return need login if not logged into DNAnexus', () => {
-    loggedInStub = sinon.stub(dx, 'loggedIn').returns('Error', null);
+    let initSJCloudHomeStub = sinon
+      .stub(utils, 'initSJCloudHome')
+      .returns('Error', null);
+    let loggedInStub = sinon.stub(dx, 'loggedIn').returns('Error', null);
 
     state.getState('invalidToken', result => {
       expect(result).toEqual({ path: 'login' });
@@ -56,13 +57,13 @@ describe('Get state', () => {
   });
 
   it('should return upload if logged into DNAnexus', () => {
-    loggedInStub = sinon
-      .stub(dx, 'loggedIn')
-      .withArgs('testToken')
-      .returns(null, 'Result');
+    let loggedInStubWithArgsStub = sinon.stub(dx, 'loggedIn');
+    loggedInStubWithArgsStub.withArgs('testToken').returns(null, 'Result');
 
     state.getState('testToken', result => {
       expect(result).toEqual({ path: 'upload' });
     });
+
+    loggedInStubWithArgsStub.restore();
   });
 });
