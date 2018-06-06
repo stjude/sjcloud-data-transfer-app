@@ -1,53 +1,73 @@
 /**
  * @module logging
- * @description Logger module using winston to provide logging functionality.
+ * @description A logging singleton that writes a log stream to both the console
+ *   and a file.
  */
 
-const os = require('os');
-const path = require('path');
-const winston = require('winston');
-const moment = require('moment');
-const fs = require('fs-extra');
-const env = require('./env');
+import * as os from 'os';
+import * as path from 'path';
+
+import * as moment from 'moment';
+import * as winston from 'winston';
+
+import { isProduction } from './env';
 
 const platform = os.platform();
-const nodeEnvironment = process.env.NODE_ENV || 'production';
 
-let logLevel = '';
-let loggingFile = path.join(
-  platform === 'win32' ? process.env.USERPROFILE : process.env.HOME,
-  '.sjcloud/log.txt',
-);
-fs.ensureFileSync(loggingFile);
+const HOME = path.join(os.homedir(), '.sjcloud');
+const FILENAME = 'log.txt';
+const MAX_SIZE = 5242880; // bytes
 
-if (process.env.LOG_LEVEL) {
-  logLevel = process.env.LOG_LEVEL;
-} else if (env.isTesting()) {
-  logLevel = 'critical';
-} else if (env.isProduction()) {
-  logLevel = 'info';
-} else logLevel = 'debug';
+const TIMESTAMP_FORMAT = 'YYYY-MM-DD HH:mm:ss.SSSS';
 
-let logging = new winston.Logger({
-  level: logLevel,
-  handleExceptions: false,
-  transports: [
-    new winston.transports.Console({
-      timestamp() {
-        return moment().format('YYYY-MM-DD HH:mm:ss.SSSS');
-      },
-      formatter(params: any) {
-        return `[${params.timestamp()}] [${params.level.padEnd(6)}] *** ${
-          params.message
-        }`;
-      },
-    }),
-    new winston.transports.File({
-      filename: loggingFile,
-      maxsize: 5242880,
-      json: false,
-    }),
-  ],
+/**
+ * Selects a log level from the environment to filter log messages.
+ *
+ * `level` should be one of npm's log level values (from highest to lowest
+ * priority): error, warn, info, verbose, debug, or silly. See
+ * <https://docs.npmjs.com/misc/config#loglevel> for more information.
+ *
+ * @param level overrides the log level from the environment
+ * @returns an npm log level to filter logging
+ */
+export const envLevel = (level?: string): string => {
+  if (level) {
+    return level;
+  } else if (isProduction()) {
+    return 'info';
+  } else {
+    return 'debug';
+  }
+};
+
+/**
+ * The log level determined by the environment.
+ */
+export const logLevel = envLevel(process.env.LOG_LEVEL);
+
+const consoleTransport = new winston.transports.Console({
+  timestamp() {
+    return moment().format(TIMESTAMP_FORMAT);
+  },
+  formatter({ timestamp, level, message }: any) {
+    return `[${timestamp()}] [${level.padEnd(6)}] *** ${message}`;
+  },
 });
 
-export { logging, logLevel };
+const fileTransport = new winston.transports.File({
+  // While winston will create the log file, it will not create the path if it
+  // does not exist. If log files aren't being written, ensure `LOG_HOME`
+  // exists.
+  filename: path.join(HOME, FILENAME),
+  maxsize: MAX_SIZE,
+  json: false,
+});
+
+/**
+ * A winston logger instance.
+ */
+export const logging = new winston.Logger({
+  level: logLevel,
+  handleExceptions: false,
+  transports: [consoleTransport, fileTransport],
+});
