@@ -9,7 +9,7 @@
  *
  *    - result: any = result of the task.
  */
-export type ResultCallback = (result: any) => void;
+export type ResultCallback<T = any> = (result: T) => void;
 
 /**
  * Callback used when we are reporting only an error.
@@ -32,8 +32,10 @@ export type ProgressCallback = (percent: number, status: string) => void;
  *    - results: any = null on failure, object on success.
  */
 
-export type SuccessCallback = (error: any, result: any) => void;
-
+export type SuccessCallback<T = any> = (
+  error: Error | null,
+  result: T | null,
+) => void;
 /**
  * Callback that is the common interface used by NodeJS command
  * functions (exec, spawn, etc).
