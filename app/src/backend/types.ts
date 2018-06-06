@@ -36,20 +36,6 @@ export type SuccessCallback<T = any> = (
   error: Error | null,
   result: T | null,
 ) => void;
-/**
- * Callback that is the common interface used by NodeJS command
- * functions (exec, spawn, etc).
- *
- *    - error: any     = Error object on failure, null on success.
- *    - stdout: string = STDOUT of the process
- *    - stderr: string = STDERR of the process
- */
-
-export type CommandCallback = (
-  error: any,
-  stdout: string,
-  stderr: string,
-) => void;
 
 /**
  * Type that we use to represent files in the Vuex store.
