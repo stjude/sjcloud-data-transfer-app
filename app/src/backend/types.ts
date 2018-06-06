@@ -46,7 +46,7 @@ export type SuccessCallback = (error: any, result: any) => void;
 export type CommandCallback = (
   error: any,
   stdout: string,
-  stderr: string
+  stderr: string,
 ) => void;
 
 /**

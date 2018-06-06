@@ -84,7 +84,7 @@ function downloadTask(task: any, callback: any) {
       });
 
       handleFileFinish(error, result, task, callback);
-    }
+    },
   );
 
   (window as any).VueApp.$store.commit('addOperationProcess', {
@@ -119,7 +119,7 @@ function uploadTask(task: any, callback: any) {
       });
 
       handleFileFinish(error, result, task, callback);
-    }
+    },
   );
 
   (window as any).VueApp.$store.commit('addOperationProcess', {
@@ -173,10 +173,10 @@ function toolInfoTask(task: any, callback: any) {
 
       task._rawTool.size = (window as any).utils.readableFileSize(
         dataUsage,
-        true
+        true,
       );
       return callback(null, describe);
-    }
+    },
   );
 }
 

@@ -10,19 +10,15 @@ describe('Handling incoming URI', () => {
     expect(protocol.handleURI(null)).toBeNull();
   });
 
-  it(`should return return the proper JS command with valid input '${
-    validInput
-  }'`, () => {
+  it(`should return return the proper JS command with valid input '${validInput}'`, () => {
     expect(protocol.handleURI(validInput)).toBe(
-      `window.uriProject = '${sampleDxProject}';`
+      `window.uriProject = '${sampleDxProject}';`,
     );
   });
 
-  it(`should return return the proper JS command with valid input '${
-    validInputWithSlash
-  }'`, () => {
+  it(`should return return the proper JS command with valid input '${validInputWithSlash}'`, () => {
     expect(protocol.handleURI(validInput)).toBe(
-      `window.uriProject = '${sampleDxProject}';`
+      `window.uriProject = '${sampleDxProject}';`,
     );
   });
 });

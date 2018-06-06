@@ -18,7 +18,7 @@ const menu = electron.Menu;
 
 const config = require('./bin/backend/config').default;
 const ui = require('./bin/backend/ui');
-const {logging, logLevel} = require('./bin/backend/logging');
+const { logging, logLevel } = require('./bin/backend/logging');
 const utils = require('./bin/backend/utils');
 
 const platform = os.platform();
@@ -75,7 +75,7 @@ function bootstrapWindow(mainWindow) {
 
   if (!config.CHROMIUM_MENU) {
     logging.debug('Production menu enabled (chromium menu disabled).');
-    const {menuConfig} = require('./bin/backend/menu.js');
+    const { menuConfig } = require('./bin/backend/menu.js');
     menu.setApplicationMenu(menu.buildFromTemplate(menuConfig));
   } else {
     logging.debug('Chromium menu enabled (production menu disabled).');
@@ -125,14 +125,14 @@ app.on('ready', () => {
     } else if (startupOptions.open_url_event_occurred) {
       uriCommand = protocol.handleURIMac(
         startupOptions.open_url_event,
-        startupOptions.open_url_url
+        startupOptions.open_url_url,
       );
     }
 
     if (uriCommand) {
       logging.silly(`Running JS command: ${uriCommand}`);
       mainWindow.webContents.executeJavaScript(
-        "window.setCurrPath = 'upload';"
+        "window.setCurrPath = 'upload';",
       );
       mainWindow.webContents.executeJavaScript(uriCommand);
     }
@@ -158,7 +158,7 @@ app.on('open-url', (event, url) => {
         mainWindow.webContents.executeJavaScript("window.currPath = 'upload';");
         mainWindow.webContents.executeJavaScript(uriCommand);
         mainWindow.webContents.executeJavaScript(
-          "window.VueApp.$store.dispatch('updateToolsFromRemote', true);"
+          "window.VueApp.$store.dispatch('updateToolsFromRemote', true);",
         );
       });
     }
@@ -180,5 +180,5 @@ app.on(
     } else {
       callback(false);
     }
-  }
+  },
 );

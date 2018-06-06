@@ -17,9 +17,7 @@ if (nodeEnvironment === 'production') {
   client_id = 'sjcloud-data-transfer-app';
 }
 
-const oauth_url = `https://platform.dnanexus.com/login?scope=%7B%22full%22%3A+true%7D&redirect_uri=https%3A%2F%2Flocalhost%3A4433%2Fauthcb&client_id=${
-  client_id
-}`;
+const oauth_url = `https://platform.dnanexus.com/login?scope=%7B%22full%22%3A+true%7D&redirect_uri=https%3A%2F%2Flocalhost%3A4433%2Fauthcb&client_id=${client_id}`;
 let width = 900;
 let height = 620;
 
@@ -73,20 +71,20 @@ export function createWindow(callback: (window: any) => void) {
  */
 export function createOauthWindow(
   showInternalURL: boolean,
-  callback: (window: any) => void
+  callback: (window: any) => void,
 ) {
   let BrowserWindow = require('electron').remote.BrowserWindow;
   let loginWindow = new BrowserWindow({
     width: 1080,
     height: 960,
     frame: true,
-    webPreferences: {nodeIntegration: false},
+    webPreferences: { nodeIntegration: false },
   });
 
   loginWindow.webContents.on('did-get-redirect-request', function(
     event: any,
     oldUrl: any,
-    newUrl: any
+    newUrl: any,
   ) {
     const match = /https:\/\/platform.dnanexus.com\/login\?code/g.exec(newUrl);
     if (match != null) {

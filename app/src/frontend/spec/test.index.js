@@ -1,6 +1,6 @@
 import '../../../app/src/frontend/bootstrap-www.js';
 import _App from '../../../app/src/frontend/vue/main.js';
-import {select} from 'd3-selection'; //
+import { select } from 'd3-selection'; //
 
 select('body')
   .append('link')

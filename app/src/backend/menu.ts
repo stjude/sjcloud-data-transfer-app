@@ -5,7 +5,7 @@
  */
 
 const app = require('electron').app;
-import {logging} from './logging';
+import { logging } from './logging';
 
 logging.info('   [*] Setting application menu...');
 
@@ -17,7 +17,7 @@ export let menuConfig = [
         label: 'About SJCPUploader',
         selector: 'orderFrontStandardAboutPanel:',
       },
-      {type: 'separator'},
+      { type: 'separator' },
       {
         label: 'Quit',
         accelerator: 'Command+Q',

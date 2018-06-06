@@ -1,4 +1,4 @@
-import {select, selectAll} from 'd3-selection';
+import { select, selectAll } from 'd3-selection';
 
 const _App = window._App;
 
@@ -20,7 +20,7 @@ describe('Upload panel for an empty project', () => {
         setTimeout(() => {
           done();
         }, 500);
-      }
+      },
     );
   });
 
@@ -62,7 +62,7 @@ describe('Upload panel for a project with completed transfer', () => {
         setTimeout(() => {
           done();
         }, 600);
-      }
+      },
     );
   });
 
@@ -78,7 +78,7 @@ describe('Upload panel for a project with completed transfer', () => {
               .trim() === 'done'
           );
         })
-        .size()
+        .size(),
     ).toEqual(1);
 
     done();
@@ -96,7 +96,7 @@ describe('Upload panel for a project with completed transfer', () => {
               .trim();
             return html === 'cloud_upload' || html === 'open_in_browser';
           })
-          .size()
+          .size(),
       ).toEqual(2);
     });
 

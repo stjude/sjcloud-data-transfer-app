@@ -16,7 +16,7 @@ const nodeEnvironment = process.env.NODE_ENV || 'production';
 let logLevel = '';
 let loggingFile = path.join(
   platform === 'win32' ? process.env.USERPROFILE : process.env.HOME,
-  '.sjcloud/log.txt'
+  '.sjcloud/log.txt',
 );
 fs.ensureFileSync(loggingFile);
 
@@ -50,4 +50,4 @@ let logging = new winston.Logger({
   ],
 });
 
-export {logging, logLevel};
+export { logging, logLevel };

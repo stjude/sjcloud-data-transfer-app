@@ -1,7 +1,7 @@
-import {ChildProcess} from 'child_process';
+import { ChildProcess } from 'child_process';
 import * as os from 'os';
 
-import {CommandCallback} from '../types';
+import { CommandCallback } from '../types';
 
 const powershell: PowershellFn = require('../../../app/bin/backend/powershell')
   .default;

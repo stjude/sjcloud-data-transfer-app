@@ -4,7 +4,7 @@ import routes from './routes.js';
 import App from './App.vue';
 import store from './store';
 import vueTippy from 'vue-tippy';
-import Quasar, {Alert} from 'quasar';
+import Quasar, { Alert } from 'quasar';
 
 // configure Vue
 Vue.config.debug = true;
@@ -34,7 +34,7 @@ const router = new VueRouter({
 export default function _App(
   selector,
   cachedState = {},
-  dataReadyCallback = null
+  dataReadyCallback = null,
 ) {
   // boostrap the app
   const newStore = store(cachedState);
@@ -89,6 +89,6 @@ if (document.querySelector('#sjcda-main-div') && window.utils) {
         _App('#sjcda-main-div', obj);
       }
     },
-    '{}'
+    '{}',
   );
 }

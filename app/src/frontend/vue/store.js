@@ -93,7 +93,7 @@ export default function getVuexStore(cachedState = {}) {
         showAllFiles: state.showAllFiles,
         showAllProjects: state.showAllProjects,
         concurrentOperations: state.concurrentOperations,
-      })
+      }),
     );
   }
 
@@ -111,7 +111,7 @@ export default function getVuexStore(cachedState = {}) {
     main: new Vuex.Store({
       state: storeCopier(
         'state',
-        substores.concat({state: cachedState}, {state: getParams()})
+        substores.concat({ state: cachedState }, { state: getParams() }),
       ),
       getters: storeCopier('getters', substores),
       mutations: storeCopier('mutations', substores),

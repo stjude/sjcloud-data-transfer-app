@@ -23,14 +23,14 @@ describe('Determining SJCloud paths', () => {
           tildeDir,
           'anaconda',
           'envs',
-          'sjcloud'
+          'sjcloud',
         ),
         ANACONDA_SJCLOUD_BIN: path.join(
           tildeDir,
           'anaconda',
           'envs',
           'sjcloud',
-          'bin'
+          'bin',
         ),
       };
       expect(result).toEqual(expectedResult);

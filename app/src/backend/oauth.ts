@@ -22,7 +22,7 @@ const ipcRenderer = require('electron').ipcRenderer;
 function waitForCode(
   showInternalURL: boolean,
   callback: any,
-  dryrun: boolean = false
+  dryrun: boolean = false,
 ) {
   ui.createOauthWindow(showInternalURL, (window: any) => {
     if (!window) {
@@ -37,7 +37,7 @@ function waitForCode(
         key: certs.private,
         cert: certs.cert,
       },
-      app
+      app,
     );
 
     window.on('close', () => {
@@ -81,7 +81,7 @@ export function getToken(showInternalURL: boolean, callback: any) {
       (data: any) => {
         let authToken = data.access_token;
         return callback(null, authToken);
-      }
+      },
     );
   });
 }

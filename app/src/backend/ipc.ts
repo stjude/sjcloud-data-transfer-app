@@ -4,8 +4,8 @@
  */
 
 import * as utils from './utils';
-import {ipcMain} from 'electron';
-import {logging} from './logging';
+import { ipcMain } from 'electron';
+import { logging } from './logging';
 
 logging.info('   [*] Registering IPC Listeners...');
 
