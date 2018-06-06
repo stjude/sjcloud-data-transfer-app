@@ -52,14 +52,14 @@ const protocol = require('./protocol');
  *                   event.
  */
 
-interface startupOptions {
-  open_url_event_occurred?: boolean;
-  open_url_event: Event;
-  open_url_url: string;
+interface IStartupOptions {
+  openURLEventOccured?: boolean;
+  openURLEvent: Event;
+  openURLURL: string;
 }
 
 let mainWindow: BrowserWindow;
-let startupOptions: startupOptions;
+let startupOptions: IStartupOptions;
 
 /**
  * Performs commands to bootstrap the main window.
@@ -117,11 +117,11 @@ app.on('ready', () => {
 
     if (platform === 'win32') {
       uriCommand = protocol.handleURIWindows();
-    } else if (startupOptions.open_url_event_occurred) {
+    } else if (startupOptions && startupOptions.openURLEventOccured) {
       // This only executes if the app wasn't ready when the open-url event first occured
       uriCommand = protocol.handleURIMac(
-        startupOptions.open_url_event,
-        startupOptions.open_url_url,
+        startupOptions.openURLEvent,
+        startupOptions.openURLURL,
       );
     }
 
@@ -142,9 +142,9 @@ app.on('activate', () => {
 app.on('open-url', (event, url) => {
   if (!app.isReady()) {
     // this will execute if the application is not open.
-    startupOptions.open_url_event_occurred = true;
-    startupOptions.open_url_event = event;
-    startupOptions.open_url_url = url;
+    startupOptions.openURLEventOccured = true;
+    startupOptions.openURLEvent = event;
+    startupOptions.openURLURL = url;
   } else {
     let uriCommand = protocol.handleURIMac(event, url);
 
