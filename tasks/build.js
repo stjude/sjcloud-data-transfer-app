@@ -5,7 +5,7 @@ const webpack = require('webpack');
 const merge = require('merge-stream');
 const typescript = require('gulp-typescript');
 
-const TS_CONFIG_PATH = path.resolve(path.join(__dirname, '../.tsconfig.json'));
+const TS_CONFIG_PATH = path.resolve(path.join(__dirname, '../tsconfig.json'));
 const WEBPACK_CONFIG_PATH = path.resolve(
   path.join(__dirname, '../.webpack.conf.js'),
 );
