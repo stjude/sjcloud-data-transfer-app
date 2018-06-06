@@ -1,15 +1,15 @@
 /**
  * @module menu
  * @description Menu configuration for the Electron application.
- *
  */
 
-const app = require('electron').app;
+import { app } from 'electron';
+
 import { logging } from './logging';
 
 logging.info('   [*] Setting application menu...');
 
-export let menuConfig = [
+export const menuConfig = [
   {
     label: 'SJCPUploader',
     submenu: [
@@ -31,37 +31,25 @@ export let menuConfig = [
     label: 'Edit',
     submenu: [
       {
-        label: 'Undo',
-        accelerator: 'CmdOrCtrl+Z',
-        selector: 'undo:',
+        role: 'undo',
       },
       {
-        label: 'Redo',
-        accelerator: 'Shift+CmdOrCtrl+Z',
-        selector: 'redo:',
+        role: 'redo',
       },
       {
         type: 'separator',
       },
       {
-        label: 'Cut',
-        accelerator: 'CmdOrCtrl+X',
-        selector: 'cut:',
+        role: 'cut',
       },
       {
-        label: 'Copy',
-        accelerator: 'CmdOrCtrl+C',
-        selector: 'copy:',
+        role: 'copy',
       },
       {
-        label: 'Paste',
-        accelerator: 'CmdOrCtrl+V',
-        selector: 'paste:',
+        role: 'paste',
       },
       {
-        label: 'Select All',
-        accelerator: 'CmdOrCtrl+A',
-        selector: 'selectAll:',
+        role: 'selectall',
       },
     ],
   },
