@@ -3,37 +3,32 @@
  * @description Checks and updates the application to the latest version.
  */
 
-const os = require('os');
-const electron = require('electron');
-const { logging } = require('./logging');
-const { reportBug } = require('./utils');
-import config from './config';
-const platform = os.platform();
+import * as os from 'os';
+import * as electron from 'electron';
 
-export const server = config.UPDATE_SERVER;
-export const feed = {
-  url: `${server}/update/${platform}/${electron.app.getVersion()}`,
-};
+import config from './config';
+import { logging } from './logging';
+import { reportBug } from './utils';
+
+const platform = os.platform();
+const server = config.UPDATE_SERVER;
+const version = electron.app.getVersion();
+const feed = `${server}/update/${platform}/${version}`;
 
 /**
  * Start the update client pulling from the update server.
  */
 export function startUpdateClient() {
   logging.info('   - Starting autoupdate server...');
-  logging.info(`     Feed:   ${feed}`);
+  logging.info(`   - Feed: ${feed}`);
   logging.info('');
-  logging.warn(' ***********');
-  logging.warn(' * WARNING *');
-  logging.warn(' ***********');
-  logging.warn('');
-  logging.warn(' Loading autoupdater. Code must be signed for this to work!');
-  logging.warn('');
 
   try {
-    electron.autoUpdater.setFeedURL(feed);
+    electron.autoUpdater.setFeedURL({ url: feed });
     electron.autoUpdater.checkForUpdates();
 
     setInterval(() => {
+      // Check for updates every 15 minutes.
       electron.autoUpdater.checkForUpdates();
     }, 15 * 60 * 1000);
 
@@ -47,7 +42,7 @@ export function startUpdateClient() {
     });
 
     electron.autoUpdater.on('update-available', () => {
-      logging.info('Update available!');
+      logging.debug('Update available!');
     });
 
     electron.autoUpdater.on('update-not-available', () => {
@@ -57,7 +52,7 @@ export function startUpdateClient() {
     electron.autoUpdater.on(
       'update-downloaded',
       (event: any, releaseNotes: any, releaseName: any) => {
-        logging.info('Update downloaded.');
+        logging.debug(`Update downloaded: ${releaseName}.`);
         const dialogOpts = {
           type: 'info',
           buttons: ['Restart', 'Later'],
@@ -72,7 +67,7 @@ export function startUpdateClient() {
           if (response === 0) {
             electron.autoUpdater.quitAndInstall();
           } else {
-            logging.info('User declined update.');
+            logging.debug('User declined update.');
           }
         });
       },
