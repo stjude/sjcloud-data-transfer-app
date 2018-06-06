@@ -1,11 +1,13 @@
 /**
  * @module protocol
- * @description Handles the custom sjcloud:// URI protocol. The only systems this is
- * supported on are Windows and Mac.
+ * @description Handles the custom sjcloud:// URI protocol. The only systems
+ *   this is supported on are Windows and Mac.
  */
 
-const { logging } = require('./logging');
-const env = require('./env');
+import * as Electron from 'electron';
+
+import * as env from './env';
+import { logging } from './logging';
 
 if (!env.isTesting()) {
   const app = require('electron').app;
@@ -31,7 +33,7 @@ export function handleURI(uri: string): string {
     return `window.uriProject = '${projectName}';`;
   }
 
-  return null;
+  return '';
 }
 
 /**
@@ -47,7 +49,15 @@ export function handleURI(uri: string): string {
  **/
 export function handleURIWindows(): string {
   let args = process.argv.slice(1);
-  return handleURI(args[0]);
+  let i: number;
+  let project_name = '';
+
+  // Concatenate project names with spaces
+  for (i = 1; i < args.length; i++) {
+    project_name = project_name + ' ' + args[i];
+  }
+
+  return handleURI(project_name);
 }
 
 /**
@@ -60,7 +70,7 @@ export function handleURIWindows(): string {
  * @param uri the uri passed to the event handler.
  * @return Command to be run in the remote javascript runtime.
  */
-export function handleURIMac(event: Event, uri: string): string {
+export function handleURIMac(event: Electron.Event, uri: string): string {
   if (event) {
     event.preventDefault();
   }

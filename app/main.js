@@ -122,10 +122,10 @@ app.on('ready', () => {
 
     if (platform === 'win32') {
       uriCommand = protocol.handleURIWindows();
-    } else if (startupOptions.open_url_event_occurred) {
+    } else if (startupOptions.openURLEventOccured) {
       uriCommand = protocol.handleURIMac(
-        startupOptions.open_url_event,
-        startupOptions.open_url_url,
+        startupOptions.openURLEvent,
+        startupOptions.openURLURL,
       );
     }
 
@@ -146,11 +146,11 @@ app.on('activate', () => {
 app.on('open-url', (event, url) => {
   if (!app.isReady()) {
     // this will execute if the application is not open.
-    startupOptions.open_url_event_occurred = true;
-    startupOptions.open_url_event = event;
-    startupOptions.open_url_url = url;
+    startupOptions.openURLEventOccured = true;
+    startupOptions.openURLEvent = event;
+    startupOptions.openURLURL = url;
   } else {
-    uriCommand = protocol.handleURIMac(event, url);
+    let uriCommand = protocol.handleURIMac(event, url);
 
     if (uriCommand !== '') {
       ensureWindow(() => {
