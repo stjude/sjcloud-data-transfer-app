@@ -3,66 +3,61 @@
  * @description All functionality pertaining to creating the windows.
  */
 
-import { getEnv } from './env';
+import { BrowserWindow, remote } from 'electron';
 
-const os = require('os');
-const path = require('path');
-const electron = require('electron');
-const BrowserWindow = electron.BrowserWindow;
+import config from './config';
+import { getEnv, isProduction } from './env';
 
-const platform = os.platform();
-const nodeEnvironment = getEnv();
+/**
+ * Get the OAuth URL based on the current environment.
+ */
+function getOAuthURL(): string {
+  let client_id: string;
 
-const internal_url = 'https://cloud.stjude.org';
-let client_id = 'sjcloud-desktop-dev';
-if (nodeEnvironment === 'production') {
-  client_id = 'sjcloud-data-transfer-app';
-}
+  if (isProduction()) {
+    client_id = 'sjcloud-data-transfer-app';
+  } else {
+    client_id = 'sjcloud-desktop-dev';
+  }
 
-const oauth_url = `https://platform.dnanexus.com/login?scope=%7B%22full%22%3A+true%7D&redirect_uri=https%3A%2F%2Flocalhost%3A4433%2Fauthcb&client_id=${client_id}`;
-let width = 900;
-let height = 620;
-
-if (platform === 'darwin' || platform === 'linux') {
-  width = 900;
-  height = 620;
-} else if (platform === 'win32') {
-  width = 900;
-  height = 620;
+  return `https://platform.dnanexus.com/login?scope=%7B%22full%22%3A+true%7D&redirect_uri=https%3A%2F%2Flocalhost%3A4433%2Fauthcb&client_id=${client_id}`;
 }
 
 /**
- * Create an instance of the main window.
- * @param callback
- * @todo Resolve icon path in this function.
+ * Create a new main browser window for the application.
+ *
+ * @param cb Call to return the browser window.
+ * @param width Width of the window.
+ * @param height Height of the window.
  */
-export function createWindow(callback: (window: any) => void) {
-  let mainWindow = new BrowserWindow({
-    width: width,
-    height: height,
+export function createWindow(
+  cb: (window: BrowserWindow) => void,
+  width: number = 900,
+  height: number = 620,
+) {
+  let mainWindow: BrowserWindow | null = new BrowserWindow({
+    width,
+    height,
     useContentSize: true,
     resizable: false,
     maximizable: false,
     frame: true,
-    // icon: path.join(__dirname, "assets/icons/png/64x64.png"),
     show: false,
   });
 
   mainWindow.once('ready-to-show', () => {
-    mainWindow.show();
+    if (mainWindow) {
+      mainWindow.show();
+    }
   });
+
   mainWindow.on('closed', () => {
     mainWindow = null;
   });
 
-  /** Attach key libraries to window **/
-  // mainWindow.$ = require("jquery");
-
-  return callback(mainWindow);
+  cb(mainWindow);
 }
 
-/**
- *
 /**
  * Opens an Oauth window with the appropriate URL then waits for the user
  * to log in. If the user logs in successfully, the code parameter will be
@@ -71,46 +66,42 @@ export function createWindow(callback: (window: any) => void) {
  * @param showInternalURL Show internal (St. Jude) or external URL.
  * @param callback
  */
-export function createOauthWindow(
+export function createOAuthWindow(
   showInternalURL: boolean,
-  callback: (window: any) => void,
+  cb: (window: BrowserWindow) => void,
+  width: number = 1080,
+  height: number = 960,
 ) {
-  let BrowserWindow = require('electron').remote.BrowserWindow;
-  let loginWindow = new BrowserWindow({
-    width: 1080,
-    height: 960,
+  const loginWindow = new remote.BrowserWindow({
+    width,
+    height,
     frame: true,
     webPreferences: { nodeIntegration: false },
   });
 
-  loginWindow.webContents.on('did-get-redirect-request', function(
-    event: any,
-    oldUrl: any,
-    newUrl: any,
-  ) {
-    const match = /https:\/\/platform.dnanexus.com\/login\?code/g.exec(newUrl);
-    if (match != null) {
-      event.preventDefault();
+  loginWindow.webContents.on(
+    'did-get-redirect-request',
+    (event: Electron.Event, oldURL: string, newURL: string) => {
+      const codeRegex = /https:\/\/platform.dnanexus.com\/login\?code/g;
+      const match = codeRegex.exec(newURL);
+      if (match != null) {
+        event.preventDefault();
+        let timer = setInterval(() => {
+          if (
+            loginWindow.webContents.getURL() ===
+            'https://platform.dnanexus.com/'
+          ) {
+            loginWindow.loadURL(getOAuthURL());
+            clearInterval(timer);
+          }
+        }, 250);
+      }
+    },
+  );
 
-      /**
-       * Every 0.5 seconds, check to see if the window is redirecting to the main
-       * DNAnexus platform page. When it does, pull up the OAuth screen and clear
-       * the interval.
-       */
-
-      let timer = setInterval(() => {
-        if (
-          loginWindow.webContents.getURL() === 'https://platform.dnanexus.com/'
-        ) {
-          clearInterval(timer);
-          loginWindow.loadURL(oauth_url);
-        }
-      }, 500);
-    }
-  });
-
-  const url = showInternalURL ? internal_url : oauth_url;
+  const url = showInternalURL ? config.INTERNAL_LOGIN_URL : getOAuthURL();
   loginWindow.loadURL(url);
   loginWindow.show();
-  return callback(loginWindow);
+
+  cb(loginWindow);
 }

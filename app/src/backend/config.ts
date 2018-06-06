@@ -12,6 +12,7 @@ interface Config {
   AUTOUPDATE_ENABLED: boolean;
   CHROMIUM_MENU: boolean;
   UPDATE_SERVER: string;
+  INTERNAL_LOGIN_URL: string;
 }
 
 let config: Config = {
@@ -26,6 +27,8 @@ let config: Config = {
     ? process.env.CHROMIUM_MENU == 'true'
     : false,
   UPDATE_SERVER: process.env.UPDATE_SERVER || 'https://dta.stjude.cloud',
+  INTERNAL_LOGIN_URL:
+    process.env.INTERNAL_LOGIN_URL || 'https://cloud.stjude.org',
 };
 
 export default config;
