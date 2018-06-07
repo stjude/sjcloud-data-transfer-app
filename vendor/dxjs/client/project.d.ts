@@ -8,6 +8,10 @@ import {
   INewFolderOptions,
   INewFolderResult,
 } from '../methods/project/newFolder';
+import {
+  IRemoveObjectsOptions,
+  IRemoveObjectsResult,
+} from '../methods/project/removeObjects';
 declare class ProjectClient {
   private client;
   constructor(client: Client);
@@ -23,5 +27,9 @@ declare class ProjectClient {
     projectId: string,
     options: INewFolderOptions,
   ): Promise<INewFolderResult>;
+  removeObjects(
+    projectId: string,
+    options: IRemoveObjectsOptions,
+  ): Promise<IRemoveObjectsResult>;
 }
 export default ProjectClient;
