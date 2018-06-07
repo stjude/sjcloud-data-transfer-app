@@ -34,11 +34,7 @@ const testFrontend = done => {
 
 const testBackend = () => {
   util.log('');
-  return gulp.src('.tmp/test/backend/*.spec.js').pipe(
-    jasmine({
-      verbose: true,
-    }),
-  );
+  return gulp.src('app/bin/backend/*.spec.js').pipe(jasmine({ verbose: true }));
 };
 
 gulp.task('test:frontend:no-compile', testFrontend);
