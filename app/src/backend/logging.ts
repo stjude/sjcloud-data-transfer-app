@@ -10,7 +10,7 @@ import * as path from 'path';
 import * as moment from 'moment';
 import * as winston from 'winston';
 
-import { isProduction } from './env';
+import { isProduction, isTesting } from './env';
 
 const platform = os.platform();
 
@@ -46,6 +46,7 @@ export const envLevel = (level?: string): string => {
 export const logLevel = envLevel(process.env.LOG_LEVEL);
 
 const consoleTransport = new winston.transports.Console({
+  silent: isTesting(),
   timestamp() {
     return moment().format(TIMESTAMP_FORMAT);
   },
