@@ -7,7 +7,6 @@
 import * as os from 'os';
 
 import * as logging from './logging-remote';
-import * as window from './ui';
 import * as utils from './utils';
 
 /**
