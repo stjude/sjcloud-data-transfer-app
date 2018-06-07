@@ -30,6 +30,15 @@ if (nodeEnvironment !== 'production' && nodeEnvironment !== 'development') {
   process.exit();
 }
 
+utils.initSJCloudHome(err => {
+  if (err) {
+    const message = 'Could not create $SJCLOUD_HOME';
+    logging.error(message);
+    throw new Error(message);
+    app.exit(1);
+  }
+});
+
 logging.info('');
 logging.info(' ###############################################');
 logging.info(' # Starting the SJCP Data Transfer Application #');
