@@ -300,8 +300,8 @@ class UploadTransfer {
   }
 
   public abort() {
-    if (request) {
-      request.abort();
+    if (this.request) {
+      this.request.abort();
     }
   }
 
