@@ -8,7 +8,10 @@ import { execSync } from 'child_process';
 import { Request } from 'request';
 
 import { Client } from '../../../vendor/dxjs';
-import { IDescribeOptions } from '../../../vendor/dxjs/methods/file/describe';
+import {
+  IDescribeOptions,
+  IDescribeResult,
+} from '../../../vendor/dxjs/methods/file/describe';
 import { DataObjectState } from '../../../vendor/dxjs/methods/system/findDataObjects';
 import {
   ProjectLevel,
@@ -118,7 +121,7 @@ export function describeDXItem(
 
   client.file
     .describe(dnanexusId, options)
-    .then((result: any) => {
+    .then((result: IDescribeResult) => {
       callback(null, result);
     })
     .catch((err: any) => {
@@ -176,7 +179,7 @@ export function listDownloadableFiles(
  *
  * @param token
  * @param remoteFileId DNAnexus identifier of the file to be downloaded.
- *                     (ex: file-XXXX).
+ *                     (ex: project-XXXX:file-XXXX).
  * @param fileName Name of the downloaded file.
  * @param fileRawSize Size in bytes of the file, received from DNAnexus.
  * @param downloadLocation Folder for the downloaded file to reside.
