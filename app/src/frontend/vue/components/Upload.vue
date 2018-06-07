@@ -109,8 +109,12 @@ export default {
   },
   mounted() {
     this.$store.commit('setInfoTipText', '');
-    const concurrency = this.$store.getters.concurrentOperations;
-    this.$root.backend.queue.setConcurrentOperations(concurrency);
+
+    // When testing, this is sometimes not defined.
+    if (this.$root.backend) {
+      const concurrency = this.$store.getters.concurrentOperations;
+      this.$root.backend.queue.setConcurrentOperations(concurrency);
+    }
   },
   methods: {
     openExternal(url) {

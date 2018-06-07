@@ -228,6 +228,7 @@ function queue(VueApp) {
         filename: file.dx_location,
       });
     },
+    setConcurrentOperations(concurrency) {},
   };
 }
 
