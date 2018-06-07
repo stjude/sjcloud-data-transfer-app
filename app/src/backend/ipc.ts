@@ -3,29 +3,42 @@
  * @description Handles the IPC listeners.
  */
 
-import { ipcMain } from 'electron';
-
 import * as utils from './utils';
+import { ipcMain } from 'electron';
 import { logging } from './logging';
 
 logging.info('   [*] Registering IPC Listeners...');
 
-ipcMain.on('sync/log-error', (event: Electron.Event, message: string) => {
-  logging.error(message);
+ipcMain.on('sync/generate-selfsigned', (event: any, arg: any) => {
+  utils.selfSigned((err: any, certs: any) => {
+    if (err) {
+      utils.reportBug(err);
+    }
+    event.returnValue = certs;
+  });
 });
 
-ipcMain.on('sync/log-warn', (event: Electron.Event, message: string) => {
-  logging.warn(message);
+ipcMain.on('sync/log-error', (event: any, arg: any) => {
+  logging.error(arg);
+  event.returnValue = null;
 });
 
-ipcMain.on('sync/log-info', (event: Electron.Event, message: string) => {
-  logging.info(message);
+ipcMain.on('sync/log-warn', (event: any, arg: any) => {
+  logging.warn(arg);
+  event.returnValue = null;
 });
 
-ipcMain.on('sync/log-debug', (event: Electron.Event, message: string) => {
-  logging.debug(message);
+ipcMain.on('sync/log-info', (event: any, arg: any) => {
+  logging.info(arg);
+  event.returnValue = null;
 });
 
-ipcMain.on('sync/log-silly', (event: Electron.Event, message: string) => {
-  logging.silly(message);
+ipcMain.on('sync/log-debug', (event: any, arg: any) => {
+  logging.debug(arg);
+  event.returnValue = null;
+});
+
+ipcMain.on('sync/log-silly', (event: any, arg: any) => {
+  logging.silly(arg);
+  event.returnValue = null;
 });
