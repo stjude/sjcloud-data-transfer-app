@@ -211,7 +211,7 @@ export function downloadDxFile(
       });
 
       req.on('abort', () => {
-        finishedCb(new Error('upload aborted'), null);
+        finishedCb(new Error('download aborted'), null);
       });
 
       progress(req).on('progress', (state: any) => {
