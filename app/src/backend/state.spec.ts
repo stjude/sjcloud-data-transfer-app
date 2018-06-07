@@ -7,6 +7,10 @@ import * as utils from './utils';
 import * as state from './state';
 import * as dx from './dx';
 
+beforeAll(() => {
+  utils.initSJCloudHome(() => {});
+});
+
 describe('Get state', () => {
   let loggingDebugStub: SinonStub;
   let reportBugStub: SinonStub;

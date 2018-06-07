@@ -6,6 +6,10 @@ import * as tmp from 'tmp';
 
 import * as utils from './utils';
 
+beforeAll(() => {
+  utils.initSJCloudHome(() => {});
+});
+
 describe('SJ Cloud Home', () => {
   it('should succeed when initializing to a valid directory', () => {
     utils.initSJCloudHome((error, result) => {
