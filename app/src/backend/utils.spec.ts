@@ -84,15 +84,6 @@ describe('Resetting file status', () => {
   });
 });
 
-describe('Self sign', () => {
-  it('should generate valid certs', () => {
-    utils.selfSigned((error, result) => {
-      expect(error).toBeNull();
-      expect(result).not.toBeNull();
-    });
-  });
-});
-
 describe('Timer class', () => {
   let timer: utils.Timer;
   beforeEach(() => {
