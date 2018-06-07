@@ -8,7 +8,7 @@
  *
  * @returns a Node environment as a string.
  */
-export function getEnv(): string | undefined {
+export function getEnv(): string {
   if (process.env.NODE_ENV) {
     return process.env.NODE_ENV.toString().toLowerCase();
   }
