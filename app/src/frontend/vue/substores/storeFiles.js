@@ -131,6 +131,12 @@ export default function(ref) {
             console.error('Process does not exist!');
           }
         });
+        let currPath = state.currPath;
+        if (currPath === 'upload' || currPath === 'download') {
+          ref.backend.queue.removeAllTaskOfType(currPath);
+        } else {
+          console.error("Don't know whether to cancel uploads or downloads!");
+        }
       },
       setFileSorting(state, obj) {
         state.currFileSortKey = obj.key;
