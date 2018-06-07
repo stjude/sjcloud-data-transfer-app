@@ -246,38 +246,42 @@ const fileUploadParameters = async (
 
 class UploadTransfer {
   private client: Client;
+  private projectId: string;
   private src: string;
   private size: number;
   private progressCb: ResultCallback;
   private finishedCb: SuccessCallback;
 
   private request: Request | null = null;
+  private fileId = '';
   private bytesRead = 0;
 
   public constructor(
     token: string,
+    projectId: string,
     src: string,
     progressCb: ResultCallback,
     finishedCb: SuccessCallback,
   ) {
     this.client = new Client(token);
+    this.projectId = projectId;
     this.src = src;
     this.size = fs.statSync(this.src).size;
     this.progressCb = progressCb;
     this.finishedCb = finishedCb;
   }
 
-  public async prepare(projectId: string): Promise<utils.IByteRange[]> {
+  public async prepare(): Promise<utils.IByteRange[]> {
     const { maximumPartSize } = await fileUploadParameters(
       this.client,
-      projectId,
+      this.projectId,
     );
 
     return utils.byteRanges(this.size, maximumPartSize);
   }
 
-  public async start(projectId: string, dst: string) {
-    const ranges = await this.prepare(projectId);
+  public async start(dst: string) {
+    const ranges = await this.prepare();
 
     const name = path.basename(this.src);
 
@@ -285,9 +289,11 @@ class UploadTransfer {
       folder: dst,
       name,
       parents: true,
-      project: projectId,
+      project: this.projectId,
       // tags: [config.NEEDS_ANALYSIS_TAG],
     });
+
+    this.fileId = id;
 
     for (let i = 0; i < ranges.length; i++) {
       const { start, end } = ranges[i];
@@ -299,9 +305,19 @@ class UploadTransfer {
     this.finishedCb(null, {});
   }
 
-  public abort() {
+  public async abort() {
     if (this.request) {
       this.request.abort();
+
+      if (this.fileId) {
+        try {
+          await this.client.project.removeObjects(this.projectId, {
+            objects: [this.fileId],
+          });
+        } catch (e) {
+          this.finishedCb(e, null);
+        }
+      }
     }
   }
 
@@ -368,8 +384,14 @@ export function uploadFile(
   finishedCb: SuccessCallback,
   remoteFolder: string = '/uploads',
 ): UploadTransfer {
-  const transfer = new UploadTransfer(token, file.path, progressCb, finishedCb);
-  transfer.start(projectId, remoteFolder);
+  const transfer = new UploadTransfer(
+    token,
+    projectId,
+    file.path,
+    progressCb,
+    finishedCb,
+  );
+  transfer.start(remoteFolder);
   return transfer;
 }
 
