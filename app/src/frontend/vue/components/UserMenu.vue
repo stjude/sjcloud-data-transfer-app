@@ -41,6 +41,7 @@ export default {
       this.$store.commit("closeMenu");
       this.$root.backend.dx.logout((err, result) => {
         this.$store.commit("setLoginState", "waiting");
+        this.$store.commit("setToken", "");
         this.$router.replace("/login");
       });
     },

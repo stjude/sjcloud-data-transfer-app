@@ -8,6 +8,14 @@ import { BrowserWindow, remote } from 'electron';
 import config from './config';
 import { getEnv, isProduction } from './env';
 
+const resetSession = (session: Electron.Session): Promise<void> => {
+  return new Promise((resolve) => {
+    session.clearStorageData({}, () => {
+      resolve();
+    })
+  });
+};
+
 /**
  * Get the OAuth URL based on the current environment.
  */
@@ -66,7 +74,7 @@ export function createWindow(
  * @param showInternalURL Show internal (St. Jude) or external URL.
  * @param callback
  */
-export function createOAuthWindow(
+export async function createOAuthWindow(
   showInternalURL: boolean,
   cb: (window: BrowserWindow) => void,
   width: number = 1080,
@@ -78,6 +86,11 @@ export function createOAuthWindow(
     frame: true,
     webPreferences: { nodeIntegration: false },
   });
+
+  if (isProduction()) {
+    const { session } = loginWindow.webContents;
+    await resetSession(session);
+  }
 
   loginWindow.webContents.on(
     'did-get-redirect-request',
