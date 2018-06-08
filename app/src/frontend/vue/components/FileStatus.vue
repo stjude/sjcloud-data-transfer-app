@@ -144,9 +144,9 @@ export default {
 			this.files.forEach((f) => {
        if (!f.finished) {
          f.checked = this.checkedAll;
+         f.cancelled = false;
+         f.errored = false;
        } 
-			 file.cancelled = false;
-			 file.errored = false;
       });
 		},
 		progressStyle(file) {
