@@ -145,8 +145,8 @@ export default {
        if (!f.finished) {
          f.checked = this.checkedAll;
        } 
-			 file.cancelled = false;
-			 file.errored = false;
+				f.cancelled = false;
+				f.errored = false;
       });
 		},
 		progressStyle(file) {
