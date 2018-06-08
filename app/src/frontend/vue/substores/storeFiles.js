@@ -104,11 +104,15 @@ export default function(ref) {
           return;
         }
 
-        const files = tool[state.currPath].filter(
+        const filesInTransfer = tool[state.currPath].filter(
           t => t.checked && t.started && !t.finished,
         );
-        files.forEach(elem => {
+        filesInTransfer.forEach(elem => {
           elem.cancelled = true;
+          if (elem.status <= 0 && elem.started) {
+            // There's a bug where started files without progress error in DNANexus
+            elem.errored = true;
+          }
           let process = null;
           if (state.currPath === 'upload') {
             process = state.operationProcesses[elem.path];
@@ -127,6 +131,22 @@ export default function(ref) {
           } else {
             console.error('Process does not exist!');
           }
+        });
+        let currPath = state.currPath;
+        if (currPath === 'upload' || currPath === 'download') {
+          ref.backend.queue.removeAllTaskOfType(currPath);
+        } else {
+          console.error("Don't know whether to cancel uploads or downloads!");
+        }
+        const filesInWaiting = tool[state.currPath].filter(
+          t => t.checked && (t.waiting || t.status === 0) && !t.finished,
+        );
+        filesInWaiting.forEach(elem => {
+          elem.cancelled = true;
+          elem.checked = false;
+          elem.started = false;
+          elem.waiting = false;
+          elem.progress = 0;
         });
       },
       setFileSorting(state, obj) {
