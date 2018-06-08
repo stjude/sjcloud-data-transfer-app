@@ -9,6 +9,7 @@
 		<div class='num-input'>
 			<input type="number" 
 					id='num-concurr-ops-input'
+					min='1'
 					:value="concurrentOperations" 
 					@change="setConcurrentOperations"/>
 			<label for='num-concurr-ops-input'>
