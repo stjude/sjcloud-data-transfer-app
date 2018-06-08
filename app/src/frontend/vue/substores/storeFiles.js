@@ -104,10 +104,10 @@ export default function(ref) {
           return;
         }
 
-        const files = tool[state.currPath].filter(
+        const filesInTransfer = tool[state.currPath].filter(
           t => t.checked && t.started && !t.finished,
         );
-        files.forEach(elem => {
+        filesInTransfer.forEach(elem => {
           elem.cancelled = true;
           if (elem.status > 0 && elem.status < 100 && !elem.finished) {
             elem.errored = true;
@@ -137,6 +137,12 @@ export default function(ref) {
         } else {
           console.error("Don't know whether to cancel uploads or downloads!");
         }
+        const filesInWaiting = tool[state.currPath].filter(
+          t => t.checked && (t.waiting || t.status === 0) && !t.finished,
+        );
+        filesInWaiting.forEach(elem => {
+          elem.cancelled = true;
+        });
       },
       setFileSorting(state, obj) {
         state.currFileSortKey = obj.key;
