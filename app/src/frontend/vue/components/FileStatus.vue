@@ -136,6 +136,8 @@ export default {
 		},
 		toggleFileChecked(file) {
 			file.checked=!file.checked;
+			file.cancelled = false;
+			file.errored = false;
 		},
 		toggleCheckBoxes() {
 			this.checkedAll=!this.checkedAll; 
@@ -143,6 +145,8 @@ export default {
        if (!f.finished) {
          f.checked = this.checkedAll;
        } 
+			 file.cancelled = false;
+			 file.errored = false;
       });
 		},
 		progressStyle(file) {
