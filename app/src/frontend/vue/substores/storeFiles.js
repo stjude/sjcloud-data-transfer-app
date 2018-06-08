@@ -109,7 +109,8 @@ export default function(ref) {
         );
         filesInTransfer.forEach(elem => {
           elem.cancelled = true;
-          if (elem.status > 0 && elem.status < 100 && !elem.finished) {
+          if (elem.status <= 0 && elem.started) {
+            // There's a bug where started files without progress error in DNANexus
             elem.errored = true;
           }
           let process = null;
