@@ -143,6 +143,10 @@ export default function(ref) {
         );
         filesInWaiting.forEach(elem => {
           elem.cancelled = true;
+          elem.checked = false;
+          elem.started = false;
+          elem.waiting = false;
+          elem.progress = 0;
         });
       },
       setFileSorting(state, obj) {
