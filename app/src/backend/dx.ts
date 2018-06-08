@@ -3,104 +3,86 @@
  * @description Methods for interacting with DNAnexus.
  */
 
-import { execSync } from 'child_process';
+import * as fs from 'fs';
+import * as path from 'path';
+import * as utils from './utils';
 
-import { Request } from 'request';
+import * as request from 'request';
 
 import { Client } from '../../../vendor/dxjs';
-import { IDescribeOptions } from '../../../vendor/dxjs/methods/file/describe';
-import { DataObjectState } from '../../../vendor/dxjs/methods/system/findDataObjects';
+import {
+  DataObjectState,
+  IDataObject,
+} from '../../../vendor/dxjs/methods/system/findDataObjects';
+import { IDescribeResult } from '../../../vendor/dxjs/methods/file/describe';
 import {
   ProjectLevel,
   IFileUploadParameters,
 } from '../../../vendor/dxjs/methods/system/findProjects';
-import {
-  SuccessCallback,
-  ResultCallback,
-  SJDTAFile,
-  SJDTAProject,
-} from './types';
-
-import * as fs from 'fs';
-import * as os from 'os';
-import * as path from 'path';
-import * as utils from './utils';
-import * as logging from './logging';
-
+import { SuccessCallback, ResultCallback, SJDTAFile } from './types';
 import config from './config';
 
-const request = require('request');
 const progress = require('request-progress');
-const async = require('async');
 const expandHomeDir = require('expand-home-dir');
-const platform = os.platform();
-
-/**********************************************************
- *                DX-Toolkit Functionality                *
- **********************************************************/
-
-interface IMetadata {
-  size: number;
-  md5: string;
-}
 
 /**
  * Runs a command to determine if we are logged in to DNAnexus.
  *
- * @param token
- * @param callback
+ * @param token API token for DNAnexus API authentication.
+ * @param cb True if we are logged in, false otherwise.
  */
-export async function loggedIn(token: string, callback: SuccessCallback) {
+export const loggedIn = async (token: string, cb: SuccessCallback<boolean>) => {
   const client = new Client(token);
 
   try {
     await client.system.whoami();
-    callback(null, true);
+    cb(null, true);
   } catch (e) {
-    callback(e, false);
+    cb(e, false);
   }
-}
+};
 
 /**
- * Login to DNAnexus using an authentication token
- * via the dx command line utility.
+ * Login to DNAnexus using an authentication token.
  *
- * @param token Authentication token
- * @param callback
+ * Essentially no-op. See `oauth` to log in.
+ *
+ * @param token API token for DNAnexus API authentication.
+ * @param cb True if we are logged in, false otherwise.
  */
-export function login(token: string, callback: SuccessCallback) {
+export const login = (token: string, cb: SuccessCallback<boolean>) => {
   if (!token) {
-    return callback(new Error('Token cannot be null/empty!'), null);
+    cb(new Error('token cannot be empty'), null);
+  } else {
+    loggedIn(token, cb);
   }
-
-  loggedIn(token, callback);
-}
+};
 
 /**
- * Logout of DNAnexus via the dx command line utility.
+ * Shim for existing logout.
  *
- * @param callback
+ * @param cb
  */
-export function logout(callback: SuccessCallback, dryrun: boolean = false) {
-  // @FIXME
-  callback(null, true);
-}
+export const logout = (cb: SuccessCallback<boolean>) => {
+  // noop
+  cb(null, true);
+};
 
 /**
- * Describe a 'dx-item' as JSON via the dx command* line utility.
+ * Describe a remote 'dx-item' as JSON.
  *
- * @param token
- * @param dnanexusId The DNAnexus object identifier (ex: file-XXXXXX).
- * @param callback
+ * @param token API token for DNAnexus API authentication.
+ * @param dxId The DNAnexus object identifier (ex: file-XXXXXX).
+ * @param cb Callback function with remote object on success.
  **/
-export function describeDXItem(
+export const describeDXItem = async (
   token: string,
-  dnanexusId: string,
-  callback: SuccessCallback,
-) {
-  if (!dnanexusId) {
-    const error = new Error('Dx-identifier cannot be null/empty!');
-    callback(error, null);
+  dxId: string,
+  cb: SuccessCallback<IDescribeResult>,
+) => {
+  if (!dxId) {
+    cb(new Error('dxId cannot be empty'), null);
+    return;
   }
 
   const client = new Client(token);
@@ -116,33 +98,31 @@ export function describeDXItem(
     },
   };
 
-  client.file
-    .describe(dnanexusId, options)
-    .then((result: any) => {
-      callback(null, result);
-    })
-    .catch((err: any) => {
-      callback(err, null);
-    });
-}
+  try {
+    let result = await client.file.describe(dxId, options);
+    cb(null, result);
+  } catch (e) {
+    cb(e, null);
+  }
+};
 
 /**
- * List all of the files available for download in a DNAnexus project.
+ * List all of the files available in a DNAnexus project.
  *
- * @param token
+ * @param token API token for DNAnexus API authentication.
  * @param projectId The DNAnexus project identifier (ex: project-XXXX).
  * @param allFiles List all files or just St. Jude Cloud associated ones.
- * @param callback
+ * @param cb Callback function with remote object on success.
  **/
-export function listDownloadableFiles(
+export const listDownloadableFiles = async (
   token: string,
   projectId: string,
   allFiles: boolean,
-  callback: SuccessCallback,
-) {
+  cb: SuccessCallback<IDataObject[]>,
+) => {
   if (!projectId) {
-    const error = new Error('Dx-project cannot be null/empty!');
-    callback(error, null);
+    cb(new Error('projectId cannot be empty'), null);
+    return;
   }
 
   const client = new Client(token);
@@ -161,20 +141,18 @@ export function listDownloadableFiles(
     tags: !allFiles ? config.DOWNLOADABLE_TAG : undefined,
   };
 
-  client.system
-    .findDataObjects(options)
-    .then(({ results }: { results: any }) => {
-      callback(null, results);
-    })
-    .catch((err: any) => {
-      callback(err, null);
-    });
-}
+  try {
+    let { results } = await client.system.findDataObjects(options);
+    cb(null, results);
+  } catch (e) {
+    cb(e, null);
+  }
+};
 
 /**
  * Download a file from DNAnexus.
  *
- * @param token
+ * @param token DNAnexus access token.
  * @param remoteFileId DNAnexus identifier of the file to be downloaded.
  *                     (ex: file-XXXX).
  * @param fileName Name of the downloaded file.
@@ -182,51 +160,70 @@ export function listDownloadableFiles(
  * @param downloadLocation Folder for the downloaded file to reside.
  * @param updateCb To be called on each update to progress.
  * @param finishedCb To be called upon completion.
- * @return the download request
+ * @returns The download request.
  */
-export function downloadDxFile(
+export const downloadDxFile = async (
   token: string,
   remoteFileId: string,
   fileName: string,
   _fileRawSize: number,
   downloadLocation: string,
-  updateCb: ResultCallback,
-  finishedCb: SuccessCallback,
-): Promise<Request> {
+  updateCb: ResultCallback<number>,
+  finishedCb: SuccessCallback<request.Response>,
+): Promise<request.Request | null> => {
   const outputPath = expandHomeDir(path.join(downloadLocation, fileName));
   const fileId = remoteFileId.split(':')[1];
 
   const client = new Client(token);
   const writer = fs.createWriteStream(outputPath);
 
-  return client.file
-    .download(fileId)
-    .then(({ url, headers }: { url: string; headers: any }) => {
-      const req = request(url, { headers }, (error: any, response: any) => {
-        if (error) {
-          finishedCb(error, null);
-        } else {
-          finishedCb(null, response);
-        }
-      });
+  try {
+    const { url, headers } = await client.file.download(fileId);
 
-      req.on('abort', () => {
-        finishedCb(new Error('upload aborted'), null);
-      });
-
-      progress(req).on('progress', (state: any) => {
-        updateCb(state.percent * 100);
-      });
-
-      req.pipe(writer);
-
-      return req;
-    })
-    .catch((err: any) => {
-      finishedCb(err, null);
+    const req = request(url, { headers }, (error: any, response: any) => {
+      if (error) {
+        finishedCb(error, null);
+      } else {
+        finishedCb(null, response);
+      }
     });
-}
 
+    req.on('abort', () => {
+      finishedCb(new Error('download aborted'), null);
+    });
+
+    progress(req).on('progress', (state: any) => {
+      updateCb(state.percent * 100);
+    });
+
+    req.pipe(writer);
+
+    return req;
+  } catch (e) {
+    finishedCb(e, null);
+    return null;
+  }
+};
+
+/**
+ * Returns the limits for the size and number of chunks that can be uploaded to
+ * the given project.
+ *
+ * The object includes
+ *
+ *   * `minimumPartSize`: [number] In bytes, the min size of the chunk. This is
+ *      required for all chunks but the final.
+ *   * `maximumPartSize`: [number] In bytes, the max size of the chunk.
+ *   * `maximumNumParts`: [number] The max number of chunks that can be uploaded.
+ *   * `maximumFileSize`: [number] In bytes, the max size of the file, i.e., the
+ *      sum of the sizes of all chunks.
+ *   * `emptyLastPartAllowed`: [boolean] Whether an empty chunk (0 bytes) is
+ *      allowed for the final chunk.
+ *
+ * @param client {Client} A preexisting Client for interacting with the DNAnexus API.
+ * @param projectId {string} The DNAnexus project identifier (project-XXXXXXX).
+ * @returns file upload parameters for the given project
+ */
 const fileUploadParameters = async (
   client: Client,
   projectId: string,
@@ -244,24 +241,42 @@ const fileUploadParameters = async (
   return params;
 };
 
+/**
+ * A transfer for a file being uploaded to DNAnexus.
+ *
+ * Large file transfers are not supported DNAnexus. This requires any large
+ * files to be uploaded in _chunks_. Given a local file, chunking and endpoint
+ * uploading are handled internally by `UploadTransfer`.
+ */
 class UploadTransfer {
   private client: Client;
   private projectId: string;
   private src: string;
   private size: number;
-  private progressCb: ResultCallback;
-  private finishedCb: SuccessCallback;
+  private progressCb: ResultCallback<number>;
+  private finishedCb: SuccessCallback<{}>;
 
-  private request: Request | null = null;
+  private request: request.Request | null = null;
   private fileId = '';
   private bytesRead = 0;
 
+  /**
+   * Creates a new upload transfer.
+   *
+   * This does not start the upload.
+   *
+   * @param token DNAnexus access token.
+   * @param projectId The ID of the container to upload to.
+   * @param src The path the the local file to upload.
+   * @param progressCb
+   * @param finishedCb
+   */
   public constructor(
     token: string,
     projectId: string,
     src: string,
-    progressCb: ResultCallback,
-    finishedCb: SuccessCallback,
+    progressCb: ResultCallback<number>,
+    finishedCb: SuccessCallback<{}>,
   ) {
     this.client = new Client(token);
     this.projectId = projectId;
@@ -271,15 +286,14 @@ class UploadTransfer {
     this.finishedCb = finishedCb;
   }
 
-  public async prepare(): Promise<utils.IByteRange[]> {
-    const { maximumPartSize } = await fileUploadParameters(
-      this.client,
-      this.projectId,
-    );
-
-    return utils.byteRanges(this.size, maximumPartSize);
-  }
-
+  /**
+   * Initiates a file upload transfer.
+   *
+   * The destination can be any path in the project. If it does not exist, it
+   * and its parents will automatically be created.
+   *
+   * @param dst The absolute path to upload the file to
+   */
   public async start(dst: string) {
     const ranges = await this.prepare();
 
@@ -305,6 +319,11 @@ class UploadTransfer {
     this.finishedCb(null, {});
   }
 
+  /**
+   * Aborts a request in progress.
+   *
+   * Any data left in the file stream will be dropped.
+   */
   public async abort() {
     if (this.request) {
       this.request.abort();
@@ -319,6 +338,15 @@ class UploadTransfer {
         }
       }
     }
+  }
+
+  private async prepare(): Promise<utils.IByteRange[]> {
+    const { maximumPartSize } = await fileUploadParameters(
+      this.client,
+      this.projectId,
+    );
+
+    return utils.byteRanges(this.size, maximumPartSize);
   }
 
   private async transfer(
@@ -352,7 +380,11 @@ class UploadTransfer {
         },
       );
 
+      // Instead of listening to each file stream, use the raw socket to track
+      // how many bytes were sent.
       this.request.on('drain', () => {
+        // `request.req` is technically not public API, but it's guaranteed to
+        // be available if the request successfully started.
         const r: any = this.request;
         const { bytesWritten } = r.req.connection;
         const percent = (this.bytesRead + bytesWritten) / this.size * 100;
@@ -369,21 +401,22 @@ class UploadTransfer {
 /**
  * Uploads a file to a DNAnexus project via the dx command line utility.
  *
- * @param token
- * @param file File object from the Vuex store.
- * @param projectId DNAnexus ID of projectId being uploaded to.
+ * @param token DNAnexus access token.
+ * @param file Local file object.
+ * @param projectId The ID of the container to upload to.
  * @param progressCb
  * @param finishedCb
- * @return the upload request
+ * @param remoteFolder The directory to upload in the project to upload to.
+ * @returns The upload transfer request.
  */
-export function uploadFile(
+export const uploadFile = (
   token: string,
   file: SJDTAFile,
   projectId: string,
   progressCb: ResultCallback,
   finishedCb: SuccessCallback,
   remoteFolder: string = '/uploads',
-): UploadTransfer {
+): UploadTransfer => {
   const transfer = new UploadTransfer(
     token,
     projectId,
@@ -391,26 +424,25 @@ export function uploadFile(
     progressCb,
     finishedCb,
   );
+
   transfer.start(remoteFolder);
+
   return transfer;
-}
+};
 
 /**
  * Find and return projects the user can upload data to.
  *
- * @param token
- * @param allProjects should we limit to St. Jude Cloud
- *                    projects or list all projects?
- * @param callback
+ * @param token API token for DNAnexus API authentication.
+ * @param allProjects Should we limit to St. Jude Cloud projects or list all projects?
+ * @param cb If successful, all projects meeting the criteria of the options passed in.
  */
-export function listProjects(
+export const listProjects = async (
   token: string,
   allProjects: boolean,
-  callback: SuccessCallback,
-  dryrun: boolean = false,
-) {
+  cb: SuccessCallback<any[]>,
+) => {
   let tagsToCheck: string[] = [];
-  let projects: SJDTAProject[] = [];
 
   if (!allProjects) {
     tagsToCheck = [config.TOOL_PROJECT_TAG, config.DATA_PROJECT_TAG];
@@ -429,22 +461,21 @@ export function listProjects(
     tags: tagsToCheck.length > 0 ? { $or: tagsToCheck } : undefined,
   };
 
-  client.system
-    .findProjects(options)
-    .then(({ results }: { results: any }) => {
-      const resultsCompat = results.map((project: any) => {
-        const { describe } = project;
+  try {
+    let { results } = await client.system.findProjects(options);
 
-        return {
-          project_name: describe.name,
-          dx_location: project.id,
-          access_level: describe.level,
-        };
-      });
+    const resultsCompat = results.map(project => {
+      const { describe } = project;
 
-      callback(null, resultsCompat);
-    })
-    .catch((err: any) => {
-      callback(err, []);
+      return {
+        project_name: describe.name,
+        dx_location: project.id,
+        access_level: describe.level,
+      };
     });
-}
+
+    cb(null, resultsCompat);
+  } catch (e) {
+    cb(e, []);
+  }
+};
