@@ -36,7 +36,7 @@ function getToolItem(elem, uploadMap) {
   return item;
 }
 
-function resetCurrToolName(tools, previousTool, commit) {
+function resetCurrToolName(tools, _previousTool, commit) {
   let forceReset = true;
   if (window.uriProject) {
     for (const tool of tools) {
@@ -50,13 +50,6 @@ function resetCurrToolName(tools, previousTool, commit) {
 
     if (forceReset) {
       // TODO: error, project was not found.
-    }
-  }
-
-  for (const tool of tools) {
-    if (tool.dx_location === previousTool) {
-      forceReset = false;
-      break;
     }
   }
 
