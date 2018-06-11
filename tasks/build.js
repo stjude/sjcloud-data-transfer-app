@@ -5,9 +5,9 @@ const webpack = require('webpack');
 const merge = require('merge-stream');
 const typescript = require('gulp-typescript');
 
-const TS_CONFIG_PATH = path.resolve(path.join(__dirname, '../.tsconfig.json'));
+const TS_CONFIG_PATH = path.resolve(path.join(__dirname, '../tsconfig.json'));
 const WEBPACK_CONFIG_PATH = path.resolve(
-  path.join(__dirname, '../.webpack.conf.js')
+  path.join(__dirname, '../.webpack.conf.js'),
 );
 const webpackConfig = require(WEBPACK_CONFIG_PATH);
 
@@ -27,7 +27,7 @@ gulp.task('compile:frontend:source', ['clean:app:bin:frontend'], callback => {
 });
 
 gulp.task('compile:frontend:spec', ['clean:tmp:test:frontend'], () =>
-  gulp.src('app/src/frontend/spec/*.js').pipe(gulp.dest('.tmp/test/frontend/'))
+  gulp.src('app/src/frontend/spec/*.js').pipe(gulp.dest('.tmp/test/frontend/')),
 );
 
 gulp.task('compile:frontend', [
@@ -39,14 +39,14 @@ gulp.task('compile:backend:source', ['clean:app:bin:backend'], () =>
   gulp
     .src('app/src/backend/**/*.ts')
     .pipe(typescript.createProject(TS_CONFIG_PATH)())
-    .pipe(gulp.dest('app/bin/backend'))
+    .pipe(gulp.dest('app/bin/backend')),
 );
 
 gulp.task('compile:backend:spec', ['clean:tmp:test:backend'], () =>
   gulp
     .src('app/src/backend/spec/*.ts')
     .pipe(typescript.createProject(TS_CONFIG_PATH)())
-    .pipe(gulp.dest('.tmp/test/backend/'))
+    .pipe(gulp.dest('.tmp/test/backend/')),
 );
 
 gulp.task('compile:backend', [

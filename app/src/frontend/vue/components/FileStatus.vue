@@ -37,6 +37,9 @@
 							<div class='file-status-cell-status-errored' v-else-if="file.errored">
 								<i class="material-icons file-status-cell-status-errored-icon">error</i>
 							</div>
+							<div v-else-if="file.cancelled && !file.finished" class='' style='width:80px; height:20px;'>
+								<div class=''>Cancelled!</div>
+							</div>
 							<!--<div v-else-if="file.started && file.status == 0">Starting...</div>-->
 							<div v-else-if="!file.finished && (file.started || file.waiting)" class='' style='width:80px; height:20px;'>
 								<div class='' v-show='!file.started'>Waiting ...</div>
@@ -133,6 +136,8 @@ export default {
 		},
 		toggleFileChecked(file) {
 			file.checked=!file.checked;
+			file.cancelled = false;
+			file.errored = false;
 		},
 		toggleCheckBoxes() {
 			this.checkedAll=!this.checkedAll; 
@@ -140,6 +145,8 @@ export default {
        if (!f.finished) {
          f.checked = this.checkedAll;
        } 
+				f.cancelled = false;
+				f.errored = false;
       });
 		},
 		progressStyle(file) {

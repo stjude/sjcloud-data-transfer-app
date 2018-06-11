@@ -3,26 +3,47 @@
  * @description Contains the various utility functions used in the application.
  **/
 
-import {ChildProcess} from 'child_process';
-import powershell from './powershell';
+import * as crypto from 'crypto';
+import * as os from 'os';
+import * as fs from 'fs';
+import * as path from 'path';
+
+import { remote, shell } from 'electron';
+import { performance } from 'perf_hooks';
+import * as treeKill from 'tree-kill';
+
+const mkdirp = require('mkdirp');
+
+import { logging } from './logging';
 import {
   SuccessCallback,
-  CommandCallback,
   ResultCallback,
   ErrorCallback,
+  SJDTAFile,
 } from './types';
 
-const os = require('os');
-const fs = require('fs');
-const path = require('path');
-const https = require('https');
-const mkdirp = require('mkdirp');
-const _crypto = require('crypto');
-const treeKill = require('tree-kill');
+export interface IByteRange {
+  start: number;
+  end: number;
+}
 
-const {logging} = require('./logging');
-const {remote, shell} = require('electron');
-const {exec} = require('child_process');
+export interface IFileInfo {
+  name: string;
+  path: string;
+  size: string;
+  raw_size: number;
+  status: number;
+  checked: boolean;
+  waiting: boolean;
+  started: boolean;
+  finished: boolean;
+}
+
+export interface ICertificate {
+  cert: string;
+  private: string;
+  public: string;
+}
 
 /**
  * CONSTANTS
@@ -30,77 +51,60 @@ const {exec} = require('child_process');
 
 export const platform = os.platform();
 export const defaultDownloadDir = path.join(os.homedir(), 'Downloads');
+export const sjcloudHomeDirectory = path.join(os.homedir(), '.sjcloud');
 
-interface StJudeCloudPaths {
-  SJCLOUD_HOME?: string;
-  ANACONDA_HOME?: string;
-  ANACONDA_BIN?: string;
-  ANACONDA_SJCLOUD_ENV?: string;
-  ANACONDA_SJCLOUD_BIN?: string;
-}
+export const byteRanges = (
+  totalSize: number,
+  chunkSize: number,
+): IByteRange[] => {
+  const n = Math.ceil(totalSize / chunkSize);
+  const pieces = [];
 
-/**
- * Returns the various paths for SJ Cloud and Anaconda.
- *
- * @param sjcloudHomeDirectory SJ Cloud home path saved in the application, if any
- * @param thePlatform Platform the application is running on
- */
-export function getSJCloudPaths(
-  sjcloudHomeDirectory: string = null,
-  thePlatform: string = platform
-): StJudeCloudPaths {
-  let result: StJudeCloudPaths = {};
+  let i = 0;
 
-  if (!sjcloudHomeDirectory) {
-    sjcloudHomeDirectory = path.join(os.homedir(), '.sjcloud');
+  while (i < n - 1) {
+    const start = chunkSize * i;
+    const end = start + chunkSize - 1;
+    pieces.push({ end, start });
+    i++;
   }
 
-  result.SJCLOUD_HOME = sjcloudHomeDirectory;
-  result.ANACONDA_HOME = path.join(sjcloudHomeDirectory, 'anaconda');
-  result.ANACONDA_BIN =
-    thePlatform === 'win32'
-      ? path.join(result.ANACONDA_HOME, 'Scripts')
-      : path.join(result.ANACONDA_HOME, 'bin');
-  result.ANACONDA_SJCLOUD_ENV = path.join(
-    result.ANACONDA_HOME,
-    'envs',
-    'sjcloud'
-  );
-  result.ANACONDA_SJCLOUD_BIN = path.join(result.ANACONDA_SJCLOUD_ENV, 'bin');
+  const lastStart = chunkSize * i;
+  pieces.push({ end: totalSize - 1, start: lastStart });
 
-  return result;
-}
+  return pieces;
+};
 
-/**
- * Checks if given path exists in the list of SJ Cloud paths.
- *
- * @param pathProperName The path to lookup
- * @param sjcloudHomeDirectory The SJ Cloud paths
- */
-export function lookupPath(
-  pathProperName: string,
-  sjcloudHomeDirectory: string = null
-): string {
-  const paths = getSJCloudPaths(sjcloudHomeDirectory);
-  return pathProperName in paths ? (paths as any)[pathProperName] : null;
-}
+export const md5Sum = (
+  pathname: string,
+  start: number = 0,
+  end: number = Infinity,
+): Promise<string> => {
+  return new Promise(resolve => {
+    const hash = crypto.createHash('md5');
+    const reader = fs.createReadStream(pathname, { start, end });
+
+    reader.on('data', (chunk: Buffer | string | any) => {
+      hash.update(chunk);
+    });
+
+    reader.on('end', () => {
+      resolve(hash.digest('hex'));
+    });
+  });
+};
 
 /**
  * Creates the ~/.sjcloud directory if it doesn't already exist.
  * Callback takes args (error, created_dir) to determine whether this is the
  * user's first time to run the app.
  *
- * @param {SuccessCallback} callback Returns (error, was directory created?)
- * @param {string?} directory Directory for SJCloud home if not default.
+ * @param {SuccessCallback<boolean>} callback Returns (error, was directory created?)
  */
-export function initSJCloudHome(
-  callback: SuccessCallback,
-  sjcloudHomeDirectory: string = null
-): void {
-  sjcloudHomeDirectory = lookupPath('SJCLOUD_HOME', sjcloudHomeDirectory);
-  fs.stat(sjcloudHomeDirectory, function(statErr: any, stats: any) {
+export function initSJCloudHome(callback: SuccessCallback<boolean>): void {
+  fs.stat(sjcloudHomeDirectory, function(statErr: Error, stats: fs.Stats) {
     if (statErr || !stats) {
-      mkdirp(sjcloudHomeDirectory, function(mkdirErr: any) {
+      mkdirp(sjcloudHomeDirectory, function(mkdirErr: Error) {
         if (mkdirErr) {
           return callback(mkdirErr, null);
         }
@@ -114,270 +118,40 @@ export function initSJCloudHome(
 }
 
 /**
- * Return the boostrapping command on a UNIX machine. This will inject the
- * correct binaries on the PATH based on what has been successfully installed
- * up until this point.
+ * Saves some contents to a file in the SJCloud directory.
  *
- * @returns {string} A command with the correct sources and PATH variable.
+ * @param {string} filename name of the file.
+ * @param {string} content contents of the file.
+ * @param {ErrorCallback} [callback=undefined]
  */
-function unixBootstrapCommand(): string {
-  let paths = [];
-
-  try {
-    let stats = fs.statSync(lookupPath('ANACONDA_SJCLOUD_BIN'));
-    if (stats) {
-      paths.push(lookupPath('ANACONDA_SJCLOUD_BIN'));
-    }
-  } catch (err) {
-    /* ignore */
-  }
-
-  try {
-    let stats = fs.statSync(lookupPath('ANACONDA_BIN'));
-    if (stats) {
-      paths.push(lookupPath('ANACONDA_BIN'));
-    }
-  } catch (err) {
-    /* ignore */
-  }
-
-  return paths.length != 0 ? `export PATH="${paths.join(':')}:$PATH";` : null;
+export function saveToSJCloudFile(
+  filename: string,
+  content: string,
+  callback: ErrorCallback,
+): void {
+  const dest = path.join(sjcloudHomeDirectory, filename);
+  fs.writeFile(dest, content, callback);
 }
 
 /**
- * Return the boostrapping command on a Windows machine. This will inject the
- * correct binaries on the PATH based on what has been successfully installed
- * up until this point.
+ * Reads a file from the SJCloud directory's contents.
  *
- * @returns {string} A command with the correct sources and PATH variable.
+ * @todo Should the error case be a SuccessCallback rather than a return?
+ * @param filename name of the file
+ * @param callback results of the SJCloud file
+ * @param defaultContent
  */
-function windowsBootstrapCommand(): string {
-  let paths = [];
-
-  try {
-    let stats = fs.statSync(lookupPath('ANACONDA_BIN'));
-    if (stats) {
-      paths.push(lookupPath('ANACONDA_BIN'));
-    }
-  } catch (err) {
-    /* ignore */
-  }
-
-  try {
-    let stats = fs.statSync(lookupPath('ANACONDA_SJCLOUD_ENV'));
-    if (stats) {
-      paths.push(lookupPath('ANACONDA_SJCLOUD_ENV'));
-    }
-  } catch (err) {
-    /* ignore */
-  }
-
-  return paths.length != 0
-    ? `$ENV:PATH="${paths.join(';')};"+$ENV:PATH;`
-    : null;
-}
-
-/**
- * Run a command on the Unix platform.
- *
- * @param {string} cmd The command to be run.
- * @param {CommandCallback} innerCallback Callback to process the command output.
- */
-function runCommandUnix(
-  cmd: string,
-  innerCallback: CommandCallback
-): ChildProcess {
-  if (platform !== 'darwin' && platform !== 'linux') {
-    throw new Error(`Invalid platform for 'runCommandUnix': ${platform}`);
-  }
-
-  let bootstrapCommand = unixBootstrapCommand();
-  if (bootstrapCommand) {
-    cmd = `${bootstrapCommand} ${cmd}`;
-  }
-
-  cmd = `/usr/bin/env bash -c '${cmd}'`;
-  logging.silly(cmd);
-  return exec(cmd, {maxBuffer: 10000000}, innerCallback);
-}
-
-/**
- * Run a command on the Windows platform.
- *
- * @param {string} cmd The command to be run.
- * @param {CommandCallback} innerCallback Callback to process the command output.
- */
-function runCommandWindows(
-  cmd: string,
-  innerCallback: CommandCallback
-): ChildProcess {
-  if (platform !== 'win32') {
-    throw new Error(`Invalid platform for 'runCommandWindows': ${platform}`);
-  }
-
-  const bootstrapCommand = windowsBootstrapCommand() || '';
-  cmd = `${bootstrapCommand}; ${cmd}`;
-
-  logging.silly(cmd);
-
-  return powershell(cmd, innerCallback);
-}
-
-/**
- * Runs command based on the system.
- *
- * @param {string} cmd Text to be entered at the command line
- * @param {SuccessCallback} callback
- * @param {boolean} [raiseOnStderr=true] Raise an error if we see anything on stderr.
- * @return {string}
- */
-export function runCommand(
-  cmd: string,
-  callback: SuccessCallback,
-  raiseOnStderr: boolean = true
-): ChildProcess {
-  const innerCallback = function(err: any, stdout: string, stderr: string) {
+export function readSJCloudFile(
+  filename: string,
+  callback: ResultCallback<string>,
+  defaultContent?: string,
+): void {
+  const dest = path.join(sjcloudHomeDirectory, filename);
+  fs.readFile(dest, (err: Error, data: any) => {
     if (err) {
-      logging.error(err);
-      return callback(err, null);
+      if (!defaultContent) return;
     }
-
-    if (raiseOnStderr && stderr && stderr.length > 0) {
-      logging.error(stderr);
-      return callback(stderr, null);
-    }
-
-    if (stdout.trim() === 'False') {
-      /** Powershell sometimes just returns False */
-      return callback(new Error('STDOUT was False'), null);
-    }
-
-    return callback(null, stdout);
-  };
-
-  if (platform === 'darwin' || platform === 'linux') {
-    return runCommandUnix(cmd, innerCallback);
-  } else if (platform === 'win32') {
-    return runCommandWindows(cmd, innerCallback);
-  } else throw new Error(`Unrecognized platform: ${platform}.`);
-}
-
-/**
- * Parse Python version from a string. Presumably, output from 'python --version'.
- * @param versionString String to parse Python version from
- * @returns A tuple containing [majorNum, minorNum, patchNum]
- */
-export function parsePythonVersion(versionString: string) {
-  const regex = /Python ([0-9]+).([0-9]+).([0-9]+)/;
-  let match = regex.exec(versionString);
-
-  if (!match) {
-    throw new Error(
-      `Could not parse Python version from string '${versionString}'`
-    );
-  }
-
-  let [full, major, minor, patch] = match;
-  return [parseInt(major), parseInt(minor), parseInt(patch)];
-}
-
-/**
- * Determines if Python 2.7.13+ is accessible on the PATH.
- *
- * @todo Change callback to SuccessCallback
- * @param {ResultCallback} callback
- */
-export function pythonOnPath(callback: ResultCallback): void {
-  runCommand('python --version', (err, res) => {
-    let majorNum: number, minorNum: number, patchNum: number;
-    [majorNum, minorNum, patchNum] = parsePythonVersion(err);
-    return callback(majorNum === 2 && minorNum === 7 && patchNum >= 13);
-  });
-}
-
-/**
- * Determines if dx-toolkit is accessible on the PATH.
- *
- * @param {SuccessCallback} callback
- */
-export function dxToolkitInstalled(callback: SuccessCallback): void {
-  const dxLocation = path.join(lookupPath('ANACONDA_SJCLOUD_BIN'), 'dx');
-  if (platform === 'linux' || platform === 'darwin') {
-    runCommand(`[ -f ${dxLocation} ]`, callback);
-  } else if (platform === 'win32') {
-    runCommand(`[System.IO.File]::Exists("${dxLocation}") `, callback);
-  }
-}
-
-/**
- * Downloads a normal file. Downloading of a DXFile is in dx.js
- *
- * @param {string} url URL of download.
- * @param {string} dest Path for newly downloaded file.
- * @see dx:downloadDxFile
- */
-export function downloadFile(url: string, dest: string): Promise<boolean> {
-  return new Promise((resolve, reject) => {
-    let file = fs.createWriteStream(dest);
-    file.on('error', (error: any) => {
-      reject(error);
-    });
-
-    file.on('finish', () => {
-      file.close();
-      resolve(true);
-    });
-
-    https.get(url, (res: any) => {
-      res.pipe(file);
-    });
-  });
-}
-
-/**
- * Untars a file to the specified location.
- *
- * @param {string} filepath Path to TAR file.
- * @param {string} destParentDir Path to the parent directory of TAR content.
- * @param {SuccessCallback} callback
- */
-export function untarTo(
-  filepath: string,
-  destParentDir: string,
-  callback: SuccessCallback
-): void {
-  runCommand(`tar - C ${destParentDir} -zxf ${filepath} `, callback);
-}
-
-/**
- * Computes the SHA256 sum of a given file.
- *
- * @todo No error possible in callback, the calculation needs to be checked
- *       for success.
- * @param {string} filepath Path to file being checksummed
- * @param {SuccessCallback} callback
- */
-export function computeSHA256(
-  filepath: string,
-  callback: SuccessCallback
-): void {
-  let shasum = _crypto.createHash('SHA256');
-
-  if (!fs.existsSync(filepath)) {
-    throw new Error(`${filepath} does not exist!`);
-  }
-
-  if (!fs.lstatSync(filepath).isFile()) {
-    throw new Error(`${filepath} is not a file!`);
-  }
-
-  let s = fs.ReadStream(filepath);
-  s.on('data', (chunk: object) => {
-    shasum.update(chunk);
-  });
-  s.on('end', () => {
-    const result = shasum.digest('hex');
-    return callback(null, result);
+    callback(data ? data.toString() : defaultContent);
   });
 }
 
@@ -386,7 +160,7 @@ export function computeSHA256(
  * of the electron window).
  *
  * @param {string} url URL to open
- *****************************************************************************/
+ **/
 export function openExternal(url: string): void {
   shell.openExternal(url);
 }
@@ -394,19 +168,19 @@ export function openExternal(url: string): void {
 /**
  * Open a file dialog that can be used to select a directory.
  *
- * @param {ResultCallback} callback
+ * @param {ResultCallback<string[]>} callback
  * @param {string} [defaultPath=undefined]
  */
 export function openDirectoryDialog(
-  callback: ResultCallback,
-  defaultPath: string = null
+  callback: ResultCallback<string[]>,
+  defaultPath?: string,
 ): void {
   return callback(
     remote.dialog.showOpenDialog({
       buttonLabel: 'Select',
       properties: ['openDirectory', 'createDirectory'],
       defaultPath,
-    })
+    }),
   );
 }
 
@@ -415,12 +189,21 @@ export function openDirectoryDialog(
  *
  * @param {ResultCallback} callback
  */
-export function openFileDialog(callback: ResultCallback) {
+export function openFileDialog(callback: ResultCallback<string[]>): void {
   return callback(
     remote.dialog.showOpenDialog({
       properties: ['openFile', 'multiSelections'],
-    })
+    }),
   );
+}
+
+/**
+ * Kills an entire process tree using a 3rd party package.
+ *
+ * @param {number} pid PID of the process to kill.
+ */
+export function killProcess(pid: number): void {
+  return treeKill(pid);
 }
 
 /**
@@ -431,25 +214,27 @@ export function openFileDialog(callback: ResultCallback) {
  *
  * @param {number} bytes number of bytes
  * @param {boolean} [roundNumbers=false] round the output numbers
- * @param {number} [divisor=1000] how many bytes are in one 'unit'? Usually,
- *                                this is 1000 or 1024.
+ * @param {boolean} [si=true] SI unit switch to use 1000 or 1024 as the divisor
  * @return {string} Human-readable size.
  */
 export function readableFileSize(
   bytes: number,
   roundNumbers: boolean = false,
-  divisor: number = 1000
+  si: boolean = true,
 ): string {
   if (isNaN(bytes) || bytes === 0) {
     return '0 GB';
   }
 
+  let divisor = si ? 1000 : 1024;
   let byteCount = Math.abs(bytes);
   if (byteCount < divisor) {
     return Math.round(byteCount) + ' B';
   }
 
-  let units = ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+  let units = si
+    ? ['kB', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB']
+    : ['KiB', 'MiB', 'GiB', 'TiB', 'PiB', 'EiB', 'ZiB', 'YiB'];
   let u = -1;
 
   do {
@@ -469,12 +254,12 @@ export function readableFileSize(
  *
  * @param {string} filepath Path where the file resides.
  * @param {boolean} [checked=false] Whether the entry should start out checked.
- * @return {object} object containing name and size properties.
+ * @return {IFileInfo} object containing name and size properties.
  */
 export function fileInfoFromPath(
   filepath: string,
-  checked: boolean = false
-): object {
+  checked: boolean = false,
+): IFileInfo {
   const name = path.basename(filepath);
   const size = fs.statSync(filepath).size;
   return {
@@ -491,117 +276,25 @@ export function fileInfoFromPath(
 }
 
 /**
- * Generate a random number between min and max.
- *
- * @param {number} min minimum number
- * @param {number} max maximum number
- * @return {number} random integer.
- */
-export function randomInt(min: number, max: number) {
-  min = Math.ceil(min);
-  max = Math.floor(max);
-  return Math.floor(Math.random() * (max - min)) + min;
-}
-
-/**
- * Kills an entire process tree using a 3rd party package.
- *
- * @param {number} pid PID of the process to kill.
- */
-export function killProcess(pid: number): void {
-  return treeKill(pid);
-}
-
-/**
  * Reset a file object's status in Vuex.
  * @todo move to a more appropriate location.
- * @param {any} file File object
+ * @param {SJDTAFile} file File object
  */
-export function resetFileStatus(file: any): void {
+export function resetFileStatus(file: SJDTAFile): void {
   file.status = 0;
   file.waiting = false;
   file.started = false;
   file.finished = false;
-  file.errored = false;
 }
 
 /**
- * Saves some contents to a file in the SJCloud directory.
+ * Generate certificates that are valid for one day.
  *
- * @param {string} filename name of the file.
- * @param {string} content contents of the file.
- * @param {ErrorCallback} [callback=undefined]
+ * @param callback Returns a string with the certificates, or error if any
  */
-export function saveToSJCloudFile(
-  filename: string,
-  content: string,
-  callback: ErrorCallback = undefined
-): void {
-  const dest = path.join(lookupPath('SJCLOUD_HOME'), filename);
-  fs.writeFile(dest, content, callback);
-}
-
-/**
- * Reads a file from the SJCloud directory's contents.
- *
- * @todo Should the error case be a SuccessCallback rather than a return?
- * @param filename name of the file
- * @param callback results of the SJCloud file
- * @param defaultContent
- */
-export function readSJCloudFile(
-  filename: string,
-  callback: ResultCallback,
-  defaultContent: any = null
-): void {
-  const dest = path.join(lookupPath('SJCLOUD_HOME'), filename);
-  fs.readFile(dest, (err: any, data: any) => {
-    if (err) {
-      if (!defaultContent) return;
-    }
-    callback(data ? data.toString() : defaultContent);
-  });
-}
-
-/**
- * Gets the appropriate tab literal character based on the platform.
- */
-export function getTabLiteral() {
-  if (platform === 'darwin' || platform === 'linux') {
-    return "$'\\t'";
-  } else if (platform === 'win32') {
-    return '`t';
-  } else throw new Error('Unrecognized platform: ${platform}.');
-}
-
-export function selfSigned(callback: SuccessCallback) {
+export function selfSigned(callback: SuccessCallback<ICertificate>): void {
   const selfsigned = require('selfsigned');
-  return selfsigned.generate({}, {days: 1}, callback);
-}
-
-/**
- * Utility timer class to time different parts of the application.
- */
-export class Timer {
-  start_time: number;
-  stop_time: number;
-
-  /**
-   * @constructor
-   */
-  constructor() {}
-  start() {
-    this.start_time = performance.now();
-  }
-
-  stop() {
-    this.stop_time = performance.now();
-  }
-
-  duration() {
-    if (this.start_time == null && this.stop_time == null) return -1;
-    return Math.round(this.stop_time - this.start_time);
-  }
+  return selfsigned.generate({}, { days: 1 }, callback);
 }
 
 /**
@@ -609,8 +302,8 @@ export class Timer {
  *
  * @param {Error} err
  */
-export function reportBug(err: Error) {
-  logging.debug(err);
+export function reportBug(err: Error): void {
+  // logging.debug(err);
   remote.dialog.showMessageBox(
     {
       type: 'error',
@@ -629,6 +322,31 @@ export function reportBug(err: Error) {
       } else {
         // 'Cancel' selected
       }
-    }
+    },
   );
+}
+
+/**
+ * Utility timer class to time different parts of the application.
+ */
+export class Timer {
+  start_time!: number;
+  stop_time!: number;
+
+  /**
+   * @constructor
+   */
+  constructor() {}
+  start(): void {
+    this.start_time = performance.now();
+  }
+
+  stop(): void {
+    this.stop_time = performance.now();
+  }
+
+  duration(): number {
+    if (this.start_time == null || this.stop_time == null) return -1;
+    return Math.round(this.stop_time - this.start_time);
+  }
 }

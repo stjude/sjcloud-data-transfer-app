@@ -14,7 +14,7 @@ const readFile = util.promisify(fs.readFile);
 function bumpVersion(level, cb) {
   exec('git rev-parse --abbrev-ref HEAD')
     .then(result => {
-      const {stdout} = result;
+      const { stdout } = result;
       const [branch] = stdout.split('\n');
       if (branch !== 'development') {
         throw new Error('Branch must be "development" when bumping version!');
@@ -22,22 +22,22 @@ function bumpVersion(level, cb) {
 
       gulp
         .src('./package.json')
-        .pipe(bump({type: level}))
+        .pipe(bump({ type: level }))
         .pipe(gulp.dest('./'))
         .on('end', () => {
           exec('git add package.json')
             .then(() => readFile('./package.json', 'utf-8'))
             .then(contents => {
-              const {version} = JSON.parse(contents);
+              const { version } = JSON.parse(contents);
               return exec(`git commit -m "Bumped to version ${version}"`);
             })
             .then(() => {
               console.log();
               console.log(
-                'Your version bump has now been successfully committed to git.'
+                'Your version bump has now been successfully committed to git.',
               );
               console.log(
-                'However, you\'ll need to do a "git push" to see the change in Github'
+                'However, you\'ll need to do a "git push" to see the change in Github',
               );
               console.log();
               cb();

@@ -62,6 +62,14 @@ export default function getVuexStore(cachedState = {}) {
         cacheState(state);
       }
 
+      if (mutation.type === 'setConcurrentOperations') {
+        cacheState(state);
+      }
+
+      if (mutation.type === 'setToken') {
+        cacheState(state);
+      }
+
       if (mutation.type === 'setURIProject') {
         store.commit('setCurrToolName', state.uriProject, true);
       }
@@ -81,10 +89,11 @@ export default function getVuexStore(cachedState = {}) {
     ref.backend.utils.saveToSJCloudFile(
       'state.json',
       JSON.stringify({
+        token: state.token,
         showAllFiles: state.showAllFiles,
         showAllProjects: state.showAllProjects,
         concurrentOperations: state.concurrentOperations,
-      })
+      }),
     );
   }
 
@@ -102,7 +111,7 @@ export default function getVuexStore(cachedState = {}) {
     main: new Vuex.Store({
       state: storeCopier(
         'state',
-        substores.concat({state: cachedState}, {state: getParams()})
+        substores.concat({ state: cachedState }, { state: getParams() }),
       ),
       getters: storeCopier('getters', substores),
       mutations: storeCopier('mutations', substores),

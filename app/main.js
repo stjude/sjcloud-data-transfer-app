@@ -18,16 +18,26 @@ const menu = electron.Menu;
 
 const config = require('./bin/backend/config').default;
 const ui = require('./bin/backend/ui');
-const {logging, logLevel} = require('./bin/backend/logging');
+const { logging, logLevel } = require('./bin/backend/logging');
 const utils = require('./bin/backend/utils');
+const env = require('./bin/backend/env');
 
 const platform = os.platform();
-const nodeEnvironment = process.env.NODE_ENV || 'production';
+const nodeEnvironment = env.getEnv();
 
 if (nodeEnvironment !== 'production' && nodeEnvironment !== 'development') {
   logging.error("NODE_ENV must be 'production' or 'development'!");
   process.exit();
 }
+
+utils.initSJCloudHome(err => {
+  if (err) {
+    const message = 'Could not create $SJCLOUD_HOME';
+    logging.error(message);
+    throw new Error(message);
+    app.exit(1);
+  }
+});
 
 logging.info('');
 logging.info(' ###############################################');
@@ -75,7 +85,7 @@ function bootstrapWindow(mainWindow) {
 
   if (!config.CHROMIUM_MENU) {
     logging.debug('Production menu enabled (chromium menu disabled).');
-    const {menuConfig} = require('./bin/backend/menu.js');
+    const { menuConfig } = require('./bin/backend/menu.js');
     menu.setApplicationMenu(menu.buildFromTemplate(menuConfig));
   } else {
     logging.debug('Chromium menu enabled (production menu disabled).');
@@ -122,17 +132,17 @@ app.on('ready', () => {
 
     if (platform === 'win32') {
       uriCommand = protocol.handleURIWindows();
-    } else if (startupOptions.open_url_event_occurred) {
+    } else if (startupOptions.openURLEventOccured) {
       uriCommand = protocol.handleURIMac(
-        startupOptions.open_url_event,
-        startupOptions.open_url_url
+        startupOptions.openURLEvent,
+        startupOptions.openURLURL,
       );
     }
 
     if (uriCommand) {
       logging.silly(`Running JS command: ${uriCommand}`);
       mainWindow.webContents.executeJavaScript(
-        "window.setCurrPath = 'upload';"
+        "window.setCurrPath = 'upload';",
       );
       mainWindow.webContents.executeJavaScript(uriCommand);
     }
@@ -146,11 +156,11 @@ app.on('activate', () => {
 app.on('open-url', (event, url) => {
   if (!app.isReady()) {
     // this will execute if the application is not open.
-    startupOptions.open_url_event_occurred = true;
-    startupOptions.open_url_event = event;
-    startupOptions.open_url_url = url;
+    startupOptions.openURLEventOccured = true;
+    startupOptions.openURLEvent = event;
+    startupOptions.openURLURL = url;
   } else {
-    uriCommand = protocol.handleURIMac(event, url);
+    let uriCommand = protocol.handleURIMac(event, url);
 
     if (uriCommand !== '') {
       ensureWindow(() => {
@@ -158,7 +168,7 @@ app.on('open-url', (event, url) => {
         mainWindow.webContents.executeJavaScript("window.currPath = 'upload';");
         mainWindow.webContents.executeJavaScript(uriCommand);
         mainWindow.webContents.executeJavaScript(
-          "window.VueApp.$store.dispatch('updateToolsFromRemote', true);"
+          "window.VueApp.$store.dispatch('updateToolsFromRemote', true);",
         );
       });
     }
@@ -180,5 +190,5 @@ app.on(
     } else {
       callback(false);
     }
-  }
+  },
 );

@@ -15,7 +15,7 @@ function getStep(overrides) {
       placement: 'left',
       smartPlacement: true,
     },
-    overrides
+    overrides,
   );
 }
 

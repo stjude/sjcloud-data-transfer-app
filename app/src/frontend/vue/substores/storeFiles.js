@@ -49,7 +49,7 @@ export default function(ref) {
     mutations: {
       addFile(state, file, checked) {
         const tool = state.tools.filter(
-          t => t.dx_location === state.currToolName
+          t => t.dx_location === state.currToolName,
         )[0];
         if (toolError(tool, state)) {
           return;
@@ -59,7 +59,7 @@ export default function(ref) {
       },
       addFiles(state, files) {
         const tool = state.tools.filter(
-          t => t.dx_location === state.currToolName
+          t => t.dx_location === state.currToolName,
         )[0];
         if (toolError(tool, state)) {
           return;
@@ -78,7 +78,7 @@ export default function(ref) {
       },
       removeCheckedFiles(state) {
         const tool = state.tools.filter(
-          t => t.dx_location === state.currToolName
+          t => t.dx_location === state.currToolName,
         )[0];
         if (toolError(tool, state)) {
           return;
@@ -88,7 +88,7 @@ export default function(ref) {
       },
       removeAllFiles(state) {
         const tool = state.tools.filter(
-          t => t.dx_location === state.currToolName
+          t => t.dx_location === state.currToolName,
         )[0];
         if (toolError(tool, state)) {
           return;
@@ -98,17 +98,21 @@ export default function(ref) {
       },
       cancelCheckedFiles(state) {
         const tool = state.tools.filter(
-          t => t.dx_location === state.currToolName
+          t => t.dx_location === state.currToolName,
         )[0];
         if (toolError(tool, state)) {
           return;
         }
 
-        const files = tool[state.currPath].filter(
-          t => t.checked && t.started && !t.finished
+        const filesInTransfer = tool[state.currPath].filter(
+          t => t.checked && t.started && !t.finished,
         );
-        files.forEach(elem => {
+        filesInTransfer.forEach(elem => {
           elem.cancelled = true;
+          if (elem.status <= 0 && elem.started) {
+            // There's a bug where started files without progress error in DNANexus
+            elem.errored = true;
+          }
           let process = null;
           if (state.currPath === 'upload') {
             process = state.operationProcesses[elem.path];
@@ -117,10 +121,32 @@ export default function(ref) {
           }
 
           if (process) {
-            ref.backend.utils.killProcess(process.pid);
+            Promise.resolve(process).then(p => {
+              if ('abort' in p && typeof p.abort === 'function') {
+                p.abort();
+              } else {
+                ref.backend.utils.killProcess(p.pid);
+              }
+            });
           } else {
             console.error('Process does not exist!');
           }
+        });
+        let currPath = state.currPath;
+        if (currPath === 'upload' || currPath === 'download') {
+          ref.backend.queue.removeAllTaskOfType(currPath);
+        } else {
+          console.error("Don't know whether to cancel uploads or downloads!");
+        }
+        const filesInWaiting = tool[state.currPath].filter(
+          t => t.checked && (t.waiting || t.status === 0) && !t.finished,
+        );
+        filesInWaiting.forEach(elem => {
+          elem.cancelled = true;
+          elem.checked = false;
+          elem.started = false;
+          elem.waiting = false;
+          elem.progress = 0;
         });
       },
       setFileSorting(state, obj) {
@@ -132,7 +158,7 @@ export default function(ref) {
       },
     },
     actions: {
-      refreshFiles({commit, state}) {
+      refreshFiles({ commit, state }) {
         state.tools.forEach(tool => {
           tool.upload = [];
           tool.download = [];
@@ -179,7 +205,7 @@ function toolError(tool, state) {
     console.error(
       `Invalid tool name '${state.currToolName}' and/or path='${
         state.currPath
-      }'.`
+      }'.`,
     );
     return true;
   }

@@ -1,4 +1,4 @@
-import {select} from 'd3-selection';
+import { select } from 'd3-selection';
 
 const _App = window._App;
 
@@ -20,7 +20,7 @@ describe('Download panel for an empty project', () => {
         setTimeout(() => {
           done();
         }, 500);
-      }
+      },
     );
   });
 
@@ -54,7 +54,7 @@ describe('Download panel for a project with completed transfer', () => {
         setTimeout(() => {
           done();
         }, 500);
-      }
+      },
     );
   });
 
@@ -67,7 +67,7 @@ describe('Download panel for a project with completed transfer', () => {
           .filter(function(d) {
             return select(this).html() === 'check_circle';
           })
-          .size()
+          .size(),
       ).toEqual(2);
 
       done();

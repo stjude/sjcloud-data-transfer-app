@@ -3,23 +3,19 @@ environment:
     secure: IOg+qGyyMMk72bZMBUn60Nbshg0k7doVDKQzb1bsGsvyd6R3R7XIRmTJH/CAN4mm
 install:
   - ps: |
+      npm i npm@latest -g
       Install-Product node 9
       $ENV:CI=true
       $ENV:PATH=$ENV:APPDATA + "\npm;" + $ENV:PATH
-      yarn install
+      npm i --no-optional
 skip_tags: true
 shallow_clone: true
 test_script:
   - ps: |
       node --version
-      yarn --version
-      yarn test
+      npm -v
+      npm test
 platform: x64
-on_success:
-  - ps: |
-      if ($ENV:APPVEYOR_REPO_BRANCH -eq "master" -Or $ENV:APPVEYOR_REPO_BRANCH -eq "development") {
-        yarn dist:release-win
-      }
 build: off
 matrix:
   fast_finish: true

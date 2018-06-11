@@ -1,4 +1,4 @@
-import {select} from 'd3-selection';
+import { select } from 'd3-selection';
 
 const _App = window._App;
 
@@ -21,7 +21,7 @@ describe("User Menu's logout button", () => {
         setTimeout(() => {
           done();
         }, 500);
-      }
+      },
     );
   });
 
@@ -43,7 +43,7 @@ describe("User Menu's logout button", () => {
         JSON.stringify([
           numRowsBeforeLogut,
           holder.selectAll('#sjcda-left-panel-table-body tr').size(),
-        ])
+        ]),
       ).toEqual('[11,1]');
       done();
     }, 500);

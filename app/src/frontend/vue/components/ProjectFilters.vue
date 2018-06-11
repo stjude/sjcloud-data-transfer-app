@@ -9,6 +9,7 @@
 		<div class='num-input'>
 			<input type="number" 
 					id='num-concurr-ops-input'
+					min='1'
 					:value="concurrentOperations" 
 					@change="setConcurrentOperations"/>
 			<label for='num-concurr-ops-input'>
@@ -20,67 +21,69 @@
 
 <script>
 export default {
-	computed: {
-		showAllFiles() {
-			return this.$store.getters.showAllFiles;
-		},
-		showAllProjects() {
-			return this.$store.getters.showAllProjects;
-		},
-		concurrentOperations() {
-			return this.$store.getters.concurrentOperations;
-		}
-	},
-	methods: {
-		updateShowAllFiles (e) {
-			this.$store.commit('setShowAllFiles', e.target.checked);
-		},
-		updateShowAllProjects (e) {
-			this.$store.commit('setShowAllProjects', e.target.checked);
-		},
-		setConcurrentOperations(e) {
-			this.$store.commit('setConcurrentOperations', e.target.value);
-		}
-	}
-}
+  computed: {
+    showAllFiles() {
+      return this.$store.getters.showAllFiles;
+    },
+    showAllProjects() {
+      return this.$store.getters.showAllProjects;
+    },
+    concurrentOperations() {
+      return this.$store.getters.concurrentOperations;
+    },
+  },
+  methods: {
+    updateShowAllFiles(e) {
+      this.$store.commit('setShowAllFiles', e.target.checked);
+    },
+    updateShowAllProjects(e) {
+      this.$store.commit('setShowAllProjects', e.target.checked);
+    },
+    setConcurrentOperations(e) {
+      this.$store.commit('setConcurrentOperations', e.target.value);
+      const concurrency = this.$store.getters.concurrentOperations;
+      this.$root.backend.queue.setConcurrentOperations(concurrency);
+    },
+  },
+};
 </script>
 
 <style scoped>
 #left-panel-project-filters {
-	/*position: absolute;
+  /*position: absolute;
 	top: 480px;*/
-	background-color: #FFFFFF;
+  background-color: #ffffff;
 }
 
 .first-checkbox {
-	width: 290px;
-	font-size: 12pt;
-	padding-top: 10px;
-	padding-left: 20px;
-	background-color:#fff;
+  width: 290px;
+  font-size: 12pt;
+  padding-top: 10px;
+  padding-left: 20px;
+  background-color: #fff;
 }
 
 .second-checkbox {
-	width: 290px;
-	margin-top: 0;
-	font-size: 12pt;
-	padding-left: 20px;
-	background-color:#fff;
+  width: 290px;
+  margin-top: 0;
+  font-size: 12pt;
+  padding-left: 20px;
+  background-color: #fff;
 }
 
 .num-input {
-	width: 290px;
-	padding-left: 20px;
-	background-color:#fff;
+  width: 290px;
+  padding-left: 20px;
+  background-color: #fff;
 }
 
-.num-input label { 
-	font-size: 12pt;
-	font-weight: 400;
+.num-input label {
+  font-size: 12pt;
+  font-weight: 400;
 }
 
 .num-input input {
-	width: 40px; 
-	text-align: right;
+  width: 40px;
+  text-align: right;
 }
 </style>

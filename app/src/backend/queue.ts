@@ -70,6 +70,7 @@ function downloadTask(task: any, callback: any) {
 
   task._rawFile.started = true;
   let process = (window as any).dx.downloadDxFile(
+    task.token,
     task.remote_location,
     task.name,
     task.raw_size,
@@ -83,7 +84,7 @@ function downloadTask(task: any, callback: any) {
       });
 
       handleFileFinish(error, result, task, callback);
-    }
+    },
   );
 
   (window as any).VueApp.$store.commit('addOperationProcess', {
@@ -104,6 +105,7 @@ function uploadTask(task: any, callback: any) {
 
   task._rawFile.started = true;
   let process = (window as any).dx.uploadFile(
+    task.token,
     task._rawFile,
     task.remote_location,
     (progress: any) => {
@@ -117,7 +119,7 @@ function uploadTask(task: any, callback: any) {
       });
 
       handleFileFinish(error, result, task, callback);
-    }
+    },
   );
 
   (window as any).VueApp.$store.commit('addOperationProcess', {
@@ -137,6 +139,7 @@ function toolInfoTask(task: any, callback: any) {
   log('Tool info task: ', task);
 
   (window as any).dx.describeDXItem(
+    task.token,
     task._rawTool.dx_location,
     (err: any, describe: any) => {
       if (err || !describe) {
@@ -170,10 +173,10 @@ function toolInfoTask(task: any, callback: any) {
 
       task._rawTool.size = (window as any).utils.readableFileSize(
         dataUsage,
-        true
+        true,
       );
       return callback(null, describe);
-    }
+    },
   );
 }
 
@@ -185,7 +188,7 @@ let workQueue = async.priorityQueue((task: any, callback: any) => {
   } else {
     toolInfoTask(task, callback);
   }
-}, 2);
+});
 
 workQueue.drain = function() {
   log('The queue is now empty and awaiting more tasks.');
@@ -254,4 +257,8 @@ export function removeAllTaskOfType(type: string) {
   workQueue.remove(function(task: any) {
     return task.data.type === type;
   });
+}
+
+export function setConcurrentOperations(concurrency: number) {
+  workQueue.concurrency = concurrency;
 }

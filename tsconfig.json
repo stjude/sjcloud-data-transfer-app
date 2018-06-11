@@ -1,10 +1,13 @@
 {
   "compilerOptions": {
+    "lib": ["es6", "dom"],
     "moduleResolution": "node",
     "pretty": true,
     "noImplicitAny": true,
     "module": "commonjs",
     "target": "es6",
     "allowJs": true
-  }
+  },
+  "include": ["app/src/**/*.ts"],
+  "exclude": ["node_modules", "**/*.spec.ts"]
 }

@@ -9,7 +9,7 @@
  *
  *    - result: any = result of the task.
  */
-export type ResultCallback = (result: any) => void;
+export type ResultCallback<T = any> = (result: T) => void;
 
 /**
  * Callback used when we are reporting only an error.
@@ -32,21 +32,9 @@ export type ProgressCallback = (percent: number, status: string) => void;
  *    - results: any = null on failure, object on success.
  */
 
-export type SuccessCallback = (error: any, result: any) => void;
-
-/**
- * Callback that is the common interface used by NodeJS command
- * functions (exec, spawn, etc).
- *
- *    - error: any     = Error object on failure, null on success.
- *    - stdout: string = STDOUT of the process
- *    - stderr: string = STDERR of the process
- */
-
-export type CommandCallback = (
-  error: any,
-  stdout: string,
-  stderr: string
+export type SuccessCallback<T = any> = (
+  error: Error | null,
+  result: T | null,
 ) => void;
 
 /**
@@ -86,9 +74,4 @@ export interface SJDTAProject {
   project_name: string;
   dx_location: string;
   access_level: string;
-}
-
-export interface DownloadInfo {
-  URL: string;
-  SHA256SUM: string;
 }
