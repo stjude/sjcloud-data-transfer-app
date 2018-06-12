@@ -34,7 +34,6 @@ export function startUpdateClient() {
 
     electron.autoUpdater.on('error', (error: any) => {
       logging.error(error);
-      reportBug(error);
     });
 
     electron.autoUpdater.on('checking-for-update', () => {
