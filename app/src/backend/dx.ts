@@ -106,6 +106,11 @@ export const describeDXItem = async (
   }
 };
 
+interface QueryBoundary {
+  id: string;
+  project: string;
+}
+
 /**
  * List all of the files available in a DNAnexus project.
  *
@@ -127,26 +132,37 @@ export const listDownloadableFiles = async (
 
   const client = new Client(token);
 
-  const options = {
-    describe: {
-      fields: {
-        name: true,
-        size: true,
-      },
-    },
-    scope: {
-      project: projectId,
-    },
-    state: DataObjectState.Closed,
-    tags: !allFiles ? config.DOWNLOADABLE_TAG : undefined,
-  };
+  let files: IDataObject[] = [];
+  let next: QueryBoundary | null = null;
 
-  try {
-    let { results } = await client.system.findDataObjects(options);
-    cb(null, results);
-  } catch (e) {
-    cb(e, null);
-  }
+  do {
+    const options = {
+      describe: {
+        fields: {
+          name: true,
+          size: true,
+        },
+      },
+      scope: {
+        project: projectId,
+      },
+      state: DataObjectState.Closed,
+      tags: !allFiles ? config.DOWNLOADABLE_TAG : undefined,
+      starting: next ? next : undefined,
+    };
+
+    try {
+      let { results, next: boundary } = await client.system.findDataObjects(
+        options,
+      );
+      files = files.concat(results);
+      next = boundary as QueryBoundary | null;
+    } catch (e) {
+      cb(e, null);
+    }
+  } while (next);
+
+  cb(null, files);
 };
 
 /**
