@@ -10,10 +10,10 @@
           {{ percentText }}
         </span>
       </div>
-			<q-spinner-oval :size='110' style='color: #1381B3'/>
+			<q-spinner-oval :size='110' style='color: #1874dc'/>
 		</div>
     <div v-else class='spinner-wrapper-no-text'>
-      <q-spinner-oval :size='55' style='color: #1381B3'/>
+      <q-spinner-oval :size='55' style='color: #1874dc'/>
     </div>
 		<div class="loading-text"
          v-bind:style='textStyle'>
@@ -89,6 +89,6 @@ export default {
   font-size: 30px;
   line-height: 110px;
   vertical-align: middle;
-  color: #1381B3;
+  color: #1874dc;
 }
 </style>

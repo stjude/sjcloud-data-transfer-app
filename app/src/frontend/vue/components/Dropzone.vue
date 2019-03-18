@@ -68,8 +68,8 @@ export default {
   width: 540px;
   border-radius: 15px;
   font-size: 30px;
-  -webkit-transition: border .5s;
-  transition: border .5s;
+  -webkit-transition: border 0.5s;
+  transition: border 0.5s;
 }
 
 .dropzone-content-container {
@@ -77,8 +77,8 @@ export default {
   left: 75px;
   top: 275px;
   height: 60px;
-  -webkit-transition: color .5s;
-  transition: color .5s;
+  -webkit-transition: color 0.5s;
+  transition: color 0.5s;
 }
 
 .dropzone-container-text {

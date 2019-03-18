@@ -20,10 +20,9 @@
 </template>
 
 <script>
-
 const active={
-	color:'#000', 
-	'border-bottom':'2px solid #1381b3'
+	color:'#000',
+	'border-bottom': '2px solid #1874dc',
 }
 
 const inactive={

@@ -70,7 +70,7 @@ export default {
         activeTd: {
           width: "30%",
           "text-align": "right",
-          "border-right": "4px solid #1381B3"
+          "border-right": "4px solid #1874dc"
         },
         inactiveTd: {
           width: "30%",
