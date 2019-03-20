@@ -27,7 +27,7 @@ export default {
 
 <style scoped>
 .info-icon {
-  color: #018dc4;
+  color: #2f82df;
   cursor: pointer;
   margin-top: -5px;
 }

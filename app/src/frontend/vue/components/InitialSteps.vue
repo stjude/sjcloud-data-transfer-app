@@ -133,7 +133,7 @@ export default {
 }
 
 .footer .progress-bar {
-  background-color: #158cba;
+  background-color: #1874dc;
 }
 
 .progress-bar-div {
@@ -146,7 +146,7 @@ export default {
   z-index: 1;
   height: 45px;
   width: 45px;
-  border: 3px solid #1381b3;
+  border: 3px solid #1874dc;
   border-radius: 25px;
   line-height: 40px;
   font-size: 26px;
@@ -155,17 +155,17 @@ export default {
 
 .footer .progress-node-active {
   color: #ffffff;
-  background-color: #158cba;
+  background-color: #1874dc;
 }
 
 .footer .progress-node-nonactive {
-  color: #158cba;
+  color: #1874dc;
   background-color: #ffffff;
 }
 
 .footer .progress-text span {
   position: absolute;
-  color: #158cba;
+  color: #1874dc;
   font-size: 16pt;
 }
 

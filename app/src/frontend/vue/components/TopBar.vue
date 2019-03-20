@@ -57,11 +57,11 @@ export default {
 <style scoped>
 .sjcda-top-bar {
 	/* background-color: #2A8BB6; */
-	background-color: #1381B3;
+	background-color: #1874dc;
 	border-width: 3px;
 	border-style: solid;
-	border-color: #1381B3;
-	color: #FFFFFF;
+	border-color: #1874dc;
+	color: #ffffff;
 	cursor: default;
 	display: inline-block; 
 	font-family: "Open Sans", "Lato", "Helvetica Neue", Helvetica, Arial, sans-serif;
@@ -83,7 +83,7 @@ export default {
   padding: 5px;
   padding-right: 8px;
 	height: 47px;
-  border-right: 1px solid #7DBAD5;
+	border-right: 1px solid #a3c7f1;
 }
 
 .sjcda-title-container {
@@ -98,7 +98,7 @@ export default {
 
 .title-font-thin {
   font-weight: 300;
-  color: #A1CDE1;
+  color: #b9d5f4;
 }
 
 .tour-prompt {
