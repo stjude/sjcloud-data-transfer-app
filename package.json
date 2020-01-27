@@ -75,7 +75,7 @@
     "karma-chrome-launcher": "^2.2.0",
     "karma-jasmine": "^1.1.0",
     "karma-webpack": "^2.0.4",
-    "lodash": "^4.17.4",
+    "lodash": "^4.17.13",
     "merge-stream": "^1.0.1",
     "mkdirp": "^0.5.1",
     "moment": "^2.19.3",
