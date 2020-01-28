@@ -7,6 +7,8 @@ coverage/*
 !app/bin/.gitkeep
 **/.DS_Store
 .tmp/*
+yarn.lock
+.python-version
 
 # developer specific symlink to [project-path/]test/testdata 
 
