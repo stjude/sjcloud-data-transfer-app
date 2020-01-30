@@ -60,7 +60,7 @@
     "expand-home-dir": "0.0.3",
     "express": "^4.17.1",
     "glob-to-regexp": "^0.3.0",
-    "gulp": "^3.9.1",
+    "gulp": "^4.0.2",
     "gulp-clean": "^0.3.2",
     "gulp-jasmine": "^2.4.2",
     "gulp-jsdoc3": "^1.0.1",
