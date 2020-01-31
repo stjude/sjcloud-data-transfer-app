@@ -2,7 +2,7 @@ const path = require('path');
 const webpack = require('webpack');
 const WebpackNotifierPlugin = require('webpack-notifier');
 const BrowserSyncPlugin = require('browser-sync-webpack-plugin');
-const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const ExtractTextPlugin = require('extract-text-webpack-plugin');
 
 module.exports = {
   module: {
@@ -14,10 +14,6 @@ module.exports = {
       {
         test: /\.css$/,
         use: [{ loader: 'style-loader' }, { loader: 'css-loader' }],
-      },
-      {
-        test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
         test: /\.js$/,
@@ -44,6 +40,14 @@ module.exports = {
         test: /\.(ttf|eot|svg)(\?v=[0-9]\.[0-9]\.[0-9])?$/,
         loader: 'file-loader',
       },
+      {
+        // KEEP THIS AS LAST RULE, will be modified in karma.conf.js
+        test: /\.less$/,
+        use: ExtractTextPlugin.extract({
+          fallback: 'style-loader',
+          use: 'css-loader!less-loader',
+        }),
+      },
     ],
   },
   resolve: {
@@ -66,18 +70,6 @@ module.exports = {
     jsonpFunction: 'sjcdappJsonp',
   },
   devtool: 'source-map',
-  optimization: {
-    splitChunks: {
-      cacheGroups: {
-        commons: {
-          chunks: 'initial',
-          minChunks: 3,
-          name: 'commons',
-          enforce: true,
-        },
-      },
-    },
-  },
   plugins: [
     new webpack.DefinePlugin({
       'process.env': {
@@ -85,7 +77,13 @@ module.exports = {
       },
     }),
     new webpack.optimize.ModuleConcatenationPlugin(),
-    new MiniCssExtractPlugin(),
+    new webpack.optimize.CommonsChunkPlugin({
+      name: 'vendor',
+      filename: 'vendor.bundle.js',
+    }),
+    new ExtractTextPlugin({
+      filename: 'app.bundle.css',
+    }),
     new BrowserSyncPlugin({
       host: 'localhost',
       port: 3057,

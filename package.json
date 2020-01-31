@@ -92,7 +92,7 @@
     "todc-bootstrap": "^3.3.7-3.3.13",
     "tree-kill": "^1.2.2",
     "vue-tippy": "^0.2.8",
-    "webpack": "^4.41.5",
+    "webpack": "^3.8.1",
     "webpack-target-electron-renderer": "^0.4.0",
     "winston": "^2.4.4"
   },
@@ -142,7 +142,6 @@
     "less": "^2.7.2",
     "less-loader": "^4.0.5",
     "lint-staged": "^6.0.0",
-    "mini-css-extract-plugin": "^0.9.0",
     "null-loader": "^0.1.1",
     "nyc": "^11.9.0",
     "style-loader": "^0.18.2",
