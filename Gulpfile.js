@@ -68,12 +68,14 @@ gulp.task('clean:app', gulp.series('clean:app:bin'));
 
 gulp.task('clean', gulp.parallel('clean:tmp', 'clean:app:bin'));
 
-gulp.task('env:set-test', () => {
+gulp.task('env:set-test', done => {
   process.env.NODE_ENV = 'testing';
+  done();
 });
 
-gulp.task('env:set-default', () => {
+gulp.task('env:set-default', done => {
   process.env.NODE_ENV = DEFAULT_ENV;
+  done();
 });
 
 //--------build.js--------
@@ -142,9 +144,10 @@ gulp.task(
 );
 gulp.task('compile', gulp.parallel('compile:frontend', 'compile:backend'));
 
-gulp.task('watch', () => {
+gulp.task('watch', done => {
   gulp.watch(sources.frontend, gulp.series('compile:frontend'));
   gulp.watch(sources.backend, gylp.series('compile:backend'));
+  done();
 });
 
 /**
@@ -172,7 +175,7 @@ gulp.task(
   }),
 );
 
-gulp.task('docs:serve', () => {
+gulp.task('docs:serve', done => {
   gulp.src('docs').pipe(
     serve({
       livereload: true,
@@ -180,6 +183,7 @@ gulp.task('docs:serve', () => {
       port: 8080,
     }),
   );
+  done();
 });
 
 gulp.task('docs', gulp.series('docs:build', 'docs:serve'));
@@ -298,7 +302,7 @@ gulp.task('test', gulp.series('test:frontend', 'test:backend'));
 
 //------------Gulpfile.js--------------
 
-gulp.task('default', () => {
+gulp.task('default', done => {
   gulpUtil.log('Commands you might be interested in:');
   gulpUtil.log('');
   gulpUtil.log('  == General ==');
@@ -333,4 +337,5 @@ gulp.task('default', () => {
     '    gulp docs:serve   , Build documentation then serve at localhost:8080.',
   );
   gulpUtil.log('');
+  done();
 });
