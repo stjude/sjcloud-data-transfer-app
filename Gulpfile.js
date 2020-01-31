@@ -33,7 +33,9 @@ const DEFAULT_ENV = process.env.NODE_ENV || 'production';
  */
 
 gulp.task('clean:tmp:test:frontend', () =>
-  gulp.src('.tmp/test/frontend', { read: false }).pipe(clean()),
+  gulp
+    .src('.tmp/test/frontend', { allowEmpty: true }, { read: false })
+    .pipe(clean()),
 );
 gulp.task('clean:tmp:test:backend', () =>
   gulp
@@ -51,10 +53,14 @@ gulp.task('clean:tmp', gulp.series('clean:tmp:test'));
  */
 
 gulp.task('clean:app:bin:frontend', () =>
-  gulp.src('app/bin/frontend', { read: false }).pipe(clean()),
+  gulp
+    .src('app/bin/frontend', { allowEmpty: true }, { read: false })
+    .pipe(clean()),
 );
 gulp.task('clean:app:bin:backend', () =>
-  gulp.src('app/bin/backend', { read: false }).pipe(clean()),
+  gulp
+    .src('app/bin/backend', { allowEmpty: true }, { read: false })
+    .pipe(clean()),
 );
 gulp.task(
   'clean:app:bin',
@@ -93,48 +99,53 @@ const sources = {
 
 gulp.task(
   'compile:frontend:source',
-  gulp.series('clean:app:bin:frontend', callback => {
-    const wpInstance = webpack(webpackConfig);
-    wpInstance.run(err => {
-      if (err) {
-        return callback(err);
-      }
-      return callback();
-    });
-  }),
+  gulp.series(
+    (compileFrontendSourceCB = callback => {
+      const wpInstance = webpack(webpackConfig);
+      wpInstance.run(err => {
+        if (err) {
+          return callback(err);
+        }
+        return callback();
+      });
+    }),
+  ),
 );
 
 gulp.task(
   'compile:frontend:spec',
-  gulp.series('clean:tmp:test:frontend', () =>
-    gulp
-      .src('app/src/frontend/spec/*.js')
-      .pipe(gulp.dest('.tmp/test/frontend/')),
+  gulp.series(
+    (compileFrontendSpecCB = () =>
+      gulp
+        .src('app/src/frontend/spec/*.js')
+        .pipe(gulp.dest('.tmp/test/frontend/'))),
   ),
 );
 
 gulp.task(
   'compile:frontend',
-  gulp.parallel('compile:frontend:source', 'compile:frontend:spec'),
+  gulp.series('compile:frontend:source', 'compile:frontend:spec'),
 );
 
 gulp.task(
   'compile:backend:source',
-  gulp.series('clean:app:bin:backend', () =>
-    gulp
-      .src('app/src/backend/**/*.ts')
-      .pipe(typescript.createProject(TS_CONFIG_PATH)())
-      .pipe(gulp.dest('app/bin/backend')),
+  gulp.series(
+    (compileBackendSourceCB = () =>
+      gulp
+        .src('app/src/backend/**/*.ts')
+        .pipe(typescript.createProject(TS_CONFIG_PATH)())
+        .pipe(gulp.dest('app/bin/backend'))),
   ),
 );
 
 gulp.task(
   'compile:backend:spec',
-  gulp.series('clean:tmp:test:backend', () =>
-    gulp
-      .src('app/src/backend/spec/*.ts')
-      .pipe(typescript.createProject(TS_CONFIG_PATH)())
-      .pipe(gulp.dest('.tmp/test/backend/')),
+  gulp.series(
+    (compileBackendSpecCB = () =>
+      gulp
+        .src('app/src/backend/spec/*.ts')
+        .pipe(typescript.createProject(TS_CONFIG_PATH)())
+        .pipe(gulp.dest('.tmp/test/backend/'))),
   ),
 );
 
@@ -142,11 +153,14 @@ gulp.task(
   'compile:backend',
   gulp.parallel('compile:backend:source', 'compile:backend:spec'),
 );
-gulp.task('compile', gulp.parallel('compile:frontend', 'compile:backend'));
+gulp.task(
+  'compile',
+  gulp.series('clean', gulp.parallel('compile:frontend', 'compile:backend')),
+);
 
 gulp.task('watch', done => {
   gulp.watch(sources.frontend, gulp.series('compile:frontend'));
-  gulp.watch(sources.backend, gylp.series('compile:backend'));
+  gulp.watch(sources.backend, gulp.series('compile:backend'));
   done();
 });
 
@@ -156,6 +170,7 @@ gulp.task('watch', done => {
 gulp.task(
   'develop',
   gulp.series(
+    'clean',
     gulp.parallel('watch', 'compile:frontend', 'compile:backend'),
     () => {
       gulpUtil.log('Initial compilation complete!');
@@ -168,7 +183,7 @@ gulp.task(
 
 gulp.task(
   'docs:build',
-  gulp.series('compile:backend', callback => {
+  gulp.series('clean', 'compile:backend', callback => {
     gulp
       .src(['README.md', 'app/bin/backend/**/*.js'], { read: false })
       .pipe(jsdoc({ opts: { destination: './docs' } }, callback));
@@ -280,13 +295,11 @@ gulp.task('test:frontend:no-compile', testFrontend);
 gulp.task('test:backend:no-compile', testBackend);
 gulp.task(
   'test:frontend',
-  gulp.series('env:set-test', 'compile:frontend'),
-  testFrontend,
+  gulp.series(gulp.series('env:set-test', 'compile:frontend'), testFrontend),
 );
 gulp.task(
   'test:backend',
-  gulp.series('env:set-test', 'compile:backend'),
-  testBackend,
+  gulp.series(gulp.series('env:set-test', 'compile:backend'), testBackend),
 );
 gulp.task('test:frontend:watch', () =>
   gulp.watch(sources.frontend, gulp.series('test:frontend')),
@@ -298,7 +311,10 @@ gulp.task(
   'test:watch',
   gulp.parallel('test:frontend:watch', 'test:backend:watch'),
 );
-gulp.task('test', gulp.series('test:frontend', 'test:backend'));
+gulp.task(
+  'test',
+  gulp.series('clean', gulp.series('test:backend', 'test:frontend')),
+);
 
 //------------Gulpfile.js--------------
 
