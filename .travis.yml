@@ -19,6 +19,7 @@ before_install:
       brew update;
       brew outdated python2 || brew upgrade python2;
     fi;
+  - npm cache verify
 install:
   - npm ci
 after_success: 
