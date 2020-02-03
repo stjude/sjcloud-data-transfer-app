@@ -4,7 +4,7 @@ os:
   - linux
 language: node_js
 node_js:
-  - "9"
+  - "13.7.0"
 addons:
   chrome: stable
   apt:
