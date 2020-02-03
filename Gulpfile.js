@@ -283,7 +283,7 @@ function runKarma(options, callback) {
 
 const testFrontend = done => {
   gulpUtil.log('');
-  return runKarma({ singleRun: true }, done);
+  runKarma({ singleRun: true }, done);
 };
 
 const testBackend = () => {
