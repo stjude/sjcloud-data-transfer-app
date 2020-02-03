@@ -3,7 +3,7 @@ os:
   - linux
 language: node_js
 node_js:
-  - "13.7.0"
+  - "10"
 addons:
   chrome: stable
   apt:
