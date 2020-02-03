@@ -21,6 +21,7 @@ before_install:
       brew outdated python2 || brew upgrade python2;
     fi;
 install:
+  - npm cache verify
   - npm i
 after_success: 
   - if [[ "$TRAVIS_OS_NAME" == "linux" ]]; then
