@@ -19,6 +19,6 @@ jobs:
       with:
         node-version: ${{ matrix.node-version }}
     - run: npm install
-    - run: npx nyc gulp test
+    - run: npm test
       env:
         CI: true
