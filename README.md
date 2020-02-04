@@ -2,10 +2,10 @@
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fstjude%2Fsjcloud-data-transfer-app.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fstjude%2Fsjcloud-data-transfer-app?ref=badge_shield)
 
-| **Branch**  | **Version** | **Unix CI**                                                              | **Windows CI**                                                             | **Coverage**                                                              |
-| ----------- | ----------- | ------------------------------------------------------------------------ | -------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| Master      | v1.5.0      | [![Build Status][travis-master-ci-svg]][travis-master-ci-link]           | [![Build status][windows-master-ci-svg]][windows-master-ci-link]           | [![Coverage Status][coverage-master-svg]][coverage-master-link]           |
-| Development | v1.5.0      | [![Build Status][travis-development-ci-svg]][travis-development-ci-link] | [![Build status][windows-development-ci-svg]][windows-development-ci-link] | [![Coverage Status][coverage-development-svg]][coverage-development-link] |
+| **Branch**  | **Version** | **CI**                                                                                                                                                                                  | **Coverage**                                                    |
+| ----------- | ----------- | ------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------------------------ | --------------------------------------------------------------- |
+| Master      | v1.5.0      | [![Actions Status](https://github.com/stjude/sjcloud-data-transfer-app/workflows/nodejs.yml/badge.svg?branch=master)](https://github.com/stjude/sjcloud-data-transfer-app/actions)      | [![Coverage Status][coverage-master-svg]][coverage-master-link] |
+| Development | v1.5.0      | [![Actions Status](https://github.com/stjude/sjcloud-data-transfer-app/workflows/nodejs.yml/badge.svg?branch=development)](https://github.com/stjude/sjcloud-data-transfer-app/actions) | [![Coverage Status][coverage-development-svg]][coverage-development-link] |
 
 A desktop application written on top of the [Electron Framework](https://electron.atom.io/) facilitating easy uploading and downloading of genomic data to the St. Jude Cloud. Functionality includes:
 
