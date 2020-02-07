@@ -118,7 +118,7 @@
     "codecov": "^3.6.4",
     "coveralls": "^3.0.9",
     "cross-env": "^5.2.1",
-    "css-loader": "^0.28.4",
+    "css-loader": "^3.4.2",
     "d3-selection": "^1.4.1",
     "electron": "^2.0.18",
     "electron-builder": "20.14.7",
