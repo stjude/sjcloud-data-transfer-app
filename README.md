@@ -5,7 +5,7 @@
 | Branch | Version | CI | Coverage |
 | ------ | ------- | -- | -------- |
 | Master | v1.5.0  | ![Node.js CI](https://github.com/stjude/sjcloud-data-transfer-app/workflows/Node.js%20CI/badge.svg?branch=master) | [![Coverage Status][coverage-master-svg]][coverage-master-link] |
-| Development | v1.5.0 | ![Node.js CI](https://github.com/stjude/sjcloud-data-transfer-app/workflows/Node.js%20CI/badge.svg?branch=development) | [![Coverage Status][coverage-development-svg]][coverage-development-link] |
+| Development | v1.5.1 | ![Node.js CI](https://github.com/stjude/sjcloud-data-transfer-app/workflows/Node.js%20CI/badge.svg?branch=development) | [![Coverage Status][coverage-development-svg]][coverage-development-link] |
 
 A desktop application written on top of the [Electron Framework](https://electron.atom.io/) facilitating easy uploading and downloading of genomic data to the St. Jude Cloud. Functionality includes:
 
