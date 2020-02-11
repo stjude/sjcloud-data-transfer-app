@@ -2,13 +2,10 @@
 
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fstjude%2Fsjcloud-data-transfer-app.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fstjude%2Fsjcloud-data-transfer-app?ref=badge_shield)
 
-## Master build status and coverage
-![Node.js CI](https://github.com/stjude/sjcloud-data-transfer-app/workflows/Node.js%20CI/badge.svg?branch=master)
-[![Coverage Status][coverage-master-svg]][coverage-master-link]
-
-## Development build status and coverage
-![Node.js CI](https://github.com/stjude/sjcloud-data-transfer-app/workflows/Node.js%20CI/badge.svg?branch=development)
-[![Coverage Status][coverage-development-svg]][coverage-development-link]
+| Branch | Version | CI | Coverage |
+| ------ | ------- | -- | -------- |
+| Master | v1.5.0  | ![Node.js CI](https://github.com/stjude/sjcloud-data-transfer-app/workflows/Node.js%20CI/badge.svg?branch=master) | [![Coverage Status][coverage-master-svg]][coverage-master-link] |
+| Development | v1.5.0 | ![Node.js CI](https://github.com/stjude/sjcloud-data-transfer-app/workflows/Node.js%20CI/badge.svg?branch=development) | [![Coverage Status][coverage-development-svg]][coverage-development-link] |
 
 A desktop application written on top of the [Electron Framework](https://electron.atom.io/) facilitating easy uploading and downloading of genomic data to the St. Jude Cloud. Functionality includes:
 
