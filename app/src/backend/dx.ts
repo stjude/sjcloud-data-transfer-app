@@ -403,7 +403,7 @@ class UploadTransfer {
         // be available if the request successfully started.
         const r: any = this.request;
         const { bytesWritten } = r.req.connection;
-        const percent = (this.bytesRead + bytesWritten) / this.size * 100;
+        const percent = ((this.bytesRead + bytesWritten) / this.size) * 100;
         this.progressCb(percent);
       });
 

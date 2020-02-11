@@ -4,12 +4,13 @@ on: [push]
 
 jobs:
   build:
-
-    runs-on: ubuntu-latest
-
     strategy:
+      fail-fast: false
       matrix:
-        node-version: [13.7.0]
+        node-version: [12.14.1]
+        platform: [ubuntu-latest, macos-latest, windows-latest]
+
+    runs-on: ${{ matrix.platform }}
 
     steps:
     - uses: actions/checkout@v2
@@ -17,7 +18,7 @@ jobs:
       uses: actions/setup-node@v1
       with:
         node-version: ${{ matrix.node-version }}
-    - run: npm install
-    - run: npx nyc gulp test
+    - run: npm ci
+    - run: npm test
       env:
         CI: true

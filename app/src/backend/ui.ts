@@ -9,10 +9,10 @@ import config from './config';
 import { getEnv, isProduction } from './env';
 
 const resetSession = (session: Electron.Session): Promise<void> => {
-  return new Promise((resolve) => {
+  return new Promise(resolve => {
     session.clearStorageData({}, () => {
       resolve();
-    })
+    });
   });
 };
 

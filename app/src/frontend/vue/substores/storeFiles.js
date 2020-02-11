@@ -203,9 +203,7 @@ function sortFiles(state, files) {
 function toolError(tool, state) {
   if (!tool || !tool[state.currPath]) {
     console.error(
-      `Invalid tool name '${state.currToolName}' and/or path='${
-        state.currPath
-      }'.`,
+      `Invalid tool name '${state.currToolName}' and/or path='${state.currPath}'.`,
     );
     return true;
   }
