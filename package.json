@@ -62,6 +62,7 @@
     "glob-to-regexp": "^0.3.0",
     "gulp": "^4.0.2",
     "gulp-clean": "^0.3.2",
+    "gulp-hub": "^4.2.0",
     "gulp-jasmine": "^2.4.2",
     "gulp-jsdoc3": "^1.0.1",
     "gulp-serve": "^1.4.0",
