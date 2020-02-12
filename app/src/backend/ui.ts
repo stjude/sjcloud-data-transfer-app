@@ -95,7 +95,7 @@ export async function createOAuthWindow(
   loginWindow.webContents.on(
     'did-get-redirect-request',
     (event: Electron.Event, oldURL: string, newURL: string) => {
-      const codeRegex = /https:\/\/platform.dnanexus.com\/login/g;
+      const codeRegex = /https:\/\/platform.dnanexus.com\/login\?code/g;
       const match = codeRegex.exec(newURL);
       if (match != null) {
         event.preventDefault();
