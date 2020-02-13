@@ -24,6 +24,9 @@ If you'd like to build yourself, you'll also need the following prerequisites in
 | -------- | ----------------------------------------------------------------------------------------------------------------- |
 | NodeJS   | [Using NVM](https://github.com/creationix/nvm#install-script) or [Official Site](https://nodejs.org/en/download/) |
 
+You must use version 12 of NodeJS and version 6 of NPM. We recommend installing NVM, then running `nvm install 12`.
+This will handle installing both the correct Node version and the correct NPM version.
+
 ### Process
 
 The process for installing the software in production mode:
