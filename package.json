@@ -55,7 +55,7 @@
   "dependencies": {
     "async": "^2.6.3",
     "bootstrap": "^3.4.1",
-    "bootstrap-tour": "^0.11.0",
+    "bootstrap-tourist": "^0.3.2",
     "cross-fetch": "^2.2.3",
     "expand-home-dir": "0.0.3",
     "express": "^4.17.1",
