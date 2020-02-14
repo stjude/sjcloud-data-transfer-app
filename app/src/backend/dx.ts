@@ -125,6 +125,7 @@ export const listDownloadableFiles = async (
   allFiles: boolean,
   cb: SuccessCallback<IDataObject[]>,
 ) => {
+  // TODO do not list viewer shortcuts
   if (!projectId) {
     cb(new Error('projectId cannot be empty'), null);
     return;
@@ -196,7 +197,11 @@ export const downloadDxFile = async (
   try {
     const { url, headers } = await client.file.download(fileId);
 
-    const req = request(url, { headers }, (error: any, response: any) => {
+    const req = request({ url, headers }, (error: any, response: any) => {
+      console.log('inside request CB error:');
+      console.log(error);
+      console.log('inside request CB response:');
+      console.log(response);
       if (error) {
         finishedCb(error, null);
       } else {
@@ -208,14 +213,20 @@ export const downloadDxFile = async (
       finishedCb(new Error('download aborted'), null);
     });
 
-    progress(req).on('progress', (state: any) => {
-      updateCb(state.percent * 100);
-    });
-
+    progress(req)
+      .on('progress', (state: any) => {
+        updateCb(state.percent * 100);
+      })
+      .on('end', () => {
+        console.log('download ended');
+      });
+    console.log('before req.pipe');
     req.pipe(writer);
-
+    console.log('returning req');
     return req;
   } catch (e) {
+    console.log('caught error:');
+    console.log(e);
     finishedCb(e, null);
     return null;
   }
