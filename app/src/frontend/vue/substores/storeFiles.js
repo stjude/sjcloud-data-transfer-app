@@ -115,21 +115,35 @@ export default function(ref) {
           }
           let process = null;
           if (state.currPath === 'upload') {
-            process = state.operationProcesses[elem.path];
+            process = state.operationUploadProcesses[elem.path];
+            if (process) {
+              console.log(process);
+              Promise.resolve(process).then(p => {
+                console.log(p);
+                if ('abort' in p && typeof p.abort === 'function') {
+                  p.abort();
+                } else {
+                  ref.backend.utils.killProcess(p.pid);
+                }
+              });
+            } else {
+              console.error('Process does not exist!');
+            }
           } else if (state.currPath === 'download') {
-            process = state.operationProcesses[elem.dx_location];
-          }
-
-          if (process) {
-            Promise.resolve(process).then(p => {
-              if ('abort' in p && typeof p.abort === 'function') {
-                p.abort();
-              } else {
-                ref.backend.utils.killProcess(p.pid);
-              }
-            });
-          } else {
-            console.error('Process does not exist!');
+            process = state.operationDownloadProcesses[elem.dx_location];
+            if (process) {
+              console.log(process);
+              Promise.resolve(process).then(p => {
+                console.log(p);
+                if ('cancel' in p && typeof p.abort === 'function') {
+                  p.cancel();
+                } else {
+                  ref.backend.utils.killProcess(p.pid);
+                }
+              });
+            } else {
+              console.error('Process does not exist!');
+            }
           }
         });
         let currPath = state.currPath;

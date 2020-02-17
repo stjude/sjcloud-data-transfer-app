@@ -22,8 +22,9 @@ import {
 import { SuccessCallback, ResultCallback, SJDTAFile } from './types';
 import config from './config';
 
-const progress = require('request-progress');
 const expandHomeDir = require('expand-home-dir');
+const axios = require('axios');
+axios.defaults.adapter = require('axios/lib/adapters/http');
 
 /**
  * Runs a command to determine if we are logged in to DNAnexus.
@@ -186,8 +187,8 @@ export const downloadDxFile = async (
   _fileRawSize: number,
   downloadLocation: string,
   updateCb: ResultCallback<number>,
-  finishedCb: SuccessCallback<request.Response>,
-): Promise<request.Request | null> => {
+  finishedCb: SuccessCallback<any>,
+): Promise<any | null> => {
   const outputPath = expandHomeDir(path.join(downloadLocation, fileName));
   const fileId = remoteFileId.split(':')[1];
 
@@ -195,38 +196,36 @@ export const downloadDxFile = async (
   const writer = fs.createWriteStream(outputPath);
 
   try {
+    const CancelToken = axios.CancelToken;
+    const source = CancelToken.source();
     const { url, headers } = await client.file.download(fileId);
-
-    const req = request({ url, headers }, (error: any, response: any) => {
-      console.log('inside request CB error:');
-      console.log(error);
-      console.log('inside request CB response:');
-      console.log(response);
-      if (error) {
-        finishedCb(error, null);
-      } else {
-        finishedCb(null, response);
-      }
-    });
-
-    req.on('abort', () => {
-      finishedCb(new Error('download aborted'), null);
-    });
-
-    progress(req)
-      .on('progress', (state: any) => {
-        updateCb(state.percent * 100);
+    axios({
+      url,
+      headers: headers,
+      responseType: 'stream',
+      cancelToken: source.token,
+    })
+      .then(function(response: any) {
+        const stream = response.data;
+        const totalSize = response.headers['content-length'];
+        var downloaded = 0;
+        stream.on('data', (data: any) => {
+          downloaded += Buffer.byteLength(data);
+          updateCb((downloaded * 100) / totalSize);
+        });
+        stream.pipe(writer);
+        stream.on('end', () => {
+          finishedCb(null, response);
+        });
+        console.log(source);
+        return new Promise((resolve, reject) => {
+          resolve(source);
+        });
       })
-      .on('end', () => {
-        console.log('download ended');
+      .catch(function(error: any) {
+        finishedCb(error, null);
       });
-    console.log('before req.pipe');
-    req.pipe(writer);
-    console.log('returning req');
-    return req;
   } catch (e) {
-    console.log('caught error:');
-    console.log(e);
     finishedCb(e, null);
     return null;
   }
