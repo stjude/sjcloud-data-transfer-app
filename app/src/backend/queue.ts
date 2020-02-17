@@ -69,7 +69,7 @@ async function downloadTask(task: any, callback: any) {
   log('Starting download task: ', task);
 
   task._rawFile.started = true;
-  (window as any).dx
+  await (window as any).dx
     .downloadDxFile(
       task.token,
       task.remote_location,
@@ -86,12 +86,19 @@ async function downloadTask(task: any, callback: any) {
         handleFileFinish(error, result, task, callback);
       },
     )
-    .then(function(response: any) {
-      console.log(response);
-      (window as any).VueApp.$store.commit('addOperationDownloadProcess', {
-        filename: task.remote_location,
-        cancelToken: response,
-      });
+    .then(
+      (response: any) => {
+        (window as any).VueApp.$store.commit('addOperationDownloadProcess', {
+          filename: task.remote_location,
+          cancelToken: response,
+        });
+      },
+      (err: any) => {
+        console.log('random error: ', err);
+      },
+    )
+    .catch((e: any) => {
+      console.log('random e: ', e);
     });
 }
 

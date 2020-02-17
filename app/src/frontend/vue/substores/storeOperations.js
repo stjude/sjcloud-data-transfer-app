@@ -77,7 +77,6 @@ export default function(ref) {
         delete state.operationUploadProcesses[info.filename];
       },
       addOperationDownloadProcess(state, info) {
-        console.log(info);
         state.operationDownloadProcesses[info.filename] = info.cancelToken;
       },
       removeOperationDownloadProcess(state, info) {

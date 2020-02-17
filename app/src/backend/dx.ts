@@ -199,7 +199,7 @@ export const downloadDxFile = async (
     const CancelToken = axios.CancelToken;
     const source = CancelToken.source();
     const { url, headers } = await client.file.download(fileId);
-    axios({
+    return axios({
       url,
       headers: headers,
       responseType: 'stream',
@@ -217,7 +217,6 @@ export const downloadDxFile = async (
         stream.on('end', () => {
           finishedCb(null, response);
         });
-        console.log(source);
         return new Promise((resolve, reject) => {
           resolve(source);
         });

@@ -114,6 +114,7 @@ export default function(ref) {
             elem.errored = true;
           }
           let process = null;
+          let cancelToken = null;
           if (state.currPath === 'upload') {
             process = state.operationUploadProcesses[elem.path];
             if (process) {
@@ -130,19 +131,14 @@ export default function(ref) {
               console.error('Process does not exist!');
             }
           } else if (state.currPath === 'download') {
-            process = state.operationDownloadProcesses[elem.dx_location];
-            if (process) {
-              console.log(process);
-              Promise.resolve(process).then(p => {
-                console.log(p);
-                if ('cancel' in p && typeof p.abort === 'function') {
-                  p.cancel();
-                } else {
-                  ref.backend.utils.killProcess(p.pid);
-                }
+            cancelToken = state.operationDownloadProcesses[elem.dx_location];
+            if (cancelToken) {
+              Promise.resolve(cancelToken).then(ct => {
+                ct.cancel();
               });
             } else {
-              console.error('Process does not exist!');
+              console.error('Could not find downloads cancel token!');
+              console.error('Job not killed.');
             }
           }
         });
