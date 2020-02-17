@@ -66,6 +66,8 @@ function handleFileFinish(error: any, result: any, task: any, callback: any) {
  * @param callback
  */
 async function downloadTask(task: any, callback: any) {
+  log('Starting download task: ', task);
+
   task._rawFile.started = true;
   (window as any).dx
     .downloadDxFile(
