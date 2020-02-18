@@ -4,8 +4,8 @@
 
 | Branch | Version | CI | Coverage |
 | ------ | ------- | -- | -------- |
-| Master | v1.5.0  | ![Node.js CI][ci-master-link] | [![Coverage Status][coverage-master-svg]][coverage-master-link] |
-| Development | v1.5.1 | ![Node.js CI][ci-development-link] | [![Coverage Status][coverage-development-svg]][coverage-development-link] |
+| Master | v1.6.0  | ![Node.js CI][ci-master-link] | [![Coverage Status][coverage-master-svg]][coverage-master-link] |
+| Development | v1.6.0 | ![Node.js CI][ci-development-link] | [![Coverage Status][coverage-development-svg]][coverage-development-link] |
 
 A desktop application written on top of the [Electron Framework](https://electron.atom.io/) facilitating easy uploading and downloading of genomic data to the St. Jude Cloud. Functionality includes:
 
