@@ -21,9 +21,9 @@ import {
 } from '../../../vendor/dxjs/methods/system/findProjects';
 import { SuccessCallback, ResultCallback, SJDTAFile } from './types';
 import config from './config';
+import axios, { AxiosResponse, AxiosError, CancelTokenSource } from 'axios';
 
 const expandHomeDir = require('expand-home-dir');
-const axios = require('axios');
 axios.defaults.adapter = require('axios/lib/adapters/http');
 
 /**
@@ -187,47 +187,43 @@ export const downloadDxFile = async (
   _fileRawSize: number,
   downloadLocation: string,
   updateCb: ResultCallback<number>,
-  finishedCb: SuccessCallback<any>,
-): Promise<any | null> => {
+  finishedCb: SuccessCallback<AxiosResponse>,
+): Promise<CancelTokenSource | AxiosError> => {
   const outputPath = expandHomeDir(path.join(downloadLocation, fileName));
   const fileId = remoteFileId.split(':')[1];
 
   const client = new Client(token);
   const writer = fs.createWriteStream(outputPath);
 
-  try {
-    const CancelToken = axios.CancelToken;
-    const source = CancelToken.source();
-    const { url, headers } = await client.file.download(fileId);
-    return axios({
-      url,
-      headers: headers,
-      responseType: 'stream',
-      cancelToken: source.token,
-    })
-      .then(function(response: any) {
-        const stream = response.data;
-        const totalSize = response.headers['content-length'];
-        var downloaded = 0;
-        stream.on('data', (data: any) => {
-          downloaded += Buffer.byteLength(data);
-          updateCb((downloaded * 100) / totalSize);
-        });
-        stream.pipe(writer);
-        stream.on('end', () => {
-          finishedCb(null, response);
-        });
-        return new Promise((resolve, reject) => {
-          resolve(source);
-        });
-      })
-      .catch(function(error: any) {
-        finishedCb(error, null);
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
+  const { url, headers } = await client.file.download(fileId);
+  return axios({
+    url,
+    headers: headers,
+    responseType: 'stream',
+    cancelToken: source.token,
+  })
+    .then(function(response: AxiosResponse): Promise<CancelTokenSource | null> {
+      const stream = response.data;
+      const totalSize = response.headers['content-length'];
+      var downloaded = 0;
+      stream.on('data', (data: AxiosResponse['data']) => {
+        downloaded += Buffer.byteLength(data);
+        updateCb((downloaded * 100) / totalSize);
       });
-  } catch (e) {
-    finishedCb(e, null);
-    return null;
-  }
+      stream.pipe(writer);
+      stream.on('end', () => {
+        finishedCb(null, response);
+      });
+      return new Promise(resolve => {
+        resolve(source);
+      });
+    })
+    .catch(function(error: AxiosError) {
+      finishedCb(error, null);
+      return error;
+    });
 };
 
 /**

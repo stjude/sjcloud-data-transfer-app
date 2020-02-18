@@ -6,6 +6,8 @@
  * @author Clay McLeod
  */
 
+import { AxiosResponse, AxiosError, CancelTokenSource } from 'axios';
+
 const async = require('async');
 const PRIORITY = {
   UPLOAD: 1,
@@ -79,26 +81,21 @@ async function downloadTask(task: any, callback: any) {
       (progress: Number) => {
         task._rawFile.status = progress;
       },
-      (error: any, result: any) => {
+      (error: AxiosError, result: AxiosResponse) => {
         (window as any).VueApp.$store.commit('removeOperationDownloadProcess', {
           filename: task.remote_location,
         });
         handleFileFinish(error, result, task, callback);
       },
     )
-    .then(
-      (response: any) => {
-        (window as any).VueApp.$store.commit('addOperationDownloadProcess', {
-          filename: task.remote_location,
-          cancelToken: response,
-        });
-      },
-      (err: any) => {
-        console.error('random error: ', err);
-      },
-    )
-    .catch((e: any) => {
-      console.error('random e: ', e);
+    .then((response: CancelTokenSource) => {
+      (window as any).VueApp.$store.commit('addOperationDownloadProcess', {
+        filename: task.remote_location,
+        cancelToken: response,
+      });
+    })
+    .catch((err: AxiosError) => {
+      console.error('Axios error: ', err);
     });
 }
 
