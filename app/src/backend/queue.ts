@@ -16,7 +16,7 @@ const PRIORITY = {
 /**
  * @todo Better exposure of debugging.
  */
-const enableDebug = true;
+const enableDebug = false;
 
 /**
  * Log a message to the console if configured.
@@ -94,11 +94,11 @@ async function downloadTask(task: any, callback: any) {
         });
       },
       (err: any) => {
-        console.log('random error: ', err);
+        console.error('random error: ', err);
       },
     )
     .catch((e: any) => {
-      console.log('random e: ', e);
+      console.error('random e: ', e);
     });
 }
 

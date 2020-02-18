@@ -118,9 +118,7 @@ export default function(ref) {
           if (state.currPath === 'upload') {
             process = state.operationUploadProcesses[elem.path];
             if (process) {
-              console.log(process);
               Promise.resolve(process).then(p => {
-                console.log(p);
                 if ('abort' in p && typeof p.abort === 'function') {
                   p.abort();
                 } else {
