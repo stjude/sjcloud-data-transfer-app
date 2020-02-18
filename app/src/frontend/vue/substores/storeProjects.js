@@ -71,6 +71,9 @@ export default function(ref) {
 
       files.forEach(elem => {
         if (isNaN(elem.describe.size)) {
+          // TODO properly handle applets and workflows.
+          // Currently they cause this error to fire, but it's not an error.
+          // applets and workflows do not have a size field.
           console.error('Handle this NaN case:', elem);
           return;
         }

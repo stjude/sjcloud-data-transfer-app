@@ -2,13 +2,18 @@ const gulp = require('gulp');
 const serve = require('gulp-webserver');
 const jsdoc = require('gulp-jsdoc3');
 
-gulp.task('docs:build', ['compile:backend'], callback => {
-  gulp
-    .src(['README.md', 'app/bin/backend/**/*.js'], { read: false })
-    .pipe(jsdoc({ opts: { destination: './docs' } }, callback));
-});
+gulp.task(
+  'docs:build',
+  gulp.series(
+    (docsBuildCB = callback => {
+      gulp
+        .src(['README.md', 'app/bin/backend/**/*.js'], { read: false })
+        .pipe(jsdoc({ opts: { destination: './docs' } }, callback));
+    }),
+  ),
+);
 
-gulp.task('docs:serve', () => {
+gulp.task('docs:serve', done => {
   gulp.src('docs').pipe(
     serve({
       livereload: true,
@@ -16,6 +21,5 @@ gulp.task('docs:serve', () => {
       port: 8080,
     }),
   );
+  done();
 });
-
-gulp.task('docs', ['docs:build', 'docs:serve']);

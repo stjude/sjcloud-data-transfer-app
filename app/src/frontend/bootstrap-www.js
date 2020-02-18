@@ -195,7 +195,7 @@ function queue(VueApp) {
             `More tasks completed than added: ${numTaskCompleted} vs ${numTaskAdded}.`,
           );
         }
-        VueApp.$store.commit('removeOperationProcess', {
+        VueApp.$store.commit('removeOperationDownloadProcess', {
           filename: file.dx_location,
         });
       }
@@ -224,7 +224,7 @@ function queue(VueApp) {
       }
       numTaskAdded++;
       fakeProgress(file, this);
-      VueApp.$store.commit('addOperationProcess', {
+      VueApp.$store.commit('addOperationDownloadProcess', {
         filename: file.dx_location,
       });
     },

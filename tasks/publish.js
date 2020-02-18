@@ -1,12 +1,10 @@
-/* eslint-disable no-console */
-
-const fs = require('fs');
 const gulp = require('gulp');
+const fs = require('fs');
 const util = require('util');
-const log = require('fancy-log');
 const bump = require('gulp-bump');
 const child = require('child_process');
-const PluginError = require('plugin-error');
+
+/* eslint-disable no-console */
 
 const exec = util.promisify(child.exec);
 const readFile = util.promisify(fs.readFile);

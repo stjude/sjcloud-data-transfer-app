@@ -21,9 +21,10 @@ import {
 } from '../../../vendor/dxjs/methods/system/findProjects';
 import { SuccessCallback, ResultCallback, SJDTAFile } from './types';
 import config from './config';
+import axios, { AxiosResponse, AxiosError, CancelTokenSource } from 'axios';
 
-const progress = require('request-progress');
 const expandHomeDir = require('expand-home-dir');
+axios.defaults.adapter = require('axios/lib/adapters/http');
 
 /**
  * Runs a command to determine if we are logged in to DNAnexus.
@@ -125,6 +126,7 @@ export const listDownloadableFiles = async (
   allFiles: boolean,
   cb: SuccessCallback<IDataObject[]>,
 ) => {
+  // TODO do not list viewer shortcuts
   if (!projectId) {
     cb(new Error('projectId cannot be empty'), null);
     return;
@@ -185,40 +187,43 @@ export const downloadDxFile = async (
   _fileRawSize: number,
   downloadLocation: string,
   updateCb: ResultCallback<number>,
-  finishedCb: SuccessCallback<request.Response>,
-): Promise<request.Request | null> => {
+  finishedCb: SuccessCallback<AxiosResponse>,
+): Promise<CancelTokenSource | AxiosError> => {
   const outputPath = expandHomeDir(path.join(downloadLocation, fileName));
   const fileId = remoteFileId.split(':')[1];
 
   const client = new Client(token);
   const writer = fs.createWriteStream(outputPath);
 
-  try {
-    const { url, headers } = await client.file.download(fileId);
-
-    const req = request(url, { headers }, (error: any, response: any) => {
-      if (error) {
-        finishedCb(error, null);
-      } else {
+  const CancelToken = axios.CancelToken;
+  const source = CancelToken.source();
+  const { url, headers } = await client.file.download(fileId);
+  return axios({
+    url,
+    headers: headers,
+    responseType: 'stream',
+    cancelToken: source.token,
+  })
+    .then(function(response: AxiosResponse): Promise<CancelTokenSource | null> {
+      const stream = response.data;
+      const totalSize = response.headers['content-length'];
+      var downloaded = 0;
+      stream.on('data', (data: AxiosResponse['data']) => {
+        downloaded += Buffer.byteLength(data);
+        updateCb((downloaded * 100) / totalSize);
+      });
+      stream.pipe(writer);
+      stream.on('end', () => {
         finishedCb(null, response);
-      }
+      });
+      return new Promise(resolve => {
+        resolve(source);
+      });
+    })
+    .catch(function(error: AxiosError) {
+      finishedCb(error, null);
+      return error;
     });
-
-    req.on('abort', () => {
-      finishedCb(new Error('download aborted'), null);
-    });
-
-    progress(req).on('progress', (state: any) => {
-      updateCb(state.percent * 100);
-    });
-
-    req.pipe(writer);
-
-    return req;
-  } catch (e) {
-    finishedCb(e, null);
-    return null;
-  }
 };
 
 /**
@@ -403,7 +408,7 @@ class UploadTransfer {
         // be available if the request successfully started.
         const r: any = this.request;
         const { bytesWritten } = r.req.connection;
-        const percent = (this.bytesRead + bytesWritten) / this.size * 100;
+        const percent = ((this.bytesRead + bytesWritten) / this.size) * 100;
         this.progressCb(percent);
       });
 

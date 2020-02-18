@@ -6,6 +6,8 @@
  * @author Clay McLeod
  */
 
+import { AxiosResponse, AxiosError, CancelTokenSource } from 'axios';
+
 const async = require('async');
 const PRIORITY = {
   UPLOAD: 1,
@@ -65,32 +67,36 @@ function handleFileFinish(error: any, result: any, task: any, callback: any) {
  *             from the code below.
  * @param callback
  */
-function downloadTask(task: any, callback: any) {
+async function downloadTask(task: any, callback: any) {
   log('Starting download task: ', task);
 
   task._rawFile.started = true;
-  let process = (window as any).dx.downloadDxFile(
-    task.token,
-    task.remote_location,
-    task.name,
-    task.raw_size,
-    task.local_location,
-    (progress: Number) => {
-      task._rawFile.status = progress;
-    },
-    (error: any, result: any) => {
-      (window as any).VueApp.$store.commit('removeOperationProcess', {
+  await (window as any).dx
+    .downloadDxFile(
+      task.token,
+      task.remote_location,
+      task.name,
+      task.raw_size,
+      task.local_location,
+      (progress: Number) => {
+        task._rawFile.status = progress;
+      },
+      (error: AxiosError, result: AxiosResponse) => {
+        (window as any).VueApp.$store.commit('removeOperationDownloadProcess', {
+          filename: task.remote_location,
+        });
+        handleFileFinish(error, result, task, callback);
+      },
+    )
+    .then((response: CancelTokenSource) => {
+      (window as any).VueApp.$store.commit('addOperationDownloadProcess', {
         filename: task.remote_location,
+        cancelToken: response,
       });
-
-      handleFileFinish(error, result, task, callback);
-    },
-  );
-
-  (window as any).VueApp.$store.commit('addOperationProcess', {
-    filename: task.remote_location,
-    process,
-  });
+    })
+    .catch((err: AxiosError) => {
+      console.error('Axios error: ', err);
+    });
 }
 
 /**
@@ -114,7 +120,7 @@ function uploadTask(task: any, callback: any) {
       }
     },
     (error: any, result: any) => {
-      (window as any).VueApp.$store.commit('removeOperationProcess', {
+      (window as any).VueApp.$store.commit('removeOperationUploadProcess', {
         filename: task.local_location,
       });
 
@@ -122,7 +128,7 @@ function uploadTask(task: any, callback: any) {
     },
   );
 
-  (window as any).VueApp.$store.commit('addOperationProcess', {
+  (window as any).VueApp.$store.commit('addOperationUploadProcess', {
     filename: task.local_location,
     process,
   });

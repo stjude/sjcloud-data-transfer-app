@@ -4,7 +4,8 @@
 export default function(ref) {
   return {
     state: {
-      operationProcesses: {},
+      operationUploadProcesses: {},
+      operationDownloadProcesses: {},
       concurrentOperations: 3,
     },
     getters: {
@@ -69,11 +70,17 @@ export default function(ref) {
     },
     mutations: {
       /** Operation Processes * */
-      addOperationProcess(state, info) {
-        state.operationProcesses[info.filename] = info.process;
+      addOperationUploadProcess(state, info) {
+        state.operationUploadProcesses[info.filename] = info.process;
       },
-      removeOperationProcess(state, info) {
-        delete state.operationProcesses[info.filename];
+      removeOperationUploadProcess(state, info) {
+        delete state.operationUploadProcesses[info.filename];
+      },
+      addOperationDownloadProcess(state, info) {
+        state.operationDownloadProcesses[info.filename] = info.cancelToken;
+      },
+      removeOperationDownloadProcess(state, info) {
+        delete state.operationDownloadProcesses[info.filename];
       },
       setConcurrentOperations(state, num) {
         if (!isNaN(num)) {

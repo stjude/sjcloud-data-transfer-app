@@ -17,10 +17,10 @@ window.ui = require('./bin/backend/ui');
 window.utils = require('./bin/backend/utils');
 
 /*
-*	Transition to using backend
-* 	methods specifically to a VueApp instance,
-*	by defining the Vue plugin below
-*/
+ *	Transition to using backend
+ * 	methods specifically to a VueApp instance,
+ *	by defining the Vue plugin below
+ */
 
 window.backend = {
   install(Vue, options) {
