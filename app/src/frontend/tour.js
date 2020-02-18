@@ -1,6 +1,6 @@
 import jQueryGlobalizer from './helpers/jQueryGlobalizer';
 import boostrap from 'bootstrap';
-import Tour from 'bootstrap-tour';
+import Tour from 'bootstrap-tourist';
 
 /**
   Helpers
@@ -41,6 +41,10 @@ const tour = new window.Tour({
   container: 'body',
   backdrop: true,
   backdropContainer: 'body',
+  backdropOptions: {
+    highlightOpacity: 0.0,
+    highlightColor: '#FFF',
+  },
   smartPlacement: true,
   delay: 100,
   // debug: true,
@@ -60,6 +64,7 @@ const tour = new window.Tour({
     }),
     getStep({
       element: '.left-panel-table-container',
+      placement: 'right',
       title: 'Step 1: Select workspace',
       content: `<div>
                 Creating a data request or running a tool for the first time
@@ -79,6 +84,7 @@ const tour = new window.Tour({
     }),
     getStep({
       element: '.right-panel-container',
+      placement: 'left',
       title: 'Step 2: Work with files',
       content: `Selecting a workspace in Step 1 will update the
                 files shown in the upload/download pane.`,
@@ -87,6 +93,7 @@ const tour = new window.Tour({
     }),
     getStep({
       element: '.upload-download-btn-container',
+      placement: 'bottom',
       title: 'Step 2: Work with files (cont.)',
       content: `You can switch between uploading input files
                 for tools or downloading results files from either
@@ -95,6 +102,7 @@ const tour = new window.Tour({
     }),
     getStep({
       element: '#upload-panel',
+      placement: 'left',
       title: 'Step 3: Upload files',
       content: `After selecting the 'Upload' tab, you can click
                 or drag files over the highlighted area to send
@@ -103,6 +111,7 @@ const tour = new window.Tour({
     }),
     getStep({
       element: '#download-panel',
+      placement: 'left',
       title: 'Step 4: Download files',
       content: `After selecting the 'Download' tab, you can select 
                 results files from tools or data included in your
@@ -113,6 +122,7 @@ const tour = new window.Tour({
     }),
     getStep({
       element: '.bottom-bar-left',
+      placement: 'top',
       title: 'Download location',
       content: `If you'd like to download your results file to somewhere
                 other than the default location, click here.`,
@@ -120,6 +130,7 @@ const tour = new window.Tour({
     }),
     getStep({
       element: '.download-btn',
+      placement: 'top',
       title: 'Download button',
       content:
         'You can download requested St. Jude data or results files to your computer.',
@@ -133,7 +144,7 @@ const tour = new window.Tour({
       element: '#sjcda-top-bar-menu',
       title: 'File a bug report',
       content: 'If you encounter issues, follow the Help link to contact us.',
-      orphan: true,
+      showIfUnintendedOrphan: true,
       onShow(tour) {
         if (!window.VueApp) return;
         // window.VueApp.$router.replace("/upload");
@@ -146,7 +157,7 @@ const tour = new window.Tour({
       title: 'User preferences',
       content:
         "You can set user preferences by selecting 'Settings' from the drop down menu.",
-      orphan: true,
+      showIfUnintendedOrphan: true,
       onShow(tour) {
         if (tour.__promptTimeout) {
           clearTimeout(tour.__promptTimeout);
@@ -201,9 +212,8 @@ tour.__promptUser = path => {
     }
     clearInterval(waitingForTools);
     tourInitialized = true;
-    tour.init();
     tour.goTo(0);
-    tour.start(true);
+    tour.start();
     tour.__promptTimeout = setTimeout(() => {
       tour.end();
     }, 5000);
@@ -217,7 +227,7 @@ tour.__start = (i = 1) => {
 
   tourInitialized = true;
   tour.setCurrentStep(i);
-  tour.start(true);
+  tour.start();
 };
 
 export default tour;

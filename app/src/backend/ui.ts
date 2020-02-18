@@ -102,7 +102,7 @@ export async function createOAuthWindow(
         let timer = setInterval(() => {
           if (
             loginWindow.webContents.getURL() ===
-            'https://platform.dnanexus.com/'
+            'https://platform.dnanexus.com/panx/projects'
           ) {
             loginWindow.loadURL(getOAuthURL());
             clearInterval(timer);

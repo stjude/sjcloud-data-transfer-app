@@ -114,22 +114,30 @@ export default function(ref) {
             elem.errored = true;
           }
           let process = null;
+          let cancelToken = null;
           if (state.currPath === 'upload') {
-            process = state.operationProcesses[elem.path];
+            process = state.operationUploadProcesses[elem.path];
+            if (process) {
+              Promise.resolve(process).then(p => {
+                if ('abort' in p && typeof p.abort === 'function') {
+                  p.abort();
+                } else {
+                  ref.backend.utils.killProcess(p.pid);
+                }
+              });
+            } else {
+              console.error('Process does not exist!');
+            }
           } else if (state.currPath === 'download') {
-            process = state.operationProcesses[elem.dx_location];
-          }
-
-          if (process) {
-            Promise.resolve(process).then(p => {
-              if ('abort' in p && typeof p.abort === 'function') {
-                p.abort();
-              } else {
-                ref.backend.utils.killProcess(p.pid);
-              }
-            });
-          } else {
-            console.error('Process does not exist!');
+            cancelToken = state.operationDownloadProcesses[elem.dx_location];
+            if (cancelToken) {
+              Promise.resolve(cancelToken).then(ct => {
+                ct.cancel();
+              });
+            } else {
+              console.error('Could not find downloads cancel token!');
+              console.error('Job not killed.');
+            }
           }
         });
         let currPath = state.currPath;

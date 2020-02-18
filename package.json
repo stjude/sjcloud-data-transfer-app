@@ -54,8 +54,9 @@
   },
   "dependencies": {
     "async": "^2.6.3",
+    "axios": "^0.19.2",
     "bootstrap": "^3.4.1",
-    "bootstrap-tour": "^0.11.0",
+    "bootstrap-tourist": "^0.3.2",
     "cross-fetch": "^2.2.3",
     "expand-home-dir": "0.0.3",
     "express": "^4.17.1",
@@ -83,7 +84,6 @@
     "quasar-extras": "^0.0.8",
     "quasar-framework": "^0.14.7",
     "request": "^2.88.2",
-    "request-progress": "^3.0.0",
     "require-dir": "^0.3.2",
     "selfsigned": "^1.10.7",
     "sinon": "^5.1.1",
