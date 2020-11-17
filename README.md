@@ -1,5 +1,7 @@
 # St. Jude Cloud Data Transfer Application
 
+## :warning: NOTICE: This repository has been deprecated.
+
 [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fstjude%2Fsjcloud-data-transfer-app.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fstjude%2Fsjcloud-data-transfer-app?ref=badge_shield)
 
 | Branch | Version | CI | Coverage |
