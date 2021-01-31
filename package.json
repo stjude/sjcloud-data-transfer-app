@@ -121,7 +121,7 @@
     "cross-env": "^5.2.1",
     "css-loader": "^1.0.1",
     "d3-selection": "^1.4.1",
-    "electron": "^2.0.18",
+    "electron": "^7.2.4",
     "electron-builder": "20.14.7",
     "electron-packager": "^12.2.0",
     "eslint": "^4.0.0",
